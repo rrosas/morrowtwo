@@ -1,35 +1,35 @@
 In the following table you get an overview of the file structure after you extracted the downloaded package.
 
 
-  * *_config*
+  * *`_`config/*
     Configuration files of the framework.
-  * *_core/*
+  * *`_`core/*
     Important files of the framework. Here you should not change anything!
-  * *_libs/* (opt.)
+  * *`_`libs/* (opt.)
     External classes made by yourself.
-  * *_logs/*
+  * *`_`logs/*
     Log files and error log files.
   * *temp/*
     Used for internal purposes.
   * *main/*
     The default project of the framework.
-    * *_config*
+    * *`_`config/*
       Configuration files of the project.
-    * *_controller*
+    * *`_`controller/*
       Controller files.
-    * *_forms*
+    * *`_`forms/*
       Form definitions for the Form class.
-    * *_i18n*
+    * *`_`i18n/*
       Configuration and translations for the used languages.
-    * *_templates*
+    * *`_`templates/*
       Templates for (X)HTML output.
-    * *_model* (opt.)
+    * *`_`model/* (opt.)
       your models for the project
-    * *_libs* (opt.)
+    * *`_`libs/* (opt.)
       your libs for the project
-    * *images* (opt.)
+    * *images/* (opt.)
       Your images for the project.
-    * *temp*
+    * *temp/*
       Temporary files for the project.
-    * *xtras* (opt.)
+    * *xtras/* (opt.)
       All files which do not fit into another folder (like JS files, SWF files ...).
