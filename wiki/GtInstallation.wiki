@@ -1,0 +1,11 @@
+  # First download the framework at Download.
+  # Extract the package to a folder of your choice below the document root of your webserver.
+  # Check the following folder permissions:
+    * ./temp (and all subfolders) have to be readable & writable by the web server user
+    * ./main/temp (and all subfolders) have to be readable & writable by the web server user
+  # You are done.
+
+= Requirements =
+
+  * Webserver (mod_rewrite recommend but not necessary)
+  * PHP >= 5
