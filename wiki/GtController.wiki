@@ -12,11 +12,14 @@ main/_controller/products_hard-stuff_funky-stuff_cool-funky-product.class.php
 == The controller inheritance ==
 
 The principle is very simple. Morrow contains a standard controller class named Controller which provides some basic methods.
-The global controller
 
-Then a global controller will called named GlobalController which extends Controller. This global controller is always called and is under full control of the user. The file has to be called [PROJECT]/_controller/_globalcontroller.class.php and there has to be a method setup() which is automatically called. So your origin global controller looks like that:
+=== The global controller ===
 
-main/_controller/_globalcontroller.class.php
+Then a global controller will called named *Globalcontroller* which extends *Controller*. This global controller is always called and is under full control of the user. The file has to be called *PROJECT_NAME/_controller/_globalcontroller.class.php* and there has to be a method *setup()* which is automatically called. So your origin global controller looks like that:
+
+*main/`_`controller/`_`globalcontroller.class.php*
+{{{
+
 <?php
  
 class GlobalController extends Controller {
@@ -25,12 +28,14 @@ class GlobalController extends Controller {
 }
  
 ?>
+}}}
 
-The page controller
+=== The page controller ===
 
-At last your URL specific controller gets loaded. It extends the GlobalController and has to contain a method run() which is automatically called. It looks like this:
+At last your URL specific controller gets loaded. It extends the *Globalcontroller* and has to contain a method *run()* which is automatically called. It looks like this:
 
-main/_controller/products_hard-stuff_funky-stuff_cool-funky-product.class.php
+*main/`_`controller/products_hard-stuff_funky-stuff_cool-funky-product.class.php*
+{{{
 <?php
  
 class PageController extends GlobalController {
@@ -39,17 +44,19 @@ class PageController extends GlobalController {
 }
  
 ?>
+}}}
 
-Using classes in the controller
+== Using classes in the controller ==
 
 Many classes are provided per default with Morrow. To use them you just have to access them as a member of the controller.
 
-If you want to initialize a class under a different instance name or you want to pass arguments to the constructor of a class you have to use the provided method load().
+If you want to initialize a class under a different instance name or you want to pass arguments to the constructor of a class you have to use the provided method *load()*.
 All classes you load that way are just loaded on demand (see Lazy loading).
-Example
 
-Simple use of the benchmark class
+=== Example ===
 
+*Simple use of the benchmark class*
+{{{
 <?php
  
 class PageController extends GlobalController {
@@ -66,9 +73,10 @@ class PageController extends GlobalController {
 }
  
 ?>
+}}}
 
-The same example but with the use of load()
-
+*The same example but with the use of load()*
+{{{
 <?php
  
 class PageController extends GlobalController {
@@ -88,22 +96,27 @@ class PageController extends GlobalController {
 }
  
 ?>
+}}}
 
-Methods
+== Methods ==
 
-$this->load()
-
+=== _$this->load()_ ===
+{{{
 void load( string $factory_args [, mixed ... ] )
+}}}
 Registers an instance of a specific class under a specific instancename.
 
-$factory_args is a string in the following format:
-"$classname:$instancename:$section"
+*$factory_args* is a string in the following format:
+*"$classname:$instancename:$section"*
 
-$classname: The name of the class that should get loaded.
-$instancename (optional, default = $classname): An alternative instancename.
-$section (optional, default = 'user'): An alternative section to categorize the instance into.
+*$classname:* The name of the class that should get loaded.
+
+*$instancename* (optional, default = $classname): An alternative instancename.
+
+*$section* (optional, default = 'user'): An alternative section to categorize the instance into.
 
 All other arguments will be passed to the constructor of the loaded class.
-Factory::load()
 
-If you are not in controller context (e.g. if you write your own classes) you can use the static method Factory::load(). It does the same as $this->load() but is always available and returns the object.
+=== _Factory::load()_ ==
+
+If you are not in controller context (e.g. if you write your own classes) you can use the static method *Factory::load()*. It does nearly the same as *$this->load()* but is always available and returns the object.
