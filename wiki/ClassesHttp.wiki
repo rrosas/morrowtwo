@@ -1,0 +1,64 @@
+= Http =
+
+With this class it is possible to send HTTP POST-Requests.
+
+== Example ==
+
+*Using Addfile() and Addvalue():*
+{{{
+<?php
+// ... Controller code
+ 
+$this->http->debug = true; // (for optional debug output)
+ 
+$this->http->addHeader('USER_AGENT', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.8.1.14) Gecko/20080404 Firefox/2.0.0.14');
+$this->http->addValue('X-Special', 'Value Data');
+$this->http->addFile('file', '/var/www/special.gif', 'image/gif');
+ 
+$this->http->post('http://localhost/index.php');
+ 
+// ... Controller code
+?>
+}}}
+
+*Using Post() only:*
+{{{
+<?php
+// ... Controller code
+ 
+$data    = array( 'field1' => 'value1', 'field2' => 'value2' );
+$files   = array( 'file' => array( 'path' => '/var/www/special.gif', 'mimetype' => 'image/gif' ));
+ 
+$this->http->post('http://localhost/index.php', $data, $files);
+ 
+// ... Controller code
+?>
+}}}
+
+== Methods ==
+
+=== _addHeader()_ ===
+{{{
+void addHeader( string $header , string $value )
+}}}
+Adds a *$header* with a given *$value* to a request.
+
+=== _addValue()_ ===
+{{{
+void addValue( string $fieldname , string $value )
+}}}
+Adds a value with the fieldname *$fieldname* and a given *$value* to a request.
+
+=== _addFile()_ ===
+{{{
+void addFile( string $fieldname , string $path , string $mimetype )
+}}}
+Adds a file to a request. You have to specify the *$path* to the file and the corresponding $mimetype.
+
+=== _post()_ ===
+{{{
+void post( $url [, array $data = array ( ) [, array $files = array ( )]] )
+}}}
+This method actually sends the request. You have to specify the *$url* the request should be sent to.
+
+Instead of using the methods *addValue()* and *addFile()* you can directly pass arrays along with this method. Take a look at the example.
