@@ -174,7 +174,7 @@ $this->db->update('table', $data, 'where id = ?', true, 1);
 It returns an array with one or two keys:
 || Key || Type || Description ||
 || SUCCESS || bool || true if the query could successfully sent to the db, otherwise false. ||
-|| AFFECTED_ROWS || string || If the parameter *$affected_rows* is set to true, this key contains the count of the affected rows.
+|| AFFECTED_ROWS || string || If the parameter *$affected_rows* is set to true, this key contains the count of the affected rows. ||
 
 === _updateSafe()_ ===
 {{{
