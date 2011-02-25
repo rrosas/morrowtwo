@@ -34,7 +34,7 @@
     * [ClassesSitesearch Sitesearch]
     * [ClassesUrl Url]
     * [ClassesView View]
-  * [ViewHandlers View Handlers]
+  * [ViewHandlersPhp View Handlers]
     * [ViewHandlersPhp PHP]
     * [ViewHandlersSerpent Serpent]
     * [ViewHandlersPlain Plain]
