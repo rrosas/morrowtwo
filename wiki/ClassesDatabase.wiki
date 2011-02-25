@@ -80,7 +80,7 @@ You must only use fields with the ">" operator whose values are unique. Otherwis
 {{{
 mixed insert( string $table , array $data [, bool $insertid = false])
 }}}
-This method inserts a new entry into the table *$table*. Every key in the array $data represents a field in the table.
+This method inserts a new entry into the table *$table*. Every key in the array *$data* represents a field in the table.
 
 It is also possible to pass an array with the key *FUNC* as value. In that case it will not been sent as string but as expression.
 {{{
@@ -135,8 +135,8 @@ $this->db->replace('table', $data, true);
 It returns an array with one or two keys:
 
 || Key || Type || Description ||
-|| SUCCESS || bool || true if the query could successfully sent to the db, otherwise false.
-|| INSERT_ID || string || If the parameter $insertid is set to true, this key contains the value of the primary key of the new entry.
+|| SUCCESS || bool || true if the query could successfully sent to the db, otherwise false. ||
+|| INSERT_ID || string || If the parameter $insertid is set to true, this key contains the value of the primary key of the new entry. ||
 
 === _replaceSafe()_ ===
 {{{
