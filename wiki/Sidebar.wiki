@@ -1,5 +1,5 @@
   * [Homepage Homepage]
-  * [Gt General Topics]
+  * [GtInstallation General Topics]
     * [GtInstallation Installation]
     * [GtFileStructure File structure]
     * [GtUrlLayout URL Layout]
