@@ -45,6 +45,6 @@ $this->view->setContent($data);
 || string || mimetype || text/html || Changes the standard mimetype of the view handler. Possible values are "text/html", "application/xml" and so on. ||
 || string || charset || iso-8859-1 || Changes the standard charset of the view handler. Possible values are "UTF-8", "iso-8859-1" and so on. ||
 || string || downloadable || _empty_ || Changes the http header so that the output is offered as a download. $value defines the filename which is presented to the user. The mimetype will be automatically determined via file extension. It you specify a different mimetype, that will be used. ||
-|| string || template	_index	 Defines the frame template without the template suffix. The default value is "_index". Meaningful for example on popups, whose html code differs from the standard frame template.
-string	content_template	[alias]	Defines the content template string without the template suffix. The default value is the alias of the actual page, for example manual_view-handlers_php.
-string	template_suffix	.tpl	The extension that will be added to the content_template and the template parameter.
+|| string || template || `_`index || Defines the frame template without the template suffix. The default value is "`_`index". Meaningful for example on popups, whose html code differs from the standard frame template. ||
+|| string || content_template || _alias_ || Defines the content template string without the template suffix. The default value is the alias of the actual page, for example manual_view-handlers_php. ||
+|| string || template_suffix || .tpl || The extension that will be added to the content_template and the template parameter. ||
