@@ -1,5 +1,9 @@
 = Mail =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 To send mails we extended the external class PHPMailer (available at http://phpmailer.codeworxtech.com ).
 
 == Example ==
