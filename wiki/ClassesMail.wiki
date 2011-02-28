@@ -17,14 +17,14 @@ $vars['copy']           = 'Now, I am a mail copy text.';
  
 // create HTML version of the mail
 $this->load('view:view_html');
-$this->view_html->setHandler('smarty');
+$this->view_html->setHandler('serpent');
 $this->view_html->setProperty('template', '_mailer/newsletter_html');
 $this->view_html->setContent($vars);
 $view_html = $this->view_html->get();
  
 // create text version of the mail
 $this->load('view:view_text');
-$this->view_text->setHandler('smarty');
+$this->view_text->setHandler('serpent');
 $this->view_text->setProperty('template', '_mailer/newsletter_text');
 $this->view_text->setContent($vars);
 $view_text = $this->view_text->get();
@@ -41,39 +41,45 @@ $this->mail->Send(false);
 ?>
 }}}
 
-*_mailer/newsletter_html.tpl*
+*_mailer/newsletter_html.htm*
 {{{
 <html>
 <head>
-        <title>{$content.subject}</title>
+        <title>~~:escape($content.subject)</title>
 </head>
  
 <body>
  
-{$content.copy}
+~~:escape($content.copy)~
  
 </body>
 </html>
 }}}
 
-*_mailer/newsletter_text.tpl*
+*_mailer/newsletter_text.htm*
 {{{
 ---------------------------------------------------------------------
-{$content.subject}
+~~:escape($content.subject)~
 ---------------------------------------------------------------------
  
-{$content.copy}
+~~:escape($content.copy)~
 }}}
 
 == Methods ==
 
 You have access to all methods the original PHPMailer provides. Furthermore we added or rewrote the following methods.
 
-=== _object `__`construct( array $config )_ ===
+=== _`__`construct()_ ===
+{{{
+object __construct( array $config )
+}}}
 This method overwrites the standard method.
 The constructor accepts an array with parameters for overwriting standard parameters of PHPMailer.
 
-=== _bool Send( [ bool $confirm = false] )_ ===
+=== _send()_ ===
+{{{
+bool send( [ bool $confirm = false] )
+}}}
 This method overwrites the standard method.
-We extended the original method with the additional parameter *$confirm*.
-Set *$confirm* to true if you really want to send the mail. If set to false the method will output a dump of all important parameters for the mail delivery. Return TRUE on success an FALSE on failure.
+We extended the original method with the additional parameter $confirm.
+Set $confirm to true if you really want to send the mail. If set to false the method will output a dump of all important parameters for the mail delivery. Return TRUE on success an FALSE on failure.
