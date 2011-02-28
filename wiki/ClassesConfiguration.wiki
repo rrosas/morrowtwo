@@ -1,5 +1,7 @@
 = Config =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 This class handles the access to the configuration of the framework.
