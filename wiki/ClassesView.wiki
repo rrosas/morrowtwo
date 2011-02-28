@@ -1,5 +1,7 @@
 = View =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 The view class controls the output of the framework. The assigned content, the output format like (X)HTML, XML, Json and so on.
