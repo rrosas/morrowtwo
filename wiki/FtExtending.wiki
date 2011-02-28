@@ -13,7 +13,7 @@ Place your class in path 1 if you need it in more than one project. Place it in 
 
 === Example ===
 
-This example integrates the PEAR Text_Diff into Morrow. It shows how to integrate a PEAR class in a system where the PEAR installer is not available. The PEAR files in this example are located in PROJECT_PATH/`_`libs/pear/*.
+This example integrates the PEAR !Text_Diff into Morrow. It shows how to integrate a PEAR class in a system where the PEAR installer is not available. The PEAR files in this example are located in PROJECT_PATH/`_`libs/pear/*.
 
 We create a new file textdiff.class.php that corresponds to the naming and folder conventions of Morrow and extend the original class in that file.
 
@@ -29,11 +29,9 @@ set_include_path(PROJECT_PATH.'_libs/pear' . PATH_SEPARATOR . get_include_path()
 require_once 'Text/Diff.php';
  
 class textdiff extends Text_Diff {
- 
     public function __construct($engine, $array1, $array2 ) {
-           parent::Text_Diff($engine, array($array1, $array2));
+        parent::Text_Diff($engine, array($array1, $array2));
     }
- 
 }
 
 ?>
@@ -44,16 +42,11 @@ class textdiff extends Text_Diff {
 <?php
 
 class PageController extends GlobalController {
- 
-        public function run() {
-            $this->load('textdiff','auto', $array1, $array2);
- 
-              // now do with your class what you want to
- 
-                ...
- 
-        }
- 
+    public function run() {
+        $this->load('textdiff','auto', $array1, $array2);
+        // now do with your class what you want to
+        ...
+    }
 }
 
 ?>
@@ -71,18 +64,15 @@ Let us take a look at the viewPlain handler which has the smallest code base. At
 <?php
  
 class Viewplain extends ViewAbstract {
- 
     public $mimetype        = 'text/plain';
     public $charset         = 'iso-8859-1';
  
-    public function getOutput($content){
-         if (!is_scalar($content['content'])) {
-                trigger_error(__class__.': The content variable for this handler has to be scalar.', e_user_error); return false;
-         }
- 
-         return $content['content'];
+    public function getOutput($content) {
+        if (!is_scalar($content['content'])) {
+            trigger_error(__class__.': The content variable for this handler has to be scalar.', e_user_error); return false;
+        }
+        return $content['content'];
     }
- 
 }
  
 ?>
