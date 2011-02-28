@@ -1,5 +1,7 @@
 = Navigation =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 The class improves the handling with common navigational tasks. The navigation data has to follow a strict scheme but can be passed from different sources. The default way is to store the data in *PROJECT*/`_`i18n/*LANGUAGE*/`_`tree.php and fill a variable named *$tree*.
