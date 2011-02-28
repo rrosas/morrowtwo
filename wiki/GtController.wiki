@@ -46,7 +46,7 @@ class PageController extends GlobalController {
 Many classes are provided per default with Morrow. To use them you just have to access them as a member of the controller.
 
 If you want to initialize a class under a different instance name or you want to pass arguments to the constructor of a class you have to use the provided method *load()*.
-All classes you load that way are just loaded on demand (see Lazy loading).
+All classes you load that way are just loaded on demand (see Lazy loading). So it's possible to init the database class in the !GlobalController although databse access is not needed in all pages.
 
 === Example ===
 
@@ -55,19 +55,16 @@ All classes you load that way are just loaded on demand (see Lazy loading).
 <?php
  
 class PageController extends GlobalController {
-        public function run() {
-       
-                // use the benchmark class
-                $this->benchmark->start('Section 1');
+    public function run() {
+        // use the benchmark class
+        $this->benchmark->start('Section 1');
+        
+        sleep(1);
                
-                sleep(1);
-               
-                $this->benchmark->stop();
-                $results = $this->benchmark->get();
-        }
+        $this->benchmark->stop();
+        $results = $this->benchmark->get();
+    }
 }
- 
-?>
 }}}
 
 *The same example but with the use of load()*
@@ -75,22 +72,19 @@ class PageController extends GlobalController {
 <?php
  
 class PageController extends GlobalController {
-        public function run() {
-               
-                // load the benchmark class under a different instance name
-                $this->load('benchmark:bm');
+    public function run() {
+        // load the benchmark class under a different instance name
+        $this->load('benchmark:bm');
        
-                // use the benchmark class
-                $this->bm->start('Section 1');
+        // use the benchmark class
+        $this->bm->start('Section 1');
                
-                sleep(1);
+        sleep(1);
                
-                $this->bm->stop();
-                $results = $this->bm->get();
-        }
+        $this->bm->stop();
+        $results = $this->bm->get();
+    }
 }
- 
-?>
 }}}
 
 == Methods ==
