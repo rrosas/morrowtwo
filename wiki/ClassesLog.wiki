@@ -1,5 +1,7 @@
 = Log =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 This class is a simple solution to log various variables to a file for controlling issues.
