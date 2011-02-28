@@ -17,6 +17,6 @@ OK, some people simply need a feature list. Now, here is a list which shows what
   * Main focus on performance
   * i18n and l10n integration
   * Multi site capable
-  * Not only (X)HTML can be outputted. There are additional view   handlers for: XML, JSON, CSV, Excel and Flash LoadVars files
+  * Not only (X)HTML can be outputted. There are additional view   handlers for: XML, JSON, CSV, Excel and Flash !LoadVars files
   * Granular adjustable caching
   * Extensive form validation
