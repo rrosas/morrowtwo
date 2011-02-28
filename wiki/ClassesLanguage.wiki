@@ -13,20 +13,20 @@ The Language class is instanced by Morrow and relies on the following configurat
 == Example ==
 {{{
 <?php
+
 // ... Controller code
  
 $alias = $this->page->get('alias');
  
-#passing language content to the template
+// passing language content to the template
 $lcontent = $this->language->getContent($alias);
 $this->view->setContent($lcontent);
  
-#passing the list of available translations to the template
+// passing the list of available translations to the template
 $translations = $this->language->getTranslations($alias);
 $this->view->setContent($translations, 'translations');
  
 // ... Controller code
-?>
 }}}
 
 == Methods ==
@@ -47,7 +47,7 @@ sets the current language key if it is a valid language.
 {{{
 bool isValid( String $lang )
 }}}
-returns true if *$lang* is in the list of possible languages, otherwise false.
+returns true if $lang is in the list of possible languages, otherwise false.
 
 === _getContent()_ ===
 {{{
@@ -77,4 +77,4 @@ returns an array of language keys for which the page alias exist. This is based 
 {{{
 bool translationExists( String $lang , String $alias )
 }}}
-returns true if the page *$alias* exists in the navigation tree of language *$lang*, otherwise false.
+returns true if the page $alias exists in the navigation tree of language $lang, otherwise false.
