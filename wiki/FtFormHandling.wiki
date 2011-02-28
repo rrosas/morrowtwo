@@ -207,119 +207,163 @@ bool checkPassword( $value ,& $error , [ $compare_value =null])
 
 === Arguments ===
 
-$value the Form.class passes the value of the field
-&$error the error key, which is used by the Form.class and therefore passed by reference.
-$compare_value the value of another field that has been defined in the "compare" attribute (optional).
-Methods must return true, if validating was successful, or false, if the input was not correct. If validation fails, you must set $error*.
+  * $value the Form.class passes the value of the field
+  * &$error the error key, which is used by the Form.class and therefore passed by reference.
+  * $compare_value the value of another field that has been defined in the "compare" attribute (optional).
 
-*The values are "keys" to language dependent definitions. See Error Messages below. 
+||Methods must return true, if validating was successful, or false, if the input was not correct. If validation fails, you must set $error. The values are "keys" to language dependent definitions. See Error Messages below. ||
 
-Example
+=== Example ===
 
+{{{
 "email" => array(
-                        "type" => "simple",
-                        "required" => true,
-                        "checktype" => "Email",
-                ),
-During validation the Form.class calls the method checkEmail im Validator.class and passes the value the user submitted for "email".
-public static function checkEmail($value, &$error, $compare_value = null){
-                if(!ereg("^[-_.[:alnum:]]+@[-_.[:alnum:]]{2,}\.[[:alpha:]]{2,4}$",$value)){
-                        $error = 'BADEMAIL';
-                        return false;
-                }
-                return true;
-        }
-In the example code above, the value is checked against a regular expresion to determine whether it meets certain criteria. If it doe not, the method sets $error to 'BADEMAIL' and returns false. Otherwise it returns true. 
+    "type" => "simple",
+    "required" => true,
+    "checktype" => "Email",
+);
+}}}
+
+During validation the Form class calls the method !checkEmail in Validator class and passes the value the user submitted for "email".
+
+{{{
+<?php
+
+public static function checkEmail($value, &$error, $compare_value = null) {
+    if(!ereg("^[-_.[:alnum:]]+@[-_.[:alnum:]]{2,}\.[[:alpha:]]{2,4}$",$value)){
+        $error = 'BADEMAIL';
+        return false;
+    }
+    return true;
+}
+
+?>
+}}}
+
+In the example code above, the value is checked against a regular expresion to determine whether it meets certain criteria. If it does not, the method sets $error to 'BADEMAIL' and returns false. Otherwise it returns true. 
 
 A further example shows the use of the "compare" attribute.
+
+{{{
 "password" => array(
-                        "required" => true,
-                        "checktype" => "Password",
-                        "compare" => "password2",
-                ),
-                "password2" => array(
-                        "required" => true,
-                ),
-public static function checkPassword($value, &$error, $compare_value=null){
-                if($compare_value !== null && $value != $compare_value){
-                        $error = 'MISMATCH';
-                        return false;
-                }
-                return true;
-        }
-Error Messages
+    "required" => true,
+    "checktype" => "Password",
+    "compare" => "password2",
+),
+"password2" => array(
+    "required" => true,
+),
+}}}
+
+{{{
+<?php 
+
+public static function checkPassword($value, &$error, $compare_value=null) {
+    if($compare_value !== null && $value != $compare_value){
+        $error = 'MISMATCH';
+        return false;
+    }
+    return true;
+}
+
+?>
+}}}
+
+== Error Messages ==
 
 Since error messages are generally specific to different languages, only keys should be used to define errors. The Form.class sets the key "MISSING" if a required element has no value submitted. The keys set in Validator.class are up to the developer to define. These keys should then be translated into real language in the _i18n files. Typically this is done in the _global.php file for each language, since the keys can usually be used for more than one form or page.
+
+{{{
+<?php
+
 $form['errors'] = array(
-                        'MISSING' => "Please enter a value.",
-                        'BADEMAIL' => "Please check your address.",
-                        'MISMATCH' => "Your repeated password was not identical.",
-                        );
-Generating HTML
+    'MISSING' => "Please enter a value.",
+    'BADEMAIL' => "Please check your address.",
+    'MISMATCH' => "Your repeated password was not identical.",
+);
 
-FormHtml.class
+?>
+}}}
 
-to ease the process of generating HTML the FormHtml.class has been developed, which works directly with the Form.class. For a list of methods see FormHtml. If you are using the smary view class the following section should be useful.
-Smarty-Tags
+== Generating HTML ==
 
-There are several smarty tags that use the FormHtml.class to generate the elements of a form in your template. For flexibility of design, the tags for "labels", "elements" and "errors" are independent and can be placed any where in the html code. The block tag "form" removes the need to repeat the form name in each element and writes the beginning and end form tags.
+=== !FormHtml class ===
+
+to ease the process of generating HTML the !FormHtml class has been developed, which works directly with the Form class. For a list of methods see !FormHtml. If you are using the smary view class the following section should be useful.
+
+=== Smarty-Tags ===
+
+There are several smarty tags that use the !FormHtml class to generate the elements of a form in your template. For flexibility of design, the tags for "labels", "elements" and "errors" are independent and can be placed any where in the html code. The block tag "form" removes the need to repeat the form name in each element and writes the beginning and end form tags.
 
 You will have to take care of the submit button and its internationalization, yourself though.
-Example
 
+*Example*
+{{{
 <!-- ... Template-Code -->
  
-        {form name="myform" action=$page.path}        
- 
-                {form_label name="email" errorclass="error"}:
-                {form_element name="email" displaytype="text"}{form_error name="email"}<br /><br />
- 
-                <input type="submit" name="submit" value="SEND" />
-        {/form}
+{form name="myform" action=$page.path}        
+    {form_label name="email" errorclass="error"}:
+    {form_element name="email" displaytype="text"}{form_error name="email"}<br /><br />
+    <input type="submit" name="submit" value="SEND" />
+{/form}
  
 <!-- ... Template-Code -->
+}}}
+
+results in
+{{{
 <!-- ... Source-Code -->
-        <form name="myform" action="morrow_docs/manual/form/smarty/">   
-                <label for="mw_myform_email" >E-Mail</label>:
-                <input id="mw_myform_email" type="text" name="myform[email]" /><br /><br />
- 
-                <input type="submit" name="submit" value="SEND" />
-        </form>
+
+<form name="myform" action="morrow_docs/manual/form/smarty/">   
+    <label for="mw_myform_email" >E-Mail</label>:
+    <input id="mw_myform_email" type="text" name="myform[email]" /><br /><br />
+     <input type="submit" name="submit" value="SEND" />
+</form>
+
 <!-- ... Source-Code -->
-The Smarty tags form_label, form_error and form_error use directly the methods of the FormHtml.class getLabel(), getElement andgetError(). See the documentation of the classes for the parameter definitions: FormHtml.
-Form control
+}}}
+
+The Smarty tags form_label, form_error and form_error use directly the methods of the !FormHtml class getLabel(), getElement andgetError(). See the documentation of the classes for the parameter definitions: !FormHtml.
+
+== Form control ==
 
 Normally the only functionality needed is to check whether a form has been submitted, validate the input and then do something with it (send it per e-mail or save it in a database). The following code is an example of simple form handling.
-Example
 
+=== Example ===
+{{{
 <?php
+
 // ... Controller-Code
-        $this->load("input");
-        $this->load("form");
+
+$this->load("input");
+$this->load("form");
  
-        $this->form->setInput($this->input->get());
+$this->form->setInput($this->input->get());
  
-        if($this -> form -> isSubmitted()){
-                $valid = $this -> form -> validate();
- 
-                if ($valid)
-                {
-                        $formdata = $this -> form -> getValues('myform');
-                        # send mail, save in database, etc.
-                        # show other contents, or redirect
-                        $this->redirect('success/');
-                }
-                else{
-                        There was an error, do nothing
-                }
- 
-        }
- 
+if($this -> form -> isSubmitted()) {
+    $valid = $this -> form -> validate();
+    if ($valid) {
+        $formdata = $this -> form -> getValues('myform');
+        
+        # send mail, save in database, etc.
+        # show other contents, or redirect
+
+        $this->redirect('success/');
+    } else {
+        There was an error, do nothing
+    }
+}
  
 // ... Controller-Code
+
 ?>
-The Form.class expects all forms to have their own array of inputs. The key is the name of the form (as seen in the form definition). The easiest way to do this is to use PHP's built in array handling for input fields. In an HTML-Form that would look like this:
+}}}
+
+The Form class expects all forms to have their own array of inputs. The key is the name of the form (as seen in the form definition). The easiest way to do this is to use PHP's built in array handling for input fields. In an HTML-Form that would look like this:
+
+{{{
 <input type="text" name="formname[elementname]" value="" />
-The FormHtml.class mentioned above does this automatically. 
+}}}
+
+The !FormHtml class mentioned above does this automatically. 
 
 For a complete list of methods, see the User-Class definition for form.
