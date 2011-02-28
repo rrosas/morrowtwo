@@ -1,5 +1,7 @@
 = Debug =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 This class helps you to debug your application. The methods described here need not to be called directly.
