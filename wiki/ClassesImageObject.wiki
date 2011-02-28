@@ -1,5 +1,9 @@
 = !ImageObject =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 A class to manipulate images with the GDlib, usually used to create thumbnails. To allow a more versatile usage of this class independent of the context it is used in it does not offer any kind of caching. Simply use the default caching Morrow offers :)
 
 == Example ==
