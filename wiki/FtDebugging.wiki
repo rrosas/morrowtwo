@@ -30,13 +30,9 @@ Morrow's preferred way is to work with exceptions. For that reason errors throw 
 // ... controller code
  
 try {
- 
-        echo $undefined; // yes, the variable undefined was not defined before
- 
+    echo $undefined; // yes, the variable undefined was not defined before
 } catch (Exception $e) {
- 
-        die($e->getMessage());
- 
+    die($e->getMessage());
 }
  
 // ... controller code
@@ -50,5 +46,4 @@ try {
 $config['debug.screen']                 = true;
 $config['debug.flatfile']               = false;
 $config['debug.die_on_error']           = true;
-$config['debug.validate']               = false;
 }}}
