@@ -4,7 +4,7 @@
 
 The output of every view handler can be cached via HTTP headers. The caching control is the job of the view class which is accessable via $this->view in your controller. It works with Expiration HTTP headers as defined in RFC 2616.
 
-*Because there is no HTTP request to the server you do not have control over the cache until the cache expires.*
+|| Because there is no HTTP request to the server you do not have control over the cache until the cache expires. ||
 
 == Example ==
 
