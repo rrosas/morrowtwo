@@ -90,8 +90,6 @@ Returns the final output of this handler. The array $content contains all variab
 
 == Integrate filters ==
 
-It is very simple to integrate a new filter.
-
 There is a naming convention you have to follow. A filter class has to start with the string *filter*.
 
 === Example ===
@@ -100,6 +98,12 @@ The following construct is the base for all new filters.
 <?php
  
 class FilterYourname extends FilterAbstract {
+    protected $params = array();    
+
+    public function __contruct($params) {
+        $this->params = $params:
+    }
+    
     public function get($content) {
         // change the content here
         return $content;
@@ -111,5 +115,5 @@ class FilterYourname extends FilterAbstract {
 
 To set the filter, call the following function in your controller.
 {{{
-$this->view->setFilter('yourname');
+$this->view->setFilter('yourname', $your_params);
 }}}
