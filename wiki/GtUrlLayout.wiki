@@ -24,9 +24,9 @@ You see, Morrows URL layout is able to map a complete hierarchical structure.
 == For advanced users ==
 
 It is also possible to use the other layout if you are used to it. Just use [FtUrlRouting URL Routing] and call the action in your global controller by hand.
-If you are writing an application rather than creating a website, it makes more sense to have a controller with different methods that are called according to the path. That was also our preference for the CMS /f/.
+If you are writing an application rather than creating a website, it makes more sense to have a controller with different methods that are called according to the path.
 
 == URL » Morrow ==
 
-Morrow takes the given URL and creates an internal identifier. It is the same as the URL but with underscores instead of slashes. So the URL above will get the following identifier: products_hard-stuff_funky-stuff_cool-funky-product
+Morrow takes the given URL and creates an internal identifier (Alias). It is the same as the URL but with underscores instead of slashes. So the URL above will get the following identifier: products_hard-stuff_funky-stuff_cool-funky-product
 This is also the name of the called controller.
