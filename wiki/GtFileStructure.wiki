@@ -11,8 +11,6 @@ In the following table you get an overview of the file structure after you extra
     External classes made by yourself.
   * *`_`logs/*
     Log files and error log files.
-  * *temp/*
-    Used for internal purposes.
   * *main/*
     The default project of the framework.
     * *`_`config/*
