@@ -1,5 +1,7 @@
 = !FormHtml =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 The !FormHtml Class simplifies the tedious task of display form fields and error messages in XHTML. It works directly with the Form.class to display fields with their propper values (whether submitted input, defaults or examples) and possible errors. 
