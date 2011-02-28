@@ -1,5 +1,7 @@
 = Sitesearch =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 This class accesses a sitesearch database created with the sitesearch filter. Those in combination provide a simple way to integrate a site wide search engine.
