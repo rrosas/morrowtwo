@@ -10,6 +10,7 @@ This class is a simple solution to log various variables to a file for controlli
 *Code*
 {{{
 <?php
+
 // ... Controller code
  
 // variables to log
@@ -24,7 +25,6 @@ $object  = new stdClass();
 $this->log->set($integer, $string, $boolean, $null, $array, $object);
  
 // ... Controller code
-?>
 }}}
 
 *Output*
@@ -60,7 +60,7 @@ Change the path to the log file using the key logfile.
 
 Parameters
 || Type || Keyname ||Required || Default ||
-|| string || logfile || No || *FRAMEWORK_ROOT*`_`logs/log_*YYYY-MM-DD*.txt ||
+|| string || logfile || No || *FRAMEWORK_ROOT*/`_`logs/log`_`*YYYY-MM-DD*.txt ||
 
 === _set()_ ===
 {{{
