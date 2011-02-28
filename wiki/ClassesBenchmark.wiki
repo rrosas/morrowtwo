@@ -15,6 +15,7 @@ $this->benchmark->start('Section 1');
  
 $this->benchmark->stop();
 $benchmarking_results = $this->benchmark->get();
+print_r($benchmarking_results);
  
 // ... Controller code
 ?>
