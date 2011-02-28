@@ -129,25 +129,45 @@ set an error manually (this should be done before validating, so that returns va
 
 returns false if $fieldname does not exist.
 
+== Methods (Manipulating Form fields) ==
 
-
-Manipulating Form fields (Elements)
-
+=== _getElement()_ ===
+{{{
 object getElement( string $formname , $fieldname )
+}}}
 returns the element object.
+
+=== _removeElement()_ ===
+{{{
 bool removeElement( string $formname , $fieldname )
+}}}
 removes a field (element). returns false if $fieldname does not exist.
+
+=== _loadDef()_ ===
+{{{
 void loadDef( array $element_def )
-load a form definition manually. For more about defining forms see Further Topics: Form Handling.
+}}}
+load a form definition manually. For more about defining forms see 
+Further Topics: Form Handling.
+
+=== _fillSet()_ ===
+{{{
 void fillSet( string $formname , string $fieldname , array $sets , [ bool $replaceall =false], [ mixed $default ])
+}}}
 dynamically fill a "set" element (e.g. with values from a database).
-$formname
-$fieldname
-$sets: an array of the "options"
-$replaceall: if true all pre-defined options are removed.
-$default: the default value(s) as String or Array (for multiple sets).
+
+  * $formname
+  * $fieldname
+  * $sets: an array of the "options"
+  * $replaceall: if true all pre-defined options are removed.
+  * $default: the default value(s) as String or Array (for multiple sets).
+
+=== _multiplyField()_ ===
+{{{
 void multiplyField( string $formname , string $fieldname , array $key_label )
+}}}
 multiply a "simple" field (useful for e.g. field in multiple languages).
-$formname
-$fieldname
-$key_label: an Array in which the key is an appendage to the field name and the value is the text for the label.
+
+  * $formname
+  * $fieldname
+  * $key_label: an Array in which the key is an appendage to the field name and the value is the text for the label.
