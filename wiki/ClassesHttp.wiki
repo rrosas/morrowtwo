@@ -1,5 +1,9 @@
 = Http =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 With this class it is possible to send HTTP POST-Requests.
 
 == Example ==
