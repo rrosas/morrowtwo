@@ -47,7 +47,3 @@
     * [FiltersGeneric Generic]
     * [FiltersSiteSearch Sitesearch]
     * [FiltersSiteSave Save]
-
-
-== Overview == 
-<wiki:toc max_depth="10" />
