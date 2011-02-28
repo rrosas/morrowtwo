@@ -74,6 +74,14 @@ $sql = $this->db->Result('
 }}}
 You must only use fields with the ">" operator whose values are unique. Otherwise all rows with the same field value will become one row.
 
+=== _result_calc_found_rows()_ ===
+{{{
+array result_calc_found_rows( string $query [, array $token = NULL ])
+}}}
+The same as result(), but with the difference that an additional key "FOUND_ROWS" contains the count of rows if you had left out the LIMIT in your query.
+
+|| Only for MySQL. ||
+
 === _insert()_ ===
 {{{
 mixed insert( string $table , array $data [, bool $insertid = false])
@@ -112,9 +120,9 @@ This method is slower than insert(), because all field names of the target table
 {{{
 mixed replace( string $table , array $data [, bool $insertid = false])
 }}}
-This method inserts a new entry into the table $table or updates an entry if the key already exists. Every key in the array $data* represents a field in the table.
+This method inserts a new entry into the table $table or updates an entry if the key already exists. Every key in the array $data represents a field in the table.
 
-It is also possible to pass an array with the key *FUNC* as value. In that case it will not been sent as string but as expression.
+It is also possible to pass an array with the key "FUNC" as value. In that case it will not been sent as string but as expression.
 
 {{{
 <?php
@@ -164,7 +172,7 @@ $data = array(
     'foo' => 'bar',
     'foo2' => array('FUNC' => 'foo2+1')
 );
-$this->db->update('table', $data, 'where id = ?', true, 1);
+$this->db->update($table, $data, 'where id = ?', true, 1);
  
 // ... Controller-Code
 }}}
@@ -181,3 +189,17 @@ mixed updateSafe( string $table , array $data [, string $where = '' [, bool $aff
 The same as update(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted. So it is made sure that there is always sent a valid query.
 
 This method is slower than update(), because all field names of the target table has to be figured out with a second query.
+
+
+=== _delete()_ ===
+{{{
+array delete( string $table, string $where = '' [, bool $affected_rows = false [, array $where_tokens = array () ]])
+}}}
+Deletes data from the table $table specified by $where.
+
+$where_tokens is an array (or a scalar) for use as a Prepared Statement in the where clause. Take a look at the example for an usage example.
+Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
+
+{{{
+$this->db->delete($table, 'where id = ?', true, 1);
+}}}
