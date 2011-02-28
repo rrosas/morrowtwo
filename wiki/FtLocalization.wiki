@@ -84,7 +84,7 @@ $this->view->setContent($language_content, 'language');
 
 Sometimes you need different HTML templates for individual languages or you have so much text, that putting it all in variables would be too time consuming.
 
-Morrow give you a simple way of creating templates for different languages. Simply add the language-key to the name of the template file: [alias].[lang].htm. 
+Morrow give you a simple way of creating templates for different languages. Simply add the language-key to the name of the template file: *alias*.*lang*.htm. 
 
 === Example ===
 *Default template:*
