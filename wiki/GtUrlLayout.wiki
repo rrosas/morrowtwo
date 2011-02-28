@@ -19,10 +19,11 @@ Morrow framework:
 products/hard-stuff/funky-stuff/cool-funky-product/
 }}}
 
-You see, Morrows URL layout is able to map a complete hierarchical structure what the most other frameworks can not.
+You see, Morrows URL layout is able to map a complete hierarchical structure.
 
 == For advanced users ==
-It is also possible to use the other layout if you are used to it. Just use URL > Routing and call the action in your global controller by hand.
+
+It is also possible to use the other layout if you are used to it. Just use [FtUrlRouting URL Routing] and call the action in your global controller by hand.
 If you are writing an application rather than creating a website, it makes more sense to have a controller with different methods that are called according to the path. That was also our preference for the CMS /f/.
 
 == URL » Morrow ==
