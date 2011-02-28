@@ -1,5 +1,7 @@
 = Input =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 This class handles the access to input that comes from the outside of the framework: $`_`GET, $`_`POST and $`_`FILES. It cleans the input vars and reformats the $`_`FILES array for a uniform access to it.
