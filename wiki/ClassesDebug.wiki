@@ -21,10 +21,9 @@ $this->benchmark->start('Section 1');
 // ... The code to be benchmarked
  
 $this->benchmark->stop();
-dump($this->benchmark->get(), $_SERVER);
+dump($this->benchmark->get());
  
 // ... Controller code
-?>
 }}}
 
 == Methods ==
@@ -33,6 +32,6 @@ dump($this->benchmark->get(), $_SERVER);
 {{{
 void dump( mixed $var )
 }}}
-This method is similar to the PHP own *var_dump()* but provides a nicer look and a little more information.
+This method is similar to the PHP own var_dump() but provides a nicer look and a little more information.
 
-|| We registered a global function *dump()* for you that initializes this class and calls this method with all parameters you passed to *dump()*. ||
+|| We registered a *global function dump()* for you that initializes this class and calls this method with all parameters you passed to it. ||
