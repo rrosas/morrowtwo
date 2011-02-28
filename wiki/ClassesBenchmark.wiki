@@ -2,6 +2,9 @@
 
 With this class it is possible to measure the time (real time and processor time) between two markers.
 
+== Overview == 
+<wiki:toc max_depth="10" />
+
 == Example ==
 {{{
 <?php
