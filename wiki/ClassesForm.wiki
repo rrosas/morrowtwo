@@ -1,5 +1,7 @@
 = Form =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 The Form.class allows you to control the flow of your forms more efficiently. Once your form is properly defined, you can choose between several methods to check and handle input or add fields dynamically based on, for example, database queries. Later you can change your definitions without having to touch the controller. To get started using the form class read the introduction to Form Handling.
