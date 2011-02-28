@@ -1,6 +1,6 @@
 = View =
 
-== Introduction ==
+<wiki:toc max_depth="10" />
 
 At the end you want to display data. Morrow provides many so called *view handlers* which let you output your data in different ways: (X)HTML, XML, CSV and some more. Your output is handled via the view class which is automatically loaded.
 
