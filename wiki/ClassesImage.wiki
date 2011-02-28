@@ -70,6 +70,18 @@ $params is an array of the following possible parameters:
 Set $return_ressource to true to receive an GD image object.
 If you set $return_ressource to true the image will NOT be cached. It is useful if you want to continue work on that image.
 
+=== _prepareGet()_ ===
+{{{
+mixed _prepareGet( string $file_path , array $params)
+}}}
+... missing ...
+
+=== _getFromHash()_ ===
+{{{
+mixed _getFromHash( string $cache_filename)
+}}}
+... missing ...
+
 === _preFilter()_ ===
 {{{
 void preFilter( object $img_obj , array $params )
