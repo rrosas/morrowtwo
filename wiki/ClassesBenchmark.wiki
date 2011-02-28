@@ -28,7 +28,7 @@ print_r($benchmarking_results);
 void start( string $section = 'Unknown section')
 }}}
 
-Starts a new section to be benchmarked with a given name *$section*. If a section was started before and not stopped so far, it will automatically be stopped.
+Starts a new section to be benchmarked with a given name $section. If a section was started before and not stopped so far, it will automatically be stopped.
 
 === _stop()_ ===
 {{{
