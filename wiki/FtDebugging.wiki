@@ -1,5 +1,7 @@
 = Debugging =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 Debugging is of course one of the most interesting topics while developing. Morrow gives you a simple and clean way to debug your applications.
