@@ -1,5 +1,9 @@
 = Url =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 This class provides some usefull methods for dealing with URLs. Especially makeUrl() and redirect() are important, since they provide correct handling of Morrow paths in the context of "projects" (see topic Multiple Sites).
 
 || Morrow normally works with Apache's mod_rewrite functionality in order to present search engine safe URLs. If it is not possible to use URL-rewriting this functionality can be turned off by setting the config variable url.modrewrite to "0". ||
