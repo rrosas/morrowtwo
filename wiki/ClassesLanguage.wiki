@@ -1,5 +1,9 @@
 = Language =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 The Language class provide an interface to the the data that is stored in arrays the `_`i18n folder. The language of the files read is automatically the current language. 
 The Language class is instanced by Morrow and relies on the following configuration variables:
 
