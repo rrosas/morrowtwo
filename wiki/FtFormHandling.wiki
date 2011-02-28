@@ -1,5 +1,9 @@
 = Form Handling =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 The form class simplifies the handling and validation of user input. It can also make creating HTML forms simpler by taking care of correct naming, refilling field values and showing errors. It also includes a work-around, so that uploaded files are not lost when a user incorrectly fills out field.
 
 In order to do all this, a certain amout of abstraction and definition is necessary. The Form.class does not concern itself with the appearance of fields, only whether they contain multiple choices or are simple fields. A definition will further contain information about requirements and validation functions as well as default values. This is done by a combination of definition files and Morrow's i18n-handling. The first part of this page is about defining form elements.
