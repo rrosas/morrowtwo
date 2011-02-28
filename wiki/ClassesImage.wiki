@@ -1,5 +1,9 @@
 = Image =
 
+<wiki:toc max_depth="10" />
+
+== Introduction ==
+
 A class to manipulate images with the GDlib, usually used to create thumbnails. For performance reasons there is a caching mechanism integrated.
 
 == Example ==
