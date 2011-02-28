@@ -16,8 +16,6 @@ The most interesting tool is Morrow's system wide replacement for *print_r()* an
 dump($this->page->get());
  
 // ... controller code
- 
-?>
 }}}
 
 == Errors & Exceptions ==
@@ -36,8 +34,6 @@ try {
 }
  
 // ... controller code
- 
-?>
 }}}
 
 == Configuration ==
