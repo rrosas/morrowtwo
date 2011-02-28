@@ -6,28 +6,24 @@ URL Routing is a fine thing if you want to internally redirect URLs to other ali
 
 == Configuration ==
 
-The configuration for the routing rules can be found in the main configuration file for the whole framework ([ROOT]/_config). Only the array within the config key routing matters (as highlighted below).
+The configuration for the routing rules has to be set in the config files for each project (for example /main/`_`config/). Only the array within the config key "routing" matters.
 
 {{{
 <?php
  
-// the first project will be the default project. The others reachable through the url
-$config['projects'] = array('main','morrow_docs');
-     
 // routing rules
 $config['routing'] = array(
-                            '/' => 'home/',
-                            'morrow_docs/' => 'morrow_docs/home/',
-                          );
+    '/' => 'home/',
+);
  
 ?>
 }}}
 
 Each array entry defines a rule will be run through when an URL is requested. The key is the pattern that have to match the incoming url. The value defines the target of the redirection.
 
-As you can see in the code snippet above, there are already two rules defined. One for every defined project which has the effect that the controller home is called when there is no path requested. Change that if you want to use an other default controller.
+As you can see in the code snippet above, there is already one rule defined. This rule defines that the alias "home" is called when there is no path given. Change that if you want to use an other default controller.
 
-*Define defaults and languages! You have to define the default alias for every project. And keep in mind that you also have to do this for different languages of your projects.*
+|| Do not forget to define the rules for each language! ||
 
 == Rules ==
 
@@ -37,13 +33,13 @@ There are a few things you have to consider:
 :[a-z0-9_]
 }}}
 
-Use a colon to define a parameter which will be redirected to the input class and are available via $this->input->get(). Nice to create pretty URLs without GET parameters.
+Use a colon to define a parameter which will be passed to the input class and is available via $this->input->get(). Nice to create pretty URLs without GET parameters.
 
 {{{
 *[a-z0-9_]
 }}}
 
-Use a asterisk to define a bunch of parameters which will be redirected to the input class and are available via $this->input->get(). Useful if you do not know how many parameters you will get.
+Use a asterisk to define a bunch of parameters which will be passed to the input class and are available via $this->input->get(). Useful if you do not know how many parameters you will get.
 
 The asterisk pattern has to be at the end of the rule and may appear only once per pattern.
 
