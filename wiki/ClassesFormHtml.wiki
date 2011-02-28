@@ -1,0 +1,119 @@
+= !FormHtml =
+
+== Introduction ==
+
+The !FormHtml Class simplifies the tedious task of display form fields and error messages in XHTML. It works directly with the Form.class to display fields with their propper values (whether submitted input, defaults or examples) and possible errors. 
+
+Unlike Form.class, !FormHtml.class is concerned with with the way the elements, labels and errors look in an XHTML page. 
+
+For greater flexibility of design, labels, fields (elements) and errors have been split up in to three separate methods, so that they may be placed on a page in any desired manner. 
+
+== Example ==
+{{{
+<?php
+ 
+// ... PHP template
+
+$label_params = array(
+        "class" => "mwlabel",
+);
+$el_params = array(
+        "class" => "mwlongfield",
+        "errorclass" => "mwlongfield errors",
+);
+ 
+?>
+
+<form name="contactform" action="<?php echo HelperOutput::url($page['path']); ?>" method="post">
+ 
+    <?php echo FormHTML::getLabel('contactform', 'name', $label_params); ?><br />
+    <?php echo FormHTML::getElement('contactform', 'name', $el_params); ?><?php echo FormHTML::getError('contactform', 'name'); ?><br />
+
+    <br />
+    <input type="submit" name="submit" value="send" />
+</form>
+ 
+<?php
+
+// ... PHP-template
+
+?>
+}}}
+
+== Methods ==
+
+=== _getLabel()_ ===
+{{{
+string static getLabel( string $formname , string $el_name [, array $params ])
+}}}
+Get the label for an element. The method accesses the Form.class and retrieves the label placing it in <label> tags with the correct "for" attribute. The required marker (set in _i18n as $form['required_wrapper']) will be wrapped around the label text.
+
+*Params:*
+
+  * errorclass - the class to be set if there was a user error for the field.
+  * errorstyle - the style to be set if there was a user error for the field.
+  * value - overwrite the label text with this value
+  * hide_required - don't show the required marker
+  * self-defined*
+
+All other params will be added as tag attributes. If errorclass or errorstyle are set and there is an error, class and style definitions will be overwritten respectively. If you want the errorclass to add a class, you will need to pass params in the following manner:
+#php code
+$param['class'] = "field";
+$param['errorclass'] = "field error";
+getElement()
+
+string static getElement( string $formname , string $el_name [, array $params ])
+Get the XHTML tag(s) for an element. The method accesses the Form.class and and creates the proper tag(s), sets the values (possibly the "example") and relevant attributes. With param['displaytype'] the input type can be influenced (depending on whether the element is "set" or "single").
+Params:
+
+errorclass - the class to be set if there was a user error for the field.
+errorstyle - the style to be set if there was a user error for the field.
+displaytype / dtype - all valid HTML input types plus special types like "checkgroup" and "date" (see below "Display Types")
+opt_classes - for use with selectors. An array of classes corresponding to each option.
+separator - a string that separates or wraps (|) elements for radio and check groups
+value - set the input value. This is only effective if the form has not been submitted and there is no value already set in the Form.class.
+self-defined*
+* see comment under getLabel() above.
+getError()
+
+string static getError( string $formname , string $el_name [, array $params ])
+Get an eventuall error message for an error that occurred during form validation. If there was no error, an empty string will be returned. 
+If not otherwise defined, an error message will be wrapped in a <span> tag that contains the attribute class="error"
+Params:
+
+tag - the name of the tag wrapping the message (default is "span")
+class - the class attribute of the tag (default is "error")
+value - overwrite the error text with this value
+self-defined - all other params are are made into HTML attributes for the wrapping tag.
+getInputImage()
+
+string static getInputImage( string $el_name )
+returns the path of the file uploaded for field $el_name. Uploaded files are stored in the session and must not be uploaded again if a form has invalid input.
+Display Types
+
+The Form.class is not concerned with the appearance of form fields and therefore does not include settings for "radio", "select", "textarea", et cetera. Since the FormHtml.class is for generating output, the attribute "displaytype" has an important role. There two general classifications of input in the Form.class, single and set, and each has it's own possibilities for display types. If a display type is not defined, FormHtml will output an input tag type "text" for singles and a select tag for sets.
+Singles
+
+Singles are all input types that allow the user only one field or choice, whether this be a single checkbox or an textarea tag.
+Allowed display type values
+
+all regular HTML form input types like text, hidden, file, checkbox (but not radio, which is only for sets)
+textarea
+date - a special format that outputs selectors for day, month and year which the Form.class automatically recognizes. The following params will influence date:
+format - (see HelperHtmlDate) if not set the value will be take from _i18n $config['locale.date.format'], if found, otherwise '%d%m%Y' (strftime() formats for day month and year allowed)
+start_year - Default (HelperHtmlDate) is the current year minus one.
+end_year - Default (HelperHtmlDate) is the current year plus five.
+Sets
+
+Sets are all input types that allow a choice between several options.
+Allowed display type values
+
+select - default
+check
+checkbox
+checkgroup
+checkboxgroup
+radio
+radiogroup
+
+Except for "select" all of the values mean basically the same: Output either a group of checkboxes or radios. The difference is decided by whether the element has the attribute multiple=true (see Form Definition). If more than one choice is allowed, checkboxes will be used instead of radios (which only allow one selection). So if you later change your form definitin from true to false, FormHtml will automatically output the correct format.
