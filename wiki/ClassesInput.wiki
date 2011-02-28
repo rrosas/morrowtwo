@@ -54,3 +54,9 @@ array function clean( [ mixed $input ])
 }}}
 Unifies line breaks to \n (UNIX line breaks) and trims the content (strips whitespace from the beginning and the end of $input).
 You do not have to call this method for the standard input variables because this is automatically done for you.
+
+=== _removeXss()_ ===
+{{{
+string function removeXss( string $var )
+}}}
+Filters a string from XSS attack vectors. Returns the cleaned string.
