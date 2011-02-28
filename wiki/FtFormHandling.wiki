@@ -37,137 +37,175 @@ $elements['myform'] = array(
 The array $elements contains keys that represent the names of forms. A similar array is used when submitting user input to the Form class. In this way, the Form.class can determine which form has been submitted and which values belong to a particular form. It is possible to define multiple forms per page.
 
 In the example above, the form "myform" is defined containing two elements: "name" and "email", according to the keys on the next array level. The following level defines each element.
-Simple Elements
 
+=== Simple Elements ===
+{{{
 <?php
-// ... Form-Definition
-        $elements['myform'] = array(
-                "name" => array(
-                        "type" => "simple",
-                        "required" => false,
-                        "default" => "5",
-                ),
-                "email" => array(
-                        "type" => "simple",
-                        "required" => true,
-                        "checktype" => "Email",
-                ), "freiwillig" => array(
-                        #ist automatisch "simple" und nicht "required"
-                ),
-        );
+
+// ... Form definition
+$elements['myform'] = array(
+    "name" => array(
+        "type" => "simple",
+        "required" => false,
+        "default" => "5",
+    ),
+    "email" => array(
+        "type" => "simple",
+        "required" => true,
+        "checktype" => "Email",
+    ),
+    "freiwillig" => array(
+        #ist automatisch "simple" und nicht "required"
+    ),
+);
+
 ?>
-Each element has a type. Unlike HTML, the Form.class is not concerned with the appearance of input fields. Therefore there are only two types that can be defined: "simple" or "set". Simple elements offer no choices to the user an can contain only one value. Sets on the other hand can offer the user multiple values to choose from. An field for an e-mail address or a single check box for Newsletter subscription would be examples of "simple" fields. A selector for user groups would be a "set". The default type is alway "simple". 
+}}}
+
+Each element has a type. Unlike HTML, the Form class is not concerned with the appearance of input fields. Therefore there are only two types that can be defined: "simple" or "set". Simple elements offer no choices to the user an can contain only one value. Sets on the other hand can offer the user multiple values to choose from. An field for an e-mail address or a single check box for Newsletter subscription would be examples of "simple" fields. A selector for user groups would be a "set". The default type is alway "simple". 
 
 No matter what type an element has, the following attributes can always be set:
-required: the user must submit input (Default is false)
-default: the value a field has if the user does not change it.
-checktype: the name of the method to call for more complex validation (see Validator.class)
-compare: the name of another element, whose value should be also sent to the checktype-method (in order to compare). Requires a that a method is set in for checktype.
+
+  * required: the user must submit input (Default is false)
+  * default: the value a field has if the user does not change it.
+  * checktype: the name of the method to call for more complex validation (see Validator class)
+  * compare: the name of another element, whose value should be also sent to the checktype-method (in order to compare). Requires a that a method is set in for checktype.
 
 "Simple" elements can also have the following: 
-example: a value that can be display to the user, but does not count as input.
 
-i18n
+  * example: a value that can be display to the user, but does not count as input.
 
-Some attributes of form elements are language dependent. For example almost all elements have labels. According to the conventions of MorrowTwo, language dependent content is defined in files under _i18n. Form definitions have their own array $form and the basic structure is the same as that of the $elements array.
+==== i18n ====
+
+Some attributes of form elements are language dependent. For example almost all elements have labels. According to the conventions of !MorrowTwo, language dependent content is defined in files under '_'i18n. Form definitions have their own array $form and the basic structure is the same as that of the $elements array.
+
+{{{
 <?php
  
-        $form['testform']['name']['label'] = "Zahl";
-        $form['testform']['email']['label'] = "eMail-Adresse";
+$form['testform']['name']['label'] = "Zahl";
+$form['testform']['email']['label'] = "eMail-Adresse";
  
 ?>
-Since it is possible that the attributes "default" and "example" contain language specific contents, they both may be set either in _form or in _i18n.
+}}}
+
+Since it is possible that the attributes "default" and "example" contain language specific contents, they both may be set either in `_`form or in `_`i18n.
+
+{{{
 <?php
  
-        $form['testform']['number']['label'] = "Number";
-        $form['testform']['number']['default'] = "10";
- 
-        $form['testform']['email']['label'] = "eMail-Adresse";
-        $form['testform']['email']['example'] = "your@email-address.com";
+$form['testform']['number']['label'] = "Number";
+$form['testform']['number']['default'] = "10";
+
+$form['testform']['email']['label'] = "eMail-Adresse";
+$form['testform']['email']['example'] = "your@email-address.com";
  
 ?>
-</textarea>
-The definition for "default" or "example" in _i18n takes precedence and will replace any value set in _form.
-Examples of "simple" elements would be:
+}}}
 
-hidden
-text
-password
-checkbox
-file
-"date"
-Sets
+The definition for "default" or "example" in `_`i18n takes precedence and will replace any value set in _form.
 
+*Examples of "simple" elements would be:*
+
+  * hidden
+  * text
+  * password
+  * checkbox
+  * file
+  * "date"
+  * Sets
+
+=== Sets === 
+
+{{{
 <?php
-// ... Form-Definition
-        $elements['myform'] = array(
-                "weekdays" => array(
-                        "type" => "set",
-                        "multiple" => false,
-                        "options" => array(
-                                        "weekday_1",
-                                        "weekday_2",
-                                        "weekday_3",
-                                        "weekday_4",
-                                        "weekday_5",
-                                        "weekday_6",
-                                        "weekday_0",
-                                        ),
-                        "default" => "weekday_2",
-                ),
-        );
+
+// ... Form definition
+$elements['myform'] = array(
+    "weekdays" => array(
+        "type" => "set",
+         "multiple" => false,
+         "options" => array(
+             "weekday_1",
+             "weekday_2",
+             "weekday_3",
+             "weekday_4",
+             "weekday_5",
+             "weekday_6",
+             "weekday_0",
+         ),
+         "default" => "weekday_2",
+     ),
+);
+
 ?>
+}}}
+
 "Sets" are elements that contain a pre-defined selection of values. The user may choose one or more of these values, may not, however, enter any value that is not contained in the list. 
 
 Where a user may choose multiple values or only one ist determined by the attribute "multiple". The default value of "multiple" is false. 
 
 The values of the choices are set using the "options" array. These are the values that are submited as form input.
+
+{{{
 <?php
-// ... Form-Definition
-        $elements['myform'] = array(
-                "weekdays" => array(
-                        "type" => "set",
-                        "multiple" => true,
-                        "options" => array(
-                                        "weekday_1",
-                                        "weekday_2",
-                                        "weekday_3",
-                                        "weekday_4",
-                                        "weekday_5",
-                                        "weekday_6",
-                                        "weekday_0",
-                                        ),
-                        "default" => array("weekday_6","weekday_0"),
-                ),
-        );
+// ... form definition
+$elements['myform'] = array(
+    "weekdays" => array(
+        "type" => "set",
+        "multiple" => true,
+        "options" => array(
+            "weekday_1",
+            "weekday_2",
+            "weekday_3",
+            "weekday_4",
+            "weekday_5",
+            "weekday_6",
+            "weekday_0",
+        ),
+        "default" => array("weekday_6","weekday_0"),
+    ),
+);
+
 ?>
+}}}
+
 "Multiple-Sets" (sets with attribute multiple=true) only differ from other sets in that the defaut attribute may be an array of values. That way, more than one value can be "pre-selected". Examples of "Sets"
-select
-radios
-"check-group" (multiple)
-select (multiple)
-Sets and _i18n
 
-Just like labels, the way options are presented to the user is usually language specific. Therefore, parallel to the options array, there is an "output" array in _i18n definition.
+  * select
+  * radios
+  * "check-group" (multiple)
+  * select (multiple)
+
+*Sets and `_`i18n*
+
+Just like labels, the way options are presented to the user is usually language specific. Therefore, parallel to the options array, there is an "output" array in `_`i18n definition.
+
+{{{
 <?php
  
-        $form['testform']['weekdays']['label'] = "Week days";
-        $form['testform']['weekdays']['output'] = array("Mon","Tue","Wed","Thu","Fri","Sat","Sun");
+$form['testform']['weekdays']['label'] = "Week days";
+$form['testform']['weekdays']['output'] = array("Mon","Tue","Wed","Thu","Fri","Sat","Sun");
  
 ?>
-Validator.class
+}}}
 
-The Form.class checks whether required fields have been filled during validation. For more complex validations, methods from the Validator.class cann be used or the developer can create methods in a new class that extends the Validator.class. The Form.class is informed of the the validator.class by the method setValidator(String classname). 
+== Validator class ==
+
+The Form class checks whether required fields have been filled during validation. For more complex validations, methods from the Validator class cann be used or the developer can create methods in a new class that extends the Validator class. The Form class is informed of the the validator class by the method setValidator(String classname). 
 
 Once a method exists, the name of the Function is added as a "checktype" attribute to the element definition.
 
 Validator must follow a few conventions.
 
-Naming
+=== Naming ===
 
 The name of the method must start with "check". This "check" is, however, not to be used when defining the attribute "checktype". For example the method checkPassword would be assigned to an element as checktype="Password".
+
+{{{
 bool checkPassword( $value ,& $error , [ $compare_value =null])
-Arguments
+}}}
+
+=== Arguments ===
 
 $value the Form.class passes the value of the field
 &$error the error key, which is used by the Form.class and therefore passed by reference.
