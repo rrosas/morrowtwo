@@ -27,9 +27,9 @@ $el_params = array(
 <form name="contactform" action="<?php echo HelperOutput::url($page['path']); ?>" method="post">
  
     <?php echo FormHTML::getLabel('contactform', 'name', $label_params); ?><br />
-    <?php echo FormHTML::getElement('contactform', 'name', $el_params); ?><?php echo FormHTML::getError('contactform', 'name'); ?><br />
+    <?php echo FormHTML::getElement('contactform', 'name', $el_params); ?>
+    <?php echo FormHTML::getError('contactform', 'name'); ?><br /><br />
 
-    <br />
     <input type="submit" name="submit" value="send" />
 </form>
  
