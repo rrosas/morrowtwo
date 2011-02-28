@@ -1,5 +1,7 @@
 = URL Routing =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 URL Routing is a fine thing if you want to internally redirect URLs to other aliases as the framework would normally use. Imagine them as a simple use of mod_rewrite but without consideration of the host. Just the path of the query matters.
@@ -15,8 +17,6 @@ The configuration for the routing rules has to be set in the config files for ea
 $config['routing'] = array(
     '/' => 'home/',
 );
- 
-?>
 }}}
 
 Each array entry defines a rule will be run through when an URL is requested. The key is the pattern that have to match the incoming url. The value defines the target of the redirection.
