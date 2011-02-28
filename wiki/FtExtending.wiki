@@ -1,5 +1,7 @@
 = Extending Morrow =
 
+<wiki:toc max_depth="10" />
+
 == Introduction ==
 
 Sometimes you will reach a point where you need more power. No problem. You can integrate own user classes and also your own view handlers to extend Morrows power. When you load a class the factory also looks for class files in
