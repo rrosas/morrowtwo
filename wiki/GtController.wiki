@@ -1,6 +1,9 @@
 = Controller = 
 
-== Introduction ==
+== Overview == 
+<wiki:toc max_depth="10" />
+
+== Introduction == 
 
 The controller is the central point where you do all your work. You have seen in the previous article how the alias is created. But where is the controller Morrow calls? Now, it is possible to handle many projects (different websites) with the framework. All projects are located in subfolders of the root. There is one folder named "main" which is the default project folder. In the further explanations we will assume that we talk about this default project.
 
