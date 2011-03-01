@@ -1,7 +1,6 @@
   * [Homepage Homepage]
   * [GtInstallation General Topics]
     * [GtInstallation Installation]
-    * [GtFileStructure File structure]
     * [GtUrlLayout URL Layout]
     * [GtController Controller]
     * [GtView View]
