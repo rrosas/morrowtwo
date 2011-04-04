@@ -4,11 +4,11 @@
 
 == Introduction ==
 
-A class to manipulate images with the GDlib, usually used to create thumbnails. To allow a more versatile usage of this class independent of the context it is used in it does not offer any kind of caching. Simply use the default caching Morrow offers :)
+A class to convert/manipulate images with the GDlib, usually used to create thumbnails. To allow a more versatile usage of this class independent of the context it is used in it does not offer any kind of caching. Simply use the default caching Morrow offers :)
 
 == Example ==
 
-The constructor requires exactly one parameter which can be any kind of image. Feel free to either pass a local path to an image (or URL if allowed) or a GD-Resource or even any kind of string representation of GIF, JPEG or PNG to the constructor
+The constructor has exactly one parameter which can be any kind of image. Feel free to either pass a local path to an image (or URL if allowed) or a GD-Resource or even any kind of string representation of GIF, JPEG or PNG to the constructor. The class also supports "chaining" as every method beside the constructor itself and the show, get and getResource methods will always return a reference to this.
 
 *Controller which outputs an image*
 {{{
@@ -29,14 +29,14 @@ die();
 
 === _resize()_ ===
 {{{
-bool resize( int $width , int $height , int $mode = 0)
+bool resize( int $width , int $height , int $mode = 0 , bool $enlarge = true)
 }}}
 Resizes the image according to the given values for width and height (in px) using the defined mode. mode can be set to one of the following values:
 
 || Value || Description ||
-|| 0 || Disregards the original image aspect ratio and therefore possibly distorts the image ||
-|| 1 || Keeps the original image aspect ratio resizing its shortest side to fit into given width and height ||
-|| 2 || Keeps the original image aspect ratio resizing its longest side to fit into given width and height ||
+|| 0 || scale to width & height (ignoring aspect ratio) ||
+|| 1 || scale to width (keeping aspect ratio for height) ||
+|| 2 || scale to height (keeping aspect ratio for height) ||
 
 === _crop()_ ===
 {{{
@@ -86,15 +86,23 @@ Adds a Photoshop like dropshadow with real alpha to an image according to the gi
 
 === _get()_ ===
 {{{
-binary get( string $type = 'png', int $quality = 100)
+binary get( string $type = 'png', bool $interlace = false , int $quality = NULL , int $filter = 248)
 }}}
-Returns an image as a binary representation according to given type (png, jpeg or gif). If type is set to jpeg quality (in percent) is used as compression ratio.
+Returns an image as a binary representation according to given type (png, jpeg or gif).
+
+If type is set to jpeg "quality" (in percent, 0-100) is used as compression ratio.
+If type is set to png "quality" (compression-level, 0-9 where 0 is "no compression" and 9 is "max compression") is used as compression ratio.
+If type is set to png "filter" is used as an optional parameter for the various types of PNG-Filters that may be set for "imagepng"
 
 === _show()_ ===
 {{{
-show( string $type = 'png', int $quality = 100)
+show( string $type = 'png', bool $interlace = false , int $quality = NULL , int $filter = NULL)
 }}}
-Outputs an image as a binary representation according to given type (png, jpeg or gif). If type is set to jpeg quality (in percent) is used as compression ratio. This method automatically sets content-type header.
+Outputs an image as a binary representation according to given type (png, jpeg or gif).
+
+If type is set to jpeg "quality" (in percent, 0-100) is used as compression ratio.
+If type is set to png "quality" (compression-level, 0-9 where 0 is "no compression" and 9 is "max compression") is used as compression ratio.
+If type is set to png "filter" is used as an optional parameter for the various types of PNG-Filters that may be set for "imagepng"
 
 === _getResource()_ ===
 {{{
