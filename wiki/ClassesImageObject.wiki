@@ -84,6 +84,34 @@ bool addShadow( $color = '#000', $background = '#fff', $alpha = 50, $angle = 135
 }}}
 Adds a Photoshop like dropshadow with real alpha to an image according to the given values for color (any hex-color), background (any hex-color), alpha (in percent), angle (in degress), distance (in px), size (in px) and spread (in px).
 
+=== _grayscale()_ ===
+{{{
+grayscale( )
+}}}
+Converts the image to grayscale
+
+=== _invert()_ ===
+{{{
+invert( )
+}}}
+Inverts the image
+
+=== _brightness()_ ===
+{{{
+brightness( int $percent = 25 )
+}}}
+Changes the brightness of the image in percent
+
+=== _hsl()_ ===
+{{{
+hsl( int $hue = 0 , int $saturation = NULL , int $lightness = nULL )
+}}}
+Tries to mimic Photoshops Hue/Saturation/Lightness settings/filters.
+
+Parameter "hue" must be in range -180 to +180
+Parameter "saturation" must be in range -100 to + 100
+Parameter "lightness" must be in range -100 to + 100
+
 === _get()_ ===
 {{{
 binary get( string $type = 'png', bool $interlace = false , int $quality = NULL , int $filter = 248)
@@ -96,7 +124,7 @@ If type is set to png "filter" is used as an optional parameter for the various 
 
 === _show()_ ===
 {{{
-show( string $type = 'png', bool $interlace = false , int $quality = NULL , int $filter = NULL)
+show( string $type = 'png', bool $interlace = false , int $quality = NULL , int $filter = NULL )
 }}}
 Outputs an image as a binary representation according to given type (png, jpeg or gif).
 
