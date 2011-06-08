@@ -26,6 +26,7 @@ $this->view->setProperty('charset', 'iso-8859-1');
 {{{
 handle get( int $compression_level )
 }}}
+[?Returns an array with header and content. Content is the handle?]
 Returns a stream handle for the generated content of the view handler.
 *$compression_level* defines the gzip compression level from 1 (weak, bigger file size) to 9 (strong, smaller file size). If not given, the output will not be compressed.
 
