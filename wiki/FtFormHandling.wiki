@@ -292,11 +292,11 @@ $form['errors'] = array(
 
 === !FormHtml class ===
 
-to ease the process of generating HTML the !FormHtml class has been developed, which works directly with the Form class. For a list of methods see !FormHtml. If you are using the smary view class the following section should be useful.
+to ease the process of generating HTML the !FormHtml class has been developed, which works directly with the Form class. For a list of methods see !FormHtml. If you are using the serpent view class the following section should be useful.
 
-=== Smarty-Tags ===
+=== Serpent Functions ===
 
-There are several smarty tags that use the !FormHtml class to generate the elements of a form in your template. For flexibility of design, the tags for "labels", "elements" and "errors" are independent and can be placed any where in the html code. The block tag "form" removes the need to repeat the form name in each element and writes the beginning and end form tags.
+There are several serpent functions that use the !FormHtml class to generate the elements of a form in your template. For flexibility of design, the tags for "labels", "elements" and "errors" are independent and can be placed any where in the html code. 
 
 You will have to take care of the submit button and its internationalization, yourself though.
 
@@ -304,9 +304,9 @@ You will have to take care of the submit button and its internationalization, yo
 {{{
 <!-- ... Template-Code -->
  
-{form name="myform" action=$page.path}        
-    {form_label name="email" errorclass="error"}:
-    {form_element name="email" displaytype="text"}{form_error name="email"}<br /><br />
+<form action="~~:url($page.path)~" method="post">
+        ~~FormHTML::getLabel('myform', 'email', array('errorclass' => 'error'));~:
+        ~~FormHTML::getElement('myform', 'email', array('errorclass' => 'error'));~<br /><br />
     <input type="submit" name="submit" value="SEND" />
 {/form}
  
@@ -317,16 +317,15 @@ results in
 {{{
 <!-- ... Source-Code -->
 
-<form name="myform" action="morrow_docs/manual/form/smarty/">   
-    <label for="mw_myform_email" >E-Mail</label>:
-    <input id="mw_myform_email" type="text" name="myform[email]" /><br /><br />
+<form action="path/to/current/page/" method="post">   
+    <label for="mw_myform_email" class=" " >E-Mail</label>:
+    <input id="mw_myform_email" type="text" name="myform[email]" class=" " /><br /><br />
      <input type="submit" name="submit" value="SEND" />
 </form>
 
 <!-- ... Source-Code -->
 }}}
 
-The Smarty tags form_label, form_error and form_error use directly the methods of the !FormHtml class getLabel(), getElement andgetError(). See the documentation of the classes for the parameter definitions: !FormHtml.
 
 == Form control ==
 
@@ -338,22 +337,20 @@ Normally the only functionality needed is to check whether a form has been submi
 
 // ... Controller-Code
 
-$this->load("input");
-$this->load("form");
  
 $this->form->setInput($this->input->get());
  
-if($this -> form -> isSubmitted()) {
-    $valid = $this -> form -> validate();
+if($this -> form -> isSubmitted('myform')) {
+    $valid = $this -> form -> validate('myform');
     if ($valid) {
         $formdata = $this -> form -> getValues('myform');
         
         # send mail, save in database, etc.
         # show other contents, or redirect
 
-        $this->redirect('success/');
+        $this -> url -> redirect('success/');
     } else {
-        There was an error, do nothing
+        # There was an error, do nothing (allow FormHTML to set the appropriate error-classes)
     }
 }
  
