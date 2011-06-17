@@ -18,7 +18,7 @@ A definition array is created in the `_`forms folder with the name of the alias,
 
 {{{
 _forms/myformpage.php    # Definition
-_i18n/en/myformpage.php	 # labels and options for English Structure
+_i18n/en/myformpage.php	 # labels and options for English
 }}}
 
 === Structure ===
