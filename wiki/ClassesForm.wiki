@@ -23,7 +23,7 @@ if($this -> form -> isSubmitted('myform')) {
                 $formdata = $this -> form -> getValues('myform');
                 # send mail, save data in database, etc.
                 # then show some other contents redirect to another page
-                $this->redirect('success/');
+                $this->url->redirect('success/');
         }
         else {
                 #There was an error, don't do anything else.
