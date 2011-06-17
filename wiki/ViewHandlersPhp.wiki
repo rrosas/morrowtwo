@@ -2,7 +2,7 @@
 
 == Introduction ==
 
-Beside Serpent it is also possible to use PHP itself as template language. Useful, if you need best performance in your application or you are not well schooled in Serpent.
+Beside Serpent it is also possible to use PHP itself as template language. Useful, if you need best performance in your application or you are not familiar with Serpent.
 
 == Example ==
 *Controller code:*
