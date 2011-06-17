@@ -16,8 +16,8 @@ The following demonstrates a simple form handling task. A form is submitted vali
  
 $this->form->setInput($this->input->get());
  
-if($this -> form -> isSubmitted()) {
-        $valid = $this -> form -> validate();
+if($this -> form -> isSubmitted('myform')) {
+        $valid = $this -> form -> validate('myform');
  
         if ($valid) {
                 $formdata = $this -> form -> getValues('myform');
