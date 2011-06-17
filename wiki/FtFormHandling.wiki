@@ -292,7 +292,7 @@ $form['errors'] = array(
 
 === !FormHtml class ===
 
-to ease the process of generating HTML the !FormHtml class has been developed, which works directly with the Form class. For a list of methods see !FormHtml. If you are using the serpent view class the following section should be useful.
+to ease the process of generating HTML the !FormHtml class has been developed, which works directly with the Form class. For a list of methods and PHP-Examples see !FormHtml in the "User Classes" section. If you are using the serpent view class the following section should be useful.
 
 === Serpent Functions ===
 
