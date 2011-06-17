@@ -58,8 +58,8 @@ $elements['myform'] = array(
         "required" => true,
         "checktype" => "Email",
     ),
-    "freiwillig" => array(
-        #ist automatisch "simple" und nicht "required"
+    "comment" => array(
+        #is automatically "simple" and not "required"
     ),
 );
 
