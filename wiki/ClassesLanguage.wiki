@@ -85,4 +85,4 @@ ias exists in the navigation tree of language $lang, otherwise false.
 {{{
 bool getLocale( [String $lang] )
 }}}
-returns the config array from the _i18n/[lang].php for $lang oder for the current language if $lang is not set.
+returns the config array from the i18n-file for $lang oder for the current language if $lang is not set.
