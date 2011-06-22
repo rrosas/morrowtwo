@@ -1,0 +1,3 @@
+See the project page for documentation:
+
+https://code.google.com/p/serpent-php-template-engine/
