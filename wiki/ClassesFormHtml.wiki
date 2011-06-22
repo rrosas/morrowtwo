@@ -113,7 +113,7 @@ There are several pre-defined display types:
     * start_year - What year to start the year-selecor with. Value may be a year (YYYY) or an operation (e.g. -18, or +10). Default is the current year minus one.
     * end_year - What year to end the year-selecor with. Value may be a year (YYYY) or an operation (e.g. -18, or +10). Default is the current year plus five. 
   * file - a special format that saves uploaded files in the session so that users don't need to choose them again, in case of errors to other fields in the form.
-  * group - a special format for outputting groups of choices either as checkboxes (multiple=true) or as radio buttons (multiple=false). Group has the special param _separator_ to define the HTML separating the checkboxes or radio buttons. The following display types are synonymous with "group":
+  * group - a special format for outputting groups of choices either as checkboxes (multiple=true) or as radio buttons (multiple=false). Group has the special param _separator_ to define the HTML separating the checkboxes or radio buttons. The following display types are synonymous with "group" if *and only if* your form type is "set" (s. !Form):
      * check
      * checkbox
      * checkgroup
