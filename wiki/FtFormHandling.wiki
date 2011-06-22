@@ -212,11 +212,11 @@ bool checkPassword( mixed $value, string & $error, [string $compare_value], [mix
 
 === Arguments ===
 
-  * $value the Form.class passes the value of the field
-  * &$error the error key, which is used by the Form.class and therefore passed by reference.
-  * $compare_value the value of another field that has been defined in the "compare" attribute (optional).
-  * $arguments - programmer defined arguments that are passed from the form-definition to the validator-method
-  * locale_values - the config array from the i18n-file for the current language, that could be useful for validation functions.
+  * $value: the Form.class passes the value of the field
+  * &$error: the error key, which is used by the Form.class and therefore passed by reference.
+  * $compare_value: the value of another field that has been defined in the "compare" attribute (optional).
+  * $arguments: programmer defined arguments that are passed from the form-definition to the validator-method
+  * $locale_values: the config array from the i18n-file for the current language, that could be useful for validation functions.
 
 ||Methods must return true, if validating was successful, or false, if the input was not correct. If validation fails, you must set $error. The values are "keys" to language dependent definitions. See Error Messages below. ||
 
