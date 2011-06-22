@@ -372,4 +372,4 @@ The Form class expects all forms to have their own array of inputs. The key is t
 
 The !FormHtml class mentioned above does this automatically. 
 
-For a complete list of methods, see the User-Class definition for form.
+For a complete list of methods, see the User-Class definition for FormHtml.
