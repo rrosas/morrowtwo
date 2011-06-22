@@ -78,3 +78,11 @@ returns an array of language keys for which the page alias exist. This is based 
 bool translationExists( String $lang , String $alias )
 }}}
 returns true if the page $alias exists in the navigation tree of language $lang, otherwise false.
+
+ias exists in the navigation tree of language $lang, otherwise false.
+
+=== _getLocale()_ ===
+{{{
+bool getLocale( [String $lang] )
+}}}
+returns the config array from the _i18n/[lang].php for $lang oder for the current language if $lang is not set.
