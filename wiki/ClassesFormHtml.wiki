@@ -104,27 +104,33 @@ returns the path of the file uploaded for field $el_name. Uploaded files are sto
 
 == Display Types ==
 
-The Form class is not concerned with the appearance of form fields and therefore does not include settings for "radio", "select", "textarea", et cetera. Since the !FormHtml class is for generating output, the attribute "displaytype" has an important role. There two general classifications of input in the Form class, single and set, and each has it's own possibilities for display types. If a display type is not defined, !FormHtml will output an input tag type "text" for singles and a select tag for sets.
+The Form class is not concerned with the appearance of form fields and therefore does not include settings for "radio", "select", "textarea", et cetera. Since the !FormHtml class is for generating output, the attribute "displaytype" has an important role. 
 
-=== Singles ===
+There are several pre-defined display types:
+  * checkbox (a single checkbox)
+  * date - a special format that outputs selectors for a date and time which are then stored interally in a string in the format YYYY-mm-dd HH:MM:SS. The following params will influence date:
+    * format - strftime-formated string that defines which fields will be available in which order. The default is '%d%m%Y' (strftime() formats for day,month,year,hours, minutes and seconds are allowed)
+    * start_year - What year to start the year-selecor with. Value may be a year (YYYY) or an operation (e.g. -18, or +10). Default is the current year minus one.
+    * end_year - What year to end the year-selecor with. Value may be a year (YYYY) or an operation (e.g. -18, or +10). Default is the current year plus five. 
+  * file - a special format that saves uploaded files in the session so that users don't need to choose them again, in case of errors to other fields in the form.
+  * group - a special format for outputting groups of choices either as checkboxes (multiple=true) or as radio buttons (multiple=false). The following display types are synonomous with "group":
+     * check
+     * checkbox
+     * checkgroup
+     * checkboxgroup
+     * radio
+     * radiogroup
+  * hidden - a normal hidden field
+  * password - a normal password field
+  * select - a normal selector (multiple=true|false)
+  * text - a normal text field
+  * textarea - a normal textarea field
 
-Singles are all input types that allow the user only one field or choice, whether this be a single checkbox or an textarea tag.
+If no display type is defined, "text" is taken by default. 
 
-*Allowed display type values*
-
-  * all regular HTML form input types like text, hidden, file, checkbox (but not radio, which is only for sets)
-  * textarea
-  * date - a special format that outputs selectors for day, month and year which the Form.class automatically recognizes. The following params will influence date:
-    * format - (see !HelperHtmlDate) if not set the value will be take from `_`i18n `$config['locale.date.format']`, if found, otherwise '%d%m%Y' (strftime() formats for day month and year allowed)
-    * start_year - Default (!HelperHtmlDate) is the current year minus one.
-    * end_year - Default (!HelperHtmlDate) is the current year plus five.
+Each display type has its own methods for outputing labels, errors and form fields but also for outputing readonly versions of the fields. For more information about these methods or to learn how to override these function or create your own display types see the section below.
 
 
-=== Sets ===
-
-Sets are all input types that allow a choice between several options.
-
-*Allowed display type values*
 
   * select - default
   * check
@@ -135,3 +141,7 @@ Sets are all input types that allow a choice between several options.
   * radiogroup
 
 Except for "select" all of the values mean basically the same: Output either a group of checkboxes or radios. The difference is decided by whether the element has the attribute multiple=true (see Form Definition). If more than one choice is allowed, checkboxes will be used instead of radios (which only allow one selection). So if you later change your form definitin from true to false, !FormHtml will automatically output the correct format.
+
+= !FormHtmlElement =
+
+coming soon!
