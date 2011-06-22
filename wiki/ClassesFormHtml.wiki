@@ -131,17 +131,6 @@ If no display type is defined, "text" is taken by default.
 Each display type has its own methods for outputing labels, errors and form fields but also for outputing readonly versions of the fields. For more information about these methods or to learn how to override these function or create your own display types see the section below.
 
 
-
-  * select - default
-  * check
-  * checkbox
-  * checkgroup
-  * checkboxgroup
-  * radio
-  * radiogroup
-
-Except for "select" all of the values mean basically the same: Output either a group of checkboxes or radios. The difference is decided by whether the element has the attribute multiple=true (see Form Definition). If more than one choice is allowed, checkboxes will be used instead of radios (which only allow one selection). So if you later change your form definitin from true to false, !FormHtml will automatically output the correct format.
-
 = !FormHtmlElement =
 
 coming soon!
