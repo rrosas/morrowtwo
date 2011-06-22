@@ -233,12 +233,9 @@ During validation the Form class calls the method !checkEmail in Validator class
 <?php
 
 public static function checkEmail($value, &$error, $compare_value = null) {
-    if (!is_string($var)) return null;
-		
-    // syntax check
     $localpart = "[a-z0-9!#$%&'*+-/\=?^_`{|}~]"; // RFC 2822
     $domainpart = "[\.a-z0-9-]";
-    if (!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+)$=i", $var, $match)){
+    if (!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+)$=i", $value, $match)){
 	$error = 'BADEMAIL';
 	return false;
     }
