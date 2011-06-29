@@ -18,7 +18,7 @@ string makeUrl( String $path [, array $query ][, array $replacements ][, bool $r
 returns a properly formatted URL for $path.
 
   * *$path:* either a relative path to page in the same Morrow installation or a full URL to another site.
-  * *$query:* an array of values that should be added to the query string. $query['id'] = 1 will add &id=1 to the URL.
+  * *$query:* an array of values that should be added to the query string. {{{$query['id'] = 1}}} will add &id=1 to the URL.
   * *$replacements:* array of changes to the url (see method rewrite)
   * *$rel2abs:* if true, the URL will be returned as a full URL (including scheme and host).
   * *$sep:* The separator for the the query string. Default is &amp; for valid XHTML. For using URLs other than in XHTML this should be set to &.
