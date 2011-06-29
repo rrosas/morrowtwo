@@ -42,7 +42,7 @@ void redirect( String $path [, array $query = array ][, array $replacements ])
 causes a clean http redirect to a new page or website. Valid values for *$path* are the same as for makeUrl().
 
   * *$path:* either a relative path to page in the same Morrow installation or a full URL to another site.
-  * *$query:* an array of values that should be added to the query string. $query['id'] = 1 will add &id=1 to the URL.
+  * *$query:* an array of values that should be added to the query string. {{{$query['id'] = 1}}} will add &id=1 to the URL.
   * *$replacements:* array of changes to the url (see method rewrite)
 
 === _parse()_ ===
