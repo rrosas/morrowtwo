@@ -12,7 +12,6 @@ It automatically loads the config files in the configuration folders FW_PATH/`_`
 
 This class works with the extended dot syntax. So if you use keys like mailer.host and mailer.smtp as identifiers in your config, you can call $this->config->get('mailer') to receive an array with the keys host and smtp.
 
-This makes it possible to work with external INI files which often use dot syntax. Just use a parse_ini_file() to get an array and register it with $this->config->register().
 
 == Example ==
 {{{
