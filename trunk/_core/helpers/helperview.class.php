@@ -46,11 +46,11 @@ class HelperView
 		return $buffer;
 		}
 		
-	public static function mailto($address, $text = '')
+	public static function mailto($address, $text = '', $html = '')
 		{
 		if (empty($text)) $text = $address;
 		$address = str_replace('@', '--', $address);
-		$link = '<a href="mailto:'.$address.'" rel="nofollow">'.htmlspecialchars($text).'</a>';
+		$link = '<a href="mailto:'.$address.'" '.$html.' rel="nofollow">'.htmlspecialchars($text).'</a>';
 		$returner = '<script type="text/javascript">/* <![CDATA[ */'."\n";
 		$returner .= 'document.write("'.str_replace('"', '\"', strrev($link) ).'".split("").reverse().join("").replace(/--/g, "@"));'."\n";
 		$returner .= '/* ]]> */</script>';
