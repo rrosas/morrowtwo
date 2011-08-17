@@ -69,6 +69,7 @@ class ViewSerpent extends ViewAbstract
 			'url' => 'Factory::load("url")->makeurl',
 			'cycle' => 'Factory::load("HelperView")->cycle',
 			'mailto' => 'Factory::load("HelperView")->mailto',
+			'hidelink' => 'factory::load("HelperView")->hidelink',
 			'thumb' => 'Factory::load("HelperView")->thumb',
 			'image' => 'Factory::load("HelperView")->image',
 			'truncate' => 'Factory::load("HelperString")->truncate',
@@ -79,7 +80,7 @@ class ViewSerpent extends ViewAbstract
 			'formelement' => 'Factory::load("formhtml")->getElement',
 			'formerror' => 'Factory::load("formhtml")->getError',
 			'formupload' => 'Factory::load("formhtml")->getInputImage',
-			'date' => 'factory::load("HelperTime")->strftime'
+			'date' => 'factory::load("HelperTime")->strftime',
 		);
 		foreach ($this->mappings as $key => $value)
 			{
