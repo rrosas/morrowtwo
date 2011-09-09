@@ -79,9 +79,9 @@ class FilterSitesearch extends FilterAbstract
 
 		// connect to DB and do maintenance
 		$this->searchdb->connect();
-		if (rand(1, $this->gc_divisor) === 1) $this->_deleteOldEntries( $this->db_tablename );
 		$this->_createTableIfNotExists( $this->db_tablename );
-		
+		if (rand(1, $this->gc_divisor) === 1) $this->_deleteOldEntries( $this->db_tablename );
+				
 		// create url for current page
 		$url = $this->url->makeUrl('');
 
