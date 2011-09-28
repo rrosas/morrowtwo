@@ -97,7 +97,6 @@ class Morrow {
 		$this->url = Factory::load('url'); // url class
 		$this->input = Factory::load('input'); // input class for all user input
 
-
 		/* define project
 		********************************************************************************************/
 		$url = $this->input->get('morrow_content');
@@ -115,16 +114,14 @@ class Morrow {
 		$project_relpath = $project_folder;
 
 		// search for projects in splitted request
-		foreach($inpath as $project_url)
-			{
-			if($project_url == $possible_project_path)
-				{
+		foreach($inpath as $project_url) {
+			if($project_url == $possible_project_path) {
 				$project_relpath = $project_url;
 				 // reset splitted nodes in config
 				array_shift($url_nodes);
 				$this->page->set('nodes', $url_nodes);
-				}
 			}
+		}
 
 		// define project constants
 		define ('PROJECT_PATH', FW_PATH . $project_relpath . '/');
@@ -137,10 +134,9 @@ class Morrow {
 		$config = $this->_loadConfigVars(PROJECT_PATH);
 
 		// register project config in config class
-		foreach ($config as $key=>$array)
-			{
+		foreach ($config as $key=>$array) {
 			$this->config->set($key, $array);
-			}
+		}
 
 		/* get domain
 		********************************************************************************************/
@@ -166,11 +162,10 @@ class Morrow {
 		#$this->language->set($lang_settings['possible'][0]);
 		// language via path
 		$nodes = $this->page->get('nodes');
-		if(isset($nodes[0]) && $this->language->isValid($nodes[0]))
-			{
+		if(isset($nodes[0]) && $this->language->isValid($nodes[0])) {
 			$input_lang_nodes = array_shift($nodes);
 			$this->page->set('nodes', $nodes);
-			}
+		}
 		
 		#$alias = implode('_', $nodes);
 		#$this->page->set('alias', $alias);
@@ -178,14 +173,12 @@ class Morrow {
 		// language via input
 		$input_lang = $this->input->get('language');
 
-		if($input_lang === null && isset($input_lang_nodes))
-			{
+		if($input_lang === null && isset($input_lang_nodes)) {
 			$input_lang = $input_lang_nodes;
-			}
+		}
 
 		if ($input_lang !== null) $this->language->set($input_lang);
 		$this->language->setLocale();
-
 
 		/* url routing
 		********************************************************************************************/
@@ -194,8 +187,7 @@ class Morrow {
 		$url = HelperUrl::trimSlashes($url);
 	
 		// iterate all rules
-		foreach ($routes as $rule=>$new_url)
-			{
+		foreach ($routes as $rule=>$new_url) {
 			$rule    = HelperUrl::trimSlashes($rule);
 			$new_url = HelperUrl::trimSlashes($new_url);
 
@@ -215,8 +207,7 @@ class Morrow {
 			array_shift($hits);
 			
 			// if there is an asterisk the last entry is for the params
-			if (strpos($rule, '*') !== false)
-				{
+			if (strpos($rule, '*') !== false) {
 				$blind_parameters = array_pop($hits);
 				$blind_parameters = HelperUrl::trimSlashes($blind_parameters);
 				$blind_parameters = explode('/', $blind_parameters);
@@ -226,42 +217,37 @@ class Morrow {
 				$blind_key = $param_asterisk_keys[1][0];
 				
 				$this->input->set($blind_key, $blind_parameters);
-				}
+			}
 			
 			// get param names
-			if (strpos($rule, ':') !== false)
-				{
+			if (strpos($rule, ':') !== false) {
 				preg_match_all('=:([a-z0-9_-]+)=i', $rule, $param_keys);
 				$params = array_combine($param_keys[1], $hits);
 				
 				// replace all known params in new_url
-				foreach ($params as $key=>$param)
-					{
+				foreach ($params as $key=>$param) {
 					$new_url = str_replace(":$key", $params[$key], $new_url);
-					}
-
-				// register new params in the input class
-				foreach ($params as $key=>$param)
-					{
-					$this->input->set($key, $param);
-					}
 				}
 
-			$url = $new_url;
+				// register new params in the input class
+				foreach ($params as $key=>$param) {
+					$this->input->set($key, $param);
+				}
 			}
+
+			$url = $new_url;
+		}
 
 		// set nodes in page class
 		if($this->config->get('url.case_insensitive')) $url = strtolower($url);
 		$url_nodes = explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
-
 		/* set alias
 		********************************************************************************************/
 		
 		$alias = implode('_', $url_nodes);
 		$this->page->set('alias', $alias);
-
 
 		/* load controller and render page
 		********************************************************************************************/
@@ -291,20 +277,17 @@ class Morrow {
 		include($global_controller_file);
 
 		// include page controller class
-		if (is_file($page_controller_file))
-			{
+		if (is_file($page_controller_file)) {
 			include($page_controller_file);
 			$controller = new PageController();
 			if (method_exists($controller, 'setup')) $controller->setup();
 			$controller->run();
 			if (method_exists($controller, 'teardown')) $controller->teardown();
-			}
-		else
-			{
+		} else {
 			$controller = new GlobalController();
 			if (method_exists($controller, 'setup')) $controller->setup();
 			if (method_exists($controller, 'teardown')) $controller->teardown();
-			}
+		}
 
 		// Inhalte zuweisen
 		$this->view->setContent($this->page->get(), 'page');
@@ -328,5 +311,5 @@ class Morrow {
 
 		// if we have zipped data bigger than 1 MB
 		if ($meta_data['wrapper_type'] == 'plainfile') unlink($meta_data['uri']);
-		}
 	}
+}
