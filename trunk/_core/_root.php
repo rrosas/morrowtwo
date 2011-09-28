@@ -21,44 +21,13 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
-
-
-
-/* add functions that do not exist in all php5 versions
-********************************************************************************************/
-if (!function_exists('date_default_timezone_set'))
-	{
-	function date_default_timezone_set ($timezone_identifier)
-		{
-		putenv("TZ=".$timezone_identifier);
-		return TRUE;
-		}
-	}
-
-/* set default timezone
-********************************************************************************************/
-date_default_timezone_set('Europe/Berlin');
-	
-/* do not allow register_globals
-********************************************************************************************/
-if (ini_get('register_globals'))
-	{
-	$rg = array_keys($_REQUEST);
-	foreach($rg as $var)
-		{
-		if ($_REQUEST[$var] === $$var) unset($$var);
-		}
-	}
-
 /* define dump function
 ********************************************************************************************/
-function dump()
-	{
+function dump() {
 	$debug = Factory::load('debug');
 	$args = func_get_args();
 	echo $debug->dump($args);
-	}
+}
 
 /* the autoloader for all classes
 ********************************************************************************************/
