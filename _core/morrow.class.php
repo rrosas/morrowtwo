@@ -24,15 +24,12 @@
 
 
 
-class Morrow
-	{
-	public function __construct()
-		{
+class Morrow {
+	public function __construct() {
 		$this->_run();
-		}
+	}
 
-	public function errorHandler($errno, $errstr, $errfile, $errline)
-		{
+	public function errorHandler($errno, $errstr, $errfile, $errline) {
 		// get actual error_reporting
 		$error_reporting = error_reporting();
 
@@ -43,25 +40,21 @@ class Morrow
 		if (($errno & $error_reporting) === 0) return;
 
 		throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
-		}
+	}
 
-	public function exceptionHandler($exception)
-		{
+	public function exceptionHandler($exception) {
 		try {
 			// load errorhandler
 			$debug = Factory::load('debug');
 			$debug->errorhandler($exception);
-			}
-		// useful if the exception handler itself contains errors
-		catch (Exception $e)
-			{
+		} catch (Exception $e) {
+			// useful if the exception handler itself contains errors
 			echo "<pre>$e</pre>";
-			}
 		}
+	}
 		
 	// registers the config files in the config class
-	private function _loadConfigVars($path)
-		{
+	private function _loadConfigVars($path) {
 		// load main config
 		include ($path.'_config/_default.php');
 
@@ -72,11 +65,10 @@ class Morrow
 		elseif (is_file($file2)) include ($file2);
 
 		return $config;
-		}
+	}
 
 	// This function contains the main application flow
-	private function _run()
-		{
+	private function _run() {
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('config'); // config class for config vars
@@ -84,11 +76,9 @@ class Morrow
 		$config = $this->_loadConfigVars(FW_PATH);
 
 		// register config in class
-		foreach ($config as $key=>$array)
-			{
+		foreach ($config as $key=>$array) {
 			$this->config->set($key, $array);
-			}
-
+		}
 			
 		/* declare errorhandler (needs config class)
 		********************************************************************************************/
@@ -97,10 +87,9 @@ class Morrow
 
 		/* set timezone 
 		********************************************************************************************/
-		if (!date_default_timezone_set($this->config->get('locale.timezone')))
-			{
+		if (!date_default_timezone_set($this->config->get('locale.timezone'))) {
 			trigger_error(__METHOD__.'<br>date_default_timezone_set() failed.', E_USER_NOTICE);
-			}
+		}
 
 		/* load classes
 		********************************************************************************************/
