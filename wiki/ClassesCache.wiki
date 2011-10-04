@@ -28,6 +28,31 @@ print_r($result);
 // ... Controller code
 }}}
 
+If your cache item has expired but you cannot generate a new cache, it is possible to use the expired cache.
+
+{{{
+<?php
+
+// ... Controller code
+ 
+if (!$result = $this->cache->load('result_id')) {
+    try {
+        // ... time consuming calculation
+        $result = 'result of a very time consuming calculation';
+        $this->cache->save('result_id', $result, '+5 seconds');
+    } catch (Exception $e) {
+		// use the old result if something went wrong
+		$temp = $this->cache->get($id);
+		$result = $temp['object'];
+	}
+}
+
+// your data
+print_r($result);
+
+// ... Controller code
+}}}
+
 == Methods ==
 
 === _`__`construct()_ ==
@@ -41,15 +66,22 @@ Change $cachedir to change the standard cache directory. If $user_droppable is s
 
 === _load()_ ===
 {{{
-void load( string $cache_id [, mixed $comparator = NULL [, $user_droppable = null ]])
+void load( string $cache_id, mixed $comparator = NULL)
 }}}
 Gets a variable with a given $cache_id from cache, dependent on validity. With the $comparator you can pass an additional comparison variable of any type, which is also used in save(). Do the comparators differ the cache is not valid.
 
 Returns the cached variable on success or FALSE on failure or invalid cache.
 
+=== _get()_ ===
+{{{
+void get( string $cache_id, mixed $comparator = NULL )
+}}}
+Same as load(), but also returns the cache item data if the item has expired.
+Returns FALSE if there is no cached data yet.
+
 === _save()_ ===
 {{{
-bool save( string $cache_id , mixed $var , string $lifetime [, mixed $comparator = NULL])
+bool save( string $cache_id, mixed $var, string $lifetime, mixed $comparator = NULL, $user_droppable = NULL )
 }}}
 Puts a variable with a given $cache_id into cache. $lifetime determines the maximum lifetime, given as a string strtotime() recognizes.
 With the $comparator you can pass an additional comparison variable of any type, which is also used in save(). Do the comparators differ the cache is not valid. You could for example pass the modification time of a file to renew the cache on change of that file.

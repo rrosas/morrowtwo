@@ -19,30 +19,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
-
-
-
-
-
-/*
-methods
-load($id, $comparator = NULL, $user_droppable = false): returns only object if valid
-exists($id, $comparator = NULL, $user_droppable = false): returns full entry + but false if not valid
-
-new
-load($id, $comparator = NULL, $user_droppable = false): returns only object if valid
-get($id, $comparator = NULL, $user_droppable = false): returns full entry
-isValid($id, $comparator = NULL, $user_droppable = false): returns true or false
-
-*/
-
-class Cache
-	{
+class Cache {
 	protected $cachedir;
 	protected $user_droppable;
 
-	public function __construct($cachedir = null, $user_droppable = false)
-		{
+	public function __construct($cachedir = null, $user_droppable = false) {
 		// set defaults
 		if (is_null($cachedir)) $cachedir = PROJECT_PATH.'temp/_codecache/';
 
@@ -61,10 +42,9 @@ class Cache
 		$this->user_droppable = $user_droppable;
 		
 		return true;
-		}
+	}
 
-	public function get($id, $user_droppable = null)
-		{
+	public function get($id, $comparator = null) {
 		// clean id
 		$id = $this->_cleanId($id);
 
@@ -72,71 +52,61 @@ class Cache
 		$cachefile			= $this->cachedir.$id;
 		$cachefile_res		= $cachefile.'%res';
 
-		// if user_droppable is given it overwrites default
-		$user_droppable = !is_null($user_droppable) ? $user_droppable : $this->user_droppable ;
-		
-		// were no-cache header sent?
-		if ($user_droppable && isset($_SERVER['HTTP_CACHE_CONTROL']) && preg_match('/max-age=0|no-cache/i', $_SERVER['HTTP_CACHE_CONTROL'])) return false;
-		
 		// does cachefile exist?
 		if (!is_file($cachefile)) return false;
-		else
-			{
-			$item = unserialize(implode('',file($cachefile)));
-			}
+		else $item = unserialize(file_get_contents($cachefile));
 
 		$item['cachefile']		= $cachefile;
 		$item['cachefile_res']	= $cachefile_res;
+		
+		// get cached data
+		$item = $this->_getObject($item);
+		
+		// check valid state
+		$item['valid'] = $this->_isValid($item, $comparator);
+		
 		return $item;		
-		}
+	}
 	
-	function _getObject($item)
-		{
+	public function load($id, $comparator = null) {
+		// get item
+		$item = $this->get($id, $comparator);
+		if(!$item) return false;
+		
+		// check validity
+		if (!$item['valid']) return false;
+		
+		return $item['object'];
+	}
+
+	protected function _getObject($item) {
 		// load handle if necessary
-		if (!isset($item['object']))
-			{
+		if (!isset($item['object'])) {
 			if (!is_file($item['cachefile_res'])) return false;
 			$item['object'] = fopen($item['cachefile_res'], 'r');
-			}
+		}
 		
 		return $item;
-		}
+	}
 	
-	public function load($id, $comparator = null, $user_droppable = null)
-		{
+	protected function _isValid($item, $comparator = null) {
+		// were no-cache headers sent?
+		if ($item['user_droppable'] && isset($_SERVER['HTTP_CACHE_CONTROL']) && preg_match('/max-age=0|no-cache/i', $_SERVER['HTTP_CACHE_CONTROL'])) return false;
+
+		// is cache file expired?
+		if (time() > $item['expires']) return false;
+		
+		// are the comparators different?
+		$comparator = $this->_createComparator($comparator);
+		if ($comparator != $item['comparator']) return false;
+		
+		return true;
+	}
+	
+	public function save($id, $object, $cachetime, $comparator = null, $user_droppable = null) {
 		// if user_droppable is given it overwrites default
 		$user_droppable = !is_null($user_droppable) ? $user_droppable : $this->user_droppable ;
 
-		// get item
-		$item = $this->get($id, $user_droppable);
-		$valid = $this->isValid($item, $comparator);
-
-		if (!$valid) return false;
-		
-		$item = $this->_getObject($item);
-		return $item['object'];
-		}
-
-	public function isValid($item, $comparator = null)
-		{
-		// is cache file expired?
-		if (time() > $item['expires'])
-			{
-			return false;
-			}
-
-		// are the comparators different?
-		$comparator = $this->_createComparator($comparator);
-		if ($comparator != $item['comparator'])
-			{
-			return false;
-			}
-
-		return true;
-		}
-	
-	public function save($id, $object, $cachetime, $comparator = null)
-		{
 		// clean id
 		$id = $this->_cleanId($id);
 
@@ -153,18 +123,15 @@ class Cache
 		$STATUS['expires']		= strtotime(date('r').' '.$cachetime); // date(r) fixes a bug with older php5 versions
 		$STATUS['cachetime']	= $cachetime;
 		$STATUS['comparator']	= $this->_createComparator($comparator);
-		$STATUS['status']		= false;
+		$STATUS['user_droppable']= $user_droppable;
 
 		// add standard objects like arrays, objects and so on
-		if (!is_resource($object))
-			{
+		if (!is_resource($object)) {
 			$STATUS['object']		= $object;
 
 			// create hash
 			$STATUS['object_hash']	= md5(serialize($object));
-			}
-		else
-			{
+		} else {
 			// write resource file
 			$res_handle = fopen($cachefile_res_tmp, 'w');
 			rewind($object);
@@ -178,12 +145,11 @@ class Cache
 			$STATUS['object_hash']	= md5_file($cachefile_res);
 
 			// could it be renamed? otherwise delete temporary file
-			if ($io_result === false)
-				{
+			if ($io_result === false) {
 				unlink($cachefile_res_tmp);
 				return false;
-				}
 			}
+		}
 
 		// write cache file
 		$io_result = file_put_contents($cachefile_tmp, serialize($STATUS));
@@ -195,31 +161,27 @@ class Cache
 		$io_result = rename($cachefile_tmp, $cachefile);
 
 		// could it be renamed? otherwise delete temporary file
-		if ($io_result === false)
-			{
+		if ($io_result === false) {
 			unlink($cachefile_tmp);
 			return false;
-			}
+		}
 
 		return $STATUS;
-		}
+	}
 
 	// Delete cache files with shell patterns
-	public function delete($pattern)
-		{
+	public function delete($pattern) {
 		$returner = $this -> _delete($pattern, $this->cachedir);
 		return $returner;
-		}
+	}
 
-	protected function _delete($pattern, $dir)
-		{
+	protected function _delete($pattern, $dir) {
 		$files = scandir($dir);
 
 		// files with leading dot must not be deleted
-		foreach ($files as $key=>$file)
-			{
+		foreach ($files as $key=>$file) {
 			if ($file[0] == '.') unset($files[$key]);
-			}
+		}
 
 		// build regex pattern
 		$pattern = basename($pattern);
@@ -230,39 +192,32 @@ class Cache
 
 		// delete the matching files
 		$result = 0;
-		foreach ($files as $key=>$file)
-			{
-			if (preg_match($pattern, $file))
-				{
+		foreach ($files as $key=>$file) {
+			if (preg_match($pattern, $file)) {
 				$result++;
 				unlink($dir.$file);
-				}
 			}
-		return $result;
 		}
+		return $result;
+	}
 
 	// create valid filename from id
-	protected function _cleanId($id)
-		{
+	protected function _cleanId($id) {
 		if (empty($id)) $id = 'morrow_empty_replacement';
 		$id = preg_replace("=[^\w\.]=i", '_', $id);
 		$id = strtolower($id);
 		return $id;
-		}
+	}
 
 	// create a comparator string from any vars
-	protected function _createComparator($input)
-		{
-		if (is_array($input) OR is_object($input))
-			{
+	protected function _createComparator($input) {
+		if (is_array($input) OR is_object($input)) {
 			// So that _sleep is not called of origin object
 			if (is_object($input)) $input = clone $input;
 			$output = md5(serialize($input));
-			}
-		else
-			{
+		} else {
 			$output = $input;
-			}
-		return $output;
 		}
+		return $output;
 	}
+}
