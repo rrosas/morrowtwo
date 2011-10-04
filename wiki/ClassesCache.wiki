@@ -41,10 +41,10 @@ if (!$result = $this->cache->load('result_id')) {
         $result = 'result of a very time consuming calculation';
         $this->cache->save('result_id', $result, '+5 seconds');
     } catch (Exception $e) {
-		// use the old result if something went wrong
-		$temp = $this->cache->get($id);
-		$result = $temp['object'];
-	}
+        // use the old result if something went wrong
+        $temp = $this->cache->get($id);
+        $result = $temp['object'];
+    }
 }
 
 // your data
