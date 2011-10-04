@@ -25,6 +25,21 @@
 
 class HelperArray
 	{
+	// get key of an array or object
+	// useful to access keys of arrays returned from functions
+	public static function extract($data, $key, $default = null) {
+		$data = (array)$data;
+		
+		if (is_scalar($key)) {
+			if (!isset($data[$key])) return $default;
+			return $data[$key];
+		} else if (is_array($key)) {
+			return array_intersect_key($data, array_flip($key));
+		} else {
+			return null;
+		}
+	}
+	
 	// This function orders an array like in a sql query
 	public static function orderBy($data, $orderby)
 		{
