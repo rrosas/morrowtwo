@@ -22,181 +22,38 @@
 
 
 
-class Image
-	{
+class Image {
 	public $cache_dir;
 	public $cache_counter = '%m';
 	
-	public function __construct()
-		{
+	public function __construct() {
 		// params
 		$default_cache_dir = PROJECT_PATH.'temp/thumbs/';
 		$counter = strftime( $this->cache_counter );
 		
 		// delete all folders that are not the current
 		$files = scandir( $default_cache_dir );
-		foreach ($files as $file)
-			{
+		foreach ($files as $file) {
 			if ($file{0} == '.') continue;
-			if (is_dir( $default_cache_dir.$file ) && $file != $counter)
-				{
+			if (is_dir( $default_cache_dir.$file ) && $file != $counter) {
 				helperFile::rmdir_recurse( $default_cache_dir.$file );
-				}
-			}
-
-		// set cache dir and create if it not exists
-		$this->cache_dir = $default_cache_dir . $counter . '/';
-		if (!file_exists( $this->cache_dir ))
-			{
-			mkdir( $this->cache_dir );
 			}
 		}
+
+		// // set cache dir and create if it not exists
+		$this->cache_dir = $default_cache_dir . $counter . '/';
+		if (!file_exists( $this->cache_dir )) {
+			mkdir( $this->cache_dir );
+		}
+	}
 	
-	private function _unsharpMask($img, $amount, $radius, $threshold)
-		{ 
+	private function _unsharpMask($img) { 
+		$matrix = array(array( -1, -1, -1 ), array( -1, 16, -1 ), array( -1, -1, -1 ));
+		imageconvolution($img, $matrix, 8, 0);
+		return $img;
+	} 
 
-		////////////////////////////////////////////////////////////////////////////////////////////////  
-		////  
-		////                  Unsharp Mask for PHP - version 2.1.1  
-		////  
-		////    Unsharp mask algorithm by Torstein H�nsi 2003-07.  
-		////             thoensi_at_netcom_dot_no.  
-		////               Please leave this notice.  
-		////  
-		///////////////////////////////////////////////////////////////////////////////////////////////  
-
-		// $img is an image that is already created within php using 
-		// imgcreatetruecolor. No url! $img must be a truecolor image. 
-
-		// Attempt to calibrate the parameters to Photoshop: 
-		if ($amount > 500)    $amount = 500; 
-		$amount = $amount * 0.016; 
-		if ($radius > 50)    $radius = 50; 
-		$radius = $radius * 2; 
-		if ($threshold > 255)    $threshold = 255; 
-
-		$radius = abs(round($radius));     // Only integers make sense. 
-		if ($radius == 0)
-			{ 
-			return $img; imagedestroy($img); break;
-			} 
-		$w = imagesx($img); $h = imagesy($img); 
-		$imgCanvas = imagecreatetruecolor($w, $h); 
-		$imgBlur = imagecreatetruecolor($w, $h); 
-
-		// Gaussian blur matrix: 
-		//                         
-		//    1    2    1         
-		//    2    4    2         
-		//    1    2    1         
-		//                         
-		////////////////////////////////////////////////// 
-
-
-		if (function_exists('imageconvolution'))
-			{ // PHP >= 5.1  
-			$matrix = array(
-				array( 1, 2, 1 ),  
-				array( 2, 4, 2 ),  
-				array( 1, 2, 1 )  
-			);  
-			imagecopy ($imgBlur, $img, 0, 0, 0, 0, $w, $h); 
-			imageconvolution($imgBlur, $matrix, 16, 0);  
-			}  
-		else
-			{  
-			// Move copies of the image around one pixel at the time and merge them with weight 
-			// according to the matrix. The same matrix is simply repeated for higher radii. 
-			for ($i = 0; $i < $radius; $i++)    { 
-			imagecopy ($imgBlur, $img, 0, 0, 1, 0, $w - 1, $h); // left 
-			imagecopymerge ($imgBlur, $img, 1, 0, 0, 0, $w, $h, 50); // right 
-			imagecopymerge ($imgBlur, $img, 0, 0, 0, 0, $w, $h, 50); // center 
-			imagecopy ($imgCanvas, $imgBlur, 0, 0, 0, 0, $w, $h); 
-
-			imagecopymerge ($imgBlur, $imgCanvas, 0, 0, 0, 1, $w, $h - 1, 33.33333 ); // up 
-			imagecopymerge ($imgBlur, $imgCanvas, 0, 1, 0, 0, $w, $h, 25); // down 
-			} 
-		} 
-
-		if($threshold>0)
-			{ 
-			// Calculate the difference between the blurred pixels and the original 
-			// and set the pixels 
-			for ($x = 0; $x < $w-1; $x++)
-				{ // each row
-				for ($y = 0; $y < $h; $y++)
-					{ // each pixel 
-
-					$rgbOrig = ImageColorAt($img, $x, $y); 
-					$rOrig = (($rgbOrig >> 16) & 0xFF); 
-					$gOrig = (($rgbOrig >> 8) & 0xFF); 
-					$bOrig = ($rgbOrig & 0xFF); 
-
-					$rgbBlur = ImageColorAt($imgBlur, $x, $y); 
-
-					$rBlur = (($rgbBlur >> 16) & 0xFF); 
-					$gBlur = (($rgbBlur >> 8) & 0xFF); 
-					$bBlur = ($rgbBlur & 0xFF); 
-
-					// When the masked pixels differ less from the original 
-					// than the threshold specifies, they are set to their original value. 
-					$rNew = (abs($rOrig - $rBlur) >= $threshold)  
-					? max(0, min(255, ($amount * ($rOrig - $rBlur)) + $rOrig))  
-					: $rOrig; 
-					$gNew = (abs($gOrig - $gBlur) >= $threshold)  
-					? max(0, min(255, ($amount * ($gOrig - $gBlur)) + $gOrig))  
-					: $gOrig; 
-					$bNew = (abs($bOrig - $bBlur) >= $threshold)  
-					? max(0, min(255, ($amount * ($bOrig - $bBlur)) + $bOrig))  
-					: $bOrig; 
-
-
-					if (($rOrig != $rNew) || ($gOrig != $gNew) || ($bOrig != $bNew))
-						{ 
-						$pixCol = ImageColorAllocate($img, $rNew, $gNew, $bNew); 
-						ImageSetPixel($img, $x, $y, $pixCol); 
-						} 
-					} 
-				} 
-			} 
-		else
-			{ 
-			for ($x = 0; $x < $w; $x++)
-				{ // each row 
-				for ($y = 0; $y < $h; $y++)
-					{ // each pixel 
-					$rgbOrig = ImageColorAt($img, $x, $y); 
-					$rOrig = (($rgbOrig >> 16) & 0xFF); 
-					$gOrig = (($rgbOrig >> 8) & 0xFF); 
-					$bOrig = ($rgbOrig & 0xFF); 
-
-					$rgbBlur = ImageColorAt($imgBlur, $x, $y); 
-
-					$rBlur = (($rgbBlur >> 16) & 0xFF); 
-					$gBlur = (($rgbBlur >> 8) & 0xFF); 
-					$bBlur = ($rgbBlur & 0xFF); 
-
-					$rNew = ($amount * ($rOrig - $rBlur)) + $rOrig; 
-					if($rNew>255){$rNew=255;} 
-					elseif($rNew<0){$rNew=0;} 
-					$gNew = ($amount * ($gOrig - $gBlur)) + $gOrig; 
-					if($gNew>255){$gNew=255;} 
-					elseif($gNew<0){$gNew=0;} 
-					$bNew = ($amount * ($bOrig - $bBlur)) + $bOrig; 
-					if($bNew>255){$bNew=255;} 
-					elseif($bNew<0){$bNew=0;} 
-					$rgbNew = ($rNew << 16) + ($gNew <<8) + $bNew; 
-					ImageSetPixel($img, $x, $y, $rgbNew); 
-					} 
-				} 
-			} 
-		imagedestroy($imgCanvas); 
-		imagedestroy($imgBlur); 
-		return $img; 
-		} 
-
-	private function _validateParams($params)
-		{
+	private function _validateParams($params) {
 		// all params with type and default_value
 		// used for _render
 		$defaults['sharpen'] = array('boolean', true);
@@ -216,21 +73,16 @@ class Image
 		$defaults['height'] = array('integer', null);
 
 		// validate params
-		foreach ($defaults as $key=>$value)
-			{
-			if (isset($params[$key]))
-				{
+		foreach ($defaults as $key=>$value) {
+			if (isset($params[$key])) {
 				// check type
 				$type = gettype($params[$key]);
 				if ($type !== $value[0]) { trigger_error(__CLASS__.': "'.$key.'" has to be of type "'.$value[0].'"', E_USER_ERROR); return; }
-				}
-			else
-				{
+			} else {
 				// set default
-				if (!is_null($value[1]))
-					$params[$key] = $value[1];
-				}
+				if (!is_null($value[1])) $params[$key] = $value[1];
 			}
+		}
 		
 		// set default width
 		if (!isset($params['width']) AND
@@ -241,10 +93,9 @@ class Image
 			$params['width'] = 100;
 		
 		return $params;
-		}
+	}
 	
-	private function _addMagnifierIcon($img_obj)
-		{
+	private function _addMagnifierIcon($img_obj) {
 		$img_width  = imagesx($img_obj);
 		$img_height = imagesy($img_obj);
 		
@@ -259,10 +110,9 @@ class Image
 		imagedestroy($magnifier);
 		
 		return $img_obj;
-		}
+	}
 	
-	private function _addOverlayImage($img_obj, $overlay_file, $overlay_position)
-		{
+	private function _addOverlayImage($img_obj, $overlay_file, $overlay_position) {
 		$img_width  = imagesx($img_obj);
 		$img_height = imagesy($img_obj);
 
@@ -281,10 +131,9 @@ class Image
 		if ($overlay_position == '9') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // ecke links oben
 		
 		return $img_obj;
-		}
+	}
 	
-	private function _addFrame($img_obj, $frame_file)
-		{
+	private function _addFrame($img_obj, $frame_file) {
 		$img_width  = imagesx($img_obj);
 		$img_height = imagesy($img_obj);
 
@@ -312,10 +161,9 @@ class Image
 		imagecopyresized($_FRAME['image'], $frame, 0, $frame_blocksize, 0, $frame_blocksize, $frame_blocksize, $img_height, $frame_blocksize, $frame_blocksize); // links
 
 		return $_FRAME['image'];
-		}
+	}
 	
-	private function _addRenderTime($img_obj, $start_time)
-		{
+	private function _addRenderTime($img_obj, $start_time) {
 		$img_width  = imagesx($img_obj);
 
 		// stop time
@@ -333,10 +181,9 @@ class Image
 		imagestring($img_obj, 1, 5, 2, 'time: '.$time.'ms', $black);
 		
 		return $img_obj;
-		}
+	}
 	
-	protected function _getCacheFilename($file_path, &$params)
-		{
+	protected function _getCacheFilename($file_path, &$params) {
 		if (!is_readable($file_path)) { trigger_error(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); return; }
 
 		$types = array('jpg', 'gif', 'png');
@@ -348,20 +195,18 @@ class Image
 		$hash = md5($file_path.$filemtime.implode('',$params));
 		$filename = $this->cache_dir.$hash.'.'.$params['type'];
 		return $filename;
-		}
+	}
 
-	protected function _getParamsFromHash($cache_filename)
-		{
+	protected function _getParamsFromHash($cache_filename) {
 		$cache_params_filename = $this->cache_dir . $cache_filename . '_params';
 		
 		if (!file_exists($cache_params_filename)) return false;
 		$data = unserialize( file_get_contents( $cache_params_filename ));
 		unlink( $cache_params_filename );
 		return $data;
-		}
+	}
 		
-	protected function _im_get($file)
-		{
+	protected function _im_get($file) {
 		$params['quality'] = '80%';
 		$params['density'] = '96';
 		$params['strip'] = '';
@@ -369,10 +214,7 @@ class Image
 		$params['gravity'] = 'center';
 
 		// create parameters from $_GET
-		foreach ($params as $key=>$value)
-			{
-			$params[$key] = "-$key $value";
-			}
+		foreach ($params as $key=>$value) $params[$key] = "-$key $value";
 
 		$params = implode(' ', $params);
 		$command = "convert $params '{$file}[0]'";
@@ -383,18 +225,15 @@ class Image
 		$command .= " 'jpg:$target' 2>&1";
 
 		$returner = shell_exec( $command );
-		if (!is_file($target))
-			{
-			//die($returner);
+		if (!is_file($target)) {
 			return false;
-			}
-
-		return ($target);
 		}
 
+		return ($target);
+	}
+
 	// returns an image object of a given file path
-	public function load($file_path)
-		{
+	public function load($file_path) {
 		if (!is_readable($file_path)) { trigger_error(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); return; }
 
 		$data = getimagesize($file_path);
@@ -405,10 +244,9 @@ class Image
 		else { trigger_error(__CLASS__.': file "'.$file_path.'" is not a valid image format'); return; }
 		
 		return $img_obj;
-		}
+	}
 	
-	public function prepareGet($file_path, $params)
-		{
+	public function prepareGet($file_path, $params) {
 		$cache_filename = $this->_getCacheFilename($file_path, $params);
 		
 		// only create params file if thumb was not created so far
@@ -423,50 +261,44 @@ class Image
 		file_put_contents( $cache_params_filename, serialize($data) );
 		
 		return $cache_filename;
-		}
+	}
 		
-	public function getFromHash($cache_filename)
-		{
+	public function getFromHash($cache_filename) {
 		$data = $this->_getParamsFromHash($cache_filename);
 		$cache_file_name = $this->_getCacheFilename($data['filename'], $data['params']);
 
 		// first try gd to process
 		try {
 			$thumb = $this->get($data['filename'], $data['params'], false, $cache_file_name);
-			}
+		}
 		// now try imagemagick to preprocess
 		// im creates a temporary image which should be deleted after gd processing
-		catch (Exception $e)
-			{
+		catch (Exception $e) {
 			$thumb = $this->_im_get( $data['filename'] );
 			$tmp_file = $thumb;
 			
 			// if preprocessing was successful use the new image for gd processing
-			if (is_file($thumb))
-				{
+			if (is_file($thumb)) {
 				$thumb = $this->get( $thumb, $data['params'], false, $cache_file_name );
 				unlink($tmp_file);
-				}
 			}
+		}
 
 		if (!is_file($thumb)) return $data;
 		return $thumb;
-		}
+	}
 
-	public function get($file_path, $params, $return_ressource = false, $filename = null)
-		{
+	public function get($file_path, $params, $return_ressource = false, $filename = null) {
 		// get cache filename if not passed
-		if (is_null($filename))
-			{
+		if (is_null($filename)) {
 			$filename = $this->_getCacheFilename($file_path, $params);
-			}
+		}
 		
 		// if there is a cache file return it
-		if (file_exists($filename))
-			{
+		if (file_exists($filename)) {
 			if ($return_ressource) return $this->load($filename);
 			else return $filename;
-			}
+		}
 		
 		// validate params
 		$params = $this->_validateParams($params);
@@ -487,35 +319,23 @@ class Image
 		if ($return_ressource) return $img_obj;
 
 		// save data to file
-		if ($params['type'] === 'jpg')
-			{
-			imagejpeg($img_obj, $filename, 80);
-			}
-		elseif ($params['type'] === 'png')
-			{
-			imagepng($img_obj, $filename);
-			}
-		elseif ($params['type'] === 'gif')
-			{
-			imagegif($img_obj, $filename);
-			}
+		if ($params['type'] === 'jpg') imagejpeg($img_obj, $filename, 80);
+		elseif ($params['type'] === 'png') imagepng($img_obj, $filename);
+		elseif ($params['type'] === 'gif') imagegif($img_obj, $filename);
 		
 		return $filename;
 		}
 
 	
-	protected function preFilter($img_obj, $params)
-		{
+	protected function preFilter($img_obj, $params) {
 		return $img_obj;
-		}
+	}
 
-	protected function postFilter($img_obj, $params)
-		{
+	protected function postFilter($img_obj, $params) {
 		return $img_obj;
-		}
+	}
 	
-	private function _render($img_obj, $params)
-		{
+	private function _render($img_obj, $params) {
 		// start time measurement
 		$time['start'] = microtime(true);
 
@@ -524,56 +344,42 @@ class Image
 		$_SRC['height']		= imagesy($img_obj);
 
 		// calculate ratio
-		if (isset($params['longside']))
-			{
-			if ($_SRC['width'] < $_SRC['height'])
-				{
+		if (isset($params['longside'])) {
+			if ($_SRC['width'] < $_SRC['height']) {
 				$_DST['height']	= $params['longside'];
 				$_DST['width']	= round($params['longside']/($_SRC['height']/$_SRC['width']));
-				}
-			else
-				{
+			} else {
 				$_DST['width']	= $params['longside'];
 				$_DST['height']	= round($params['longside']/($_SRC['width']/$_SRC['height']));
-				}
 			}
-		elseif (isset($params['shortside']))
-			{
-			if ($_SRC['width'] < $_SRC['height'])
-				{
+		} elseif (isset($params['shortside'])) {
+			if ($_SRC['width'] < $_SRC['height']) {
 				$_DST['width']	= $params['shortside'];
 				$_DST['height']	= round($params['shortside']/($_SRC['width']/$_SRC['height']));
-				}
-			else
-				{
+			} else {
 				$_DST['height']	= $params['shortside'];
 				$_DST['width']	= round($params['shortside']/($_SRC['height']/$_SRC['width']));
-				}
 			}
-		else
-			{
+		} else {
 			// calculate destination dimension
 			if (isset($params['width'])) $_DST['width'] = $params['width'];
 			else $_DST['width'] = round($params['height']/($_SRC['height']/$_SRC['width']));
 
 			if (isset($params['height'])) $_DST['height']	= $params['height'];
 			else $_DST['height'] = round($params['width']/($_SRC['width']/$_SRC['height']));
-			}
+		}
 
 		// should the image get cropped
 		$_DST['offset_w'] = 0;
 		$_DST['offset_h'] = 0;
 				
-		if($params['crop'] === true)
-			{
+		if($params['crop'] === true) {
 			$width_ratio = $_SRC['width']/$_DST['width'];
 			$height_ratio = $_SRC['height']/$_DST['height'];
 
 			// crop on width
-			if ($width_ratio > $height_ratio)
-				{
-				switch($params['crop_position'])
-					{
+			if ($width_ratio > $height_ratio) {
+				switch($params['crop_position']) {
 					case '1':
 						$_DST['offset_w'] = 0;
 						break;
@@ -583,15 +389,12 @@ class Image
 					case '3':
 						$_DST['offset_w'] = round(($_SRC['width']-$_DST['width']*$height_ratio));
 						break;
-					}
-				$_SRC['width'] = round($_DST['width']*$height_ratio);
 				}
-
+				$_SRC['width'] = round($_DST['width']*$height_ratio);
+			}
 			// crop on height
-			elseif ($width_ratio < $height_ratio)
-				{
-				switch($params['crop_position'])
-					{
+			elseif ($width_ratio < $height_ratio) {
+				switch($params['crop_position']) {
 					case '1':
 						$_DST['offset_h'] = 0;
 						break;
@@ -601,24 +404,22 @@ class Image
 					case '3':
 						$_DST['offset_h'] = round(($_SRC['height']-$_DST['height']*$width_ratio));
 						break;
-					}
-				$_SRC['height'] = round($_DST['height']*$width_ratio);
 				}
+				$_SRC['height'] = round($_DST['height']*$width_ratio);
 			}
+		}
 
 		// if the source image is smaller than the destination image, all calculations before were crap
-		if ($params['extrapolate'] === false && $_DST['height'] > $_SRC['height'] && $_DST['width'] > $_SRC['width'])
-			{
+		if ($params['extrapolate'] === false && $_DST['height'] > $_SRC['height'] && $_DST['width'] > $_SRC['width']) {
 			$_DST['width'] = $_SRC['width'];
 			$_DST['height'] = $_SRC['height'];
-			}
+		}
 
 		### now create the image
 		$_SRC['image'] = $img_obj;
 
 		// if the source image is too big first scale down linear to an image four times bigger than the target image 
-		if ($_DST['width']*4 < $_SRC['width'] AND $_DST['height']*4 < $_SRC['height'])
-			{
+		if ($_DST['width']*4 < $_SRC['width'] AND $_DST['height']*4 < $_SRC['height']) {
 			// multiplier of target dimension
 			$_TMP['width'] = round($_DST['width']*4);
 			$_TMP['height'] = round($_DST['height']*4);
@@ -632,7 +433,7 @@ class Image
 			$_DST['offset_w'] = 0;
 			$_DST['offset_h'] = 0;
 			unset($_TMP['image']);
-			}
+		}
 
 		// create destination image
 		$_DST['image'] = imagecreatetruecolor($_DST['width'], $_DST['height']);
@@ -640,35 +441,20 @@ class Image
 		imagecopyresampled($_DST['image'], $_SRC['image'], 0, 0, $_DST['offset_w'], $_DST['offset_h'], $_DST['width'], $_DST['height'], $_SRC['width'], $_SRC['height']);
 		
 		// sharpen the image
-		if ($params['sharpen'] === true)
-			{
-			$_DST['image'] = $this->_unsharpMask($_DST['image'],80,.5,3);
-			}
+		if ($params['sharpen'] === true) $_DST['image'] = $this->_unsharpMask($_DST['image']);
 
 		// add the magnifier icon
-		if ($params['hint'] === true)
-			{
-			$_DST['image'] = $this->_addMagnifierIcon($_DST['image']);
-			}
+		if ($params['hint'] === true) $_DST['image'] = $this->_addMagnifierIcon($_DST['image']);
 
 		// add an overlay image
-		if (!empty($params['overlay']))
-			{
-			$_DST['image'] = $this->_addOverlayImage($_DST['image'], $params['overlay'], $params['overlay_position']);
-			}
+		if (!empty($params['overlay'])) $_DST['image'] = $this->_addOverlayImage($_DST['image'], $params['overlay'], $params['overlay_position']);
 
 		// add frame
-		if (!empty($params['frame']))
-			{
-			$_DST['image'] = $this->_addFrame($_DST['image'], $params['frame']);
-			}
+		if (!empty($params['frame'])) $_DST['image'] = $this->_addFrame($_DST['image'], $params['frame']);
 
 		// add calculation time
-		if ($params['dev'] === true)
-			{
-			$_DST['image'] = $this->_addRenderTime($_DST['image'], $time['start']);
-			}
+		if ($params['dev'] === true) $_DST['image'] = $this->_addRenderTime($_DST['image'], $time['start']);
 			
 		return $_DST['image'];
-		}
 	}
+}
