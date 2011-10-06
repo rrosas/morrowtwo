@@ -24,21 +24,18 @@
 
 
 
-class Debug
-	{
-	private $config;
+class Debug {
+	protected $config;
 
 	// Members for dump
-	public $maxdepth               = 8; // the maximum recursion level
+	public $maxdepth = 8; // the maximum recursion level
 	
 	// Members for errorhandler
-	private $lasterror;
-	private $errorcounter = 0;
-	private $errortype;
+	protected $lasterror;
+	protected $errorcounter = 0;
+	protected $errortype;
 	
-	
-	public function __construct()
-		{
+	public function __construct() {
 		// read config from config class
 		$config = Factory::load('config');
 		$this->config = $config->get('debug');
@@ -59,10 +56,9 @@ class Debug
 		$this->errortype[4096]	= 'E_RECOVERABLE_ERROR';
 		$this->errortype[8192]	= 'E_DEPRECATED';
 		$this->errortype[16384]	= 'E_USER_DEPRECATED';
-		}
+	}
 
-	private function errorhandler_file($errstr, $backtrace, $errorcode)
-		{
+	private function errorhandler_file($errstr, $backtrace, $errorcode) {
 		$fn = FW_PATH.'/_logs/'.date("y-m-d").'.txt';
 
 		$body  = '############################## '.$errorcode."\n";
@@ -81,55 +77,11 @@ class Debug
 		$body .= "\n";
 
 		file_put_contents($fn, $body, FILE_APPEND);
-		}
+	}
 
-	private function errorhandler_firephp($errstr, $backtrace, $errordescription)
-		{
-		require_once(FW_PATH . '_libs/FirePHPCore-0.3.1/lib/FirePHPCore/FirePHP.class.php');
-		$firephp = FirePHP::getInstance(true);
-
-		$actual = &$backtrace[0];
-		
-		foreach ($backtrace as $key=>$item)
-			{
-			if ($key > 0)
-				{
-				if ($key===1) $firephp->group( 'Backtrace', array('Collapsed'=>false) );
-				
-				$firephp->info( $item['file'] . ' (line ' . $item['line'] . ')' );
-				$firephp->log( $item['args'] );
-
-				if ($key==count($backtrace)) $firephp->groupEnd();
-				continue;
-				}
-			
-			$title = utf8_decode($item['file']) . ' (line ' . $item['line'] . ')';
-			
-			$firephp->group( 'Error' );
-			$firephp->error( $errstr );
-			$firephp->info( $title );
-			
-			$show_lines = 10;
-			$file = file($item['file']);
-			if ($item['line']-$show_lines < 0) $linestart = 0; else $linestart = $item['line']-$show_lines;
-			$file = array_slice($file, $linestart, $show_lines*2, true);
-
-			foreach ($file as $key=>$line)
-				{
-				$method = ($item['line'] == $key+1) ? 'warn' : 'log';
-				$firephp->$method( $key+1 . ': ' . $line );
-				}
-			
-			$firephp->groupEnd();
-			$firephp->info( $item['args'], 'Arguments' );
-			}
-		}
-
-	private function errorhandler_screen($errstr, $backtrace, $errordescription)
-		{
+	protected function errorhandler_screen($errstr, $backtrace, $errordescription) {
 		// output css and js only at first call
-		if ($this->errorcounter === 1)
-			echo $this->errorhandler_screen_header();
+		if ($this->errorcounter === 1) echo $this->errorhandler_screen_header();
 
 		// output error
 		$error  = '<div class="errorhandler">';
@@ -138,28 +90,23 @@ class Debug
 		$error .= '<div class="headline">'.$errstr.'</div><br />';
 
 		$count = 0;
-		foreach ($backtrace as $key=>$value)
-			{
+		foreach ($backtrace as $key=>$value) {
 			// only if file is available
-			if (!empty($value['file']) && is_file($value['file']))
-				{
+			if (!empty($value['file']) && is_file($value['file'])) {
 				$id_file = 'errorhandler_file_'.$this->errorcounter.'_'.$count;
 				$id_args = 'errorhandler_args_'.$this->errorcounter.'_'.$count;
-				if ($count === 0) $show = 'style="display: block;"';
-				else              $show = '';
+				$show = ($count === 0) ? 'style="display: block;"' : '';
 
-				if ($count>0)
-					{
+				if ($count>0) {
 					$call = $value['class'].$value['type'].$value['function'].'()';
 					$error .= '<div class="filename">'.$call.'</div>';
-					}
+				}
 
-				if (count($value['args'])>0 and $count > 0)
-					{
+				if (count($value['args'])>0 and $count > 0) {
 					$dump = $this->dump($value['args']);
 					$error .= '<a href="#" onclick="errorhandler_toggle(\''.$id_args.'\'); return false;">&raquo; Arguments ('.count($value['args']).')</a>';
 					$error .= '<div class="args" id="'.$id_args.'" style="display: none;">'.$dump.'</div>';
-					}
+				}
 
 				// highlight the file name
 				$file = preg_replace('=[^/]+$=', '<strong>$0</strong>', $value['file']);
@@ -168,17 +115,16 @@ class Debug
 				$error .= '<div class="file" id="'.$id_file.'" '.$show.'>'.$this->getContent($value['file'], $value['line']).'<div style="clear: both;"></div></div>';
 
 				$count++;
-				}
 			}
+		}
 
 		$error .= '</div>';
 		$error .= '</div>'."\n";
 
 		echo $error;		
-		}
+	}
 		
-	private function errorhandler_screen_header()
-		{
+	protected function errorhandler_screen_header() {
 		return '
 			<style type="text/css">
 			.errorhandler { color: #333; }
@@ -205,10 +151,9 @@ class Debug
 				}
 			</script>
 		';
-		}
+	}
 		
-	public function errorhandler($exception)
-		{
+	public function errorhandler($exception) {
 		$errstr = $exception->getMessage();
 		$errcode = $exception->getCode();
 		$backtrace = $exception->getTrace();
@@ -230,29 +175,22 @@ class Debug
 		
 		// clean array
 		$backtrace_keys = array('file'=>'', 'line'=>'', 'class'=>'', 'object'=>'', 'type'=>'', 'function'=>'', 'args'=>array());
-		foreach ($backtrace as $key=>$value)
-			{
+		foreach ($backtrace as $key=>$value) {
 			$backtrace[$key] = array_merge($backtrace_keys, $value);
-			}
+		}
 		
 		// cause of a bug in PHP 5.2 (http://bugs.php.net/bug.php?id=45895#c140511)
 		$use_workaround = version_compare( phpversion(), '5.2', '>=' ) && version_compare( phpversion(), '5.3', '<=' );
-		if ($exception instanceof ErrorException && $use_workaround)
-			{
-			for ($i = count($backtrace) - 1; $i > 0; --$i)
-				{
+		if ($exception instanceof ErrorException && $use_workaround) {
+			for ($i = count($backtrace) - 1; $i > 0; --$i) {
 				$backtrace[$i]['args'] = $backtrace[$i - 1]['args'];
-				}
 			}
+		}
 		
 		// set the error code string
 		if ($exception instanceof ErrorException) $errordescription = $this->errortype[ $exception->getSeverity() ];
 		elseif ($errcode == 0) $errordescription = 'EXCEPTION';
 		else $errordescription = 'EXCEPTION (Code '.$errcode.')';
-
-		// show in firephp console (default = 0)
-		if (isset($this->config['console']) && $this->config['console'] == true)
-			$this->errorhandler_firephp($errstr, $backtrace, $errordescription);
 
 		// show error on screen (default = 1)
 		if (!isset($this->config['screen']) OR $this->config['screen'] == true)
@@ -263,51 +201,36 @@ class Debug
 			$this->errorhandler_file($errstr, $backtrace, $errordescription);
 		
 		return;
-		}
+	}
 
-	private function getContent($errfile, $errline, $file_or_string = 'file')
-		{
+	protected function getContent($errfile, $errline, $file_or_string = 'file') {
 		$show_lines = 10;
 
 		// Ausschnitt aus der Datei holen
-		if ($file_or_string === 'file')
-			{
-			$file = highlight_file($errfile, true);
-			}
-		else
-			{
-			$file = highlight_string($errfile, true);
-			}
+		if ($file_or_string === 'file') $file = highlight_file($errfile, true);
+		else $file = highlight_string($errfile, true);
 		
 		$file = explode("<br />", $file);
 
-		foreach($file as $key=>$value)
-			{
+		foreach($file as $key=>$value) {
 			$temp = strip_tags($value);
 			if (empty($temp)) $value = '&nbsp;';
 			$value = '<span>'.$value.'</span>';
 			if ($key == $errline-1) $value = '<div class="lineerror">'.$value.'</div>';
 			$value = '<li><code>'.$value.'</code></li>';
 			$file[$key] = $value;
-			}
+		}
 
 		if ($errline-$show_lines < 0) $linestart = 0; else $linestart = $errline-$show_lines;
 		$file = array_slice($file, $linestart, $show_lines*2, true);
 		$file = implode('', $file);
 		return '<ol start="'.($linestart+1).'">'.$file.'</ol>';
-		}
+	}
 
 		
 	/* main method
 	********************************************************************************************/
-	public function dump($input)
-		{
-		// show in firephp console (default = 0)
-		if (isset($this->config['console']) && $this->config['console'] == true)
-			{
-			call_user_func_array( array($this, 'dump_firephp'), $input );
-			}
-
+	public function dump($input) {
 		// show error on screen (default = 1)
 		if (isset($this->config['screen']) && $this->config['screen'] == false) return;
 		
@@ -316,52 +239,27 @@ class Debug
 		$backtrace = $backtrace[1];
 
 		// get calling file
-		if (isset($backtrace['file']))
-			{
+		if (isset($backtrace['file'])) {
 			$file = file($backtrace['file']);
 			$function = trim($file[$backtrace['line']-1]);
-			}
+		}
 
 		$output = '';
-		foreach ($input as $arg)
-			{
+		foreach ($input as $arg) {
 			// create headline
 			$headline = '<b>'.$function.'</b><br />called in <b>'.$backtrace['file'].'</b> on line <b>'.$backtrace['line'].'</b>';
 			$output .= $this->dump_php($arg, $headline);
-			}
+		}
 		
 		return $output;
-		}
-
-	public function dump_firephp()
-		{
-		require_once(FW_PATH . '_libs/FirePHPCore-0.3.1/lib/FirePHPCore/FirePHP.class.php');
-		$firephp = FirePHP::getInstance(true);
-
-		$backtrace = debug_backtrace();
-		$actual = $backtrace[3];
-		
-		$firephp->group( 'Dump' );
-		$firephp->info( $actual['file'] . ' (line '.$actual['line'].')'  );
-		
-		$args = func_get_args();
-		foreach ($args as $arg)
-			{
-			$firephp->log($arg);
-			}
-		
-		$firephp->groupEnd();
-		
-		return '';
-		}
+	}
 
 
 	////////////////////////////////////////////////////////
 	// Inspired from:     PHP.net Contributions
 	// Description: Helps with php debugging
 
-	protected function dump_php(&$var, $info = FALSE)
-		{
+	protected function dump_php(&$var, $info = FALSE) {
 		$scope = false;
 		$prefix = 'unique';
 		$suffix = 'value';
@@ -380,10 +278,9 @@ class Debug
 		$output .= "</pre>";
 		
 		return $output;
-		}
+	}
 
-	protected function dump_php_recursive(&$var, $var_name = NULL, $indent = NULL, $reference = NULL, $depth = 0)
-		{
+	protected function dump_php_recursive(&$var, $var_name = NULL, $indent = NULL, $reference = NULL, $depth = 0) {
 		$colors = array(
 			'String' => 'green',
 			'Integer' => 'red',
@@ -402,15 +299,12 @@ class Debug
 
 		$depth++;
 
-		if (is_array($var) && isset($var[$keyvar]))
-			{
+		if (is_array($var) && isset($var[$keyvar])) {
 			$real_var = &$var[$keyvar];
 			$real_name = &$var[$keyname];
 			$type = ucfirst(gettype($real_var));
 			$output .= "$indent$var_name <span style='color:$grey'>$type</span> = <span style='color:#e87800;'>&amp;$real_name</span><br />";
-			}
-		else
-			{
+		} else {
 			$var = array($keyvar => $var, $keyname => $reference);
 			$avar = &$var[$keyvar];
 			$type = ucfirst(gettype($avar));
@@ -419,64 +313,56 @@ class Debug
 			if($type == "Double") { $type = "Float"; }
 			if($type == "Unknown type") { $type = "String"; }
 			
-			if(is_array($avar))
-				{
+			if(is_array($avar)) {
 				$count = count($avar);
 				$output .= "$indent" . ($var_name ? "$var_name => ":"") . "<span style='color:$grey'>$type ($count)</span><br />$indent(<br />";
 				$keys = array_keys($avar);
-				foreach($keys as $name)
-					{
+				foreach($keys as $name) {
 					$value = &$avar[$name];
 					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
 					else $output .= $this->dump_php_recursive($value, "['$name']", $indent.$do_dump_indent, $reference, $depth);
-					}
-				$output .= "$indent)<br />";
 				}
-			elseif(is_object($avar))
-				{
+				$output .= "$indent)<br />";
+			} elseif(is_object($avar)) {
 				$parent_class = get_parent_class($avar) ? ' extends '.get_parent_class($avar) : '';
 				
 				$output .= "$indent$var_name <span style='color:$grey'>$type(".get_class($avar).$parent_class.")</span><br />$indent{<br />";
 
 				// output methods
 				$reflectionClass = new ReflectionClass( get_class($avar) );
-				foreach ($reflectionClass->getMethods() as $method)
-					{
+				foreach ($reflectionClass->getMethods() as $method) {
 					$output .= "$indent$do_dump_indent";
 					$output .= "<span style='color: #0099c5'>";
 					$output .=  '-> '.$method->getName().'(';
 					$params = array();
-					foreach ($method->getParameters() as $param)
-						{
+					foreach ($method->getParameters() as $param) {
 						$temp = ($param->isPassedByReference() ? '&' : '') . '$'.$param->getName();
 						if ($param->isOptional()) $temp = "[".$temp."]";
 						$params[] = $temp;
-						}
-					$output .= implode(', ', $params).')</span><br />';
 					}
+					$output .= implode(', ', $params).')</span><br />';
+				}
 
 				// output members
 				$members = get_object_vars($avar);
 				if (count($members) > 0) $output .= "$indent$do_dump_indent<br />";
-				foreach($members as $name=>$value)
-					{
+				foreach($members as $name=>$value) {
 					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
 					else $output .= $this->dump_php_recursive($value, "$${name}", $indent.$do_dump_indent, $reference, $depth);
-					}
+				}
 				$output .= "$indent}<br />";
-				}
-			elseif(is_resource($avar))
-				{
+			} elseif(is_resource($avar)) {
 				$output .= "$indent$var_name <span style='color:$grey'>$type(".get_resource_type($avar).")</span><br />$indent{<br />";
-				$meta_data = stream_get_meta_data($avar);
-				foreach($meta_data as $key=>$value)
-					{
-					$output .= $this->dump_php_recursive($value, "['$key']", $indent.$do_dump_indent, $reference);
-					}
-				$output .= "$indent)<br />";
+				try {
+					$meta_data = stream_get_meta_data($avar);
+				} catch (Exception $e) {
+					$meta_data = array();
 				}
-			else // for boolean, string, integer, float
-				{
+				foreach($meta_data as $key=>$value) {
+					$output .= $this->dump_php_recursive($value, "['$key']", $indent.$do_dump_indent, $reference);
+				}
+				$output .= "$indent)<br />";
+			} else { // for boolean, string, integer, float
 				$output .= "$indent$var_name = <span style='color:$grey'>$type(".strlen((string)$avar).")</span> <span style='color: ${colors[$type]}'>";
 				
 				// rewrite output
@@ -484,11 +370,11 @@ class Debug
 				elseif(is_bool($avar)) $output .= ($avar == 1 ? "TRUE":"FALSE")."</span><br />";
 				elseif(is_null($avar)) $output .= "NULL</span><br />";
 				else $output .= "$avar</span><br />";
-				}
+			}
 			
 			$var = $var[$keyvar];
-			}
+		}
 		
 		return $output;
-		}
 	}
+}
