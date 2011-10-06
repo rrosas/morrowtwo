@@ -53,5 +53,5 @@ Returns an array with the keys "headers" and "body".
 array post( $url [, array $data = array ( ) [, array $files = array ( )]] )
 }}}
 This method sends a POST request. You have to specify the *$url* the request should be sent to.
-$data defines POST data you want to send. Use $files to send files.
+*$data* defines POST data you want to send. Use *$files* to send files.
 Returns an array with the keys "headers" and "body".
