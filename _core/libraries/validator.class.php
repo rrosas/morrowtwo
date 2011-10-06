@@ -210,7 +210,7 @@ class Validator{
 
 	public static function checkZip($value, &$error) {
 		// nur deutsche PLZ!
-		 if(!preg("=^[0-9]*$=",$value)){
+		 if(!preg_match("=^\d+$=",$value)){
 			$error = 'ZIPBADCHARS';
 			return false;
 		 }
