@@ -51,7 +51,7 @@ class Validator{
 	}
 
 	public static function checkNumber($value, &$error){
-		if(!preg('=^[0-9]*$=',$value)){ 
+		if(!preg_match('=^[0-9]*$=',$value)){ 
 			$error = 'NAN';
 			return false;
 		}
@@ -99,7 +99,7 @@ class Validator{
 		if(isset($locale['currency']['separator'])){
 			$sep = $locale['currency']['separator'];
 		}
-		if(!preg("=^[0-9]{1,}({$sep}[0-9]{0,4})?$=",$value)){ 
+		if(!preg_match("=^[0-9]{1,}({$sep}[0-9]{0,4})?$=",$value)){ 
 			$error = 'BADPRICE';
 			return false;
 		}
