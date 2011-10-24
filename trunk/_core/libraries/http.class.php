@@ -75,9 +75,16 @@ class Http {
 				$post[$name] = '@' . $path;
 			}
 			
+			// if you did not append a file you post data can disappear
+			// http://de2.php.net/manual/de/function.curl-setopt.php#94405
+			// I also had that error with verification for BrowserID
+			if (count($files) == 0) {
+				$post = http_build_query($post, '', '&');
+			}
+			
 			// POST request
 			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS,  $post); 
+			curl_setopt($ch, CURLOPT_POSTFIELDS,  $post);
 		}
 		
 		// HEAD
