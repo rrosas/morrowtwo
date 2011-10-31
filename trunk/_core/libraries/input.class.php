@@ -22,8 +22,7 @@
 
 
 
-class Input
-	{
+class Input {
 	protected $post;
 	protected $get;
 	protected $data;
