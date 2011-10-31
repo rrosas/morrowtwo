@@ -30,27 +30,20 @@ class Input
 	
 	protected $magic_quotes_gpc;
 	
-	public function __construct()
-		{
+	public function __construct() {
 		$this->magic_quotes_gpc = get_magic_quotes_gpc();
 		
 		$this->get   = $this->clean($_GET);
 		$this->post  = $this->clean($_POST);
 		$this->files = $this->_getFileData($this->clean($_FILES));
 		$this->data  = $this->_array_merge_recursive_distinct($this->get, $this->post, $this->files);
-
-		unset($_GET, $_POST, $_FILES, $_REQUEST);
-		}
+	}
 
 	// Bereinigen von user input
-	public function clean($value)
-		{
-		if (is_array($value))
-			{
+	public function clean($value) {
+		if (is_array($value)) {
 			$value = array_map(array(&$this, 'clean'), $value);
-			}
-		else
-			{
+		} else {
 			// Folgendermaßen wird bereinigt
 			$value = trim($value);
 			if ($this->magic_quotes_gpc) $value = stripslashes($value);
@@ -58,116 +51,89 @@ class Input
 			$value = preg_replace("=(\r\n|\r)=", "\n", $value);
 			// filter nullbyte
 			$value = str_replace("\0", '', $value);
-			}
-		return $value;
 		}
+		return $value;
+	}
 
 	// Zugriff auf Get-Variablen
-	public function get($identifier = null)
-		{
+	public function get($identifier = null) {
 		return helperArray::dotSyntaxGet($this->data, $identifier);
-		}
+	}
 
-	public function getPost($identifier = null)
-		{
+	public function getPost($identifier = null) {
 		return helperArray::dotSyntaxGet($this->post, $identifier);
-		}
+	}
 
-	public function getGet($identifier = null)
-		{
+	public function getGet($identifier = null) {
 		return helperArray::dotSyntaxGet($this->get, $identifier);
-		}
+	}
 
-	public function getFiles($identifier = null)
-		{
+	public function getFiles($identifier = null) {
 		return helperArray::dotSyntaxGet($this->files, $identifier);
-		}
+	}
 
 	// import for URL Routing
-	public function set($identifier, $value)
-		{
+	public function set($identifier, $value) {
 		helperArray::dotSyntaxSet($this->data, $identifier, $value);
-		}
+	}
 
-	protected function _array_merge_recursive_distinct ()
-		{
+	protected function _array_merge_recursive_distinct () {
 		$arrays = func_get_args();
 		$base = array_shift($arrays);
 		if (!is_array($base)) $base = empty($base) ? array() : array($base);
-		foreach($arrays as $append)
-			{
+		foreach($arrays as $append) {
 			if (!is_array($append)) $append = array($append);
-			foreach($append as $key => $value)
-				{
-				if (!array_key_exists($key, $base))
-					{
+			foreach($append as $key => $value) {
+				if (!array_key_exists($key, $base)) {
 					$base[$key] = $append[$key];
 					continue;
-					}
-				if(is_array($value) or is_array($base[$key]))
-					{
+				}
+				if (is_array($value) or is_array($base[$key])) {
 					$base[$key] = $this->_array_merge_recursive_distinct($base[$key], $append[$key]);
-					}
-				else
-					{
+				} else {
 					$base[$key] = $value;
-					}
 				}
 			}
-		return $base;
 		}
+		return $base;
+	}
 
 		// if arrays of formdata are used, php rearranges the array format of _FILE.
 	// this method puts them back in a more useful format
-	protected function _getFileData($_files)
-		{
+	protected function _getFileData($_files) {
 		$return_files = array();
-		if(is_array($_files))
-			{
-			foreach($_files as $fkey => $fvalue)
-				{
-				if(is_array($fvalue))
-					{
-					foreach($fvalue as $varname=>$varpair)
-						{
-						if(is_array($varpair))
-							{
-							foreach($varpair as $fieldname=>$varvalue)
-								{
+		if(is_array($_files)) {
+			foreach($_files as $fkey => $fvalue) {
+				if(is_array($fvalue)) {
+					foreach($fvalue as $varname=>$varpair) {
+						if(is_array($varpair)) {
+							foreach($varpair as $fieldname=>$varvalue) {
 								$return_files[$fkey][$fieldname][$varname]=$varvalue;
-								}
 							}
-						else
-							{
+						} else {
 							$return_files[$fkey] = $fvalue;
-							}
 						}
 					}
 				}
 			}
-		return $return_files;
 		}
+		return $return_files;
+	}
 
-	public function removeXss($var)
-		{
-		if (is_array($var))
-			{
-			foreach ($var as $key=>$value)
-				{
+	public function removeXss($var) {
+		if (is_array($var)) {
+			foreach ($var as $key=>$value) {
 				$var[$key] = $this->_removeXss($value);
-				}
 			}
-		else
-			{
+		} else {
 			if (is_scalar($var))
 				$var = $this->_removeXss($var);
 			}
 		return $var;
-		}
+	}
 	
 	// http://kallahar.com/smallprojects/php_xss_filter_function.php
-	protected function _removeXss($val)
-		{
+	protected function _removeXss($val) {
 		// remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
 		// this prevents some character re-spacing such as <java\0script>
 		// note that you have to handle splits with \n, \r, and \t later since they *are* allowed in some inputs
@@ -179,8 +145,7 @@ class Input
 		$search .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$search .= '1234567890!@#$%^&*()';
 		$search .= '~`";:?+/={}[]-_|\'\\';
-		for ($i = 0; $i < strlen($search); $i++)
-			{
+		for ($i = 0; $i < strlen($search); $i++) {
 			// ;? matches the ;, which is optional
 			// 0{0,7} matches any padded zeros, which are optional and go up to 8 chars
 
@@ -188,7 +153,7 @@ class Input
 			$val = preg_replace('/(&#[xX]0{0,8}'.dechex(ord($search[$i])).';?)/i', $search[$i], $val); // with a ;
 			// &#00064 @ 0{0,7} matches '0' zero to seven times
 			$val = preg_replace('/(&#0{0,8}'.ord($search[$i]).';?)/', $search[$i], $val); // with a ;
-			}
+		}
 
 		// now the only remaining whitespace attacks are \t, \n, and \r
 		$ra1 = Array('javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'style', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound', 'title', 'base');
@@ -196,35 +161,29 @@ class Input
 		$ra = array_merge($ra1, $ra2);
 
 		$found = true; // keep replacing as long as the previous round replaced something
-		while ($found == true)
-			{
+		while ($found == true) {
 			$val_before = $val;
-			for ($i = 0; $i < sizeof($ra); $i++)
-				{
+			for ($i = 0; $i < sizeof($ra); $i++) {
 				$pattern = '/';
-				for ($j = 0; $j < strlen($ra[$i]); $j++)
-					{
-					if ($j > 0)
-						{
+				for ($j = 0; $j < strlen($ra[$i]); $j++) {
+					if ($j > 0) {
 						$pattern .= '(';
 						$pattern .= '(&#[xX]0{0,8}([9ab]);)';
 						$pattern .= '|';
 						$pattern .= '|(&#0{0,8}([9|10|13]);)';
 						$pattern .= ')*';
-						}
-					$pattern .= $ra[$i][$j];
 					}
+					$pattern .= $ra[$i][$j];
+				}
 				$pattern .= '/i';
 				$replacement = substr($ra[$i], 0, 2).'<x>'.substr($ra[$i], 2); // add in <> to nerf the tag
 				$val = preg_replace($pattern, $replacement, $val); // filter out the hex tags
-				if ($val_before == $val)
-					{
+				if ($val_before == $val) {
 					// no replacements were made, so exit the loop
 					$found = false;
-					}
 				}
 			}
+		}
 		return $val;
-		} 	
-
-	}
+	} 	
+}
