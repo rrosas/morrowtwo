@@ -21,25 +21,19 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
-
-
-
 /*
-This class is the base controller which will get extended
+This class allows lazy loading and registers classes as members
+Will be used by the controller and may be used by other classes for example models
 */
 
-class Controller
-	{
+class Loader {
 	private $_params = array();
 	
-	public function __construct()
-		{
+	public function __construct() {
 		$this->load('page');
-		}
+	}
 
-	protected function load($params)
-		{
+	protected function load($params) {
 		// get arguments
 		$factory_args = func_get_args();
 
@@ -50,20 +44,18 @@ class Controller
 		
 		// save params for later
 		$this->_params[$instancename] = $factory_args;
-		}
+	}
 
-	public function __get($instancename)
-		{
+	public function __get($instancename) {
 		return $this->_load($instancename);
-		}
+	}
 
-	private function _load($instancename)
-		{
+	private function _load($instancename) {
 		// get arguments
 		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array( $instancename ) ;
 		
 		// assign the new class
 		$this->$instancename = call_user_func_array( array('Factory','load'), $factory_args );
 		return $this->$instancename;
-		}
 	}
+}

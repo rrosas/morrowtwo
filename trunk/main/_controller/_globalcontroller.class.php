@@ -1,6 +1,6 @@
 <?php
 
-class GlobalController extends Controller {
+class GlobalController extends Loader {
 	public function setup() {
 		$this->view->setHandler('serpent');
 	}
