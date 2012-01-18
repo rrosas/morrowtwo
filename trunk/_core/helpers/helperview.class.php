@@ -50,10 +50,16 @@ class HelperView
 		{
 		if (empty($text)) $text = $address;
 		$address = str_replace('@', '--', $address);
-		$link = '<a href="mailto:'.$address.'" '.$html.' rel="nofollow">'.htmlspecialchars($text).'</a>';
-		$returner = '<script type="text/javascript">/* <![CDATA[ */'."\n";
-		$returner .= 'document.write("'.str_replace('"', '\"', strrev($link) ).'".split("").reverse().join("").replace(/--/g, "@"));'."\n";
-		$returner .= '/* ]]> */</script>';
+		$id = uniqid('scrambled_');
+		
+		$link = '<a href="mailto:'.$address.'" '.$html.' rel="nofollow">'.$text.'</a>';
+		$link = str_replace('"', '\"', strrev($link));
+		
+		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
+		$returner .= '<script>';
+		$returner .= 'var el = document.getElementById("'.$id.'");';
+		$returner .= 'el.innerHTML = el.textContent.split("").reverse().join("").replace(/--/g, "@");';
+		$returner .= '</script>';
 		return $returner;
 		}
 
