@@ -62,8 +62,9 @@ class FormElementSet extends FormElement{
 		$this->options = $values;
 	}
 	public function addGroups($values){
-		if(count($this->groups)>0) $this->groups = array_merge(array_combine($this->options,$this->output),$values);
-		else $this->groups = array_merge($this->groups,$values);
+		foreach ($values as $k=>$v) {
+			$this->groups[$k] = $v;
+		}
 	}
 	public function addOptions($values){
 		$this->options = array_merge($this->options,$values);
