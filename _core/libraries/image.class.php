@@ -295,7 +295,7 @@ class Image {
 		}
 		
 		// if there is a cache file return it
-		if (file_exists($filename)) {
+		if (file_exists($filename) && (!isset($params['dev']) || $params['dev'] == false)) {
 			if ($return_ressource) return $this->load($filename);
 			else return $filename;
 		}
@@ -424,6 +424,11 @@ class Image {
 			$_TMP['width'] = round($_DST['width']*4);
 			$_TMP['height'] = round($_DST['height']*4);
 			$_TMP['image'] = imagecreatetruecolor($_TMP['width'], $_TMP['height']);
+			
+			// preserve image transparancy
+			imagealphablending($_TMP['image'], false);
+			imagesavealpha($_TMP['image'],true);
+
 			imagecopyresized($_TMP['image'], $_SRC['image'], 0, 0, $_DST['offset_w'], $_DST['offset_h'], $_TMP['width'], $_TMP['height'], $_SRC['width'], $_SRC['height']);
 			$_SRC['image'] = $_TMP['image'];
 			$_SRC['width'] = $_TMP['width'];
@@ -437,6 +442,11 @@ class Image {
 
 		// create destination image
 		$_DST['image'] = imagecreatetruecolor($_DST['width'], $_DST['height']);
+
+		// preserve image transparancy
+		imagealphablending($_DST['image'], false);
+		imagesavealpha($_DST['image'],true);
+
 		imagefill($_DST['image'], 0, 0, imagecolorallocate ($_DST['image'], 255, 255, 255));
 		imagecopyresampled($_DST['image'], $_SRC['image'], 0, 0, $_DST['offset_w'], $_DST['offset_h'], $_DST['width'], $_DST['height'], $_SRC['width'], $_SRC['height']);
 		
