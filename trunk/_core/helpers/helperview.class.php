@@ -46,15 +46,14 @@ class HelperView
 		return $buffer;
 		}
 		
-	public static function mailto($address, $text = '', $html = '')
+	public static function mailto($address, $text = '', $html = null)
 		{
 		if (empty($text)) $text = $address;
 		$address = str_replace('@', '--', $address);
 		$id = uniqid('scrambled_');
-		
+
 		$link = '<a href="mailto:'.$address.'" '.$html.' rel="nofollow">'.$text.'</a>';
-		$link = str_replace('"', '\"', strrev($link));
-		
+		$link = strrev($link);
 		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
 		$returner .= '<script>';
 		$returner .= 'var el = document.getElementById("'.$id.'");';
@@ -67,10 +66,15 @@ class HelperView
 	public static function hidelink($url, $text = '', $html = '')
 		{
 		if (empty($text)) $text = $url;
+		$id = uniqid('scrambled_');
 		$link = '<a href="'.$url.'" '.$html.' rel="nofollow">'.htmlspecialchars($text).'</a>';
-		$returner = '<script type="text/javascript">/* <![CDATA[ */'."\n";
-		$returner .= 'document.write("'.str_replace('"', '\"', strrev($link) ).'".split("").reverse().join("").replace(/--/g, "@"));'."\n";
-		$returner .= '/* ]]> */</script>';
+		$link = strrev($link);
+		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
+		$returner .= '<script>';
+		$returner .= 'var el = document.getElementById("'.$id.'");';
+		$returner .= 'var content = el.textContent ? el.textContent : el.innerText;'; // innerText = IE
+		$returner .= 'el.innerHTML = content.split("").reverse().join("");';
+		$returner .= '</script>';
 		return $returner;
 		}
 
