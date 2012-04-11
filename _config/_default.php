@@ -11,9 +11,10 @@ $config['projects'] = array('main');
 $config['locale.timezone']     = 'Europe/Berlin';
 
 // debug
-$config['debug.screen']  		= true;
-$config['debug.flatfile']		= false;
-$config['debug.die_on_error']	= true;
+$config['debug.output.screen']  = true;
+$config['debug.output.headers']	= true;
+$config['debug.output.flatfile']= false;
+$config['debug.password']		= 'password';
 
 // session
 $config['session.lifetime']		= 0; // Lifetime of the session cookie, defined in seconds.

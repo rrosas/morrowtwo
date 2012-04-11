@@ -35,6 +35,9 @@ class Debug {
 	protected $errorcounter = 0;
 	protected $errortype;
 	
+	// this variable stores the actual count of sent http debug headers
+	protected $x_debug_count = 0; 
+	
 	public function __construct() {
 		// read config from config class
 		$config = Factory::load('config');
@@ -58,7 +61,7 @@ class Debug {
 		$this->errortype[16384]	= 'E_USER_DEPRECATED';
 	}
 
-	private function errorhandler_file($errstr, $backtrace, $errorcode) {
+	protected function errorhandler_file($errstr, $backtrace, $errorcode) {
 		$fn = FW_PATH.'/_logs/'.date("y-m-d").'.txt';
 
 		$body  = '############################## '.$errorcode."\n";
@@ -78,16 +81,12 @@ class Debug {
 
 		file_put_contents($fn, $body, FILE_APPEND);
 	}
-
-	protected function errorhandler_screen($errstr, $backtrace, $errordescription) {
-		// output css and js only at first call
-		if ($this->errorcounter === 1) echo $this->errorhandler_screen_header();
-
+	
+	protected function errorhandler_output($errstr, $backtrace, $errordescription) {
 		// output error
-		$error  = '<div class="errorhandler">';
-		$error .= '<div class="box">';
+		$error = '<div class="dp_container">';
 		$error .= '<div class="skyline">'.$errordescription.'</div>';
-		$error .= '<div class="headline">'.$errstr.'</div><br />';
+		$error .= '<h1 class="exception">'.$errstr.'</h1>';
 
 		$count = 0;
 		foreach ($backtrace as $key=>$value) {
@@ -99,60 +98,96 @@ class Debug {
 
 				if ($count>0) {
 					$call = $value['class'].$value['type'].$value['function'].'()';
-					$error .= '<div class="filename">'.$call.'</div>';
-				}
-
-				if (count($value['args'])>0 and $count > 0) {
-					$dump = $this->dump($value['args']);
-					$error .= '<a href="#" onclick="errorhandler_toggle(\''.$id_args.'\'); return false;">&raquo; Arguments ('.count($value['args']).')</a>';
-					$error .= '<div class="args" id="'.$id_args.'" style="display: none;">'.$dump.'</div>';
+					$error .= '<h2>'.$call.'</h2>';
 				}
 
 				// highlight the file name
 				$file = preg_replace('=[^/]+$=', '<strong>$0</strong>', $value['file']);
 				
-				$error .= '<a href="#" onclick="errorhandler_toggle(\''.$id_file.'\'); return false;">&raquo; '.$file.' (Line '.$value['line'].')</a>';
+				$error .= '<h3>'.$file.' (Line '.$value['line'].')</h3>';
 				$error .= '<div class="file" id="'.$id_file.'" '.$show.'>'.$this->getContent($value['file'], $value['line']).'<div style="clear: both;"></div></div>';
+
+				if (count($value['args'])>0 and $count > 0) {
+					$dump = htmlspecialchars(print_r($value['args'], true));
+					$error .= '<h3>Arguments ('.count($value['args']).')</h3>';
+					$error .= '<div class="args" id="'.$id_args.'">'.$dump.'</div>';
+				}
 
 				$count++;
 			}
 		}
 
 		$error .= '</div>';
-		$error .= '</div>'."\n";
 
-		echo $error;		
+		// output css and js only at first call
+		if ($this->errorcounter === 1) $error .= $this->debug_styles();
+
+		return $error;
 	}
-		
-	protected function errorhandler_screen_header() {
+	
+	protected function debug_styles() {
 		return '
-			<style type="text/css">
-			.errorhandler { color: #333; }
-			.errorhandler .lineerror { background-color: #fdd; display: inline; }
-			.errorhandler .box { background-color: #f3f3f3; padding: 10px; margin: 10px; border: 1px solid #ccc; font: normal 11px/14px Verdana,Arial,Helvetica; }
-			.errorhandler .file { display: none; padding: 2px; margin: 1px 0px 10px 0px; background-color: #fff; border: 1px solid #999; font-family: Courier New; overflow: hidden; }
-			.errorhandler .args { display: none; padding: 2px; margin: 1px 0px 10px 0px; background-color: #fff; border: 1px solid #999; font-family: Courier New; overflow: hidden; white-space: pre; }
-			.errorhandler .skyline { float: right; padding: 4px 5px 2px 5px; color: #fff; font-size: 9px; }
-			.errorhandler .headline { background-color: #c44; padding: 4px 5px 4px 5px; color: #fff; font-weight: bold; font-size: 13px; line-height: 16px; }
-			.errorhandler .filename { background-color: #ddd; margin: 10px 0px 2px 0px; padding: 4px 5px 4px 5px; font-weight: bold; font-size: 13px; }
-			.errorhandler ol { background-color: #eee; margin-top: 0; margin-bottom: 1px; }
-			.errorhandler ol li { background-color: #fff; padding: 0px 0px 0px 5px; margin: 0; }
-			.errorhandler ol li code { margin: 0; padding: 0; background: none; border: 0px; display: inline; }
-			.errorhandler a { display: block; text-decoration: none; color: #333; font-weight: normal; padding: 1px 0px 1px 10px; }
-			.errorhandler .headline a { color: #fff; }
-			</style>
+			<style>
+			// css reset
+			.dp_container,
+			.dp_container .lineerror,
+			.dp_container .file,
+			.dp_container .args,
+			.dp_container .skyline,
+			
+			.dp_container h1,
+			.dp_container h2,
+			.dp_container h3,
+			
+			.dp_container ol,
+			.dp_container ol li,
+			.dp_container ol li code { 
+				margin: 0 !important;
+				padding: 0 !important;
+				border: 0 !important;
+				font-size: 100% !important;
+				font: inherit !important;
+				vertical-align: baseline !important;
+				line-height: 100% !important;
+				list-style: none !important;
+			}
+			
+			.dp_container { font-size: 11px; color: #333; background: #f3f3f3; font: normal 11px/14px Verdana,sans-serif; }
+			.dp_container .lineerror { background: #fdd; display: inline; }
+			.dp_container .file { font: normal 12px/16px "Courier New"; margin: 1px 0px 10px 0px; background: #fff; border: 1px solid #999; border-left: 0; border-right: 0; overflow: hidden; }
+			.dp_container .args { font: normal 12px/16px "Courier New"; padding: 2px 5px; margin: 1px 0px 10px 0px; background: #fff; border: 1px solid #999; border-left: 0; border-right: 0; overflow: hidden; white-space: pre; }
+			.dp_container .skyline { float: right; padding: 4px 5px 2px 5px; color: #fff; font-size: 9px; }
 
-			<script type="text/javascript">
-			function errorhandler_toggle(id)
-				{
-				id = document.getElementById(id);
-				if (id.style.display == "block") id.style.display = "none";
-				else id.style.display = "block";
-				}
-			</script>
+			.dp_container h1 { margin: 0 0 10px 0; padding: 4px 5px; color: #fff; font: bold 13px/16px Verdana,sans-serif; }
+			.dp_container h1.exception { background: #c44; }
+			.dp_container h1.dump { background: #06c; }
+			.dp_container h2 { background: #ddd; margin: 10px 0px 2px 0px; padding: 4px 5px; font: bold 13px/16px Verdana,sans-serif; }
+			.dp_container h3 { margin: 0; padding: 4px 5px; font: normal 11px/14px Verdana,sans-serif; }
+
+			.dp_container ol { background: #eee; margin-top: 0; margin-bottom: 1px; }
+			.dp_container ol li { background: #fff; padding: 0px 0px 0px 5px; }
+			.dp_container ol li code { background: none; display: inline; }
+			</style>
 		';
 	}
+	
+	protected function _output_http_headers($content) {
+		// we need this client header to proceed
+		if (!isset($_SERVER['HTTP_X_DEBUG_REQUEST']) || $_SERVER['HTTP_X_DEBUG_REQUEST'] != $this->config['password']) {
+			header('X-Debug-Indicator: MorrowTwo');
+			return;
+		}
 		
+		$content = str_split($content, 5000);
+		foreach ($content as $i=>$c) {
+			$c = base64_encode($c);
+			header('X-Debug-'.($this->x_debug_count+$i).': '.$c);
+		}
+
+		$this->x_debug_count += count($content);
+		header('X-Debug-Count: '.$this->x_debug_count);
+	}
+	
 	public function errorhandler($exception) {
 		$errstr = $exception->getMessage();
 		$errcode = $exception->getCode();
@@ -192,14 +227,22 @@ class Debug {
 		elseif ($errcode == 0) $errordescription = 'EXCEPTION';
 		else $errordescription = 'EXCEPTION (Code '.$errcode.')';
 
-		// show error on screen (default = 1)
-		if (!isset($this->config['screen']) OR $this->config['screen'] == true)
-			$this->errorhandler_screen($errstr, $backtrace, $errordescription);
+		// show error in firefox panel
+		if (isset($this->config['output']['headers']) && $this->config['output']['headers'] == true) {
+			$error = $this->errorhandler_output($errstr, $backtrace, $errordescription);
+			$this->_output_http_headers($error);
+		}
 
-		// log error in flatfile (default = 0)
-		if (isset($this->config['flatfile']) && $this->config['flatfile'] == 1)
+		// show error on screen
+		if (!isset($this->config['output']['screen']) OR $this->config['output']['screen'] == true) {
+			$error = $this->errorhandler_output($errstr, $backtrace, $errordescription);
+			echo $error;
+		}
+
+		// log error in flatfile
+		if (isset($this->config['output']['flatfile']) && $this->config['output']['flatfile'] == true)
 			$this->errorhandler_file($errstr, $backtrace, $errordescription);
-		
+
 		return;
 	}
 
@@ -231,9 +274,6 @@ class Debug {
 	/* main method
 	********************************************************************************************/
 	public function dump($input) {
-		// show error on screen (default = 1)
-		if (isset($this->config['screen']) && $this->config['screen'] == false) return;
-		
 		// get function call position
 		$backtrace = debug_backtrace();
 		$backtrace = $backtrace[1];
@@ -246,11 +286,33 @@ class Debug {
 
 		$output = '';
 		foreach ($input as $arg) {
+			// count errors to produce unique ids
+			$this->errorcounter++;
+
 			// create headline
-			$headline = '<b>'.$function.'</b><br />called in <b>'.$backtrace['file'].'</b> on line <b>'.$backtrace['line'].'</b>';
-			$output .= $this->dump_php($arg, $headline);
+			$output .= '<div class="dp_container">';
+			$output .= '<h1 class="dump">'.htmlspecialchars($function).'</h1>';
+
+			// highlight the file name
+			$file = preg_replace('=[^/]+$=', '<strong>$0</strong>', $backtrace['file']);
+			$output .= '<h3>'.$file.' (Line '.$backtrace['line'].')</h3>';
+
+			// add var content
+			$output .= $this->dump_php($arg);
+			$output .= '</div>';
+			
+			// add styles
+			$output .= $this->debug_styles();
 		}
 		
+		// output to debug console
+		if (isset($this->config['output']['headers']) && $this->config['output']['headers'] == true) {
+			$this->_output_http_headers($output);
+		}		
+
+		// output to screen		
+		if (isset($this->config['output']['screen']) && $this->config['output']['screen'] == false) return '';
+
 		return $output;
 	}
 
@@ -259,7 +321,7 @@ class Debug {
 	// Inspired from:     PHP.net Contributions
 	// Description: Helps with php debugging
 
-	protected function dump_php(&$var, $info = FALSE) {
+	protected function dump_php(&$var) {
 		$scope = false;
 		$prefix = 'unique';
 		$suffix = 'value';
@@ -272,10 +334,9 @@ class Debug {
 		foreach($vals as $key => $val) if($val === $new) $vname = $key;
 		$var = $old;
 
-		$output = "<pre style='margin: 0px 0px 10px 0px; display: block; background: white; color: black; font: normal 12px/15px \"Courier New\"; border: 1px solid #cccccc; padding: 5px;'>";
-		if($info != FALSE) $output .= "<b style='color: red;'>$info:</b><br />";
+		$output = '<div class="args">';
 		$output .= $this->dump_php_recursive($var, '$'.$vname);
-		$output .= "</pre>";
+		$output .= "</div>";
 		
 		return $output;
 	}
