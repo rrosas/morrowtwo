@@ -155,7 +155,7 @@
 		$global = $path . '_tree.php';
 		if(is_file($global)){
 			include($global);
-			foreach($_TREE as $branch){
+			foreach($tree as $branch){
 				if(isset($branch[$alias])) return true;
 			}
 		}
