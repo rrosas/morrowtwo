@@ -41,3 +41,6 @@ DirectoryIndex index.php
 	AddOutputFilterByType DEFLATE text/css text/javascript application/x-javascript
 </IfModule>
 
+<IfModule mod_headers.c>
+	Header set X-UA-Compatible "IE=edge,chrome=1"
+</IfModule>
