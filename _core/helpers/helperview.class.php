@@ -96,8 +96,16 @@ class HelperView
 
 	public static function thumb($filepath, $params = array())
 		{
-		$path = Factory::load('image')->get($filepath, $params);
-		$path = str_replace(FW_PATH, '', $path);
+		try {
+			$path = Factory::load('image')->get($filepath, $params);
+			$path = str_replace(FW_PATH, '', $path);
+		} catch (Exception $e) {
+			if (!isset($params['width'])) $params['width'] = 100;
+			if (!isset($params['height'])) $params['height'] = $params['width'];
+			
+			$text = 'Bild fehlt.';
+			$path = 'http://dummyimage.com/'.urlencode($params['width']).'x'.urlencode($params['height']).'/&text='.rawurlencode($text);
+		}
 		return $path;
 		}
 	
