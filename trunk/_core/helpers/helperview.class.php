@@ -100,11 +100,16 @@ class HelperView
 			$path = Factory::load('image')->get($filepath, $params);
 			$path = str_replace(FW_PATH, '', $path);
 		} catch (Exception $e) {
-			if (!isset($params['width'])) $params['width'] = 100;
-			if (!isset($params['height'])) $params['height'] = $params['width'];
-			
-			$text = 'Bild fehlt.';
-			$path = 'http://dummyimage.com/'.urlencode($params['width']).'x'.urlencode($params['height']).'/&text='.rawurlencode($text);
+			if (isset($params['fallback'])) {
+				$path = Factory::load('image')->get($params['fallback'], $params);
+				$path = str_replace(FW_PATH, '', $path);
+			} else {
+				if (!isset($params['width'])) $params['width'] = 100;
+				if (!isset($params['height'])) $params['height'] = $params['width'];
+
+				$text = 'Bild fehlt.';
+				$path = 'http://dummyimage.com/'.urlencode($params['width']).'x'.urlencode($params['height']).'/&text='.rawurlencode($text);
+			}
 		}
 		return $path;
 		}
