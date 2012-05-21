@@ -186,7 +186,7 @@ class Serpent
 		file_put_contents($compiled_tpl, $compiled);
 		
 		// clean compiled template
-		file_put_contents($compiled_tpl, $compiled_tpl);
+		file_put_contents($compiled_tpl, file_get_contents($compiled_tpl));
 		
 		// touch it to synch the mtime of the original and the compiled template
 		touch($compiled_tpl, $timestamp);
