@@ -29,7 +29,10 @@ class Http {
 	
 	public function init($ch) {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		try {
+			// CURLOPT_FOLLOWLOCATION cannot be activated when in safe_mode or an open_basedir is set
+			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		} catch (Exception $e) {}
 		curl_setopt($ch, CURLOPT_HEADER, true);
 		curl_setopt($ch, CURLOPT_HTTPGET, true);
 		curl_setopt($ch, CURLOPT_ENCODING , "gzip");
