@@ -60,7 +60,7 @@ class formhtmlelementGroup extends formhtmlelement{
 			#radios
 			else{
 				$opt_id = "mw_" . $idname . "_" . $cnt++;
-				if($values == $ov) $checked = ' checked="checked"';
+				if(!is_null($values) && $values == $ov) $checked = ' checked="checked"';
 			}
 			$label = "<label for=\"" . $opt_id . "\">" . htmlspecialchars($output[$ok]) . "</label>";
 			$content .= $separator_start;
