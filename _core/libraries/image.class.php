@@ -201,6 +201,7 @@ class Image {
 		$cache_params_filename = $this->cache_dir . $cache_filename . '_params';
 		
 		if (!file_exists($cache_params_filename)) return false;
+		
 		$data = unserialize( file_get_contents( $cache_params_filename ));
 		unlink( $cache_params_filename );
 		return $data;
@@ -211,7 +212,9 @@ class Image {
 		$params['density'] = '96';
 		$params['strip'] = '';
 		$params['thumbnail'] = '"1000x1000"';
-		$params['gravity'] = 'center';
+		$params['fill'] = '"#999"';
+		$params['font'] = 'Arial';
+		$params['pointsize '] = '60';
 
 		// create parameters from $_GET
 		foreach ($params as $key=>$value) $params[$key] = "-$key $value";
