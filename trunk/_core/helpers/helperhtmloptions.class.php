@@ -26,15 +26,10 @@
 class HelperHtmlOptions{
 
 	static public function getOutput($name, $options, $output, $selected = array(), $class='',$style = array(), $classes = array(), $extras = array()){
-
 		$_html_result = '';
 
-		#make sure selected is an array
 		if(!is_array($selected)) $selected = array_map('strval', array_values((array)$selected));
 
-
-
-		#HelperString::htmlSpecialChars($string);
 		foreach ($options as $_key=>$opt_name) {
 			$opt_value = $output[$_key];
 
@@ -46,22 +41,21 @@ class HelperHtmlOptions{
 			$_html_result .= HelperHtmlOptions::getOption($opt_name, $opt_value, $selected, $ostyle, $class);
 		}
 
+		//die();
 		#add extras
 		$extra_str = '';
 		foreach($extras as $_key => $_value){
 			$extra_str .= ' '.$_key.'="'.HelperString::htmlSpecialChars($_value).'"';
-
 		}
 
 		if(!empty($name)) {
 			$_html_result = '<select name="' . $name . '"' . $extra_str . '>' . chr(10) . $_html_result . '</select>' . "\n";
-                }
+		}
 		return $_html_result;
 	}
 
 
 	static public function getOption($key, $value, $selected, $stylevalue, $classall, $classvalue = ''){
-
 	 	if(!is_array($value)) {
 			$_html_result = '<option class="' .HelperString::htmlSpecialChars($classall).' '.HelperString::htmlSpecialChars($classvalue)
 				.'" style="' .HelperString::htmlSpecialChars($stylevalue)
@@ -69,12 +63,10 @@ class HelperHtmlOptions{
 				.'" value="' .HelperString::htmlSpecialChars($key) . '"';
 			if (in_array((string)$key, $selected))
 				$_html_result .= ' selected="selected"';
-
-			$_html_result .= '>' . HelperString::htmlSpecialChars($value) . '</option>' . chr(10);
-                }
-		else {
-			$_html_result = HelperHtmlOptions::getOptGroup($key, $value, $selected, $stylevalue, $classall, $classvalue);
-                }
+				$_html_result .= '>' . HelperString::htmlSpecialChars($value) . '</option>' . chr(10);
+			} else {
+				$_html_result = HelperHtmlOptions::getOptGroup($key, $value, $selected, $stylevalue, $classall, $classvalue);
+			}
 		return $_html_result;
 
 	}
