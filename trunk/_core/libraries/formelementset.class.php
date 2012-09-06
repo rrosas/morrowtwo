@@ -26,11 +26,8 @@
 
 class FormElementSet extends FormElement{
 	public $type = "set";
-	public $output = array();
 	public $options = array();
-	public $groups = array();
 	public $multiple = false;
-
 
 	public function setDefault($value){
 		if(!isset($value)) {
@@ -43,29 +40,14 @@ class FormElementSet extends FormElement{
 		#$this->checktype = null;
 	}
 
-	public function getOutput(){
-		return $this->output;
-	}
-	public function setOutput($values){
-		$this->output = $values;
-	}
-	public function setGroups($values){
-		$this->groups = $values;
-	}
-	public function addOutput($values){
-		$this->output = array_merge($this->output,$values);
-	}
 	public function getOptions(){
 		return $this->options;
 	}
+	
 	public function setOptions($values){
 		$this->options = $values;
 	}
-	public function addGroups($values){
-		foreach ($values as $k=>$v) {
-			$this->groups[$k] = $v;
-		}
-	}
+	
 	public function addOptions($values){
 		$this->options = array_merge($this->options,$values);
 	}
@@ -97,24 +79,36 @@ class FormElementSet extends FormElement{
 
 	}
 
+	protected function _getKeysRecursive($array) {
+		$returner = array();
+		
+		foreach ($array as $key=>$value) {
+			if (is_array($value)) $returner = array_merge($returner, $this->_getKeysRecursive($value));
+			else $returner[] = $key;
+		}
+		
+		return $returner;
+	}
+	
 	public function validate($formname, $validator_class = 'validator'){
-		/*remove values that have been set but are not in options */
+		$options_to_check = $this->_getKeysRecursive($this->options);
+		
+		// remove values that have been set but are not in options
 		if(is_array($this->value)){
 			foreach($this->value as $idx=>$item){
-				if(!in_array($item, $this->options)){
+				if(!in_array($item, $options_to_check)){
 					unset($this->value[$idx]);
 				}
 			}
 		}
-		else if(!in_array($this->value, $this->options)){
+		else if(!in_array($this->value, $options_to_check)){
 			$this->value = '';
 		}
 	
-
 		if($this->multiple) {
 			$this->comparefield = null;
 			if($this->required && (!is_array($this->value) || count($this->value) == 0)){
-				$this->setError("MISSING");
+				$this->setError(Factory::load('language')->_('This field is required.'));
 				return false;
 			}
 			return true;

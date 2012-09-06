@@ -19,115 +19,146 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
+/*
 
+ToDo:
+Rename _i18n to _languages
+Müssen die Sprachen im CMS tatsächlich anders genannt werden?
+Steuerdatei in Sprachverzeichnis kopieren, damit man einfach Sprachen reinwerfen kann (gut z.B. fürs CMS)
 
+de/forms.php
+de/i18n.php
+de/l10n.php // Haupt-Einstellungen
+de/tree.php
 
-	class Language{
-		private $language = null;
-		private $default = null;
-		private $possible = array();
-		private $content_path = null;
-		private $locale = array();
-		private $content = array();
+*/
+ 
 
-		public function __construct($settings){
-			$required = array("possible","content_path");
-			if(count(array_diff($required, array_keys($settings))) > 0){
-				user_error("Missing key(s). Required params are : " . implode(", ",$required));
-				return;
-			}
-			if(!is_array($settings['possible'])){
-				$settings['default'] = $settings['possible'];
-				$settings['possible'] = array($settings['default']);
-			}
-			else{
-				$settings['default'] = $settings['possible'][0];
-			}
-			
-			$this->default = $settings['default'];
-			$this->possible = $settings['possible'];
-			$this->content_path = HelperFile::cleanPath($settings['content_path']);
-			
-			#more tests
-			if(!is_dir($this->content_path)){
-				user_error('Content path ' . $this->content_path . ' does not exist');
-				return;
-			}
-			
-			if(!$this->isValid($this->default)) {
-				user_error("Default language is not a valid language. Check that the following file exists: " . $this->content_path . $this->default . '.php');
-				return;
-			}
-						
-			foreach($this->possible as $pos) {
-				if(!$this->isValid($pos)){
-					user_error($pos . " is not a valid language. Missing File: " . $this->content_path . $pos . '.php');
-					return;
-				}
-			}
-			
-			//language was provided
-			if(isset($settings['language']) && $this->isValid($settings['language'])){
-				$this -> language = $settings['language'];
-			}
-			
-			
-			
-			#still not defined: default
-			if($this->language == null) $this->language = $this->default;
+class Language {
+	protected $language = null;
+	protected $default = null;
+	protected $possible = array();
+	protected $language_path = null;
+	protected $locale = null;
+	protected $content = null;
+	protected $i18n_checked = false;
+	protected $i18n_path = null;
+
+	public function __construct($settings){
+		// check for required setting keys
+		$required = array("possible", "language_path", "i18n_path");
+		if(count(array_diff($required, array_keys($settings))) > 0){
+			throw new Exception("Missing key(s). Required params are : " . implode(", ",$required));
+		}
+		if(!is_array($settings['possible'])) {
+			$settings['default'] = $settings['possible'];
+			$settings['possible'] = array($settings['default']);
+		} else {
+			$settings['default'] = $settings['possible'][0];
 		}
 
-		public function set($lang = null){
-			if($this->isValid($lang)){
-				$this->language = $lang;
-				#clear content because language has changed
-				$this->content = array();
-				return true;
+		// set default parameters
+		$this->default = $settings['default'];
+		$this->possible = $settings['possible'];
+		$this->language_path = HelperFile::cleanPath($settings['language_path']);
+		$this->i18n_path = $settings['i18n_path'];
+		
+		// check if there is a valid language file for the possible languages
+		foreach($this->possible as $pos) {
+			if(!$this->isValid($pos)){
+				throw new Exception($pos . " is not a valid language. Missing File: " . $this->language_path . $pos . '/l10n.php');
 			}
-			return false;
-		}
-
-		public function get(){
-			if($this->language == null) return $this->default;
-			return $this->language;
-		}
-
-
-	public function isValid($lang){
-		return (in_array($lang, $this -> possible) && is_file($this->content_path . $lang . '.php'));
-	}
-
-	public function getContent($alias){
-		$ccontent = array();
-		if(!isset($this->content['_global'])){
-			$file = $this->content_path . $this->get() . '/_global.php';
-			$this->content['_global'] = $this->_getContent($file,'content');
-		}
-		if(isset($this->content[$alias])) {
-			$ccontent = $this->content[$alias];
-		}	
-		else{
-			$file = $this->content_path . $this->get() . '/' . $alias . '.php';
-			$ccontent = $this->_getContent($file,'content');
-			$this->content[$alias] = $ccontent;
 		}
 		
-		return array_merge($this->content['_global'], $ccontent);
-	}
-	
-	public function getFormContent($alias){
-		$file = $this->content_path . $this->get() . '/_global.php';
-		$gform = $this->_getContent($file,'form');
-		$file = $this->content_path . $this->get() . '/' . $alias . '.php';
-		$cform = $this->_getContent($file,'form');
-		return array_merge($gform, $cform);
-	}
-	
-	public function getTree(){
-		$file = $this->content_path . $this->get() . '/_tree.php';
-		return $this->_getContent($file,'tree');
+		// language was provided
+		if(isset($settings['language']) && $this->isValid($settings['language'])){
+			$this->language = $settings['language'];
+		}
+		
+		// still not defined: default
+		if($this->language == null) $this->language = $this->default;
+
+		// now load l10n
+		$this->locale = $this->getLocale();
 	}
 
+	public function set($lang = null){
+		if($this->isValid($lang)){
+			$this->language = $lang;
+			$this->locale = $this->getLocale();
+
+			// clear content because language has changed
+			$this->content = array();
+			return true;
+		}
+		return false;
+	}
+
+	public function get(){
+		return $this->language;
+	}
+
+	public function getPossible(){
+		return $this->possible;
+	}
+
+	public function getDefault(){
+		return $this->default;
+	}
+
+	public function isValid($lang){
+		return in_array($lang, $this->possible);
+	}
+
+	public function getConfig($lang = null){
+		if(is_null($lang)) $lang = $this->get();
+
+		$file = $this->language_path . $lang . '/l10n.php';
+		$config = $this->_loadFile($file);
+		return $config;
+	}
+
+	public function getContent(){
+		if ($this->content == null){
+			$file = $this->language_path . $this->language . '/i18n.php';
+			$this->content = $this->_loadFile($file, false);
+		}
+
+		return $this->content;
+	}
+
+	public function getFormContent(){
+		$file = $this->language_path . $this->get() . '/forms.php';
+		return $this->_loadFile($file);
+	}
+
+	public function getTree(){
+		$file = $this->language_path . $this->get() . '/tree.php';
+		return $this->_loadFile($file);
+	}
+
+	protected function _loadFile($file, $dotSyntaxExplode = true){
+		if(!is_file($file)) return array();
+		if ($dotSyntaxExplode) return HelperArray::dotSyntaxExplode(include($file));
+		return include($file);
+	}
+
+	public function getLocale($lang = null) {
+		if ($lang == null) $lang = $this->language;
+		if ($lang == $this->language && $this->locale != null) return $this->locale;
+
+		$file = $this->language_path . $lang . '/l10n.php';
+		$locale = $this->_loadFile($file);
+		return $locale;
+	}
+
+	public function setLocale() {
+		if (!setlocale(LC_TIME, $this->locale['keys'])){
+			exec('locale -a', $locales);
+			$locales = implode("<br />", $locales);
+			throw new Exception(__METHOD__.'<br>setLocale() failed. These are the locales installed on this system:<br />'.$locales);
+		}
+	}
 
 	public function getTranslations($alias){
 		$translations = array();
@@ -142,16 +173,9 @@
 		return $translations;
 	}
 
-	public function getConfig($lang = null){
-		if(is_null($lang)) $lang = $this->get();
-		$file = $this->content_path . $lang . '.php';
-		$config = $this->_getContent($file,'config');
-		return $config;
-	}
-
 	public function translationExists($lang, $alias){
 		#where is tree?
-		$path = $this->content_path . $lang . '/';
+		$path = $this->language_path . $lang . '/';
 		$global = $path . '_tree.php';
 		if(is_file($global)){
 			include($global);
@@ -160,34 +184,6 @@
 			}
 		}
 		return false;
-	}
-	
-	private function _getContent($file, $key){
-		if(!is_file($file)) {
-			return array();
-		}
-		include($file);
-		if(!isset($$key)) return array();
-		return HelperArray::dotSyntaxExplode($$key);
-	}
-	
-	public function getLocale($lang = null) {
-		if (is_null($lang)) $lang = $this->get();
-		if (!isset($this->locale[$lang])) {
-			$file = $this->content_path . $lang . '.php';
-			$config = $this->_getContent($file,'config');
-			$this->locale[$lang] = $config;
-		}
-		return $this->locale[$lang];
-	}
-	public function setLocale(){
-		$lang = $this->get();
-		if (!isset($this->locale[$lang])) $this->getLocale();
-		if (!setlocale(LC_TIME, $this->locale[$lang]['keys'])){
-			exec('locale -a', $locales);
-			$locales = implode("<br />", $locales);
-			trigger_error(__METHOD__.'<br>setLocale() failed. These are the locales installed on this system:<br />'.$locales, E_USER_NOTICE);
-		}
 	}
 
 	/*
@@ -219,24 +215,14 @@
 		}
 	}
 
-	public function getPossible(){
-		return $this->possible;
-	}
+	/*
+		Parse the Accept-Language HTTP header sent by the browser. It
+		will return an array with the languages the user accepts, sorted
+		from most preferred to least preferred.
 
-	public function getDefault(){
-		return $this->default;
-	}
-
-
-	private function _getBrowserLanguages()
-		/**
-		* Parse the Accept-Language HTTP header sent by the browser. It
-		* will return an array with the languages the user accepts, sorted
-		* from most preferred to least preferred.
-		*
-		* @return  Array: key is the importance, value is the language code.
-		*/
-		{
+		@return  Array: key is the importance, value is the language code.
+	*/
+	protected function _getBrowserLanguages() {
 		$ayLang = array();
 		$aySeen = array();
 		if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
@@ -256,4 +242,107 @@
 			}
 		return $ayLang;
 		}
+
+	public function _($string) {
+		if ($this->language == $this->possible[0]) return $string;
+
+		// search in language file
+		if (isset($this->content[$string]) && !empty($this->content[$string])) {
+			return $this->content[$string];
+		}
+
+		// oh not found, better check all languages
+		if (!$this->i18n_checked) {
+			$this->check_language_files();
+		}
+
+		return $string;
 	}
+
+	public function check_language_files() {
+		$this->i18n_checked = true;
+
+		// search for all translation patterns
+		$files = array();
+		foreach ($this->i18n_path as $path) {
+			$files = array_merge($files, $this->_glob_recursive($path));
+		}
+		
+		$catalog = array();
+		foreach ($files as $file) {
+			$content = file_get_contents($file);
+
+			// handle double quotes
+			preg_match_all('-_\(("(\\\.|[^"])*")\)-', $content, $matches);
+			$catalog = array_merge($catalog, $matches[1]);
+
+			// handle single quotes
+			preg_match_all("-_\(('(\\\.|[^'])*')\)-", $content, $matches);
+			$catalog = array_merge($catalog, $matches[1]);
+		}
+
+		
+		// handle string escape sequences
+		foreach ($catalog as $i=>$v) {
+			eval("\$catalog[\$i] = ".$v.";");
+		}
+
+		$catalog = array_fill_keys($catalog, '');
+		ksort($catalog);
+
+		// check the difference between the catalog and the existing language files
+		foreach ($this->possible as $i=>$al) {
+			if ($i === 0) continue;
+
+			$path = $this->language_path . $al . '/i18n.php';
+			
+			$current = include($path);
+			// only keep not empty values
+			if (!is_array($current)) $current = array();
+			$current = array_filter($current);
+			ksort($current);
+
+			// new entries
+			$new = array_diff_key($catalog, $current);
+			
+			// old entries
+			$old = array_diff_key($current, $catalog);
+
+			// valid entries
+			$valid = array_intersect_key($current, $catalog);
+
+			$export = "<?php\n/* This is an automatically created file */\n\nreturn array(";
+			$export .= $this->_var_export($new, 'entries to translate');
+			$export .= $this->_var_export($old, 'unknown entries');
+			$export .= $this->_var_export($valid, 'translated entries');
+			$export .= ");";
+
+			file_put_contents($path, $export);
+		}
+	}
+
+	protected function _var_export($array, $section) {
+		if (empty($array)) return '';
+
+		$returner = "\n  /* $section */\n";
+		foreach ($array as $k=>$v) {
+			$key = str_replace("'", "\'", $k);
+			$value = str_replace("'", "\'", $v);
+
+			$returner .= str_pad("    '$key'", 40, ' ');
+			$returner .= '=> ';
+			$returner .= "'$value',\n";
+		}
+
+		return $returner;
+	}
+
+	protected function _glob_recursive($pattern, $flags = 0) {
+		$files = glob($pattern, $flags);
+		foreach (glob(dirname($pattern).'/*', GLOB_NOSORT) as $dir) {
+			$files = array_merge($files, $this->_glob_recursive($dir.'/'.basename($pattern), $flags));
+		}
+
+		return $files;	
+	}
+}

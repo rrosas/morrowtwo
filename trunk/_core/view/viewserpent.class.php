@@ -81,6 +81,7 @@ class ViewSerpent extends ViewAbstract
 			'formerror' => 'Factory::load("formhtml")->getError',
 			'formupload' => 'Factory::load("formhtml")->getInputImage',
 			'date' => 'factory::load("HelperTime")->strftime',
+			'_' => 'factory::load("language")->_',
 		);
 		foreach ($this->mappings as $key => $value)
 			{
