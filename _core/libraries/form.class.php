@@ -20,37 +20,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
-/**
- * 2010-11-03 Dirk Lüth
- * Added passing of parameter "arguments" to _parseDef (also see formelement.class.php)
- * Example usage (in form defintion):
- * $fields['birthday'] = array('required' => true, 'checktype' => 'MinAge', 'arguments' => 18);
- */
 
-
-class Form{
+class Form {
 	public $elements = array();	
 	public $_rawinput = array();
 
-	private $has_errors = false;
+	protected $has_errors = false;
 
 	public $submitted = false;
 	public $submittedForm = null;
 	public $_lcontent;
 	public $_locale;
 
-	private $_validator = 'validator';
+	protected $_validator = 'validator';
 
 	public function __construct($settings = null){ #$element_def, $content, $locale) {
 		if($settings == null) $settings = $this->morrow_construct_vars();
 		
-		$this->_lcontent = $settings['content'];
 		$this->_locale = $settings['locale'];
 		$this->_parseDef($settings['elements']);
 	}
 
 	/* for use only in MorrowTwo context! */
-	private function morrow_construct_vars(){
+	protected function morrow_construct_vars(){
 		$page = Factory::load('page');
 		$alias = $page->get('alias');
 			
@@ -64,7 +56,6 @@ class Form{
 		
 		#language content / locale
 		$language = Factory::load('language');
-		$settings['content'] = $language->getFormContent($alias);
 		$settings['locale'] = $language->getLocale();
 		
 		return $settings;
@@ -84,7 +75,7 @@ class Form{
 		return null;
 	}
 
-	private function _parseDef($formdef){
+	protected function _parseDef($formdef){
 		foreach($formdef as $formkey=>$element_def){
 			foreach($element_def as $key=>$el){
 				$required = isset($el['required'])?$el['required']:false;
@@ -95,9 +86,6 @@ class Form{
 				switch ($el['type']){
 					case 'set':
 						$new_element = new FormElementSet($this,$key,$required, $checktype);
-						#output (from lcontent)
-						$output = isset($this->_lcontent[$formkey][$key]['output'])?$this->_lcontent[$formkey][$key]['output']:array();
-						$new_element->setOutput($output);
 						#options
 						$options = isset($el['options'])?$el['options']:array();
 						$new_element->setOptions($options);
@@ -108,22 +96,15 @@ class Form{
 					default:
 						$new_element = new FormElement($this,$key,$required, $checktype);
 						if($el['type'] == "checkbox") $new_element->type = "checkbox";
-						if(isset($this->_lcontent[$formkey][$key]['example'])){
-							$new_element->setExample($this->_lcontent[$formkey][$key]['example']);
-						}
-						else if(isset($el['example'])){
+						if(isset($el['example'])){
 							$new_element->setExample($el['example']);
 						}
 				}
-				if(isset($this->_lcontent[$formkey][$key]['label'])){
-					$new_element->setLabel($this->_lcontent[$formkey][$key]['label']);
-				}
-				#default value in i18n
-				if(isset($this->_lcontent[$formkey][$key]['default'])){
-					$new_element->setDefault($this->_lcontent[$formkey][$key]['default']);
+				if(isset($el['label'])){
+					$new_element->setLabel($el['label']);
 				}
 				#default value in element definition
-				else if(isset($el['default'])){
+				if(isset($el['default'])){
 					$new_element->setDefault($el['default']);
 				}
 				else $new_element->setDefault(null);
@@ -187,12 +168,11 @@ class Form{
 		$this->_parseDef($element_def);
 	}
 
-
 	public function setValues($formname, $values, $overwriteall = false){
+		//dump(array($formname, $values));
+		
 		if(!$this->_checkElements($formname)) return false;
 		foreach($this->elements[$formname] as $key=>$elobj){
-						#special treatment for checkboxes ... grrr
-			#if(isset($values[$key]) || ($elobj->type == "checkbox" && $this->submitted)) $overwrite = true;
 			$overwrite = $overwriteall;
 			if(isset($values[$key])) $overwrite = true;
 			else $values[$key] = '';
@@ -231,20 +211,19 @@ class Form{
 		$this->submitted = false;
 		$this->submittedForms = array();	
 		$this->submittedForm = null;
-		#check submitted an which form
+		
+		// check submitted an which form
+		$formkeys = array_keys($this->elements);
+		
 		foreach($this->elements as $formkey=>$def){
-			$overwrite = false;
-			if(isset($input[$formkey])) {
-				$this->submitted = true;
-				$this->submittedForms[$formkey] = true;	
-				$this->submittedForm = $formkey;	
-				$overwrite = true;
-			}
-			else $input[$formkey] = array();
-			$this->setValues($formkey,$input[$formkey],$overwrite);
-		}
-		return;
+			if (!isset($input[$formkey])) continue;
 
+			$this->submitted = true;
+			$this->submittedForms[$formkey] = true;	
+			$this->submittedForm = $formkey;	
+			
+			$this->setValues($formkey, $input[$formkey], true);
+		}
 	}
 
 	public function setValidator($validator){
@@ -277,37 +256,12 @@ class Form{
 			trigger_error("Element '" . $fieldname . "' ist not type 'set'.",E_USER_ERROR);
 			return false;
 		}
-		$options = array_keys($sets);
-		$output = array_values($sets);
-		#dump($fieldname);
-		#dump($options);
-		$tmpoutput = array();
-		$cnt = 0;
-		$dim3 = false;
-		foreach($output as $k=>$o){
-			$tmpoutput[$cnt] = $o;
-			if(is_array($o)){
-				$dim3 = true;
-				foreach($o as $ki=>$i){
-					$options[$cnt] = $ki;
-					$tmpoutput[$cnt] = $i;
-					$cnt++;
-				}
-			}
-			$cnt++;
-		}
-		if($dim3) $output = $tmpoutput;
-		#dump($options);
-		#dump($output);
+		
 		if($replaceall) {
-			$this->elements[$formname][$fieldname]->setOptions($options);
-			$this->elements[$formname][$fieldname]->setOutput($output);
-			if($dim3) $this->elements[$formname][$fieldname]->setGroups($sets);
+			$this->elements[$formname][$fieldname]->setOptions($sets);
 		}
 		else{
-			$this->elements[$formname][$fieldname]->addOptions($options);
-			$this->elements[$formname][$fieldname]->addOutput($output);
-			if($dim3) $this->elements[$formname][$fieldname]->addGroups($sets);
+			$this->elements[$formname][$fieldname]->addOptions($sets);
 		}
 
 		if($default !== null) $this->elements[$formname][$fieldname]->setDefault($default);
@@ -330,7 +284,7 @@ class Form{
 		unset($this->elements[$formname][$fieldname]);
 	}
 
-	private function  _checkElements($formname, $fieldname=null){
+	protected function  _checkElements($formname, $fieldname=null){
 		if(!isset($this->elements[$formname])){
 			trigger_error("Missing Form-Def for '" . $formname . "' !",E_USER_ERROR);
 			return false;

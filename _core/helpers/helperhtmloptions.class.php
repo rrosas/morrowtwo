@@ -25,43 +25,43 @@
 
 class HelperHtmlOptions{
 
-	static public function getOutput($name, $options, $output, $selected = array(), $class='',$style = array(), $classes = array(), $extras = array()){
-		$_html_result = '';
+	static public function getOutput($name, $keys, $values, $selected = array(), $class='',$style = array(), $classes = array(), $extras = array()){
 
 		if(!is_array($selected)) $selected = array_map('strval', array_values((array)$selected));
+		
+		//dump(array($keys, $values, $selected));
 
-		foreach ($options as $_key=>$opt_name) {
-			$opt_value = $output[$_key];
+		$_html_result = '';
+		foreach ($keys as $i=>$key) {
+			// add css styles
+			$ostyle = (is_array($style) && isset($style[$i])) ? $style[$i] : '';
 
-			if(is_array($style) && isset($style[$_key])) {
-				$ostyle = $style[$_key];
-			}
-			else $ostyle = '';
-
-			$_html_result .= HelperHtmlOptions::getOption($opt_name, $opt_value, $selected, $ostyle, $class);
+			// add generated option to output
+			$_html_result .= HelperHtmlOptions::getOption($key, $values[$i], $selected, $ostyle, $class);
 		}
 
-		//die();
-		#add extras
+		// add extras
 		$extra_str = '';
 		foreach($extras as $_key => $_value){
 			$extra_str .= ' '.$_key.'="'.HelperString::htmlSpecialChars($_value).'"';
 		}
 
-		if(!empty($name)) {
-			$_html_result = '<select name="' . $name . '"' . $extra_str . '>' . chr(10) . $_html_result . '</select>' . "\n";
+		if (!empty($name)) {
+			$_html_result = "<select name=\"{$name}\" {$extra_str}>{$_html_result}</select>\n";
 		}
+		
 		return $_html_result;
 	}
 
 
 	static public function getOption($key, $value, $selected, $stylevalue, $classall, $classvalue = ''){
-	 	if(!is_array($value)) {
+		if(!is_array($value)) {
 			$_html_result = '<option class="' .HelperString::htmlSpecialChars($classall).' '.HelperString::htmlSpecialChars($classvalue)
 				.'" style="' .HelperString::htmlSpecialChars($stylevalue)
 				.'" label="' .HelperString::htmlSpecialChars($value)
 				.'" value="' .HelperString::htmlSpecialChars($key) . '"';
-			if (in_array((string)$key, $selected))
+			
+			if (!is_array($value) && in_array((string)$key, $selected))
 				$_html_result .= ' selected="selected"';
 				$_html_result .= '>' . HelperString::htmlSpecialChars($value) . '</option>' . chr(10);
 			} else {

@@ -157,9 +157,15 @@ class Morrow {
 		/* load languageClass and define alias
 		********************************************************************************************/
 		$lang_settings['possible'] = $this->config->get('languages');
-		$lang_settings['content_path'] = PROJECT_PATH . '_i18n/';
+		$lang_settings['language_path'] = PROJECT_PATH . '_i18n/';
+		$lang_settings['i18n_path'] = array(
+			FW_PATH . '_core/*.php',
+			FW_PATH . '_libs/*.php',
+			PROJECT_PATH . '_templates/*',
+			PROJECT_PATH . '*.php'
+		);
 		$this->language = Factory::load('language', $lang_settings);
-		#$this->language->set($lang_settings['possible'][0]);
+
 		// language via path
 		$nodes = $this->page->get('nodes');
 		if(isset($nodes[0]) && $this->language->isValid($nodes[0])) {

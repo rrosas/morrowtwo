@@ -60,12 +60,9 @@ class FormHtml{
 		// overwrite value
 		if(isset($params['value'])) $el_label = $params['value'];
 
-		#required wrapper
-		if($_elobj->required
-			&& (!isset($params['readonly']) || $params['readonly'] != "true")
-			&& isset($_form->_lcontent['required_wrapper']) ){
-				list($before, $after) = explode("|",$_form->_lcontent['required_wrapper']);
-				$el_label = $before . $el_label . $after;
+		// required wrapper
+		if($_elobj->required && (!isset($params['readonly']) || $params['readonly'] != "true")){
+			$el_label = $el_label . ' *';
 		}
 
 		#errorclass errorstyle
@@ -76,16 +73,6 @@ class FormHtml{
 			if(isset($params['errorstyle'])) $params['style'] .= ' '.$params['errorstyle'];
 		}
 
-		#get modifiers
-		/*
-		$modi_sets = array();
-		foreach($params as $pk=>$pv){
-			if(!in_array($pk, $special_params) AND $pk != 'value'){
-				$modi_sets[] = "$pk=\"$pv\"";
-			}
-		}
-		$modifiers = implode(" ", $modi_sets);
-		*/
 		$id = "mw_" . $formname . "_" . $el_name;
 
 		$classname = 'formhtmlelement' . $display_type;
@@ -117,7 +104,7 @@ class FormHtml{
 		$id = "mw_" . $formname . "_" . $el_name;
 
 		$_elobj = $_form->getElement($formname,$el_name);
-
+		
 		// merge params with global params
 		if(isset(self::$config[$formname])){
 			$params = array_merge( self::$config[$formname], $params );
@@ -139,7 +126,6 @@ class FormHtml{
 		if(!empty($value) && !$_form->isSubmitted($formname) && empty($el_value)) $el_value = $value;
 		#print_r($_form);
 
-
 		#get modifiers
 		$modi_sets = array();
 
@@ -150,20 +136,10 @@ class FormHtml{
 				 $modi_sets[] = "onclick=\"if(this.value=='$example')this.value=''\"";
 			}
 		}
-		/*
-		foreach($params as $pk=>$pv){
-			if(!in_array($pk, $special_params)){
-				$modi_sets[] = "$pk=\"$pv\"";
-			}
-		}
-		$modifiers = implode(" ", $modi_sets);
-		*/
 
 		$form_el_name = $formname . "[" . $el_name . "]";
 
 		#filter
-
-		
 		$outfilter = null;
 		$infilter = null;
                 if(method_exists('formfilter','out' . $display_type)){
@@ -188,8 +164,7 @@ class FormHtml{
 		$options = array();
 		if($_elobj->type == "set"){
 			$options = array();
-			if(count($_elobj->groups)>0) $options = $_elobj->groups;
-			elseif(count($_elobj->options)>0) $options = array_combine($_elobj->options, $_elobj->output);
+			if (count($_elobj->options)>0) $options = $_elobj->options;
 			$multiple =  $_elobj->multiple;
 			$default_dtype = 'select';
 
@@ -214,7 +189,7 @@ class FormHtml{
 		else{
 			$display_obj = Factory::load('formhtmlelement' . $default_dtype);
 		}
-			
+		
 		if(isset($params['readonly']) && $params['readonly']===true) 
 			$content .= $display_obj->getReadonly($form_el_name, $el_value, $id, $params, $options, $multiple);
 		else 

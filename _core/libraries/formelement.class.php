@@ -141,7 +141,6 @@ class FormElement{
 			}
 		}
 
-
 		#form called without submitting, remove any file-data stored in the session
 		if(!$this->_fh->isSubmitted() && $session->get($tf_key)!='') {
 			$session->delete($tf_key);
@@ -150,7 +149,7 @@ class FormElement{
 		if(empty($value) && !$overwrite){
 			$value = $this->value;
 		}
-		if(!empty($this->example) && $value === $this->example) $value = "";
+
 		if(!empty($this->example) && $value === $this->example) $value = "";
 		$this->value = $value;
 		#the value should no longer be null
@@ -171,15 +170,13 @@ class FormElement{
 		return $this->example;
 	}
 
-	public function setError($key){
-		$value = $key;
-		if(isset($this->_fh->_lcontent['errors'][$key])) $value = $this->_fh->_lcontent['errors'][$key];
+	public function setError($value){
 		$this->error = $value;
 	}
 
 	public function validate($formname, $validator_class = 'validator'){
 		if($this->value === null){
-			trigger_error("You must set all element values before validating (" . $this->name . ")",E_USER_ERROR);
+			throw new Exception("You must set all element values before validating (" . $this->name . ")");
 		}
 
 		$compare = null;
@@ -188,7 +185,7 @@ class FormElement{
 		}
 
 		if($this->required && $this->value === ''){
-			$this->setError("MISSING");
+			$this->setError(Factory::load('language')->_("This field is required."));
 			return false;
 		}
 		#else if($this->value !== '' && $this->checktype != null){
@@ -196,7 +193,7 @@ class FormElement{
 			$validator = Factory::load($validator_class);
 			$function = "check" . $this->checktype;
 			if(!method_exists($validator,$function)){
-				trigger_error("Method $function does not exist in class " . get_class($validator) . "!",E_USER_ERROR);
+				throw new Exception("Method $function does not exist in class " . get_class($validator) . "!");
 			}
 			else{
 				if(!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)){
