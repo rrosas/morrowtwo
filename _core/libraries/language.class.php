@@ -88,7 +88,7 @@ class Language {
 			$this->locale = $this->getLocale();
 
 			// clear content because language has changed
-			$this->content = array();
+			$this->content = null;
 			return true;
 		}
 		return false;
@@ -244,7 +244,7 @@ class Language {
 		}
 
 	public function _($string) {
-		if ($this->language == $this->possible[0]) return $string;
+		if ($this->language == 'en') return $string;
 
 		// search in language file
 		if (isset($this->content[$string]) && !empty($this->content[$string])) {
