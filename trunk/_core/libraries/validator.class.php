@@ -25,7 +25,7 @@ class Validator {
 		// syntax check
 		$localpart = "[a-z0-9!#$%&'*+-/\=?^_`{|}~]"; // RFC 2822
 		$domainpart = "[\.a-z0-9-]";
-		if(!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+)$=i", $var, $match)) {
+		if(!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+\.$domainpart+)$=i", $var, $match))
 			$error = Factory::load('language')->_('Email address is not valid.');
 			return false;
 		}
