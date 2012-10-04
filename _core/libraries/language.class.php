@@ -244,7 +244,7 @@ class Language {
 		}
 
 	public function _($string) {
-		if ($this->language == 'en') return $string;
+		if ($this->language == $this->possible[0]) return $string;
 
 		// search in language file
 		if (isset($this->content[$string]) && !empty($this->content[$string])) {
