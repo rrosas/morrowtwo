@@ -189,6 +189,8 @@ class Debug {
 	}
 	
 	public function errorhandler($exception) {
+		header("HTTP/1.1 500 Internal Server Error");
+
 		$errstr = $exception->getMessage();
 		$errcode = $exception->getCode();
 		$backtrace = $exception->getTrace();
