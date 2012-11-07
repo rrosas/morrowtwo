@@ -51,7 +51,8 @@ class HelperArray
 		$params = array();
 
 		// explode the orderby to use it for array_multisort
-		$orderbys = explode(', ', $orderby);
+		$orderbys = explode(',', $orderby);
+		$orderbys = array_map('trim', $orderbys);
 		foreach ($orderbys as &$orderby)
 			{
 			$parts = explode(" ", $orderby);
@@ -76,10 +77,10 @@ class HelperArray
 			$params[$i] = array();
 			foreach ($data as $ii=>$row)
 				{
-				$temp[] = strtolower($row[$field]);
+				$temp[$field][] = strtolower($row[$field]);
 				}
 			
-			$params[$i] =& $temp;
+			$params[$i] =& $temp[$field];
 			}
 		
 		//now sort
