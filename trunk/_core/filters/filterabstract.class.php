@@ -24,7 +24,6 @@
 
 
 
-abstract class FilterAbstract
-	{
+abstract class FilterAbstract {
 	abstract public function get($content);
-	}
+}

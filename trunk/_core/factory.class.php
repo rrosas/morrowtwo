@@ -21,17 +21,11 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
-
-
 /* This class manages all classes the framework is working with */
-class Factory
-	{
+class Factory {
 	public static $instances;
-	public static $use_fallback = null;
 	
-	public static function load($params)
-		{
+	public static function load($params) {
 		// get factory config
 		$params = explode(':', $params);
 		$classname = strtolower($params[0]);
@@ -46,63 +40,43 @@ class Factory
 		// Wenn sie schon instanziert wurde, zurückgeben, ansonsten anlegen
 		$instance =& self::$instances[$namespace][$instancename];
 		
-		if (isset($instance))
-			{
+		if (isset($instance)) {
 			if ($instance instanceof $classname) return $instance;
-			else
-				{
+			else {
 				trigger_error('instance "'.$instancename.'" already defined of class "'.get_class($instance).'"', E_USER_ERROR);
 				return false;
-				}
 			}
+		}
 
 		// create object
-		if (is_null($args))
-			{
+		if (is_null($args)) {
 			$instance = new $classname;
-			}
-		else
-			{
-			if (is_null(self::$use_fallback)) self::$use_fallback = version_compare(PHP_VERSION, '5.1.3', '<');
-			
-			if (self::$use_fallback)
-				{
-				$instance = self::createObjArray($classname, $args);
-				}
-			else
-				{
-				// use reflection class to inject the args as single parameters (php > 5.1.3)
-				$reflectionObj = new ReflectionClass($classname);
-				$instance = $reflectionObj->newInstanceArgs($args);
-				}
-			}
-		return $instance;
+		} else {
+			// use reflection class to inject the args as single parameters
+			$reflectionObj = new ReflectionClass($classname);
+			$instance = $reflectionObj->newInstanceArgs($args);
 		}
+		return $instance;
+	}
 	
 	// fallback for creating an object with an array as the single params
-	public static function createObjArray($type,$args=array())
-		{
+	public static function createObjArray($type,$args=array()) {
 		$paramstr = array();
-		for ($i = 0; $i < count($args); $i++)
-			{
+		for ($i = 0; $i < count($args); $i++) {
 			$paramstr[] = '$args['.$i.']';
-			}
+		}
 		$paramstr = implode(',', $paramstr);
 		return eval("return new $type($paramstr);");
-		}
-
-
-	public static function debug()
-		{
-		$returner = array();
-		foreach (self::$instances['internal'] as $class=>$value)
-			{
-			$returner['internal'][$class] = get_class($value);
-			}
-		foreach (self::$instances['user'] as $class=>$value)
-			{
-			$returner['user'][$class] = get_class($value);
-			}
-		dump($returner);
-		}
 	}
+
+	public static function debug() {
+		$returner = array();
+		foreach (self::$instances['internal'] as $class=>$value) {
+			$returner['internal'][$class] = get_class($value);
+		}
+		foreach (self::$instances['user'] as $class=>$value) {
+			$returner['user'][$class] = get_class($value);
+		}
+		dump($returner);
+	}
+}

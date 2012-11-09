@@ -23,8 +23,7 @@
 
 
 
-class HelperArray
-	{
+class HelperArray {
 	// get key of an array or object
 	// useful to access keys of arrays returned from functions
 	public static function extract($data, $key, $default = null) {
@@ -41,8 +40,7 @@ class HelperArray
 	}
 	
 	// This function orders an array like in a sql query
-	public static function orderBy($data, $orderby)
-		{
+	public static function orderBy($data, $orderby) {
 		// all the references are part of a workaround which only occurs with array_multisort and call_user_func_array in PHP >= 5.3
 		$asc = SORT_ASC; 
 		$desc = SORT_DESC;
@@ -53,8 +51,7 @@ class HelperArray
 		// explode the orderby to use it for array_multisort
 		$orderbys = explode(',', $orderby);
 		$orderbys = array_map('trim', $orderbys);
-		foreach ($orderbys as &$orderby)
-			{
+		foreach ($orderbys as &$orderby) {
 			$parts = explode(" ", $orderby);
 			if (!isset($parts[1])) $parts[1] = 'asc';
 			$parts[1] = strtolower($parts[1]);
@@ -66,113 +63,92 @@ class HelperArray
 			// add sort flag
 			if ($parts[1] == 'asc') $params[] =& $asc;
 			else $params[] =& $desc;
-			}
+		}
 
 		// create temp arrays for multisort
 		$temp = array();
 		$count = count($params)-1;
-		for ($i=0; $i<=$count; $i=$i+2)
-			{
+		for ($i=0; $i<=$count; $i=$i+2) {
 			$field = $params[$i];
 			$params[$i] = array();
-			foreach ($data as $ii=>$row)
-				{
+			foreach ($data as $ii=>$row) {
 				$temp[$field][] = strtolower($row[$field]);
-				}
+			}
 			
 			$params[$i] =& $temp[$field];
-			}
+		}
 		
 		//now sort
 		$params[] =& $data;
 		call_user_func_array('array_multisort', $params);
 		return $data;
-		}
+	}
 
 	// This function does a array_diff_key but recursive
-	public static function array_diff_key_recursive ($a1, $a2)
-		{
-		if (is_array($a2))
-			{
+	public static function array_diff_key_recursive ($a1, $a2) {
+		if (is_array($a2)) {
 			$r = array_diff_key($a1, $a2);
-			}
-		else
-			{
+		} else {
 			$r = $a1;
-			}
+		}
 
-		foreach($a1 as $k => $v)
-			{
-			if (is_array($v))
-				{
+		foreach($a1 as $k => $v) {
+			if (is_array($v)) {
 				$temp = self::array_diff_key_recursive($a1[$k], $a2[$k]);
-				if (count($temp) > 0)
+				if (count($temp) > 0) {
 					$r[$k]=$temp;
 				}
 			}
-		return $r;
 		}
+		return $r;
+	}
 
 	// This function does a correct array_merge_recursive
-	public static function array_merge_recursive()
-		{
+	public static function array_merge_recursive() {
 		$_return    = false;
 		$parameters = func_get_args();
 
 		// Validation
-		if(count($parameters) >= 2)
-			{
+		if(count($parameters) >= 2) {
 			$_return = true;
 
-			foreach($parameters as $parameter)
-				{
-				if(!is_array($parameter))
-					{
+			foreach($parameters as $parameter) {
+				if(!is_array($parameter)) {
 					$_return = false;
 					throw new Exception(__METHOD__ . ': Only arrays can be merged', E_USER_ERROR);
 					break;
-					}
 				}
 			}
-		else
-			{
+		} else {
 			throw new Exception(__METHOD__ . ': Two or more arrays needed to be merged', E_USER_ERROR);
-			}
+		}
 
-		if($_return = true)
-			{
+		if($_return = true) {
 			$_return = array_shift($parameters);
 
-			foreach($parameters as $parameter)
-				{
-				foreach($parameter as $key => $value)
-					{
+			foreach($parameters as $parameter) {
+				foreach($parameter as $key => $value) {
 					$type = gettype($value);
-					switch($type)
-						{
+					switch($type) {
 						case 'array':
-							if(isset($_return[$key]) && is_array($_return[$key]))
-								{
+							if(isset($_return[$key]) && is_array($_return[$key])) {
 								$_return[$key] = self::array_merge_recursive($_return[$key], $parameter[$key]);
-								}
-							else
-								{
+							} else {
 								$_return[$key] = $parameter[$key];
-								}
+							}
 							break;
 						default:
 							$_return[$key] = $parameter[$key];
 							break;
-						}
 					}
 				}
 			}
-
-		return $_return;
 		}
 
-	public static function dotSyntaxGet(&$array, $identifier)
-		{
+		return $_return;
+	}
+
+	public static function dotSyntaxGet(&$array, $identifier) {
 		// Validierung
 		if (!is_array($array)) { trigger_error(__CLASS__.': first parameter has to be of type "array".', E_USER_ERROR); return; }
 		if (!is_string($identifier) AND !is_null($identifier)) { trigger_error(__CLASS__.': second parameter has to be of type "string".', E_USER_ERROR); return; }
@@ -181,27 +157,23 @@ class HelperArray
 		// Referenz erstellen
 		$parts = explode('.', $identifier);
 		$returner =& $array;
-		foreach ($parts as $part)
-			{
+		foreach ($parts as $part) {
 			// Wenn es den Array-Schlüssel gibt, Referenz erweitern
-			if (isset($returner[$part]))
-				{
+			if (isset($returner[$part])) {
 				$returner =& $returner[$part];
-				}
+			}
 			// ansonsten Referenz löschen
-			else
-				{
+			else {
 				unset($returner);
 				break;
-				}
 			}
+		}
 
 		if (isset($returner)) return $returner;
 		else return null;
-		}
+	}
 
-	public static function dotSyntaxSet(&$array, $identifier, $value)
-		{
+	public static function dotSyntaxSet(&$array, $identifier, $value) {
 		// Validierung
 		if (!is_array($array)) { trigger_error(__CLASS__.': first parameter has to be of type "array".', E_USER_ERROR); return false; }
 		if (!is_string($identifier) OR empty($identifier)) { trigger_error(__CLASS__.': identifier has to be of type "string" and must not be empty.', E_USER_ERROR); return false; }
@@ -210,24 +182,22 @@ class HelperArray
 		$parts = explode('.', $identifier);
 		$returner =& $array;
 		
-		foreach ($parts as $part)
-			{
+		foreach ($parts as $part) {
 			if (strlen($part) === 0) { trigger_error(__CLASS__.': a key must not be empty.', E_USER_ERROR); return false; }
-			if (!isset($returner[$part]))
-				{
+			if (!isset($returner[$part])) {
 				$returner[$part] = '';
-				}
-			$returner =& $returner[$part];
 			}
-
-		if (is_array($value))
-			$returner = self::dotSyntaxExplode($value);
-		else $returner = $value;
-		return true;
+			$returner =& $returner[$part];
 		}
 
-	public static function dotSyntaxDelete(&$array, $identifier)
-		{
+		if (is_array($value)) {
+			$returner = self::dotSyntaxExplode($value);
+		}
+		else $returner = $value;
+		return true;
+	}
+
+	public static function dotSyntaxDelete(&$array, $identifier) {
 		// Validierung
 		if (!is_array($array)) { trigger_error(__CLASS__.': first parameter has to be of type "array".', E_USER_ERROR); return; }
 		if (!is_string($identifier)) { trigger_error(__CLASS__.': second parameter has to be of type "string".', E_USER_ERROR); return; }
@@ -236,71 +206,57 @@ class HelperArray
 		$parts = explode('.', $identifier);
 		$returner =& $array;
 		$parent =& $array;
-		foreach ($parts as $part)
-			{
+		foreach ($parts as $part) {
 			// Wenn es den Array-Schlüssel gibt, Referenz erweitern
-			if (isset($returner[$part]) && !empty($part))
-				{
+			if (isset($returner[$part]) && !empty($part)) {
 				$parent =& $returner;
 				$rkey = $part;
 				$returner =& $returner[$part];
-				}
+			}
 			// ansonsten Referenz löschen
-			else
-				{
+			else {
 				unset($returner);
 				break;
-				}
-			}
-
-		if (isset($returner))
-			{
-		    unset($parent[$rkey]);
-			return true;
-			}
-		else
-			{
-			trigger_error(__CLASS__.': identifier "'.$identifier.'" does not exist.', E_USER_ERROR); return false;
 			}
 		}
 
-	public static function dotSyntaxExplode($array)
-		{
+		if (isset($returner)) {
+		    unset($parent[$rkey]);
+			return true;
+		} else {
+			trigger_error(__CLASS__.': identifier "'.$identifier.'" does not exist.', E_USER_ERROR); return false;
+		}
+	}
+
+	public static function dotSyntaxExplode($array) {
 		$data = array();
 
 		// Iterate keys
-		foreach ($array as $rkey=>$row)
-			{
+		foreach ($array as $rkey=>$row) {
 			$parent =& $data;
 			$parts = explode('.',$rkey);
 
 			// Iterate key parts
-			foreach ($parts as $part)
-				{
+			foreach ($parts as $part) {
 				// build values
-				if(!isset($parent[$part]) || !is_array($parent[$part]))
-					{
-					if ($part === end($parts))
-						{
+				if(!isset($parent[$part]) || !is_array($parent[$part])) {
+					if ($part === end($parts)) {
 						if (!is_array($row)) $parent[$part] = $row;
 						else $parent[$part] = self::dotSyntaxExplode($row);
-						}
-					else $parent[$part] = array();
 					}
-				$parent = &$parent[$part];
+					else $parent[$part] = array();
 				}
+				$parent = &$parent[$part];
 			}
+		}
 		return $data;
-		}
-
-	public static function setKey($data, $field)
-		{
-		$returner = array();
-		foreach ($data as $row)
-			{
-			$returner[$row[$field]] = $row;
-			}
-		return $returner;
-		}
-	
 	}
+
+	public static function setKey($data, $field) {
+		$returner = array();
+		foreach ($data as $row) {
+			$returner[$row[$field]] = $row;
+		}
+		return $returner;
+	}
+}

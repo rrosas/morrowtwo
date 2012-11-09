@@ -23,8 +23,7 @@
 
 
 
-class FilterSitesearch extends FilterAbstract
-	{
+class FilterSitesearch extends FilterAbstract {
 	// some new properties
 	public $buildindex			= true;
 
@@ -42,8 +41,7 @@ class FilterSitesearch extends FilterAbstract
 
 	private $db_tablename		= 'searchdata';
 
-	public function __construct($config = array())
-		{
+	public function __construct($config = array()) {
 		$this->db_config = array(
 			'driver' => 'sqlite',
 			'file' => PROJECT_PATH.'temp/_sitesearch.sqlite',
@@ -54,14 +52,12 @@ class FilterSitesearch extends FilterAbstract
 		);
 		
 		// apply config
-		foreach ($config as $key=>$value)
-			{
+		foreach ($config as $key=>$value) {
 			$this->$key = $value;
-			}
 		}
+	}
 	
-	public function get($content)
-		{
+	public function get($content) {
 		// get output from standard handler
 		$original_output = $content;
 
@@ -96,15 +92,15 @@ class FilterSitesearch extends FilterAbstract
 			FROM ".$this->db_tablename."
 			WHERE url = ?
 		", $url);
-		if (isset($result['RESULT'][0]['checksum']))
+		if (isset($result['RESULT'][0]['checksum'])) {
 			$checksum = $result['RESULT'][0]['checksum'];
+		}
 		else $checksum = 1;
-		if ($checksum === $md5)
-			{
+		if ($checksum === $md5) {
 			// touch the current entry
 			$this->_touchEntry($this->db_tablename, $url);
 			return $original_output;
-			}
+		}
 
 		// ##### create Index #####
 		
@@ -144,31 +140,26 @@ class FilterSitesearch extends FilterAbstract
 		
 		// execute exclude patterns
 		$save_to_db = true;
-		foreach ($this->exclude_patterns as $patterns)
-			{
-			foreach ($patterns as $field=>$pattern)
-				{
-				if (preg_match($pattern, $replace[$field]))	
-					{
+		foreach ($this->exclude_patterns as $patterns) {
+			foreach ($patterns as $field=>$pattern) {
+				if (preg_match($pattern, $replace[$field]))	{
 					$save_to_db = false;
 					break;
-					}
 				}
 			}
+		}
 		
 		// now save
-		if ($save_to_db)
-			{
+		if ($save_to_db) {
 			$this->searchdb->replace($this->db_tablename, $replace);
 			$this->searchdb->query("VACUUM");
-			}
+		}
 		
 		// output the original content
 		return $original_output;
-		}
+	}
 
-	private function _createTableIfNotExists($table)
-		{
+	private function _createTableIfNotExists($table) {
 		$this->searchdb->query("
 			CREATE TABLE IF NOT EXISTS `".$table."` (
 			`url` char(255) NOT NULL,
@@ -181,30 +172,27 @@ class FilterSitesearch extends FilterAbstract
 			PRIMARY KEY  (`url`)
 			);
 		");
-		}
+	}
 	
-	private function _deleteOldEntries($table)
-		{
+	private function _deleteOldEntries($table) {
 		$sql = $this->searchdb->exec("
 			DELETE FROM {$table}
 			WHERE datetime(touched, '{$this->entry_lifetime}') < datetime('now');
 		");
 		$this->searchdb->query("VACUUM");
-		}
+	}
 		
-	private function _touchEntry($table, $url)
-		{
+	private function _touchEntry($table, $url) {
 		$updates['touched'] = array('FUNC' => "datetime('now')");
 		$this->searchdb->update($table, $updates, "WHERE url = '{$url}'");
-		}
+	}
 
-	private function _check($url)
-		{
+	private function _check($url) {
 		$sql = $this->searchdb->result("
 			SELECT *
 			FROM {$this->db_tablename}
 			WHERE url = ?
 		", $url);
 		dump($sql);
-		}
 	}
+}

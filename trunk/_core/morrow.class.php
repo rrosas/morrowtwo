@@ -21,9 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
-
-
 class Morrow {
 	public function __construct() {
 		$this->_run();
@@ -56,19 +53,22 @@ class Morrow {
 	// registers the config files in the config class
 	private function _loadConfigVars($path) {
 		// load main config
-		include ($path.'_config/_default.php');
+		$config = include ($path.'_config/_default.php');
 
 		// overwrite with server specific config
 		$file1 = $path.'_config/'.$_SERVER['HTTP_HOST'].'.php';
 		$file2 = $path.'_config/'.$_SERVER['SERVER_ADDR'].'.php';
-		if (is_file($file1)) include ($file1);
-		elseif (is_file($file2)) include ($file2);
+		if (is_file($file1)) $config = include($file1);
+		elseif (is_file($file2)) $config = include($file2);
 
 		return $config;
 	}
 
 	// This function contains the main application flow
 	private function _run() {
+		// compress the output
+		if(!ob_start("ob_gzhandler")) ob_start();
+		
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('config'); // config class for config vars
@@ -93,19 +93,18 @@ class Morrow {
 
 		/* load classes
 		********************************************************************************************/
-		$this->page = Factory::load('page'); // config class for page vars
-		$this->url = Factory::load('url'); // url class
-		$this->input = Factory::load('input'); // input class for all user input
+		$this->page		= Factory::load('page'); // config class for page vars
+		$this->url		= Factory::load('url'); // url class
+		$this->input	= Factory::load('input'); // input class for all user input
 
 		/* define project
 		********************************************************************************************/
-		$url = $this->input->get('morrow_content');
-		$url = HelperUrl::trimSlashes($url);
-		$url_nodes = explode('/', $url);
+		$url			= HelperUrl::trimSlashes($this->input->get('morrow_content'));
+		$url_nodes		= explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
-		$inpath       = $this->config->get('projects');
-		$project_folder = array_shift($inpath);
+		$inpath			= $this->config->get('projects');
+		$project_folder	= array_shift($inpath);
 		$this->config->set('default_project', $project_folder);
 
 		$possible_project_path = $url_nodes[0];
@@ -188,20 +187,20 @@ class Morrow {
 
 		/* url routing
 		********************************************************************************************/
-		$routes = $this->config->get('routing');
-		$url    = implode('/',$this->page->get('nodes')); #$this->input->get('morrow_content');
-		$url = HelperUrl::trimSlashes($url);
+		$routes	= $this->config->get('routing');
+		$url	= implode('/',$this->page->get('nodes')); #$this->input->get('morrow_content');
+		$url	= HelperUrl::trimSlashes($url);
 	
 		// iterate all rules
 		foreach ($routes as $rule=>$new_url) {
-			$rule    = HelperUrl::trimSlashes($rule);
-			$new_url = HelperUrl::trimSlashes($new_url);
+			$rule		= HelperUrl::trimSlashes($rule);
+			$new_url	= HelperUrl::trimSlashes($new_url);
 
 			// rebuild route to a preg pattern
-			$preg_route = preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters. the four backslashes match just one
-			$preg_route = preg_replace('=/\\*[a-z0-9_]+=i', '(.*)', $preg_route); // match asterisk.
+			$preg_route	= preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters. the four backslashes match just one
+			$preg_route	= preg_replace('=/\\*[a-z0-9_]+=i', '(.*)', $preg_route); // match asterisk.
 
-			$pattern = '=^'.$preg_route.'$=i';
+			$pattern	= '=^'.$preg_route.'$=i';
 
 			// does this rule match?
 			preg_match($pattern, $url, $hits);
@@ -260,9 +259,9 @@ class Morrow {
 		$this->view = Factory::load('view');
 				
 		// declare the controller to be loaded
-		$controller_path         = PROJECT_PATH.'_controller/';
-		$global_controller_file  = $controller_path.'_globalcontroller.class.php';
-		$page_controller_file    = $controller_path.$alias.'.class.php';
+		$controller_path		= PROJECT_PATH.'_controller/';
+		$global_controller_file	= $controller_path.'_globalcontroller.class.php';
+		$page_controller_file	= $controller_path.$alias.'.class.php';
 
 		$this->page->set('controller', $page_controller_file);
 		$this->page->set('path', implode('/', $nodes).'/');
@@ -298,12 +297,7 @@ class Morrow {
 		// Inhalte zuweisen
 		$this->view->setContent($this->page->get(), 'page');
 
-		// if the client accepts encoding serve it
-		$compression_level = 0;
-		if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && strstr($_SERVER['HTTP_ACCEPT_ENCODING'],'gzip'))
-			$compression_level = 6;
-
-		$view = $this->view->get($compression_level);
+		$view = $this->view->get();
 		$headers = $view['headers'];
 		$handle = $view['content'];
 		$meta_data = stream_get_meta_data($handle);
@@ -315,6 +309,8 @@ class Morrow {
 		fpassthru($handle);
 		fclose($handle);
 
+		ob_end_flush();
+		
 		// if we have zipped data bigger than 1 MB
 		if ($meta_data['wrapper_type'] == 'plainfile') unlink($meta_data['uri']);
 	}

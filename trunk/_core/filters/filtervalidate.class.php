@@ -23,27 +23,23 @@
 
 
 
-class FilterValidate extends FilterAbstract
-	{
+class FilterValidate extends FilterAbstract {
 	protected $filter = null;
 	
-	public function __construct( $filter )
-		{
+	public function __construct( $filter ) {
 		$this->filter = $filter;
-		}
+	}
 	
-	public function get($content)
-		{
+	public function get($content) {
 		$original = $content;
 
 		// filter
-		if (!is_null($this->filter))
-			{
+		if (!is_null($this->filter)) {
 			$start = preg_quote($this->filter[0]);
 			$end = preg_quote($this->filter[1]);
 			
 			$content = preg_replace('='.$start.'.*?'.$end.'=s', '', $content);
-			}
+		}
 		
 		// get xml errors
 		$oldSetting = libxml_use_internal_errors( true );
@@ -64,17 +60,15 @@ class FilterValidate extends FilterAbstract
 		$lines = preg_split('=(\r\n|\r|\n)=', $content);
 		
 		$output = '';
-		foreach ($errors as $error)
-			{
+		foreach ($errors as $error) {
 			$line = htmlentities($lines[$error->line-1]);
 			
 			$output .= '<div style="background-color: #ffc; border: 1px solid #f00; padding: 10px; margin: 5px; font: normal 12px/15px \'Courier New\'; color: #000;">';
 			$output .= $error->message .'<br />';
 			$output .= 'Line '.$error->line.': '.$line;
 			$output .= '</div>';
-
-			}
+		}
 		
 		return $output . $original;
-		}
 	}
+}

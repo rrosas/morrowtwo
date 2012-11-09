@@ -30,8 +30,6 @@ class Input {
 	protected $magic_quotes_gpc;
 	
 	public function __construct() {
-		$this->magic_quotes_gpc = get_magic_quotes_gpc();
-		
 		$this->get   = $this->clean($_GET);
 		$this->post  = $this->clean($_POST);
 		$this->files = $this->_getFileData($this->clean($_FILES));
@@ -45,7 +43,6 @@ class Input {
 		} else {
 			// Folgendermaßen wird bereinigt
 			$value = trim($value);
-			if ($this->magic_quotes_gpc) $value = stripslashes($value);
 			// unify line breaks
 			$value = preg_replace("=(\r\n|\r)=", "\n", $value);
 			// filter nullbyte

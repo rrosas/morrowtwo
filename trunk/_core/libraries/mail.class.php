@@ -24,43 +24,37 @@
 
 require("./_core/external/PHPMailer_v5.0.2/class.phpmailer.php");
 
-class Mail extends PHPMailer
-	{
-	public function __construct($config)
-		{
+class Mail extends PHPMailer {
+	public function __construct($config) {
 		// set settings from config class
 		if (isset($config) && is_array($config))
-			foreach ($config as $key=>$value)
-				{
+			foreach ($config as $key=>$value) {
 				$this -> $key = $config[$key];
-				}
-		}
+			}
+	}
 	
 	// Mail-Template laden
-	public function Send($confirm = false)
-		{
+	public function Send($confirm = false) {
 		// if From was not set ...
-		if ($this->From == 'root@localhost')
-			{
+		if ($this->From == 'root@localhost') {
 			trigger_error(__CLASS__.'<br />The key "From" could not be found in the assigned config, but has to be set.', E_USER_ERROR);
 			return false;
-			}
+		}
 
 		// Set sender to avoid to get marked as spam
 		if (empty($this->Sender)) $this -> Sender		= $this -> From;
 		
 		// set user to standards for developing purposes
-		if (isset($this->forceTo) && is_array($this->forceTo) && count($this->forceTo)>0 )
-			{
+		if (isset($this->forceTo) && is_array($this->forceTo) && count($this->forceTo)>0 ) {
 			$this->ClearAllRecipients();
-			foreach ($this->forceTo as $email)
+			foreach ($this->forceTo as $email) {
 				$this->AddAddress( $email, 'Development User' );
 			}
+		}
 		
 		// Send mail only if confirmed
 		if ($confirm === true) $returner = parent::Send();
-		else
-			{
+		else {
 			$dump['from']    = $this->From;
 			$dump['fromName']= $this->FromName;
 			$dump['to']      = $this->to;
@@ -71,17 +65,14 @@ class Mail extends PHPMailer
 			$dump['altbody'] = $this->AltBody;
 			dump($dump);
 			$returner = true;
-			}
+		}
 
-		if ($returner === false)
-			{
+		if ($returner === false) {
 			trigger_error(__CLASS__.'<br />'.$this->ErrorInfo, E_USER_ERROR);
 			return false;
-			}
-		else
-			{
+		} else {
 			return true;
-			}
 		}
 	}
+}
 	

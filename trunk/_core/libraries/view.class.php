@@ -73,7 +73,7 @@ class View {
 	}
 
 	// main method to get output
-	public function get($compression_level = 0) {
+	public function get() {
 		// get the underlying display handler
 		$displayHandler = $this -> getDisplayHandler();
 
@@ -118,13 +118,15 @@ class View {
 		// process Filters
 		$handle = $this->_processFilters($handle);
 
-		// add compression
-		if($compression_level > 0)
-			$handle = $this->_compressStream($handle, $compression_level);
-
-		// get filesize of stream
+		// do not compress files bigger than 1 MB to preserve memory and save cpu power
 		$stats = fstat($handle);
-		$this->header[] = 'Content-Length: '.$stats['size'];
+		$size = $stats['size'];
+
+		if ($size > (1*1024*1024)) {
+			$content = ob_get_clean();
+			ob_start();
+			echo $content;
+		}
 
 		// use etag for content validation (only HTTP1.1)
 		rewind($handle);
@@ -195,52 +197,6 @@ class View {
 		return $fhandle;
 	}
 
-	// enable compression
-	protected function _compressStream($handle, $compression) {
-		// add compression header
-		$this->header[] = 'Content-Encoding: gzip';
-
-		// use a different way to compress for small and big streams to preserve memory
-		$stats = fstat($handle);
-		$size = $stats['size'];
-
-		if ($size < (1*1024*1024)) { // smaller than 1 MB
-			// create gzhandler
-			$gzhandle = fopen('php://memory', 'r+');
-
-			// get and compress
-			rewind($handle);
-			$content = gzencode( stream_get_contents($handle), $compression);
-			fclose($handle);
-
-			// write to gzhandler
-			$size = fwrite($gzhandle, $content);
-			$handle = $gzhandle;
-		}
-		else {
-			// create gzhandler
-			$tmp_path = PROJECT_PATH . 'temp/_view_streams';
-			if (!is_dir($tmp_path)) mkdir($tmp_path);
-			$tempname = tempnam(PROJECT_PATH . 'temp/_view_streams', 'gzhandle');
-			$gzhandle = gzopen($tempname, 'w');
-
-			// get and compress
-			rewind($handle);
-			while (!feof($handle)) {
-				$buffer = fread($handle, 4096);
-				gzputs($gzhandle, $buffer);
-			}
-			fclose($handle);
-			fclose($gzhandle);
-			
-			// write to gzhandler
-			$size = filesize($tempname);
-			$handle = fopen($tempname, 'r');
-		}
-
-		return $handle;
-	}
-		
 	// return instance of a display handler
 	protected function getDisplayHandler() {
 		if($this->handler == null) {

@@ -216,14 +216,6 @@ class Debug {
 			$backtrace[$key] = array_merge($backtrace_keys, $value);
 		}
 		
-		// cause of a bug in PHP 5.2 (http://bugs.php.net/bug.php?id=45895#c140511)
-		$use_workaround = version_compare( phpversion(), '5.2', '>=' ) && version_compare( phpversion(), '5.3', '<=' );
-		if ($exception instanceof ErrorException && $use_workaround) {
-			for ($i = count($backtrace) - 1; $i > 0; --$i) {
-				$backtrace[$i]['args'] = $backtrace[$i - 1]['args'];
-			}
-		}
-		
 		// set the error code string
 		if ($exception instanceof ErrorException) $errordescription = $this->errortype[ $exception->getSeverity() ];
 		elseif ($errcode == 0) $errordescription = 'EXCEPTION';

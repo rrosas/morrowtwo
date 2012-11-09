@@ -23,24 +23,21 @@
 
 
 
-class FilterGeneric extends FilterAbstract
-	{
+class FilterGeneric extends FilterAbstract {
 	public $userfunction = '';
 	public $params = array();
 	
-	public function __construct($config = array())
-		{
+	public function __construct($config = array()) {
 		$this->userfunction = $config[0];
 		$this->params = array_slice($config, 1);
-		}
+	}
 	
-	public function get($content)
-		{
+	public function get($content) {
 		// replace placeholder :CONTENT with $content
 		$key = array_search(':CONTENT', $this->params);
 		if ($key !== false) $this->params[$key] = $content;
 
 		$content = call_user_func_array($this->userfunction, $this->params);
 		return $content;
-		}
 	}
+}
