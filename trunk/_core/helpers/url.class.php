@@ -20,14 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperUrl
-	{
-	public static function trimSlashes($path)
-		{
+class Url {
+	public static function trimSlashes($path) {
 		$path = preg_replace('=^/*(.*?)/*$=si', '$1', $path);
 		return $path;
-		}
 	}
+}

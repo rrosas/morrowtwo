@@ -20,17 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Views;
 
+class Json {
+	public $mimetype	= 'application/json';
+	public $charset		= 'utf-8';
 
-
-class helperTime {
-	public static function strftime($format, $time) {
-		$time = strtotime($time);
-			
-		if($time != false) {
-			return strftime($format, $time);
-		} else {
-			return false;
-		}
+	public function getOutput($content, $handle) {
+		fwrite($handle, json_encode($content['content']));
+		return $handle;
 	}
 }

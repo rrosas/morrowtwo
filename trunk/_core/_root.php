@@ -21,6 +21,8 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow;
+
 /* define dump function
 ********************************************************************************************/
 function dump() {
@@ -31,8 +33,44 @@ function dump() {
 
 /* the autoloader for all classes
 ********************************************************************************************/
-include(FW_PATH.'_core/autoloader.php');
+function __autoload($classname) {
+	print_r($classname);
+
+	// First we try the external libs. That way the user can replace all core libs if he wants to
+	$classname = preg_replace('=^Morrow=i', '_core', $classname);
+	$classname = preg_replace('=^User=i', '_libs', $classname);
+	$classname = str_replace('\\', '/', strtolower($classname));
+	
+	// first try to find the user class, then the morrow class
+	$try[] = FW_PATH.$classname.'.class.php';
+	if (strpos($classname, '_core') === 0) {
+		$try[] = FW_PATH.str_replace('_core/', '_libs/', $classname).'.class.php';
+	}
+
+	print_r($try);
+	
+	/*
+	if (defined('PROJECT_PATH')) {
+		$try[] = PROJECT_PATH.'_libs/'.$classname.'.class.php';
+		$try[] = PROJECT_PATH.'_model/'.$classname.'.class.php';
+	}
+
+	$try[] = FW_PATH.'_core/'.$classname.'.class.php';
+	$try[] = FW_PATH.'_core/libraries/'.$classname.'.class.php';
+	$try[] = FW_PATH.'_core/helpers/'.$classname.'.class.php';
+	$try[] = FW_PATH.'_core/view/'.$classname.'.class.php';
+	$try[] = FW_PATH.'_core/filters/'.$classname.'.class.php';
+	*/
+
+	foreach($try as $path) { if(is_file($path)) { include ($path); break; } }
+}
+
+spl_autoload_register('Morrow\__autoload');
 
 /* load framework
 ********************************************************************************************/
-Factory::load('morrow:morrow:internal');
+require(FW_PATH . '_core/factory.class.php');
+require(FW_PATH . '_core/loader.class.php');
+require(FW_PATH . '_core/morrow.class.php');
+
+new Morrow();

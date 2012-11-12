@@ -20,11 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-
-class HelperHtmlDate{
+class HtmlDate{
 	static	$defaults = array();
 
 	static public function getOutput($el_key, $date_str=null, $date_format="%d%m%Y", $start_year=null, $end_year=null, $params=array()){

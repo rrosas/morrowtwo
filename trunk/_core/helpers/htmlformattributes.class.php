@@ -20,10 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperHtmlFormAttributes{
+class HtmlFormAttributes{
 
 	static private $global_attributes = array('id', 'class', 'style', 'title', 'dir', 'lang', 'onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown', 'onkeyup', 'autofocus');
 	static private $attributes = array(

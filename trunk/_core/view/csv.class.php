@@ -20,21 +20,40 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Views;
 
+class Csv {
+	public $mimetype	= 'text/csv';
+	public $charset		= 'utf-8';
 
+	public $separator	= ';';
+	public $linebreaks	= "\n";
+	public $delimiter 	= '"';
+	public $table_header= true;
+	
+	public function getOutput($content, $handle) {
+		$this->_outputCSV($content['content'], $handle);
+		return $handle;
+	}
 
-class HelperIni {
-	public static function parsePhpIniSize($val) {
-		$val = trim($val);
-		$last = strtolower($val[strlen($val)-1]);
-		switch($last) {
-			case 'g':
-				$val *= 1024;
-			case 'm':
-				$val *= 1024;
-			case 'k':
-				$val *= 1024;
+	private function _outputCSV($input, $handle) {
+		foreach($input as $nr=>$row) {
+			// use first row for headlines
+			if ($nr == 0 && $this->table_header === true) {
+				fwrite($handle, $this -> _createRow( array_keys($row) ));
+			}
+
+			fwrite($handle, $this -> _createRow($row));
 		}
-		return $val;
-	}		
+	}
+
+	private function _createRow($input) {
+		foreach ($input as $key=>$value) {
+			$temp = str_replace('"','""',$value);
+			$temp = preg_replace("=(\r\n|\r|\n)=","\n",$temp);
+			$input[$key] = $this->delimiter.$temp.$this->delimiter;
+		}
+		$output = implode($this->separator, $input).$this->linebreaks;
+		return $output;
+	}
 }

@@ -1,5 +1,4 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -21,14 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperOutput{
-		
-	public static function url($path, $query=array(), $rel2abs=false){
-		$url = Factory::getInstance('url');
-		return $url->makeUrl($path, $query, $rel2abs);
-	}
-	
+class Ini {
+	public static function parsePhpIniSize($val) {
+		$val = trim($val);
+		$last = strtolower($val[strlen($val)-1]);
+		switch($last) {
+			case 'g':
+				$val *= 1024;
+			case 'm':
+				$val *= 1024;
+			case 'k':
+				$val *= 1024;
+		}
+		return $val;
+	}		
 }

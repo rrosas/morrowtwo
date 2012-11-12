@@ -1,6 +1,8 @@
 <?php
 
-class PageController extends GlobalController {
+namespace Morrow;
+
+class PageController extends DefaultController {
 	public function run() {
 	}
 }

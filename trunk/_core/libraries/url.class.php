@@ -20,13 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
+namespace Morrow\Libraries;
 
 class Url {
 
 	public function __construct(){
 		ini_set('arg_separator.output', '&amp;');
-		$this->page = Factory::load('page');
+		$this->page = \Morrow\Factory::load('page');
 	}
 
 	// wie parse_url, gibt jedoch immer den kompletten Satz an Schlüsseln zurück

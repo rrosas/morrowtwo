@@ -1,4 +1,5 @@
 <?php
+
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -20,47 +21,13 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-class ViewCsv extends ViewAbstract
-	{
-	public $mimetype	= 'text/csv';
-	public $charset		= 'utf-8';
-
-	public $separator	= ';';
-	public $linebreaks	= "\n";
-	public $delimiter 	= '"';
-	public $table_header= true;
-	
-	public function getOutput($content, $handle)
-		{
-		$this->_outputCSV($content['content'], $handle);
-		return $handle;
-		}
-
-	private function _outputCSV($input, $handle)
-		{
-		foreach($input as $nr=>$row)
-			{
-			// use first row for headlines
-			if ($nr == 0 && $this->table_header === true)
-				{
-				fwrite($handle, $this -> _createRow( array_keys($row) ));
-				}
-
-			fwrite($handle, $this -> _createRow($row));
-			}
-		}
-
-	private function _createRow($input)
-		{
-		foreach ($input as $key=>$value)
-			{
-			$temp = str_replace('"','""',$value);
-			$temp = preg_replace("=(\r\n|\r|\n)=","\n",$temp);
-			$input[$key] = $this->delimiter.$temp.$this->delimiter;
-			}
-		$output = implode($this->separator, $input).$this->linebreaks;
-		return $output;
-		}
+class Output{
+		
+	public static function url($path, $query=array(), $rel2abs=false){
+		$url = Factory::getInstance('url');
+		return $url->makeUrl($path, $query, $rel2abs);
 	}
+	
+}

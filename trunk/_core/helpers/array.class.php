@@ -20,10 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperArray {
+class Array {
 	// get key of an array or object
 	// useful to access keys of arrays returned from functions
 	public static function extract($data, $key, $default = null) {

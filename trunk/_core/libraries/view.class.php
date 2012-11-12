@@ -20,9 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
-
-
+namespace Morrow\Libraries;
 
 class View {
 	protected $cachetime = 0;
@@ -43,8 +41,8 @@ class View {
 		$this-> path_to_filters = FW_PATH.'_core/filters/';
 
 		// get page
-		$this->page = Factory::load('page');
-		$this->url  = Factory::load('url');
+		$this->page = \Morrow\Factory::load('page');
+		$this->url  = \Morrow\Factory::load('url');
 	}
 
 	public function setContent($value, $key = 'content', $overwrite = false) {
@@ -201,10 +199,11 @@ class View {
 	protected function getDisplayHandler() {
 		if($this->handler == null) {
 			// get viewhandler
-			$displayClassName = 'view' . $this->mode;
+			$displayClassName = $this->mode;
 			
 			// assign class (DO NOT USE the factory)
-			$this->handler = new $displayClassName($this);
+			$classname = '\\Morrow\\Views\\' . $displayClassName;
+			$this->handler = new $classname($this);
 		}
 		return $this->handler;
 	}

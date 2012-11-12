@@ -20,26 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Views;
 
+class Plain {
+	public $mimetype	= 'text/plain';
+	public $charset		= 'utf-8';
 
-// First we try the external libs. That way the user can replace all core libs if he wants to
-function __autoload($class_name) {
-	$class_name = strtolower(basename($class_name));
-
-	$try[] = FW_PATH.'_libs/'.$class_name.'.class.php';
-	
-	if (defined('PROJECT_PATH')) {
-		$try[] = PROJECT_PATH.'_libs/'.$class_name.'.class.php';
-		$try[] = PROJECT_PATH.'_model/'.$class_name.'.class.php';
+	public function getOutput($content, $handle) {
+		$content = $content['content'];
+		
+		if (is_resource($content) && get_resource_type($content) == 'stream') {
+			// close the old handle
+			fclose($handle);
+			return $content;
+		}
+		
+		if (!is_scalar($content)) { trigger_error(__CLASS__.': The content variable for this handler has to be scalar or a resource of type "stream".', E_USER_ERROR); return false; }
+		fwrite($handle, $content);
+		return $handle;
 	}
-
-	$try[] = FW_PATH.'_core/'.$class_name.'.class.php';
-	$try[] = FW_PATH.'_core/libraries/'.$class_name.'.class.php';
-	$try[] = FW_PATH.'_core/helpers/'.$class_name.'.class.php';
-	$try[] = FW_PATH.'_core/view/'.$class_name.'.class.php';
-	$try[] = FW_PATH.'_core/filters/'.$class_name.'.class.php';
-
-	foreach($try as $path) { if(is_file($path)) { include ($path); break; } }
 }
-
-spl_autoload_register('__autoload');

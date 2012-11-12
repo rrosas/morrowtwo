@@ -21,6 +21,8 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow;
+
 class Morrow {
 	public function __construct() {
 		$this->_run();
@@ -36,7 +38,7 @@ class Morrow {
 		// return if error should not get processed
 		if (($errno & $error_reporting) === 0) return;
 
-		throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+		throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 	}
 
 	public function exceptionHandler($exception) {
@@ -99,7 +101,7 @@ class Morrow {
 
 		/* define project
 		********************************************************************************************/
-		$url			= HelperUrl::trimSlashes($this->input->get('morrow_content'));
+		$url			= Helpers\General::url_trimSlashes($this->input->get('morrow_content'));
 		$url_nodes		= explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
@@ -189,12 +191,12 @@ class Morrow {
 		********************************************************************************************/
 		$routes	= $this->config->get('routing');
 		$url	= implode('/',$this->page->get('nodes')); #$this->input->get('morrow_content');
-		$url	= HelperUrl::trimSlashes($url);
+		$url	= Helpers\General::url_trimSlashes($url);
 	
 		// iterate all rules
 		foreach ($routes as $rule=>$new_url) {
-			$rule		= HelperUrl::trimSlashes($rule);
-			$new_url	= HelperUrl::trimSlashes($new_url);
+			$rule		= Helpers\General::url_trimSlashes($rule);
+			$new_url	= Helpers\General::url_trimSlashes($new_url);
 
 			// rebuild route to a preg pattern
 			$preg_route	= preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters. the four backslashes match just one
@@ -214,7 +216,7 @@ class Morrow {
 			// if there is an asterisk the last entry is for the params
 			if (strpos($rule, '*') !== false) {
 				$blind_parameters = array_pop($hits);
-				$blind_parameters = HelperUrl::trimSlashes($blind_parameters);
+				$blind_parameters = Helpers\General::url_trimSlashes($blind_parameters);
 				$blind_parameters = explode('/', $blind_parameters);
 				
 				// get asterisk param names
@@ -260,7 +262,7 @@ class Morrow {
 				
 		// declare the controller to be loaded
 		$controller_path		= PROJECT_PATH.'_controller/';
-		$global_controller_file	= $controller_path.'_globalcontroller.class.php';
+		$global_controller_file	= $controller_path.'_default.class.php';
 		$page_controller_file	= $controller_path.$alias.'.class.php';
 
 		$this->page->set('controller', $page_controller_file);
@@ -289,7 +291,7 @@ class Morrow {
 			$controller->run();
 			if (method_exists($controller, 'teardown')) $controller->teardown();
 		} else {
-			$controller = new GlobalController();
+			$controller = new DefaultController();
 			if (method_exists($controller, 'setup')) $controller->setup();
 			if (method_exists($controller, 'teardown')) $controller->teardown();
 		}

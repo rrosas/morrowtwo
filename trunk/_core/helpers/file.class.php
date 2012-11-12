@@ -20,49 +20,10 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperFile
-	{
-	// Bereinigt die Slashes bei Pfadangaben
-	static public function cleanPath($dir, $absolute = false)
-		{
-		if (!is_string($dir))
-			{
-			trigger_error(__CLASS__.': parameter has to be of type "string".', E_USER_ERROR);
-			return false;
-			}
-
-		// Doppelte Slashes durch einen ersetzen
-		$dir = str_replace('//', '/', $dir);
-		
-		// Slash am Ende 
-		if (substr($dir, -1) !== '/') $dir .= '/';
-		
-		// Slash am Anfang
-		if ($absolute === true && substr($dir, 0, 1) !== '/') $dir = '/'.$dir;
-		
-		return $dir;
-		}
-	
-	static public function dirWriteable($dir)
-		{
-		if (!is_dir($dir))
-			{
-			trigger_error(__CLASS__.': Directory "'.$dir.'" not exists.', E_USER_ERROR);
-			return false;
-			}
-		if (!is_writeable($dir))
-			{
-			trigger_error(__CLASS__.': Directory "'.$dir.'" is not writeable.', E_USER_ERROR);
-			return false;
-			}
-		return true;
-		}
-
-	public static function safeFileName($filename)
-		{
+class File {
+	public static function safeFileName($filename) {
 		$pathinfo = pathinfo($filename);
 		$pattern = $pathinfo['filename'];
 		$pattern = preg_replace("=[^\w\*\?]=i", '', $pattern);
@@ -70,22 +31,19 @@ class HelperFile
 		$pattern = preg_replace('=([\*|\?])=', '.$1',$pattern);
 		if(isset($pathinfo['extension'])) $pattern . "." . $pathinfo['extension'];
 		return $pattern;
-		}
+	}
 
-	public static function fileSize($a, $dec_point = '.', $thousands_sep = ',')
-		{
+	public static function fileSize($a, $dec_point = '.', $thousands_sep = ',') {
 		$unim = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
 		$c = 0;
-		while ($a>=1024)
-			{
+		while ($a>=1024) {
 			$c++;
 			$a = $a/1024;
-			}
-		return number_format($a,($c ? 2 : 0),$dec_point, $thousands_sep).' '.$unim[$c];
 		}
+		return number_format($a,($c ? 2 : 0),$dec_point, $thousands_sep).' '.$unim[$c];
+	}
 
-	public static function dirlist($dir, $endings = null)
-		{
+	public static function dirlist($dir, $endings = null) {
 		if(!is_null($endings) && !is_array($endings)) $endings = array($endings);
 		$d = dir($dir);
 		$list = array();
@@ -99,10 +57,9 @@ class HelperFile
 		}
 		$d->close();
 		return $list;
-		}
+	}
 
-	public static function getMimeType($file)
-		{
+	public static function getMimeType($file) {
 		$mime_types = array(
 			'ai' => 'application/postscript',
 			'aif' => 'audio/x-aiff',
@@ -227,69 +184,55 @@ class HelperFile
 		else $ext = 'unknown';
 		if (isset($mime_types[$ext])) return $mime_types[$ext];
 		else return 'application/x-'.$ext;
-		}
+	}
 
-	public static function rmdir_recurse($path)
-		{
+	public static function rmdir_recurse($path) {
 		if (!file_exists($path)) return;
 		
 		$path = rtrim($path, '/').'/';
 		$handle = opendir($path);
-		for (;false !== ($file = readdir($handle));)
-			{
+		for (;false !== ($file = readdir($handle));) {
 			if($file == "." or $file == ".." ) continue;
 			
 			$fullpath = $path.$file;
-			if(!is_link($fullpath) &&  is_dir($fullpath) )
-				{
+			if(!is_link($fullpath) &&  is_dir($fullpath) ) {
 				self::rmdir_recurse($fullpath);
-				}
-			else
-				{
+			} else {
 				unlink($fullpath);
-				}
 			}
+		}
 		closedir($handle);
 		rmdir($path);
-		}
+	}
 	
-	public static function copy_recurse($src, $dst, $file_permissions, $dir_permissions)
-		{
+	public static function copy_recurse($src, $dst, $file_permissions, $dir_permissions) {
 		if (is_string($file_permissions)) $file_permissions = octdec($file_permissions);
 		if (is_string($dir_permissions)) $dir_permissions = octdec($dir_permissions);
-		
 		
 		$src = self::cleanPath( $src );
 		$dst = self::cleanPath( $dst );
 		
 		$dir = opendir($src);
 		
-		if (!file_exists($dst))
-			{
+		if (!file_exists($dst)) {
 			mkdir($dst);
 			chmod($dst, $dir_permissions);
-			}
+		}
 		
-		while(false !== ( $file = readdir($dir)) )
-			{
+		while(false !== ( $file = readdir($dir)) ) {
 			if ($file{0} == '.') continue;
 
-			if (is_link($src . $file))
-				{
+			if (is_link($src . $file)) {
 				$target = $src . $file;
 				$target = realpath($target);
 				symlink( $target, $dst . $file );
-				}
-			elseif (is_dir($src . $file))
-				{
+			} elseif (is_dir($src . $file)) {
 				self::copy_recurse($src . $file, $dst . $file, $file_permissions, $dir_permissions);
-				}
-			else
-				{
+			} else {
 				copy($src . $file, $dst . $file);
 				chmod($dst . $file, $file_permissions);
-				}
 			}
+		}
 		closedir($dir);
-		} 
-	}
+	} 
+}

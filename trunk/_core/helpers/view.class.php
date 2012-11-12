@@ -20,15 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperView
-	{
+class View {
 	public static $cycles = array();
 	
-	public static function cycle()
-		{
+	public static function cycle() {
 		$values = func_get_args();
 		$name = array_shift($values);
 		
@@ -36,18 +33,16 @@ class HelperView
 		$index =&  self::$cycles[$name];
 		if ( !isset($values[ ++$index ]) ) $index = 0;
 		return $values[ $index ];
-		}
+	}
 		
-	public static function strip($buffer)
-		{
+	public static function strip($buffer) {
 		$pat = array("=^\s+=", "=\s{2,}=", "=\s+\$=", "=>\s*<([a-z])=");
 		$rep = array("", " ", "", "><$1");
 		$buffer = preg_replace($pat,$rep,$buffer);
 		return $buffer;
-		}
+	}
 		
-	public static function mailto($address, $text = '', $html = null)
-		{
+	public static function mailto($address, $text = '', $html = null) {
 		if (empty($text)) $text = $address;
 		$address = str_replace('@', '--', $address);
 		$id = uniqid('scrambled_');
@@ -61,10 +56,9 @@ class HelperView
 		$returner .= 'el.innerHTML = content.split("").reverse().join("").replace(/--/g, "@");';
 		$returner .= '</script>';
 		return $returner;
-		}
+	}
 
-	public static function hidelink($url, $text = '', $html = '')
-		{
+	public static function hidelink($url, $text = '', $html = '') {
 		if (empty($text)) $text = $url;
 		$id = uniqid('scrambled_');
 		$link = '<a href="'.$url.'" '.$html.' rel="nofollow">'.htmlspecialchars($text).'</a>';
@@ -76,10 +70,9 @@ class HelperView
 		$returner .= 'el.innerHTML = content.split("").reverse().join("");';
 		$returner .= '</script>';
 		return $returner;
-		}
+	}
 
-	public static function loremipsum($word_count = 200, $random = true)
-		{
+	public static function loremipsum($word_count = 200, $random = true) {
 		$text = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.';
 		$count = str_word_count($text);
 
@@ -92,10 +85,9 @@ class HelperView
 		
 		$returner = ucfirst(implode(' ', $returner)).'.';
 		return $returner;
-		}
+	}
 
-	public static function thumb($filepath, $params = array())
-		{
+	public static function thumb($filepath, $params = array()) {
 		try {
 			$path = Factory::load('image')->get($filepath, $params);
 			$path = str_replace(FW_PATH, '', $path);
@@ -112,7 +104,7 @@ class HelperView
 			}
 		}
 		return $path;
-		}
+	}
 	
 	public static function image($filepath, $calls = array()) {
 		$id         = md5(serialize(array($filepath, $calls)));
@@ -136,4 +128,4 @@ class HelperView
 		return str_replace(FW_PATH, '', $path);
 	}
 }
-?>
+

@@ -1,6 +1,8 @@
 <?php
 
-class GlobalController extends Loader {
+namespace Morrow;
+
+class DefaultController extends Loader {
 	public function setup() {
 		$this->view->setHandler('serpent');
 	}

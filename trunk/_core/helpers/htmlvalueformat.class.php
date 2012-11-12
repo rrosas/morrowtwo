@@ -21,12 +21,11 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
-
+namespace Morrow\Helpers;
 	
 /*
 e.g.:
-~~ helperhtmlvalueformat::format($value, $currency, $numberFormat) ~
+~~ htmlvalueformat::format($value, $currency, $numberFormat) ~
 
 ------ $currency -------------------------------------
 	array(
@@ -55,7 +54,7 @@ e.g.:
 
 */
 
-class HelperHtmlValueFormat
+class HtmlValueFormat
 	{
 	private static function defaults($what) {
 		$defaults['format']['thou'] = '';

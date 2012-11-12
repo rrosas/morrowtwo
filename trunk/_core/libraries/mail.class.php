@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
+namespace Morrow\Libraries;
 
 require("./_core/external/PHPMailer_v5.0.2/class.phpmailer.php");
 

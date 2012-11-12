@@ -20,17 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Libraries;
 
-
-class Navigation
-	{
+class Navigation {
 	protected $nodes, $tree = array();
 	protected $active_id = null;
 	
-	public function __construct($data = null)
-		{
-		if (is_null($data))
-			{
+	public function __construct($data = null) {
+		if (is_null($data)) {
 			// get simple tree from language class
 			$language = Factory::load('language');
 			$data = $language->getTree();
@@ -41,28 +38,24 @@ class Navigation
 			// set active page
 			$page = Factory::load('page');
 			$this->setActive($page->get('alias'));
-			}
-		else
-			{
+		} else {
 			// fills $nodes and $tree
 			$this->add($data);
-			}
 		}
+	}
 		
-	public function add($data, $branch = null)
-		{
+	public function add($data, $branch = null) {
 		if (!is_null($branch)) $data = array($branch => $data);
 		
-		foreach ($data as $branch => $tree)
-			{
+		foreach ($data as $branch => $tree) {
 			// first create the flat tree
-			foreach ($tree as $id => $node)
-				{
+			foreach ($tree as $id => $node) {
 				// its ok just to pass a string as title
 				if (is_string($node)) $node = array('title' => $node);
 				
-				if (!isset($node['title']) or empty($node['title']))
+				if (!isset($node['title']) or empty($node['title'])) {
 					throw new Exception(__CLASS__ . "': You have to define a title for id '{$id}'.");
+				}
 				
 				// add other information
 				$node['active'] = false;
@@ -79,97 +72,72 @@ class Navigation
 				$this->nodes[$node['alias']] = $node;
 
 				// add to nested tree
-				if (empty($node['parent']))
-					{
+				if (empty($node['parent'])) {
 					$this->tree[$branch][$id] =& $this->nodes[$id];
-					}
 				}
 			}
+		}
 
 		$nodes =& $this->nodes;
 		
 		// now create the references in between
-		foreach ($nodes as $id => $node)
-			{
+		foreach ($nodes as $id => $node) {
 			// add as child to parent
-			if (isset($nodes[$node['parent']]))
-				{
+			if (isset($nodes[$node['parent']])) {
 				$nodes[$node['parent']]['children'][$id] =& $nodes[$id];
-				}
 			}
-
-		//dump($nodes);
-
-		// now create the nested tree
-		/*
-		foreach ($tree as $id => $node)
-			{
-			if (empty($node['parent']))
-				{
-				$this->tree[$branch][$id] =& $this->nodes[$id];
-				}
-			}
-		dump($this->tree); die();
-		*/
 		}
+	}
 
-	public function setActive($id)
-		{
+	public function setActive($id) {
 		if (!isset($this->nodes[$id])) { throw new Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
 		
 		// set active id to retrieve the breadcrumb
 		$this->active_id = $id;
 		
 		// set all nodes to inactive
-		foreach ($this->nodes as $key => $item)
-			{
+		foreach ($this->nodes as $key => $item) {
 			$this->nodes[$key]['active'] = false;
-			}
+		}
 		
 		// set actual node to active
 		$actual =& $this->nodes[$id];
 		$actual['active'] = true;
 		
 		// loop to the top and set to active
-		while (isset($this->nodes[$actual['parent']]))
-			{
+		while (isset($this->nodes[$actual['parent']])) {
 			$actual =& $this->nodes[$actual['parent']];
 			$actual['active'] = true;
-			}
+		}
 		
 		// return actual node
 		return $this->nodes[$id];
-		}
+	}
 
-	public function getActive()
-		{
+	public function getActive() {
 		return $this->get($this->active_id);
-		}
+	}
 
 	// get full tree or specific id
-	public function get($id = null)
-		{
+	public function get($id = null) {
 		// return full tree
 		if (is_null($id)) return $this->tree;
 
 		if (!isset($this->nodes[$id])) { throw new Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
 		return $this->nodes[$id];
-		}
+	}
 
 	// get full tree or the first found node by field
-	public function find($field, $id)
-		{
+	public function find($field, $id) {
 		// return node by user defined field
-		foreach ($this->nodes as $node)
-			{
+		foreach ($this->nodes as $node) {
 			if (isset($node[$field]) && $node[$field] == $id) return $node;
-			}
-		return null;
 		}
+		return null;
+	}
 
 	// get breadcrumb (tree up to actual page)
-	public function getBreadcrumb()
-		{
+	public function getBreadcrumb() {
 		$breadcrumb = array();
 		
 		// handle not set active node
@@ -180,12 +148,11 @@ class Navigation
 		array_unshift($breadcrumb, $actual);
 		
 		// loop to the top
-		while (isset($this->nodes[$actual['parent']]))
-			{
+		while (isset($this->nodes[$actual['parent']])) {
 			$actual =& $this->nodes[$actual['parent']];
 			array_unshift($breadcrumb, $actual);
-			}
+		}
 		
 		return $breadcrumb;
-		}
 	}
+}

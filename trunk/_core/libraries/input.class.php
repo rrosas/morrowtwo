@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-
+namespace Morrow\Libraries;
 
 class Input {
 	protected $post;
@@ -53,24 +53,24 @@ class Input {
 
 	// Zugriff auf Get-Variablen
 	public function get($identifier = null) {
-		return helperArray::dotSyntaxGet($this->data, $identifier);
+		return \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier);
 	}
 
 	public function getPost($identifier = null) {
-		return helperArray::dotSyntaxGet($this->post, $identifier);
+		return \Morrow\Helpers\General::array_dotSyntaxGet($this->post, $identifier);
 	}
 
 	public function getGet($identifier = null) {
-		return helperArray::dotSyntaxGet($this->get, $identifier);
+		return \Morrow\Helpers\General::array_dotSyntaxGet($this->get, $identifier);
 	}
 
 	public function getFiles($identifier = null) {
-		return helperArray::dotSyntaxGet($this->files, $identifier);
+		return \Morrow\Helpers\General::array_dotSyntaxGet($this->files, $identifier);
 	}
 
 	// import for URL Routing
 	public function set($identifier, $value) {
-		helperArray::dotSyntaxSet($this->data, $identifier, $value);
+		\Morrow\Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
 	}
 
 	protected function _array_merge_recursive_distinct () {

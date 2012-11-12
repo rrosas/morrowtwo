@@ -19,11 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
-/**
- * 2010-11-03 Dirk Lüth
- * Added public property "arguments" to be able to pass arguments to custom validators
- */
 
+namespace Morrow\Libraries;
 
 class FormElement{
 	public $type = "simple";

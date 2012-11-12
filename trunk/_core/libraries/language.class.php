@@ -19,20 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
-/*
 
-ToDo:
-Rename _i18n to _languages
-Müssen die Sprachen im CMS tatsächlich anders genannt werden?
-Steuerdatei in Sprachverzeichnis kopieren, damit man einfach Sprachen reinwerfen kann (gut z.B. fürs CMS)
-
-de/forms.php
-de/i18n.php
-de/l10n.php // Haupt-Einstellungen
-de/tree.php
-
-*/
- 
+namespace Morrow\Libraries;
 
 class Language {
 	protected $language = null;
@@ -60,7 +48,7 @@ class Language {
 		// set default parameters
 		$this->default = $settings['default'];
 		$this->possible = $settings['possible'];
-		$this->language_path = HelperFile::cleanPath($settings['language_path']);
+		$this->language_path = \Morrow\Helpers\General::cleanPath($settings['language_path']);
 		$this->i18n_path = $settings['i18n_path'];
 		
 		// check if there is a valid language file for the possible languages
@@ -139,7 +127,7 @@ class Language {
 
 	protected function _loadFile($file, $dotSyntaxExplode = true){
 		if(!is_file($file)) return array();
-		if ($dotSyntaxExplode) return HelperArray::dotSyntaxExplode(include($file));
+		if ($dotSyntaxExplode) return \Morrow\Helpers\General::array_dotSyntaxExplode(include($file));
 		return include($file);
 	}
 
@@ -193,7 +181,7 @@ class Language {
 		the variable langcheck is stored in the session.
 	*/
 	public function setFromClient(){
-		$session = Factory::load("session");
+		$session = \Morrow\Factory::load("session");
 		$lang = $this->get();
 		if ($session->get("framework.langcheck") !== null) return;
 
@@ -210,7 +198,7 @@ class Language {
 		
 		// there was a change so redirect
 		if (isset($new)) {
-			$url = Factory::load('url');
+			$url = \Morrow\Factory::load('url');
 			$url->redirect('', array('language' => $new));
 		}
 	}

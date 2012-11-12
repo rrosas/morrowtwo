@@ -20,10 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Views;
 
-
-class ViewPhp extends ViewAbstract
-	{
+class Php {
 	public $mimetype	= 'text/html';
 	public $charset		= 'utf-8';
 
@@ -31,36 +30,31 @@ class ViewPhp extends ViewAbstract
 	public $content_template	= '';
 	public $template_suffix	= '.tpl';
 
-	public function __construct($view)
-		{
+	public function __construct($view) {
 		// Template holen
 		$this->page = Factory::load('page');
 		$this->content_template = $this->page->get('alias');
 		$this->language = Factory::load('language');
-		}
+	}
 
-	public function getOutput($content, $handle)
-		{
+	public function getOutput($content, $handle) {
 		// get default template
-		if (empty($this->content_template))
-			{
+		if (empty($this->content_template)) {
 			$this->content_template = $this->page->get('alias');
-			}
+		}
 		
 		// language specific templates
 		$lang = $this->language->get();
 		$lang_template = $this->template . '.' . $lang;
-		if(is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix))
-			{
+		if(is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix)) {
 			$this->template = $lang_template;
-			}
+		}
 
 		// language specific content template
 		$lang_template = $this->content_template . '.' . $lang;
-		if(is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix))
-			{
+		if(is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix)) {
 			$this->content_template = $lang_template;
-			}		
+		}
 		
 		// add suffix
 		$this->template .=  $this->template_suffix;
@@ -71,10 +65,9 @@ class ViewPhp extends ViewAbstract
 		$content['page']['template'] = $this->template;
 
 		// assign vars
-		foreach ($content as $key=>$value)
-			{
+		foreach ($content as $key=>$value) {
 			$$key = $value;
-			}
+		}
 
 		ob_start();
 		include(PROJECT_PATH.'_templates/'.$this->template);
@@ -84,5 +77,5 @@ class ViewPhp extends ViewAbstract
 		fwrite($handle, $output);
 		
 		return $handle;
-		}
 	}
+}

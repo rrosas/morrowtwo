@@ -20,26 +20,42 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Views;
 
-
-class Viewplain extends ViewAbstract
-	{
+class Flash {
 	public $mimetype	= 'text/plain';
 	public $charset		= 'utf-8';
+	
+	public $numeric_prefix = 'entry';
 
-	public function getOutput($content, $handle)
-		{
-		$content = $content['content'];
-		
-		if (is_resource($content) && get_resource_type($content) == 'stream')
-			{
-			// close the old handle
-			fclose($handle);
-			return $content;
-			}
-		
-		if (!is_scalar($content)) { trigger_error(__CLASS__.': The content variable for this handler has to be scalar or a resource of type "stream".', E_USER_ERROR); return false; }
-		fwrite($handle, $content);
+	public function getOutput($content, $handle) {
+		if (isset($content['content'])) $this -> _outputVars('', $content['content'], $handle);
+		fwrite($handle, '&eof=1');
 		return $handle;
+	}
+	
+	protected function _outputVars($var, $input, $handle) {
+		if (is_array($input)) {
+			if (count($input) === 0) return '';
+			foreach($input as $key=>$value) {
+				if (is_numeric($key)) $key = $this->numeric_prefix.$key;
+				if (!empty($var)) $var_to = $var.'_'.$key;
+				else $var_to = $key;
+
+				if (!isset($output)) $output = '';
+				$this -> _outputVars($var_to, $value, $handle);
+			}
+		} else {
+			// Ausgabe des Inhalts
+			if ($input === true) $input = 'true';
+			elseif ($input === false) $input = 'false';
+			elseif ($input === null) $input = 'null';
+			else {
+				$input = trim(stripslashes($input));
+			}
+
+			$body = $input;
+			fwrite($handle, '&'.$var.'='.rawurlencode($body));
 		}
 	}
+}

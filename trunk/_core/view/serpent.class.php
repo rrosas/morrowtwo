@@ -20,10 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Views;
 
-
-class ViewSerpent extends ViewAbstract
-	{
+class Serpent {
 	public $mimetype	= 'text/html';
 	public $charset		= 'utf-8';
 
@@ -36,8 +35,7 @@ class ViewSerpent extends ViewAbstract
 	public $autoescape		= true;
 	public $plugin_config	= false;
 
-	public function __construct($view)
-		{
+	public function __construct($view) {
 		// Template holen
 		$this->page = Factory::load('page');
 		$this->content_template = $this->page->get('alias');
@@ -45,13 +43,13 @@ class ViewSerpent extends ViewAbstract
 		
 		//require_once( FW_PATH.'_core/external/serpent_1.2.4/source/serpent.class.php' );
 		require_once( FW_PATH.'_core/external/serpent_1.3/source/serpent.class.php' );
-		}
+	}
 
-	public function getOutput($content, $handle)
-		{
+	public function getOutput($content, $handle) {
 		// get default template
-		if (empty($this->template))
+		if (empty($this->template)) {
 			$this->template = $this->page->get('alias');
+		}
 		
 		// assign template and frame_template to page
 		$content['page']['template'] = $this->template;
@@ -83,10 +81,9 @@ class ViewSerpent extends ViewAbstract
 			'date' => 'factory::load("HelperTime")->strftime',
 			'_' => 'factory::load("language")->_',
 		);
-		foreach ($this->mappings as $key => $value)
-			{
+		foreach ($this->mappings as $key => $value) {
 			$mappings[$key] = $value;
-			}
+		}
 
 		// set compiler config
 		$_engine->addPluginConfig('compiler', 'serpent', array(
@@ -102,14 +99,13 @@ class ViewSerpent extends ViewAbstract
 		
 		// set additional config
 		$conf =& $this->plugin_config;
-		if ($conf !== false)
-			{
+		if ($conf !== false) {
 			$_engine->addPluginConfig($conf[0], $conf[1], $conf[2]);
-			}			
+		}
 		
 		$_engine->pass($content);
 		fwrite($handle, $_engine->render($this->template) );
 		
 		return $handle;
-		}
 	}
+}

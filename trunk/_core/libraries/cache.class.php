@@ -19,6 +19,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
+
+namespace Morrow\Libraries;
+
 class Cache {
 	protected $cachedir;
 	protected $user_droppable;
@@ -28,12 +31,18 @@ class Cache {
 		if (is_null($cachedir)) $cachedir = PROJECT_PATH.'temp/_codecache/';
 
 		// clean params
-		$cachedir = HelperFile::cleanPath($cachedir);
+		$cachedir = Helpers\General::cleanPath($cachedir);
 		if ($cachedir === false) return false;
 
 		// validation
-		$status = HelperFile::dirWriteable($cachedir);
-		if ($status === false) return false;
+		if (!is_dir($cachedir)) {
+			trigger_error(__CLASS__.': Directory "'.$dir.'" not exists.', E_USER_ERROR);
+			return false;
+		}
+		if (!is_writeable($cachedir)) {
+			trigger_error(__CLASS__.': Directory "'.$dir.'" is not writeable.', E_USER_ERROR);
+			return false;
+		}
 
 		// set new paths
 		$this->cachedir = $cachedir;

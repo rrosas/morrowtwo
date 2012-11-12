@@ -21,14 +21,16 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-/* This class manages all classes the framework is working with */
+namespace Morrow;
+
+// This class manages all classes the framework is working with
 class Factory {
 	public static $instances;
 	
 	public static function load($params) {
 		// get factory config
 		$params = explode(':', $params);
-		$classname = strtolower($params[0]);
+		$classname = __NAMESPACE__ . '\\Libraries\\' . strtolower($params[0]);
 		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
 		$namespace = (isset($params[2])) ? $params[2] : 'user';
 		
@@ -53,20 +55,10 @@ class Factory {
 			$instance = new $classname;
 		} else {
 			// use reflection class to inject the args as single parameters
-			$reflectionObj = new ReflectionClass($classname);
+			$reflectionObj = new \ReflectionClass($classname);
 			$instance = $reflectionObj->newInstanceArgs($args);
 		}
 		return $instance;
-	}
-	
-	// fallback for creating an object with an array as the single params
-	public static function createObjArray($type,$args=array()) {
-		$paramstr = array();
-		for ($i = 0; $i < count($args); $i++) {
-			$paramstr[] = '$args['.$i.']';
-		}
-		$paramstr = implode(',', $paramstr);
-		return eval("return new $type($paramstr);");
 	}
 
 	public static function debug() {

@@ -26,6 +26,8 @@ This class allows lazy loading and registers classes as members
 Will be used by the controller and may be used by other classes for example models
 */
 
+namespace Morrow;
+
 class Loader {
 	private $_params = array();
 	
@@ -55,7 +57,7 @@ class Loader {
 		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array( $instancename ) ;
 		
 		// assign the new class
-		$this->$instancename = call_user_func_array( array('Factory','load'), $factory_args );
+		$this->$instancename = call_user_func_array( array(__NAMESPACE__ . '\\Factory','load'), $factory_args );
 		return $this->$instancename;
 	}
 }

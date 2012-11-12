@@ -20,8 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-class Pager
-	{
+namespace Morrow\Libraries;
+
+class Pager {
 	/* These are defaults */
 	public $TotalResults;
 	public $CurrentPage = 1;
@@ -31,14 +32,12 @@ class Pager
 
 	protected $input;
 
-	public function __construct( $input )
-		{
+	public function __construct( $input ) {
 		$this->input = $input;
 		$this->CurrentPage = $this->getCurrentPage();
-		}
+	}
 
-	public function get()
-		{
+	public function get() {
 		$this->TotalPages = $this->getTotalPages();
 		$this->ResultArray = array(
 			"page_prev" => $this->getPrevPage(),
@@ -55,78 +54,67 @@ class Pager
 			"var" => $this->PageVarName,
 		);
 		return $this->ResultArray;
-		}
+	}
 
 	/* Start information functions */
-	public function getTotalPages()
-		{
+	public function getTotalPages() {
 		/* Make sure we don't devide by zero */
 		$result = 1;
-		if($this->TotalResults != 0 && $this->ResultsPerPage != 0)
-			{
+		if($this->TotalResults != 0 && $this->ResultsPerPage != 0) {
 			$result = ceil($this->TotalResults / $this->ResultsPerPage);
-			}
+		}
 		
 		/* If 0, make it 1 page */
 		if($result == 0) return 1;
 		else return $result;
-		}
+	}
 
-	public function getStartOffset()
-		{
+	public function getStartOffset() {
 		$offset = $this->ResultsPerPage * ($this->CurrentPage - 1);
 		return $offset;
-		}
+	}
 
-	public function getEndOffset()
-		{
+	public function getEndOffset() {
 		if($this->getStartOffset() > ($this->TotalResults - $this->ResultsPerPage)) $offset = $this->TotalResults;
 		elseif($this->getStartOffset() != 0) $offset = $this->getStartOffset() + $this->ResultsPerPage - 1;
 		else $offset = $this->ResultsPerPage;
 		
 		return $offset;
-		}
+	}
 
-	public function getCurrentPage()
-		{
-		if(isset($this->input[$this->PageVarName]))
-			{
+	public function getCurrentPage() {
+		if(isset($this->input[$this->PageVarName])) {
 			$page = $this->input[$this->PageVarName];
 			if (is_numeric($page) and $page > 0) $this->CurrentPage = $page;
-			}
-		return $this->CurrentPage;
 		}
+		return $this->CurrentPage;
+	}
 
-	public function getPrevPage()
-		{
+	public function getPrevPage() {
 		if($this->CurrentPage > 1) return $this->CurrentPage - 1;
 		else return false;
-		}
+	}
 
-	public function getNextPage()
-		{
+	public function getNextPage() {
 		if($this->CurrentPage < $this->TotalPages) return $this->CurrentPage + 1;
 		else return false;
-		}
+	}
 
-	public function getStartNumber()
-		{
+	public function getStartNumber() {
 		$links_per_page_half = $this->LinksPerPage / 2;
 		/* See if curpage is less than half links per page */
 		if($this->CurrentPage <= $links_per_page_half || $this->TotalPages <= $this->LinksPerPage) return 1;
 		/* See if curpage is greater than TotalPages minus Half links per page */
 		elseif($this->CurrentPage >= ($this->TotalPages - $links_per_page_half)) return $this->TotalPages - $this->LinksPerPage + 1;
 		else return $this->CurrentPage - $links_per_page_half;
-		}
+	}
 
-	public function getEndNumber()
-		{
+	public function getEndNumber() {
 		if($this->TotalPages < $this->LinksPerPage) return $this->TotalPages;
 		else return $this->getStartNumber() + $this->LinksPerPage - 1;
-		}
-
-	public function getLimit()
-		{
-		return $this->getStartOffset() . ',' . $this->ResultsPerPage;
-		}
 	}
+
+	public function getLimit() {
+		return $this->getStartOffset() . ',' . $this->ResultsPerPage;
+	}
+}

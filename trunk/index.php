@@ -1,4 +1,5 @@
 <?php
+
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -20,13 +21,15 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow;
+
 $time_start = microtime(true);
 
 // include E_STRICT in error_reporting
 error_reporting(E_ALL | E_STRICT);
 
 // set framework path
-define ("FW_PATH", dirname(__FILE__).'/');
+define ("FW_PATH", __DIR__ .'/');
 
 // include starter
 require(FW_PATH . "_core/_root.php");

@@ -20,10 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Helpers;
 
-
-
-class HelperHtmlOptions{
+class HtmlOptions{
 
 	static public function getOutput($name, $keys, $values, $selected = array(), $class='',$style = array(), $classes = array(), $extras = array()){
 

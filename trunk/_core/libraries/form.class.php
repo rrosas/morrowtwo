@@ -21,6 +21,8 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Libraries;
+
 class Form {
 	public $elements = array();	
 	public $_rawinput = array();
