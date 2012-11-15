@@ -22,12 +22,11 @@
 
 namespace Morrow\Helpers;
 
-class HtmlDate{
+class HtmlDate {
 	static	$defaults = array();
 
 	static public function getOutput($el_key, $date_str=null, $date_format="%d%m%Y", $start_year=null, $end_year=null, $params=array()){
-		
-	        self::$defaults = array(
+        self::$defaults = array(
 			'_Year' => date('Y'),
 			'_Month' => date('m'),
 			'_Day' => date('d'),
@@ -85,7 +84,7 @@ class HtmlDate{
 		return $_html_result;
 	}
 
-	private static function getOptions($el_key, $format, $start_year, $end_year, $params = array()){
+	protected static function getOptions($el_key, $format, $start_year, $end_year, $params = array()){
 		$class = ''; 
 		$style = array();
 		$classes = array(); 
@@ -181,17 +180,15 @@ class HtmlDate{
 	}
 }
 
-function getOperator($string, &$operator){
-		$number = substr($string, 1);
-		if($string{0} == '+'){
-			$operator = $number;
-			return true;
-		}
-		if($string{0} == '-'){
-			$operator = $number*(-1);
-			return true;
-		}
-		
-		return false;
-		
+function getOperator($string, &$operator) {
+	$number = substr($string, 1);
+	if($string{0} == '+'){
+		$operator = $number;
+		return true;
 	}
+	if($string{0} == '-'){
+		$operator = $number*(-1);
+		return true;
+	}
+	return false;
+}

@@ -36,7 +36,7 @@ class Language {
 		// check for required setting keys
 		$required = array("possible", "language_path", "i18n_path");
 		if(count(array_diff($required, array_keys($settings))) > 0){
-			throw new Exception("Missing key(s). Required params are : " . implode(", ",$required));
+			throw new \Exception("Missing key(s). Required params are : " . implode(", ",$required));
 		}
 		if(!is_array($settings['possible'])) {
 			$settings['default'] = $settings['possible'];
@@ -54,7 +54,7 @@ class Language {
 		// check if there is a valid language file for the possible languages
 		foreach($this->possible as $pos) {
 			if(!$this->isValid($pos)){
-				throw new Exception($pos . " is not a valid language. Missing File: " . $this->language_path . $pos . '/l10n.php');
+				throw new \Exception($pos . " is not a valid language. Missing File: " . $this->language_path . $pos . '/l10n.php');
 			}
 		}
 		
@@ -144,7 +144,7 @@ class Language {
 		if (!setlocale(LC_TIME, $this->locale['keys'])){
 			exec('locale -a', $locales);
 			$locales = implode("<br />", $locales);
-			throw new Exception(__METHOD__.'<br>setLocale() failed. These are the locales installed on this system:<br />'.$locales);
+			throw new \Exception(__METHOD__.'<br>setLocale() failed. These are the locales installed on this system:<br />'.$locales);
 		}
 	}
 

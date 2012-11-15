@@ -38,22 +38,21 @@ class DBSession extends Session{
 
 	**/
  
-	private $config = null;
-	private $db = null;
-	private $format = '%Y%m%d%H%M%S';
-	private $table = null;
+	protected $config = null;
+	protected $db = null;
+	protected $format = '%Y%m%d%H%M%S';
+	protected $table = null;
 
  	public function __construct($data){
 		if (ini_get('session.auto_start') == true){
-			trigger_error('You must turn off session.auto_start in your php.ini or use different session handler');
-
+			throw new \Exception('You must turn off session.auto_start in your php.ini or use different session handler');
 		}
 
 		#setting the session handlers
 		$junk =  session_set_save_handler(array($this, "on_session_start"),array($this,"on_session_end"),array($this,"on_session_read"),array($this,"on_session_write"),array($this,"on_session_destroy"),array($this,"on_session_gc"));
 
-		$this->config = Factory::load('config');
-		$this->db = Factory::load('db',$this->config->get('session.db'));
+		$this->config = \Morrow\Factory::load('config');
+		$this->db = \Morrow\Factory::load('db',$this->config->get('session.db'));
 
 		#important!: call the parent constructor
 		parent::__construct($data);

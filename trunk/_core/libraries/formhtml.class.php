@@ -23,14 +23,13 @@
 
 namespace Morrow\Libraries;
 
-class FormHtml{
+class FormHtml {
 		
 	public static $config = array();
 	
-	public static function setConfig($formname, $config)
-		{
+	public static function setConfig($formname, $config) {
 		self::$config[$formname] = $config;
-		}
+	}
 
 	public static function getLabel($formname, $el_name, $params = array()){
 		
@@ -40,10 +39,10 @@ class FormHtml{
 		if(isset($params['dtype'])) $display_type = $params['dtype'];
 		else if(isset($params['displaytype'])) $display_type = $params['displaytype'];
 
-		$_form = Factory::load('form');
+		$_form = \Morrow\Factory::load('form');
 
 		if(!$_form->getElement($formname,$el_name)) {
-			trigger_error("FormHtml::getLabel : missing definition for '$el_name'");
+			throw new \Exception("FormHtml::getLabel : missing definition for '$el_name'");
 			return '';
 		}
 
@@ -76,7 +75,7 @@ class FormHtml{
 
 		$classname = 'formhtmlelement' . $display_type;
                 if(class_exists($classname)){
-			$display_obj = Factory::load($classname);
+			$display_obj = \Morrow\Factory::load($classname);
 			$content = $display_obj->getLabel($el_label, $id, $params);
 		}
 		else $content = "<label for=\"" . $id . "\" " .  HelperHtmlFormAttributes::getAttributeString($params, 'label') . ">$el_label</label>";
@@ -86,7 +85,7 @@ class FormHtml{
 	}
 
 	public static function getElement($formname, $el_name, $params = array()){
-		$_form = Factory::load('form');
+		$_form = \Morrow\Factory::load('form');
 
 		$special_params = array('errorclass','errorstyle', 'value', 'dtype','displaytype', 'opt_classes','separator', 'styles');
 
@@ -96,7 +95,7 @@ class FormHtml{
 		
 
 		if(!$_form->getElement($formname,$el_name)) {
-			trigger_error("FormHtml::getElement : missing definition for '$el_name'");
+			throw new \Exception("FormHtml::getElement : missing definition for '$el_name'");
 			return '';
 		}
 
@@ -183,10 +182,10 @@ class FormHtml{
 		$display_obj = null;
 		$classname = 'formhtmlelement' . $display_type;
                 if(!is_null($display_type) && class_exists($classname)){
-			$display_obj = Factory::load($classname);
+			$display_obj = \Morrow\Factory::load($classname);
 		}
 		else{
-			$display_obj = Factory::load('formhtmlelement' . $default_dtype);
+			$display_obj = \Morrow\Factory::load('formhtmlelement' . $default_dtype);
 		}
 		
 		if(isset($params['readonly']) && $params['readonly']===true) 
@@ -204,10 +203,10 @@ class FormHtml{
 		$special_params = array('tag');
 
 		#$_form = $smarty-> _framework -> formhandler;
-		$_form = Factory::load('form');
+		$_form = \Morrow\Factory::load('form');
 
 		if(!$_form->getElement($formname,$el_name)) {
-			trigger_error("FormHtml::getError : missing definition for '$el_name'");
+			throw new \Exception("FormHtml::getError : missing definition for '$el_name'");
 			return '';
 		}
 
@@ -249,7 +248,7 @@ class FormHtml{
 			else if(isset($params['displaytype'])) $display_type = $params['displaytype'];
 			$classname = 'formhtmlelement' . $display_type;
 			if(class_exists($classname)){
-				$display_obj = Factory::load($classname);
+				$display_obj = \Morrow\Factory::load($classname);
 				$content = $display_obj->getError($content, $params, $tagname);
 			}
 			else $content = "<$tagname " . HelperHtmlFormAttributes::getAttributeString($params, $tagname) .">$content</$tagname>";
@@ -262,7 +261,7 @@ class FormHtml{
 
 	public static function getInputImage($el_name){
 		$tf_key = 'TMP_FILES.' . $el_name . '.tmp_name';
-		$session = Factory::load('session');
+		$session = \Morrow\Factory::load('session');
 		return $session->get($tf_key);
 	}
 	

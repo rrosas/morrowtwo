@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Excel {
+class Excel extends AbstractView {
 	public $mimetype	= 'application/vnd.ms-excel';
 	public $charset		= 'utf-8';
 	public $stream		= false;
@@ -37,7 +37,7 @@ class Excel {
 		return $handle;
 	}
 
-	private function _output($input, $handle) {
+	protected function _output($input, $handle) {
 		fwrite($handle, '<table cellpadding="0" cellspacing="0" border="0">');
 		foreach($input as $nr=>$row) {
 

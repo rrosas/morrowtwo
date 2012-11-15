@@ -26,8 +26,7 @@ class General {
 	// Bereinigt die Slashes bei Pfadangaben
 	static public function cleanPath($dir, $absolute = false) {
 		if (!is_string($dir)) {
-			trigger_error(__CLASS__.': parameter has to be of type "string".', E_USER_ERROR);
-			return false;
+			throw new \Exception(__CLASS__.': parameter has to be of type "string".');
 		}
 
 		// Doppelte Slashes durch einen ersetzen
@@ -123,12 +122,12 @@ class General {
 			foreach($parameters as $parameter) {
 				if(!is_array($parameter)) {
 					$_return = false;
-					throw new Exception(__METHOD__ . ': Only arrays can be merged', E_USER_ERROR);
+					throw new \Exception(__METHOD__ . ': Only arrays can be merged', E_USER_ERROR);
 					break;
 				}
 			}
 		} else {
-			throw new Exception(__METHOD__ . ': Two or more arrays needed to be merged', E_USER_ERROR);
+			throw new \Exception(__METHOD__ . ': Two or more arrays needed to be merged', E_USER_ERROR);
 		}
 
 		if($_return = true) {
@@ -158,8 +157,8 @@ class General {
 
 	public static function array_dotSyntaxGet(&$array, $identifier) {
 		// Validierung
-		if (!is_array($array)) { trigger_error(__CLASS__.': first parameter has to be of type "array".', E_USER_ERROR); return; }
-		if (!is_string($identifier) AND !is_null($identifier)) { trigger_error(__CLASS__.': second parameter has to be of type "string".', E_USER_ERROR); return; }
+		if (!is_array($array)) { throw new \Exception(__CLASS__.': first parameter has to be of type "array".'); }
+		if (!is_string($identifier) AND !is_null($identifier)) { throw new \Exception(__CLASS__.': second parameter has to be of type "string".'); }
 		if (empty($identifier)) return $array;
 
 		// Referenz erstellen
@@ -183,15 +182,15 @@ class General {
 
 	public static function array_dotSyntaxSet(&$array, $identifier, $value) {
 		// Validierung
-		if (!is_array($array)) { trigger_error(__CLASS__.': first parameter has to be of type "array".', E_USER_ERROR); return false; }
-		if (!is_string($identifier) OR empty($identifier)) { trigger_error(__CLASS__.': identifier has to be of type "string" and must not be empty.', E_USER_ERROR); return false; }
+		if (!is_array($array)) { throw new \Exception(__CLASS__.': first parameter has to be of type "array".'); }
+		if (!is_string($identifier) OR empty($identifier)) { throw new \Exception(__CLASS__.': identifier has to be of type "string" and must not be empty.'); }
 
 		// Referenz erstellen
 		$parts = explode('.', $identifier);
 		$returner =& $array;
 		
 		foreach ($parts as $part) {
-			if (strlen($part) === 0) { trigger_error(__CLASS__.': a key must not be empty.', E_USER_ERROR); return false; }
+			if (strlen($part) === 0) { throw new \Exception(__CLASS__.': a key must not be empty.'); }
 			if (!isset($returner[$part])) {
 				$returner[$part] = '';
 			}
@@ -207,8 +206,8 @@ class General {
 
 	public static function array_dotSyntaxDelete(&$array, $identifier) {
 		// Validierung
-		if (!is_array($array)) { trigger_error(__CLASS__.': first parameter has to be of type "array".', E_USER_ERROR); return; }
-		if (!is_string($identifier)) { trigger_error(__CLASS__.': second parameter has to be of type "string".', E_USER_ERROR); return; }
+		if (!is_array($array)) { throw new \Exception(__CLASS__.': first parameter has to be of type "array".'); }
+		if (!is_string($identifier)) { throw new \Exception(__CLASS__.': second parameter has to be of type "string".'); }
 
 		// Referenz erstellen
 		$parts = explode('.', $identifier);
@@ -232,7 +231,7 @@ class General {
 		    unset($parent[$rkey]);
 			return true;
 		} else {
-			trigger_error(__CLASS__.': identifier "'.$identifier.'" does not exist.', E_USER_ERROR); return false;
+			throw new \Exception(__CLASS__.': identifier "'.$identifier.'" does not exist.');
 		}
 	}
 

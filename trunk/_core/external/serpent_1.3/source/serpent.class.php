@@ -64,8 +64,8 @@ class Serpent
 		if (substr($this->compile_dir, -1) != '/') $this->compile_dir .= '/'; 
 		
 		// check if compile dir exists
-		if (!file_exists($this->compile_dir)) throw new Exception('compile_dir "'.$this->compile_dir.'" does not exist.');
-		if (!is_writeable($this->compile_dir)) throw new Exception('compile_dir "'.$this->compile_dir.'" is not writeable.');
+		if (!file_exists($this->compile_dir)) throw new \Exception('compile_dir "'.$this->compile_dir.'" does not exist.');
+		if (!is_writeable($this->compile_dir)) throw new \Exception('compile_dir "'.$this->compile_dir.'" is not writeable.');
 
 		// add to template stack
 		$this->_template_stack[$this->render_id][] = $this->_render($tpl, $resource_handler, $compiler_handler);
@@ -127,7 +127,7 @@ class Serpent
 			
 			return $object;
 			}
-		throw new Exception($type.' handler "'.$name.'" does not exist.');
+		throw new \Exception($type.' handler "'.$name.'" does not exist.');
 		}
 	
 	// checks if a template has to be compiled and returns the path to the compiled template

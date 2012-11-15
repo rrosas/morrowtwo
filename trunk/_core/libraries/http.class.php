@@ -76,7 +76,7 @@ class Http {
 		if ($method == 'post') {
 			// add files to post fields
 			foreach ($files as $name => $path) {
-				if (!is_readable($path)) throw new Exception("File '$path' does not exist.");
+				if (!is_readable($path)) throw new \Exception("File '$path' does not exist.");
 				$post[$name] = '@' . $path;
 			}
 			
@@ -98,7 +98,7 @@ class Http {
 		}
 		
 		if (!$data = curl_exec($ch)) {
-			throw new Exception(curl_error($ch) . " ($url)");
+			throw new \Exception(curl_error($ch) . " ($url)");
 		}
 		
 		$data = $this->_splitResponse($ch, $data);

@@ -48,7 +48,7 @@ class SerpentResourceFile extends SerpentResourceAbstract
 		else $raw_tpl = $raw_tpl . $this->suffix; // or fall back to standard template
 
 		// does the template exist
-		if (!file_exists( $raw_tpl )) throw new Exception('template "'.$tpl.'" ('.$raw_tpl.') does not exist.');
+		if (!file_exists( $raw_tpl )) throw new \Exception('template "'.$tpl.'" ('.$raw_tpl.') does not exist.');
 		
 		return filemtime( $raw_tpl );
 		}

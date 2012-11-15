@@ -47,13 +47,13 @@ class Image {
 		}
 	}
 	
-	private function _unsharpMask($img) { 
+	protected function _unsharpMask($img) { 
 		$matrix = array(array( -1, -1, -1 ), array( -1, 16, -1 ), array( -1, -1, -1 ));
 		imageconvolution($img, $matrix, 8, 0);
 		return $img;
 	} 
 
-	private function _validateParams($params) {
+	protected function _validateParams($params) {
 		// all params with type and default_value
 		// used for _render
 		$defaults['sharpen'] = array('boolean', true);
@@ -77,7 +77,7 @@ class Image {
 			if (isset($params[$key])) {
 				// check type
 				$type = gettype($params[$key]);
-				if ($type !== $value[0]) { trigger_error(__CLASS__.': "'.$key.'" has to be of type "'.$value[0].'"', E_USER_ERROR); return; }
+				if ($type !== $value[0]) { throw new \Exception(__CLASS__.': "'.$key.'" has to be of type "'.$value[0].'"'); return; }
 			} else {
 				// set default
 				if (!is_null($value[1])) $params[$key] = $value[1];
@@ -95,7 +95,7 @@ class Image {
 		return $params;
 	}
 	
-	private function _addMagnifierIcon($img_obj) {
+	protected function _addMagnifierIcon($img_obj) {
 		$img_width  = imagesx($img_obj);
 		$img_height = imagesy($img_obj);
 		
@@ -112,7 +112,7 @@ class Image {
 		return $img_obj;
 	}
 	
-	private function _addOverlayImage($img_obj, $overlay_file, $overlay_position) {
+	protected function _addOverlayImage($img_obj, $overlay_file, $overlay_position) {
 		$img_width  = imagesx($img_obj);
 		$img_height = imagesy($img_obj);
 
@@ -133,12 +133,12 @@ class Image {
 		return $img_obj;
 	}
 	
-	private function _addFrame($img_obj, $frame_file) {
+	protected function _addFrame($img_obj, $frame_file) {
 		$img_width  = imagesx($img_obj);
 		$img_height = imagesy($img_obj);
 
 		$imagesize = getimagesize($frame_file);
-		if ($imagesize[0] != $imagesize[1] OR $imagesize[0]%3 OR !file_exists($frame_file)) { trigger_error('wrong dimensions of "frame"-image or width and height is not a multiplier of 3', E_USER_ERROR); return; }
+		if ($imagesize[0] != $imagesize[1] OR $imagesize[0]%3 OR !file_exists($frame_file)) { throw new \Exception('wrong dimensions of "frame"-image or width and height is not a multiplier of 3'); return; }
 
 		// "frame"-Bild laden und initialisieren
 		$frame = imagecreatefrompng($frame_file);
@@ -163,7 +163,7 @@ class Image {
 		return $_FRAME['image'];
 	}
 	
-	private function _addRenderTime($img_obj, $start_time) {
+	protected function _addRenderTime($img_obj, $start_time) {
 		$img_width  = imagesx($img_obj);
 
 		// stop time
@@ -184,7 +184,7 @@ class Image {
 	}
 	
 	protected function _getCacheFilename($file_path, &$params) {
-		if (!is_readable($file_path)) { trigger_error(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); return; }
+		if (!is_readable($file_path)) { throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); }
 
 		$types = array('jpg', 'gif', 'png');
 		if (!isset($params['type']) OR !is_string($params['type']) OR !in_array($params['type'], $types))
@@ -237,14 +237,14 @@ class Image {
 
 	// returns an image object of a given file path
 	public function load($file_path) {
-		if (!is_readable($file_path)) { trigger_error(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); return; }
+		if (!is_readable($file_path)) { throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); }
 
 		$data = getimagesize($file_path);
 
 		if ($data[2] == 1)	$img_obj = imagecreatefromgif($file_path);
 		elseif ($data[2] == 2)	$img_obj = imagecreatefromjpeg($file_path);
 		elseif ($data[2] == 3)	$img_obj = imagecreatefrompng($file_path);
-		else { trigger_error(__CLASS__.': file "'.$file_path.'" is not a valid image format'); return; }
+		else { throw new \Exception(__CLASS__.': file "'.$file_path.'" is not a valid image format'); }
 		
 		return $img_obj;
 	}
@@ -338,7 +338,7 @@ class Image {
 		return $img_obj;
 	}
 	
-	private function _render($img_obj, $params) {
+	protected function _render($img_obj, $params) {
 		// start time measurement
 		$time['start'] = microtime(true);
 

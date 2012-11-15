@@ -29,7 +29,7 @@ Will be used by the controller and may be used by other classes for example mode
 namespace Morrow;
 
 class Loader {
-	private $_params = array();
+	protected $_params = array();
 	
 	public function __construct() {
 		$this->load('page');
@@ -52,7 +52,7 @@ class Loader {
 		return $this->_load($instancename);
 	}
 
-	private function _load($instancename) {
+	protected function _load($instancename) {
 		// get arguments
 		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array( $instancename ) ;
 		

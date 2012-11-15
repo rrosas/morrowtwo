@@ -37,8 +37,7 @@ class Mail extends PHPMailer {
 	public function Send($confirm = false) {
 		// if From was not set ...
 		if ($this->From == 'root@localhost') {
-			trigger_error(__CLASS__.'<br />The key "From" could not be found in the assigned config, but has to be set.', E_USER_ERROR);
-			return false;
+			throw new \Exception(__CLASS__.'<br />The key "From" could not be found in the assigned config, but has to be set.');
 		}
 
 		// Set sender to avoid to get marked as spam
@@ -68,8 +67,7 @@ class Mail extends PHPMailer {
 		}
 
 		if ($returner === false) {
-			trigger_error(__CLASS__.'<br />'.$this->ErrorInfo, E_USER_ERROR);
-			return false;
+			throw new \Exception(__CLASS__.'<br />'.$this->ErrorInfo);
 		} else {
 			return true;
 		}

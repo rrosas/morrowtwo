@@ -23,16 +23,15 @@
 namespace Morrow\Libraries;
 
 class PageSession extends Session{
-	private $alias = '';
+	protected $alias = '';
 	protected $section = '';
 	
 	public function __construct(){
-		$page = Factory::load('page');
+		$page = \Morrow\Factory::load('page');
 		$this->alias = $page->get('alias');
 		$this->section = 'page.' . $this->alias; 
 	}
 
  	public function __destruct(){
 	}
-
 }

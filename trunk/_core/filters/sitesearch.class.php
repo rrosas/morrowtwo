@@ -20,10 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Filters;
 
-
-
-class FilterSitesearch extends FilterAbstract {
+class Sitesearch extends AbstractFilter {
 	// some new properties
 	public $buildindex			= true;
 
@@ -39,7 +38,7 @@ class FilterSitesearch extends FilterAbstract {
 	
 	public $db_config			= array();
 
-	private $db_tablename		= 'searchdata';
+	protected $db_tablename		= 'searchdata';
 
 	public function __construct($config = array()) {
 		$this->db_config = array(
@@ -70,8 +69,8 @@ class FilterSitesearch extends FilterAbstract {
 		$output = $original_output;
 
 		// load needed classes
-		$this->url = Factory::load('url');
-		$this->searchdb		= Factory::load('db:searchdb', $this->db_config);
+		$this->url = \Morrow\Factory::load('url');
+		$this->searchdb		= \Morrow\Factory::load('db:searchdb', $this->db_config);
 
 		// connect to DB and do maintenance
 		$this->searchdb->connect();
@@ -159,7 +158,7 @@ class FilterSitesearch extends FilterAbstract {
 		return $original_output;
 	}
 
-	private function _createTableIfNotExists($table) {
+	protected function _createTableIfNotExists($table) {
 		$this->searchdb->query("
 			CREATE TABLE IF NOT EXISTS `".$table."` (
 			`url` char(255) NOT NULL,
@@ -174,7 +173,7 @@ class FilterSitesearch extends FilterAbstract {
 		");
 	}
 	
-	private function _deleteOldEntries($table) {
+	protected function _deleteOldEntries($table) {
 		$sql = $this->searchdb->exec("
 			DELETE FROM {$table}
 			WHERE datetime(touched, '{$this->entry_lifetime}') < datetime('now');
@@ -182,12 +181,12 @@ class FilterSitesearch extends FilterAbstract {
 		$this->searchdb->query("VACUUM");
 	}
 		
-	private function _touchEntry($table, $url) {
+	protected function _touchEntry($table, $url) {
 		$updates['touched'] = array('FUNC' => "datetime('now')");
 		$this->searchdb->update($table, $updates, "WHERE url = '{$url}'");
 	}
 
-	private function _check($url) {
+	protected function _check($url) {
 		$sql = $this->searchdb->result("
 			SELECT *
 			FROM {$this->db_tablename}

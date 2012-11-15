@@ -22,13 +22,11 @@
 
 namespace Morrow\Libraries;
 
-class Time
-	{
+class Time {
 	public $time = 0;
 	public $types = 0;
 	
-	public function __construct($var_timestamp = null)
-		{
+	public function __construct($var_timestamp = null) {
 		if (!is_null($var_timestamp))
 			$this->time = $this->_convertToTimestamp($var_timestamp);
 		else
@@ -44,24 +42,21 @@ class Time
 			'iso' => 'c',
 			'rfc' => 'r',
 		);
-		}
+	}
 	
-	public static function create($var_timestamp = null)
-		{
+	public static function create($var_timestamp = null) {
 		return new self($var_timestamp);
-		}
+	}
 	
-	public function set($var_timestamp)
-		{
+	public function set($var_timestamp) {
 		$timestamp = $this->_convertToTimestamp($var_timestamp);
 		if (!$timestamp) return false;
 		
 		$this->time = $timestamp;
 		return true;
-		}
+	}
 
-	public function get($type = 'timestamp', $alter = null)
-		{
+	public function get($type = 'timestamp', $alter = null) {
 		$type = strtolower($type);
 		
 		// return timestamp
@@ -69,7 +64,7 @@ class Time
 
 		// check type
 		$types = array_keys($this->types);
-		if (!in_array( $type, $types )) throw new Exception('type "'.$type.'" no valid. Valid types are "'.implode('", "', $types).'".');
+		if (!in_array( $type, $types )) throw new \Exception('type "'.$type.'" no valid. Valid types are "'.implode('", "', $types).'".');
 		
 		$timestamp = $this->time;
 
@@ -77,29 +72,25 @@ class Time
 		if (!is_null($alter)) $timestamp = strtotime($alter, $timestamp);
 
 		return date($this->types[$type], $timestamp);
-		}
+	}
 	
-	public function strftime($format)
-		{
+	public function strftime($format) {
 		return strftime($format, $this->time);
-		}
+	}
 	
-	public function date($format)
-		{
+	public function date($format) {
 		return date($format, $this->time);
-		}
+	}
 
-	protected function _convertToTimestamp($var)
-		{
+	protected function _convertToTimestamp($var) {
 		if (is_numeric($var)) return (int)$var;
 		
 		$var = strtotime($var);
 		if (!$var) return false;
 		return $var;
-		}
+	}
 	
-	public function time_since($var_since, $skip_empty_values = true)
-		{
+	public function time_since($var_since, $skip_empty_values = true) {
 		$since = $this->_convertToTimestamp($var_since);
 		if (!$since) return false;
 		$since = $this->time - $since;
@@ -115,8 +106,7 @@ class Time
 		);
 
 		$fragment = array();
-		foreach ($chunks as $i=>$value)
-			{
+		foreach ($chunks as $i=>$value) {
 			$seconds = $value[0];
 			$key = $value[1];
 			$count = floor($since / $seconds);
@@ -128,8 +118,8 @@ class Time
 			
 			// substract for further calculations
 			$since -= $count*$seconds;
-			}
+		}
 
 		return $fragment;
-		}
 	}
+}

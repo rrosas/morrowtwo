@@ -39,7 +39,7 @@ class Debug {
 	
 	public function __construct() {
 		// read config from config class
-		$config = Factory::load('config');
+		$config = \Morrow\Factory::load('config');
 		$this->config = $config->get('debug');
 
 		// error types
@@ -221,19 +221,19 @@ class Debug {
 		else $errordescription = 'EXCEPTION (Code '.$errcode.')';
 
 		// show error in firefox panel
-		if (isset($this->config['output']['headers']) && $this->config['output']['headers'] == true) {
+		if ($this->config['output']['headers'] == true) {
 			$error = $this->errorhandler_output($errstr, $backtrace, $errordescription);
 			$this->_output_http_headers($error);
 		}
 
 		// show error on screen
-		if (!isset($this->config['output']['screen']) OR $this->config['output']['screen'] == true) {
+		if ($this->config['output']['screen'] == true) {
 			$error = $this->errorhandler_output($errstr, $backtrace, $errordescription);
 			echo $error;
 		}
 
 		// log error in flatfile
-		if (isset($this->config['output']['flatfile']) && $this->config['output']['flatfile'] == true)
+		if ($this->config['output']['flatfile'] == true)
 			$this->errorhandler_file($errstr, $backtrace, $errordescription);
 
 		return;
@@ -299,12 +299,12 @@ class Debug {
 		}
 		
 		// output to debug console
-		if (isset($this->config['output']['headers']) && $this->config['output']['headers'] == true) {
+		if ($this->config['output']['headers'] == true) {
 			$this->_output_http_headers($output);
 		}		
 
 		// output to screen		
-		if (isset($this->config['output']['screen']) && $this->config['output']['screen'] == false) return '';
+		if ($this->config['output']['screen'] == false) return '';
 
 		return $output;
 	}
@@ -383,7 +383,7 @@ class Debug {
 				$output .= "$indent$var_name <span style='color:$grey'>$type(".get_class($avar).$parent_class.")</span><br />$indent{<br />";
 
 				// output methods
-				$reflectionClass = new ReflectionClass( get_class($avar) );
+				$reflectionClass = new \ReflectionClass( get_class($avar) );
 				foreach ($reflectionClass->getMethods() as $method) {
 					$output .= "$indent$do_dump_indent";
 					$output .= "<span style='color: #0099c5'>";

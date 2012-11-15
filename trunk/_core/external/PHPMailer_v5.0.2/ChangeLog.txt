@@ -19,7 +19,7 @@ Version 5.0.0 (April 02, 2009)
   system to differentiate from the PHP4 version of PHPMailer.
 * Most notable in this release is fully object oriented code.
 class.smtp.php:
-* Refactored class.smtp.php to support new exception handling
+* Refactored class.smtp.php to support new \Exception handling
   code size reduced from 29.2 Kb to 25.6 Kb
 * Removed unnecessary functions from class.smtp.php:
   public function Expand($name) {
@@ -29,7 +29,7 @@ class.smtp.php:
   public function SendOrMail($from) {
   public function Verify($name) {
 class.phpmailer.php:
-* Refactored class.phpmailer.php with new exception handling
+* Refactored class.phpmailer.php with new \Exception handling
 * Changed processing functionality of Sendmail and Qmail so they cannot be
   inadvertently used
 * removed getFile() function, just became a simple wrapper for
@@ -48,7 +48,7 @@ New /test_script
   script that you can copy/paste to your editor to duplicate the functionality.
 New examples
 * All new examples in both basic and advanced modes. Advanced examples show
-  Exception handling.
+  \Exception handling.
 PHPDocumentator (phpdocs) documentation for PHPMailer version 5.0.0
 * all new documentation
 

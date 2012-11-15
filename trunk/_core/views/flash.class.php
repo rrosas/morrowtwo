@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Flash {
+class Flash extends AbstractView {
 	public $mimetype	= 'text/plain';
 	public $charset		= 'utf-8';
 	

@@ -54,7 +54,7 @@ class Db extends PDO
 			parent::__construct($connector, $this->config['user'], $this->config['pass']);
 
 			$this -> setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL); // leave column names as returned by the database driver
-			$this -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // on errors we want to get exceptions
+			$this -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // on errors we want to get \Exceptions
 
 			// set encoding
 			if(isset($this->config['encoding'])){

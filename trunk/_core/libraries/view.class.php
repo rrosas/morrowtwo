@@ -48,13 +48,13 @@ class View {
 	public function setContent($value, $key = 'content', $overwrite = false) {
 		// validation
 		if (!is_string($key) || empty($key)) {
-			trigger_error(__CLASS__.': the key has to be of type "string" and not empty.', E_USER_ERROR);
+			throw new \Exception(__CLASS__.': the key has to be of type "string" and not empty.');
 			return;
 		}
 
 		// set
 		if (isset($this->content[$key]) && !$overwrite) {
-			trigger_error(__CLASS__.': the key "'.$key.' is already set.', E_USER_ERROR);
+			throw new \Exception(__CLASS__.': the key "'.$key.' is already set.');
 			return;
 		}
 		else $this->content[$key] = $value;
@@ -64,7 +64,7 @@ class View {
 		if (is_null($key)) return $this->content;
 
 		if (!is_string($key) OR !isset($this->content[$key])) {
-			trigger_error(__CLASS__.': key "'.$key.'" not found.', E_USER_ERROR);
+			throw new \Exception(__CLASS__.': key "'.$key.'" not found.');
 			return;
 		}
 		return $this->content[$key];
@@ -80,7 +80,7 @@ class View {
 		if (isset($this->properties[$this->mode]))
 			foreach ($this->properties[$this->mode] as $key=>$value) {
 				if (!isset($displayHandler->$key))
-					trigger_error(__CLASS__.': the property "'.$key.'" does not exist for handler "'.$this->mode.'".', E_USER_ERROR);
+					throw new \Exception(__CLASS__.': the property "'.$key.'" does not exist for handler "'.$this->mode.'".');
 				$displayHandler->$key = $value;
 				if ($key === 'mimetype') $mimetype_changed = true;
 			}
@@ -215,7 +215,7 @@ class View {
 
 	public function setFilter($name, $config = array(), $handler = null) {
 		if ($handler == null) $handler = $this->mode;
-		$this->filters[$handler][$name] = array('filter'.$name, $config);
+		$this->filters[$handler][$name] = array('\\Morrow\\Filters\\' . $name, $config);
 	}
 
 	public function unsetFilter($name, $handler = null) {
@@ -229,7 +229,7 @@ class View {
 
 	public function setHeader($key, $value = '') {
 		if (stripos($key, 'content-type') !== false) {
-			trigger_error(__CLASS__.': the content-type header should not be directly set. Use setProperty("mimetype", ...) and setProperty("charset", ...) instead.', E_USER_ERROR);
+			throw new \Exception(__CLASS__.': the content-type header should not be directly set. Use setProperty("mimetype", ...) and setProperty("charset", ...) instead.');
 		}
 
 		$header = $key . (!empty($value) ? ': '.$value : '');

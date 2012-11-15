@@ -24,7 +24,7 @@ namespace Morrow\Libraries;
 
 class FormElement{
 	public $type = "simple";
-	private $_fh;
+	protected $_fh;
 
 	public $required;
 	public $checktype;
@@ -92,7 +92,7 @@ class FormElement{
 
 
 	public function setValue($value, $overwrite = false){
-		$session = Factory::load("session");
+		$session = \Morrow\Factory::load("session");
 		$tf_key = 'TMP_FILES.' . $this->name;
 		if(is_array($value)){
 			#special: file
@@ -173,7 +173,7 @@ class FormElement{
 
 	public function validate($formname, $validator_class = 'validator'){
 		if($this->value === null){
-			throw new Exception("You must set all element values before validating (" . $this->name . ")");
+			throw new \Exception("You must set all element values before validating (" . $this->name . ")");
 		}
 
 		$compare = null;
@@ -182,21 +182,21 @@ class FormElement{
 		}
 
 		if($this->required && $this->value === ''){
-			$this->setError(Factory::load('language')->_("This field is required."));
+			$this->setError(\Morrow\Factory::load('language')->_("This field is required."));
 			return false;
 		}
 		#else if($this->value !== '' && $this->checktype != null){
 		else if($this->checktype != null && ($this->value !== '' || $this->comparefield != null)){
-			$validator = Factory::load($validator_class);
+			$validator = \Morrow\Factory::load($validator_class);
 			$function = "check" . $this->checktype;
 			if(!method_exists($validator,$function)){
-				throw new Exception("Method $function does not exist in class " . get_class($validator) . "!");
+				throw new \Exception("Method $function does not exist in class " . get_class($validator) . "!");
 			}
 			else{
 				if(!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)){
 					$this->setError($errorkey);
 					#if it was a file, remove it from session
-					$session = Factory::load("session");
+					$session = \Morrow\Factory::load("session");
 					$tf_key = 'TMP_FILES.' . $this->name;
 					if($session->get($tf_key)!='') {
 						$session->delete($tf_key);

@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Json {
+class Json extends AbstractView {
 	public $mimetype	= 'application/json';
 	public $charset		= 'utf-8';
 

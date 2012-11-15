@@ -22,13 +22,11 @@
 
 namespace Morrow\Libraries;
 
-class Sitesearch
-	{
-	private $contextradius = 50;
-	private $limit = 10;
+class Sitesearch {
+	protected $contextradius = 50;
+	protected $limit = 10;
 	
-	public function __construct($config = array())
-		{
+	public function __construct($config = array()) {
 		$this->db_config = array(
 			'driver' => 'sqlite',
 			'file' => PROJECT_PATH.'temp/_sitesearch.sqlite',
@@ -39,17 +37,15 @@ class Sitesearch
 		);
 
 		// apply config
-		foreach ($config as $key=>$value)
-			{
+		foreach ($config as $key=>$value) {
 			$this->$key = $value;
-			}
-
-		$this->db = Factory::load('db:dbsitesearch', $this->db_config);
-		$this->bm = Factory::load('benchmark:benchmarksitesearch');
 		}
 
-	public function getAll($where = '')
-		{
+		$this->db = \Morrow\Factory::load('db:dbsitesearch', $this->db_config);
+		$this->bm = \Morrow\Factory::load('benchmark:benchmarksitesearch');
+	}
+
+	public function getAll($where = '') {
 		$results = $this->db->Result("
 			SELECT url,title,searchdata,bytes,strftime('%s', changed) as changed, *
 			FROM searchdata
@@ -58,10 +54,9 @@ class Sitesearch
 		
 		$returner = $results['RESULT'];
 		return $returner;
-		}
+	}
 		
-	public function get($q)
-		{
+	public function get($q) {
 		// start timer
 		$start = microtime(true);
 		
@@ -70,16 +65,14 @@ class Sitesearch
 		$q2 = explode(' ', $q);
 		$q_count = count($q2);
 		
-		foreach ($q2 as $key=>$value)
-			{
+		foreach ($q2 as $key=>$value) {
 			$q2[$key] = '%'.$value.'%';
-			}
+		}
 
 		$replacements = array();
-		for ($i=0; $i<3; $i++)
-			{
+		for ($i=0; $i<3; $i++) {
 			$replacements = array_merge($replacements, $q2);
-			}
+		}
 		array_push($replacements, $this->limit);
 		
 		$results = $this->db->Result("
@@ -96,15 +89,13 @@ class Sitesearch
 		$returner['time'] = microtime(true)-$start;
 		$returner['data'] = $this->_prepare($q, $results);
 		return $returner;
-		}
+	}
 		
-	private function _prepare($q, $results)
-		{
+	protected function _prepare($q, $results) {
 		if (!isset($results['RESULT'][0])) return;
 
 		$phrases = explode(' ', $q);
-		foreach ($results['RESULT'] as $key=>$result)
-			{
+		foreach ($results['RESULT'] as $key=>$result) {
 			$new =& $results['RESULT'][$key];
 			
 			$raw = helperString::excerpt($result['searchdata'], $q, $this->contextradius);
@@ -117,30 +108,27 @@ class Sitesearch
 			// hits in url and url should lead to higher relevance
 			$extract = strtolower($result['title'].' '.$result['url']);
 			$weight = array();
-			foreach ($phrases as $phrase)
-				{
+			foreach ($phrases as $phrase) {
 				$phrase = strtolower($phrase);
 				$weight[$phrase] = substr_count($extract, $phrase)+1;
-				}
+			}
 			$weight = array_product($weight)*1.5;
 
 			$new['relevance']	+= $weight;
-			}
+		}
 
 		// sort after weight
 		$weight = array();
-		foreach ($results['RESULT'] as $key => $row)
-			{
+		foreach ($results['RESULT'] as $key => $row) {
 			$weight[$key]  = $row['relevance'];
-			}
+		}
 
 		array_multisort($weight, SORT_DESC, $results['RESULT']);
 		return $results;
-		}
+	}
 
 	// stopword lists: http://www.ranks.nl/tools/stopwords.html
-	private function _cleanQuery($q)
-		{
+	protected function _cleanQuery($q) {
 		$q = trim($q);
 		$q = preg_replace('|\s+|', ' ', $q); // strip whitespace
 		$words = explode(' ', $q);
@@ -156,6 +144,5 @@ class Sitesearch
 		
 		$q = implode(' ', $words);
 		return $q;
-		}
-
 	}
+}

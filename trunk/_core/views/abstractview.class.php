@@ -20,14 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+
 namespace Morrow\Views;
 
-class Json {
-	public $mimetype	= 'application/json';
-	public $charset		= 'utf-8';
+abstract class AbstractView {
+	// properties
+	public $mimetype		= 'text/html';
+	public $charset			= 'utf-8';
+	public $downloadable	= '';
 
-	public function getOutput($content, $handle) {
-		fwrite($handle, json_encode($content['content']));
-		return $handle;
-	}
+	abstract public function getOutput($content, $handle);
 }

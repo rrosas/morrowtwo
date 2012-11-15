@@ -36,11 +36,11 @@ class Cache {
 
 		// validation
 		if (!is_dir($cachedir)) {
-			trigger_error(__CLASS__.': Directory "'.$dir.'" not exists.', E_USER_ERROR);
+			throw new \Exception(__CLASS__.': Directory "'.$dir.'" not exists.');
 			return false;
 		}
 		if (!is_writeable($cachedir)) {
-			trigger_error(__CLASS__.': Directory "'.$dir.'" is not writeable.', E_USER_ERROR);
+			throw new \Exception(__CLASS__.': Directory "'.$dir.'" is not writeable.');
 			return false;
 		}
 

@@ -45,7 +45,7 @@ class Factory {
 		if (isset($instance)) {
 			if ($instance instanceof $classname) return $instance;
 			else {
-				trigger_error('instance "'.$instancename.'" already defined of class "'.get_class($instance).'"', E_USER_ERROR);
+				throw new \Exception('instance "'.$instancename.'" already defined of class "'.get_class($instance).'"');
 				return false;
 			}
 		}

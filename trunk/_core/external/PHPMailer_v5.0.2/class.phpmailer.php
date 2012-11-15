@@ -291,7 +291,7 @@ class PHPMailer {
 
   /**
    * Constructor
-   * @param boolean $exceptions Should we throw external exceptions?
+   * @param boolean $exceptions Should we throw external \Exceptions?
    */
   public function __construct($exceptions = false) {
     $this->exceptions = ($exceptions == true);
@@ -396,7 +396,7 @@ class PHPMailer {
 
   /**
    * Adds an address to one of the recipient arrays
-   * Addresses that have been added already return false, but do not throw exceptions
+   * Addresses that have been added already return false, but do not throw \Exceptions
    * @param string $kind One of 'to', 'cc', 'bcc', 'ReplyTo'
    * @param string $address The email address to send to
    * @param string $name
@@ -2064,7 +2064,7 @@ class PHPMailer {
   }
 }
 
-class phpmailerException extends Exception {
+class phpmailerException extends \Exception {
   public function errorMessage() {
     $errorMsg = '<strong>' . $this->getMessage() . "</strong><br />\n";
     return $errorMsg;

@@ -22,22 +22,19 @@
 
 namespace Morrow\Libraries;
 
-class Log
-	{
-	private $logfile;
+class Log {
+	protected $logfile;
 
-	public function __construct($args = null)
-		{
+	public function __construct($args = null) {
 		// set defaults
 		$date = strftime('%Y-%m-%d');
 		if (!isset($args['logfile'])) $args['logfile'] = FW_PATH.'_logs/log_'.$date.'.txt';
 
 		$this->logfile = $args['logfile'];
 		return true;
-		}
+	}
 
-	public function set()
-		{
+	public function set() {
 		$data['args'] = func_get_args();
 		$caller = debug_backtrace();
 		$data['caller']= $caller[0];
@@ -45,16 +42,14 @@ class Log
 		$data['formated_microtime'] = sprintf("%'03d", microtime()*1000);
 
 		return $this->_getOutputPlain($data);
-		}
+	}
 
-	private function _getOutputPlain($data)
-		{
+	protected function _getOutputPlain($data) {
 		// create output string
 		$output = 'date: '.$data['formated_time'].' .'.$data['formated_microtime']."\n";
 		$output .= 'call: '.$data['caller']['file'].' (line '.$data['caller']['line'].')'."\n";
 
-		foreach ($data['args'] as $arg)
-			{
+		foreach ($data['args'] as $arg) {
 			$output .= '---'."\n";
 
 			// get dump
@@ -64,12 +59,12 @@ class Log
 			ob_end_clean();
 			
 			$output .= $dump;
-			}
+		}
 
 		$output .= '=============================='."\n";
 
 		$result =  file_put_contents($this->logfile, $output, FILE_APPEND);
 		if (is_integer($result)) return true;
 		else return false;
-		}
 	}
+}

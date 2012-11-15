@@ -131,7 +131,7 @@ class SerpentCompilerSerpent extends SerpentCompilerAbstract
 		if (!preg_match('=(?<!:):([a-z0-9_]+)\s*(\()=i', $content, $match, PREG_OFFSET_CAPTURE)) return false;
 		
 		// check mappings
-		if (!isset($this->mappings[ $match[1][0] ])) throw new Exception('mapping for function call "'.$match[1][0].'" does not exist.');
+		if (!isset($this->mappings[ $match[1][0] ])) throw new \Exception('mapping for function call "'.$match[1][0].'" does not exist.');
 		$mapping = $this->mappings[ $match[1][0] ];
 		
 		// find end of mapped function (search for the last closing parenthesis)

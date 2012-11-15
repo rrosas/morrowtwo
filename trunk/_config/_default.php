@@ -8,6 +8,9 @@ return array(
 // the first project will be the default project. The others reachable through the url
 	'projects'					=> array('main'),
 
+// languages
+	'languages'    				=> array('en'),
+
 // locale/timezone
 	'locale.timezone'			=> 'Europe/Berlin',
 
@@ -18,4 +21,10 @@ return array(
 	'session.domain'			=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
 	'session.secure'			=> false, // If TRUE cookie will only be sent over secure connections.
 	'session.httponly'			=> false, // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
+
+// debug
+	'debug.output.screen'		=> true,
+	'debug.output.headers'		=> false,
+	'debug.output.flatfile'		=> false,
+	'debug.password'			=> 'password',
 );

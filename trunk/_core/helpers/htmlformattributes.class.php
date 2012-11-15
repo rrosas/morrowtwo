@@ -24,8 +24,8 @@ namespace Morrow\Helpers;
 
 class HtmlFormAttributes{
 
-	static private $global_attributes = array('id', 'class', 'style', 'title', 'dir', 'lang', 'onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown', 'onkeyup', 'autofocus');
-	static private $attributes = array(
+	static protected $global_attributes = array('id', 'class', 'style', 'title', 'dir', 'lang', 'onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown', 'onkeyup', 'autofocus');
+	static protected $attributes = array(
 			"input" => array('accept', 'accesskey', 'align', 'alt', 'checked', 'disabled', 'ismap', 'maxlength', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'size', 'src', 'tabindex', 'type', 'usemap', 'value'),
 			"textarea" => array('accesskey', 'cols', 'disabled', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'rows','tabindex'),
 			"select" => array('disabled', 'multiple', 'name', 'onblur', 'onchange', 'onfocus', 'size', 'tabindex'),
@@ -34,8 +34,6 @@ class HtmlFormAttributes{
 			"legend" => array('accesskey', 'align'),
 			"fieldset" => array(),
 			);
-					
-	
 
 	static public function filterAttributes($tagname, $attributes){
 		$tagname = strtolower($tagname);
@@ -47,13 +45,10 @@ class HtmlFormAttributes{
 				}
 			}
 		}
-	
 		return $attributes;		
-
 	}
 
 	static public function getAttributeString($attributes, $tagname = null, $filter = true){
-
 		// special case for textarea which needs cols and rows to be valid
 		if ($tagname == 'textarea') {
 			$attributes = array_merge( array('cols' => 40, 'rows' => '10'), $attributes);
@@ -63,7 +58,7 @@ class HtmlFormAttributes{
 
 		$attr_sets = array();
 		foreach($attributes as $pk=>$pv){
-				$attr_sets[] = "$pk=\"$pv\"";
+			$attr_sets[] = "$pk=\"$pv\"";
 		}
 		$attributes = implode(" ", $attr_sets);
 		return $attributes;

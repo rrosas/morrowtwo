@@ -41,19 +41,34 @@ class Morrow {
 		throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 	}
 
-	public function exceptionHandler($exception) {
+	public function ExceptionHandler($exception) {
 		try {
 			// load errorhandler
 			$debug = Factory::load('debug');
 			$debug->errorhandler($exception);
-		} catch (Exception $e) {
-			// useful if the exception handler itself contains errors
+		} catch (\Exception $e) {
+			// useful if the \Exception handler itself contains errors
 			echo "<pre>$e</pre>";
 		}
 	}
+	
+	protected function autoload($classname) {
+		// First we try the external libs. That way the user can replace all core libs if he wants to
+		$classname = preg_replace('=^Morrow=i', '_core', $classname);
+		$classname = preg_replace('=^User=i', '_libs', $classname);
+		$classname = str_replace('\\', '/', strtolower($classname));
 		
+		// first try to find the user class, then the morrow class
+		$try[] = FW_PATH . $classname.'.class.php';
+		if (strpos($classname, '_core') === 0) {
+			$try[] = FW_PATH . str_replace('_core/', '_libs/', $classname).'.class.php';
+		}
+
+		foreach($try as $path) { if(is_file($path)) { include ($path); break; } }	
+	}
+	
 	// registers the config files in the config class
-	private function _loadConfigVars($path) {
+	protected function _loadConfigVars($path) {
 		// load main config
 		$config = include ($path.'_config/_default.php');
 
@@ -67,9 +82,10 @@ class Morrow {
 	}
 
 	// This function contains the main application flow
-	private function _run() {
-		// compress the output
-		if(!ob_start("ob_gzhandler")) ob_start();
+	protected function _run() {
+		/* register autoloader
+		********************************************************************************************/
+		spl_autoload_register(array($this, 'autoload'));
 		
 		/* register main config in the config class
 		********************************************************************************************/
@@ -90,7 +106,7 @@ class Morrow {
 		/* set timezone 
 		********************************************************************************************/
 		if (!date_default_timezone_set($this->config->get('locale.timezone'))) {
-			trigger_error(__METHOD__.'<br>date_default_timezone_set() failed.', E_USER_NOTICE);
+			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
 
 		/* load classes

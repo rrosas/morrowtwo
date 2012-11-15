@@ -25,14 +25,14 @@
 namespace Morrow\Libraries;
 
 class ImageObject {
-	private $image;
-	private $width;
-	private $height;
+	protected $image;
+	protected $width;
+	protected $height;
 	
 	public function __construct($image = null) {
 		// check existance of GD library
 			if(!function_exists('gd_info')) {
-				throw new Exception(__METHOD__ . ': GD library not found');
+				throw new \Exception(__METHOD__ . ': GD library not found');
 			}
 		
 		// fix for missing PHP function "imageconvolution"
@@ -179,7 +179,7 @@ class ImageObject {
 		
 		// check for successful initialization
 			if(!is_resource($this->image) || !get_resource_type($this->image) === 'gd') {
-				throw new Exception(__METHOD__ . ': Source image could not be initialized');
+				throw new \Exception(__METHOD__ . ': Source image could not be initialized');
 			}
 		
 		@imagealphablending($this->image, false);
@@ -201,7 +201,7 @@ class ImageObject {
 					
 					$temp->final = $this->rgb2color($temp->intensity['r'], $temp->intensity['g'], $temp->intensity['b'], $temp->intensity['a']); 
 					if(@imagesetpixel($this->image, $x, $y, $temp->final) === false) {
-						throw new Exception('Error setting color in image');
+						throw new \Exception('Error setting color in image');
 					}
 				}
 			}
@@ -229,7 +229,7 @@ class ImageObject {
 					
 					$temp->final = $this->rgb2color($temp->final['r'], $temp->final['g'], $temp->final['b'], $temp->final['a']); 
 					if(@imagesetpixel($this->image, $x, $y, $temp->final) === false) {
-						throw new Exception('Error setting color in image');
+						throw new \Exception('Error setting color in image');
 					}
 				}
 			}
@@ -259,7 +259,7 @@ class ImageObject {
 					$temp->final     = $this->rgb2color($temp->final['r'], $temp->final['g'], $temp->final['b'], $temp->final['a']);
 					 
 					if(@imagesetpixel($this->image, $x, $y, $temp->final) === false) {
-						throw new Exception('Error setting color in image');
+						throw new \Exception('Error setting color in image');
 					}
 				}
 			}
@@ -304,7 +304,7 @@ class ImageObject {
 				$temp->final = $this->rgb2color($temp->final['r'], $temp->final['g'], $temp->final['b'], $temp->final['a']);
 				 
 				if(@imagesetpixel($this->image, $x, $y, $temp->final) === false) {
-					throw new Exception('Error setting color in image');
+					throw new \Exception('Error setting color in image');
 				}
 			}
 		}
@@ -322,11 +322,11 @@ class ImageObject {
 		*/
 		// check parameter
 			if(!preg_match('/^\d+$/', $width)) {
-				throw new Exception(__METHOD__ . ': Parameter "width" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "width" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $height)) {
-				throw new Exception(__METHOD__ . ': Parameter "height" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "height" has to be numeric');
 			}
 		
 		// process
@@ -358,20 +358,20 @@ class ImageObject {
 					}
 					
 					if(!$temp = @imagecreatetruecolor($width, $height)) {
-						throw new Exception('Temporary image could not be created');
+						throw new \Exception('Temporary image could not be created');
 					}
 					if(@imagealphablending($temp, false) === false) {
-						throw new Exception('Error processing temporary image');
+						throw new \Exception('Error processing temporary image');
 					}
 					if(@imagesavealpha($temp, true) === false) {
-						throw new Exception('Error processing temporary image');
+						throw new \Exception('Error processing temporary image');
 					}
 					
 					if(@imagecopyresampled($temp, $this->image, 0, 0, 0, 0, $width, $height, $this->width, $this->height) === false) {
-						throw new Exception('Final image could not be resampled');
+						throw new \Exception('Final image could not be resampled');
 					}
 				} catch(Exception $e) {
-					throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+					throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 				}
 				
 				$this->width  = $width;
@@ -388,19 +388,19 @@ class ImageObject {
 	public function crop($width, $height, $x = false, $y = false) {
 		// check parameter
 			if(!preg_match('/^\d+$/', $width)) {
-				throw new Exception(__METHOD__ . ': Parameter "width" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "width" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $height)) {
-				throw new Exception(__METHOD__ . ': Parameter "height" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "height" has to be numeric');
 			}
 			
 			if($x !== false && !preg_match('/^\d+$/', $x)) {
-				throw new Exception(__METHOD__ . ': Parameter "x" has to be numeric or false');
+				throw new \Exception(__METHOD__ . ': Parameter "x" has to be numeric or false');
 			}
 			
 			if($y !== false && !preg_match('/^\d+$/', $y)) {
-				throw new Exception(__METHOD__ . ': Parameter "y" has to be numeric or false');
+				throw new \Exception(__METHOD__ . ': Parameter "y" has to be numeric or false');
 			}
 		
 		// process
@@ -414,20 +414,20 @@ class ImageObject {
 				}
 
 				if(!$temp = @imagecreatetruecolor($width, $height)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				if(@imagealphablending($temp, false) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagesavealpha($temp, true) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				
 				if(@imagecopy($temp, $this->image, 0, 0, $x, $y, $width, $height) === false) {
-					throw new Exception('Final image could not be resampled');
+					throw new \Exception('Final image could not be resampled');
 				}
 		 	} catch(Exception $e) {
-				throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+				throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 			}
 			
 			$this->width  = $width;
@@ -445,20 +445,20 @@ class ImageObject {
 	public function flip($axes = 1) {
 		// check parameter
 			if(!preg_match('/^[12]$/', $axes)) {
-				throw new Exception(__METHOD__ . ': Parameter "axes" has to be 1 or 2');
+				throw new \Exception(__METHOD__ . ': Parameter "axes" has to be 1 or 2');
 			}
 		
 		// process
 			try {
 				if(!$temp = @imagecreatetruecolor($this->width, $this->height)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				
 				if(@imagealphablending($temp, false) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagesavealpha($temp, true) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				
 				switch($axes) {
@@ -466,7 +466,7 @@ class ImageObject {
 						for($x = 0; $x < $this->width; $x++) {
 							for($y = 0; $y < $this->height; $y++) {
 								if(@imagecopy($temp, $this->image, $x, $this->height - $y - 1, $x, $y, 1, 1) === false) {
-									throw new Exception('Error while flipping the source image');
+									throw new \Exception('Error while flipping the source image');
 								}
 							}
 						}
@@ -475,14 +475,14 @@ class ImageObject {
 						for($x = 0; $x < $this->width; $x++) {
 							for($y = 0; $y < $this->height; $y++) {
 								if(@imagecopy($temp, $this->image, $this->width - $x - 1, $y, $x, $y, 1, 1) === false) {
-									throw new Exception('Error while flipping the source image');
+									throw new \Exception('Error while flipping the source image');
 								}
 							}
 						}
 						break;
 				}
 			} catch(Exception $e) {
-				throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+				throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 			}
 			
 			$this->image  = $temp;
@@ -497,7 +497,7 @@ class ImageObject {
 	public function blur($amount = 100, $alpha = true) {
 		// check parameter
 			if(!preg_match('/^\d+$/', $amount)) {
-				throw new Exception(__METHOD__ . ': Parameter "amount" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "amount" has to be numeric');
 			}
 		
 		// calibrate parameters to Photoshop
@@ -508,18 +508,18 @@ class ImageObject {
 				$temp = new \stdClass();
 				
 				if(!$temp->final = @imagecreatetruecolor($this->width, $this->height)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				
 				if(@imagealphablending($temp->final, false) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagesavealpha($temp->final, true) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				
 				if(@imagecopymerge($temp->final, $this->image, 0, 0, 0, 0, $this->width, $this->height, 100) === false) {
-					throw new Exception('Error while processing the source image');
+					throw new \Exception('Error while processing the source image');
 				}
 				
 				$matrix = array(
@@ -529,7 +529,7 @@ class ImageObject {
 				);
 				
 				if(@imageconvolution($temp->final, $matrix, $amount + 8, 0) === false) {
-					throw new Exception('Error while blurring');
+					throw new \Exception('Error while blurring');
 				}
 				
 				// restore alpha transparency
@@ -545,13 +545,13 @@ class ImageObject {
 								
 								$temp->color->final = $this->rgb2color($temp->color->final['r'], $temp->color->final['g'], $temp->color->final['b'], $temp->color->source['a']);  
 								if(@imagesetpixel($temp->final, $x, $y, $temp->color->final) === false) {
-				                	throw new Exception('Error setting color in temporary image');
+				                	throw new \Exception('Error setting color in temporary image');
 								}
 							}
 						}
 					}
 			} catch(Exception $e) {
-				throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+				throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 			}
 			
 			$this->image = $temp->final;
@@ -566,15 +566,15 @@ class ImageObject {
 	public function sharpen($amount = 50, $radius = 1, $threshold = 0) {
 		// check parameter
 			if(!preg_match('/^\d+$/', $amount)) {
-				throw new Exception(__METHOD__ . ': Parameter "amount" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "amount" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $radius)) {
-				throw new Exception(__METHOD__ . ': Parameter "radius" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "radius" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $threshold)) {
-				throw new Exception(__METHOD__ . ': Parameter "threshold" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "threshold" has to be numeric');
 			}
 		
 		// calibrate parameters to Photoshop
@@ -589,30 +589,30 @@ class ImageObject {
 				try {
 					$temp = new \stdClass();
 					if(!$temp->final = @imagecreatetruecolor($this->width, $this->height)) {
-						throw new Exception('Temporary image could not be created');
+						throw new \Exception('Temporary image could not be created');
 					}
 					if(@imagealphablending($temp->final, false) === false) {
-						throw new Exception('Error processing temporary image');
+						throw new \Exception('Error processing temporary image');
 					}
 					if(@imagesavealpha($temp->final, true) === false) {
-						throw new Exception('Error processing temporary image');
+						throw new \Exception('Error processing temporary image');
 					}
 					if(!$temp->blur = @imagecreatetruecolor($this->width, $this->height)) {
-						throw new Exception('Temporary image could not be created');
+						throw new \Exception('Temporary image could not be created');
 					}
 					if(@imagealphablending($temp->blur, false) === false) {
-						throw new Exception('Error processing temporary image');
+						throw new \Exception('Error processing temporary image');
 					}
 					if(@imagesavealpha($temp->blur, true) === false) {
-						throw new Exception('Error processing temporary image');
+						throw new \Exception('Error processing temporary image');
 					}
 					
 					if(@imagecopy($temp->final, $this->image, 0, 0, 0, 0, $this->width, $this->height) === false) {
-						throw new Exception('Error while processing the source image');
+						throw new \Exception('Error while processing the source image');
 					}
 					
 					if(@imagecopy($temp->blur, $this->image, 0, 0, 0, 0, $this->width, $this->height) === false) {
-						throw new Exception('Error while processing the source image');
+						throw new \Exception('Error while processing the source image');
 					}
 					
 					$matrix = array(
@@ -622,7 +622,7 @@ class ImageObject {
 					);
 						
 					if(@imageconvolution($temp->blur, $matrix, 16, 0) === false) {
-						throw new Exception('Error while sharpening');
+						throw new \Exception('Error while sharpening');
 					}
 					
 					// compare pixel
@@ -653,7 +653,7 @@ class ImageObject {
 								if(($temp->color->source['r'] != $temp->color->final['r']) || ($temp->color->source['g'] != $temp->color->final['g']) || ($temp->color->source['b'] != $temp->color->final['b']) || ($temp->color->source['a'] != $temp->color->final['a'])) {
 									$temp->color->final = $this->rgb2color($temp->color->final['r'], $temp->color->final['g'], $temp->color->final['b'], $temp->color->final['a']); 
 		                    		if(@imagesetpixel($temp->final, $x, $y, $temp->color->final) === false) {
-		                    			throw new Exception('Error setting color in temporary image');
+		                    			throw new \Exception('Error setting color in temporary image');
 		                    		}
 								}
 							}
@@ -661,7 +661,7 @@ class ImageObject {
 					
 					@imagedestroy($temp->blur);
 				} catch(Exception $e) {
-					throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+					throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 				}
 			}
 			
@@ -677,7 +677,7 @@ class ImageObject {
 	public function addReflection($aperture = 80, $height = 140, $alpha = 40) {
 		// check parameter
 			if(!preg_match('/^\d+$/', $aperture)) {
-				throw new Exception(__METHOD__ . ': Parameter "aperture" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "aperture" has to be numeric');
 			}
 			
 			if($height === false) {
@@ -685,11 +685,11 @@ class ImageObject {
 			}
 			
 			if(!preg_match('/^\d+$/', $height)) {
-				throw new Exception(__METHOD__ . ': Parameter "height" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "height" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $alpha)) {
-				throw new Exception(__METHOD__ . ': Parameter "alpha" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "alpha" has to be numeric');
 			}
 		
 		// calibrate parameters
@@ -701,10 +701,10 @@ class ImageObject {
 			try {
 				$temp = new \stdClass();
 				if(!$temp->final = @imagecreatetruecolor($this->width, $this->height + $height)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				if(!$temp->reflection = new Image($this->image)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				
 				$temp->reflection->crop($this->width, $aperture, 0, $this->height - $aperture);
@@ -712,13 +712,13 @@ class ImageObject {
 				$temp->reflection->flip();
 				
 				if(@imagealphablending($temp->final, false) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagesavealpha($temp->final, true) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagecopy($temp->final, $this->image, 0, 0, 0, 0, $this->width, $this->height) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				
 				$temp->copy =& $temp->reflection->getResource();
@@ -732,7 +732,7 @@ class ImageObject {
 
 						$color = @imagecolorallocatealpha($temp->final, $color['r'], $color['g'], $color['b'], min(127, $a + $color['a']));
 						if(@imagesetpixel($temp->final, $x, $this->height + $y, $color) === false) {
-							throw new Exception('Error processing temporary image');
+							throw new \Exception('Error processing temporary image');
 						}
 					}
 				}
@@ -742,7 +742,7 @@ class ImageObject {
 					unset($temp->copy);
 					unset($temp->reflection);
 			} catch(Exception $e) {
-				throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+				throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 			}
 			
 			$this->height = $this->height + $height;
@@ -760,11 +760,11 @@ class ImageObject {
 			
 		// check parameter
 			if($color === null) {
-				throw new Exception(__METHOD__ . ': Parameter "color" has to be a hex value');
+				throw new \Exception(__METHOD__ . ': Parameter "color" has to be a hex value');
 			}
 			
 			if(!preg_match('/^\d+$/', $stroke)) {
-				throw new Exception(__METHOD__ . ': Parameter "stroke" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "stroke" has to be numeric');
 			}
 		
 		// process
@@ -774,17 +774,17 @@ class ImageObject {
 				$height = $this->height + 2 * $stroke;
 				
 				if(!$temp = @imagecreatetruecolor($width, $height)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				
 				if(@imagefill($temp, 0, 0, $color) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagecopy($temp, $this->image, $stroke, $stroke, 0, 0, $this->width, $this->height) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 			} catch(Exception $e) {
-				throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+				throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 			}
 			
 			$this->width  = $width;
@@ -807,31 +807,31 @@ class ImageObject {
 			
 		// check parameter
 			if($color === null) {
-				throw new Exception(__METHOD__ . ': Parameter "color" has to be a hex value');
+				throw new \Exception(__METHOD__ . ': Parameter "color" has to be a hex value');
 			}
 			
 			if($background === null) {
-				throw new Exception(__METHOD__ . ': Parameter "background" has to be a hex value');
+				throw new \Exception(__METHOD__ . ': Parameter "background" has to be a hex value');
 			}
 			
 			if(!preg_match('/^\d+$/', $alpha)) {
-				throw new Exception(__METHOD__ . ': Parameter "alpha" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "alpha" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $angle)) {
-				throw new Exception(__METHOD__ . ': Parameter "angle" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "angle" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $distance)) {
-				throw new Exception(__METHOD__ . ': Parameter "distance" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "distance" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $size)) {
-				throw new Exception(__METHOD__ . ': Parameter "size" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "size" has to be numeric');
 			}
 			
 			if(!preg_match('/^\d+$/', $spread)) {
-				throw new Exception(__METHOD__ . ': Parameter "spread" has to be numeric');
+				throw new \Exception(__METHOD__ . ': Parameter "spread" has to be numeric');
 			}
 		
 		// calibrate parameters
@@ -858,32 +858,32 @@ class ImageObject {
 				
 				$temp = new \stdClass();
 				if(!$temp->final = @imagecreatetruecolor($width + abs($offset->x), $height + abs($offset->y))) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				if(@imagealphablending($temp->final, false) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagesavealpha($temp->final, true) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(!$temp->shadow = @imagecreatetruecolor($width, $height)) {
-					throw new Exception('Temporary image could not be created');
+					throw new \Exception('Temporary image could not be created');
 				}
 				
 				$rgbBackground = ($background['r'] << 16) + ($background['g'] << 8) + $background['b'] + (127 << 24);
 				
 				if(@imagefill($temp->final, 0, 0, $rgbBackground) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				
 				$rgbBackground = $this->rgb2color($background['r'], $background['g'], $background['b'], $background['a']);
 				$rgbShadow = $this->rgb2color($color['r'], $color['g'], $color['b'], $alpha);
 				
 				if(@imagefill($temp->shadow, 0, 0, $rgbBackground) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				if(@imagefilledrectangle($temp->shadow, $size - $spread, $size - $spread, $this->width + $size + $spread - 1, $this->height + $size + $spread - 1, $rgbShadow) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 				
 				$temp->shadow = new Image($temp->shadow);
@@ -924,7 +924,7 @@ class ImageObject {
 						if($a < 127) {
 							$ac = $this->rgb2color($color['r'], $color['g'], $color['b'], $a);
 							if(@imagesetpixel($temp->final, $x + $offset->shadow->x, $y + $offset->shadow->y, $ac) === false) {
-								throw new Exception('Error processing temporary image');
+								throw new \Exception('Error processing temporary image');
 							}
 						}
 					}
@@ -937,10 +937,10 @@ class ImageObject {
 					unset($dc);
 
 				if(@imagecopy($temp->final, $this->image, $offset->final->x, $offset->final->y, 0, 0, $this->width, $this->height) === false) {
-					throw new Exception('Error processing temporary image');
+					throw new \Exception('Error processing temporary image');
 				}
 			} catch(Exception $e) {
-				throw new Exception(__METHOD__ . ': ' . $e->getMessage());
+				throw new \Exception(__METHOD__ . ': ' . $e->getMessage());
 			}
 			
 			$this->width  = $width + abs($offset->x);
@@ -1149,7 +1149,7 @@ class ImageObject {
 		);
 	}
 	
-	private function hue2rgb($p, $q, $t) {
+	protected function hue2rgb($p, $q, $t) {
 		if($t < 0) $t++;
 		if($t > 1) $t--;
 		if($t < 1/6) return $p + ($q - $p) * 6 * $t;
@@ -1159,4 +1159,3 @@ class ImageObject {
 		return $p;
 	}
 }
-?>

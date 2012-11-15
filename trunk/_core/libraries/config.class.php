@@ -23,7 +23,7 @@
 namespace Morrow\Libraries;
 
 class Config {
-	private $data = array(); // The array with parsed data
+	protected $data = array(); // The array with parsed data
 
 	public function get($identifier = null) {
 		$returner = \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier);

@@ -20,19 +20,8 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
+namespace Morrow\Filters;
 
-
-
-class FilterSave extends FilterAbstract {
-	public $userfunction = '';
-	public $params = array();
-	
-	public function __construct($file) {
-		$this->file = $file;
-	}
-	
-	public function get($content) {
-		file_put_contents($this->file, $content);
-		return $content;
-	}
+abstract class AbstractFilter {
+	abstract public function get($content);
 }

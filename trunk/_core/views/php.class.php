@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Php {
+class Php extends AbstractView {
 	public $mimetype	= 'text/html';
 	public $charset		= 'utf-8';
 

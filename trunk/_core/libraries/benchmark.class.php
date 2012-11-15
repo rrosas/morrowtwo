@@ -22,49 +22,45 @@
 
 namespace Morrow\Libraries;
 
-class Benchmark
-	{
-	private $section;	// the name of the actual measured section
-	private $active;	// is measuring active at the moment
-	private $realtime;	// start value of measuring in real time
-	private $proctime;	// start value of measuring in proc time
-	private $time_all;	// overall time of measuring
-	private $data;		// the data of measuring
+class Benchmark {
+	protected $section;	// the name of the actual measured section
+	protected $active;	// is measuring active at the moment
+	protected $realtime;	// start value of measuring in real time
+	protected $proctime;	// start value of measuring in proc time
+	protected $time_all;	// overall time of measuring
+	protected $data;		// the data of measuring
 
-	public function start($section = 'Unknown section')
-		{
+	public function start($section = 'Unknown section') {
 		if ($this->active) $this->stop();
 
 		// set start value for system + user time
-		if (function_exists('getrusage'))
-			{
+		if (function_exists('getrusage')) {
 			$use = getrusage();
 			$user   = sprintf('%6d.%06d', $use['ru_utime.tv_sec'], $use['ru_utime.tv_usec']);
 			$system = sprintf('%6d.%06d', $use['ru_stime.tv_sec'], $use['ru_stime.tv_usec']);
 			$this->proctime = $user+$system;
-			}
+		}
 
 		// set start value for real time
 		$this->realtime		= microtime(true);
 
 		$this->section		= $section;
 		$this->active		= true;
-		}
+	}
 
-	public function stop()
-		{
+	public function stop() {
 		$temp['section'] = $this->section;
 
 		// set start value for system + user time
-		if (function_exists('getrusage'))
-			{
+		if (function_exists('getrusage')) {
 			$use = getrusage();
 			$user   = sprintf('%6d.%06d', $use['ru_utime.tv_sec'], $use['ru_utime.tv_usec']);
 			$system = sprintf('%6d.%06d', $use['ru_stime.tv_sec'], $use['ru_stime.tv_usec']);
 			$proctime_end = $user+$system;
 			$temp['proctime'] = $proctime_end - $this->proctime;
-			}
-		else $temp['proctime'] = 'n/a';
+		} else {
+			$temp['proctime'] = 'n/a';
+		}
 
 		$realtime_end = microtime(true);
 		$temp['realtime'] = $realtime_end - $this->realtime;
@@ -74,26 +70,24 @@ class Benchmark
 
 		$this->data[] = $temp;
 		$this->active	= false;
-		}
+	}
 
-	public function get()
-		{
+	public function get() {
 		if ($this->active) $this->stop();
 
-		foreach ($this->data as $key=>$value)
-			{
+		foreach ($this->data as $key=>$value) {
 			$row =& $this->data[$key];
 			$row['realtime_ms'] = $row['realtime']*1000;
-			if (is_numeric($row['proctime']))
-				{
+			if (is_numeric($row['proctime'])) {
 				$row['proctime_ms'] = $row['proctime']*1000;
-				}
-			else $row['proctime_ms'] = 'n/a';
+			} else {
+				$row['proctime_ms'] = 'n/a';
 			}
+		}
 
 		$returner = $this->data;
 		unset($this->data);
 		
 		return $returner;
-		}
 	}
+}

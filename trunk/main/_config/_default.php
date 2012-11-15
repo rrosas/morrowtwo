@@ -3,7 +3,7 @@
 return array(
 // debug
 	'debug.output.screen'	=> true,
-	'debug.output.headers'	=> true,
+	'debug.output.headers'	=> false,
 	'debug.output.flatfile'	=> false,
 	'debug.password'		=> 'password',
 
@@ -28,7 +28,7 @@ return array(
 	'db.encoding'  			=> 'utf8',
 
 // languages
-	'languages'    			=> array('en', 'de'),
+	'languages'    			=> array('en'),
 
 // routing rules
 	'routing' => array(

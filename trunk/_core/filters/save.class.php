@@ -20,42 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Views;
+namespace Morrow\Filters;
 
-class Flash {
-	public $mimetype	= 'text/plain';
-	public $charset		= 'utf-8';
+class Save extends AbstractFilter {
+	public $userfunction = '';
+	public $params = array();
 	
-	public $numeric_prefix = 'entry';
-
-	public function getOutput($content, $handle) {
-		if (isset($content['content'])) $this -> _outputVars('', $content['content'], $handle);
-		fwrite($handle, '&eof=1');
-		return $handle;
+	public function __construct($file) {
+		$this->file = $file;
 	}
 	
-	protected function _outputVars($var, $input, $handle) {
-		if (is_array($input)) {
-			if (count($input) === 0) return '';
-			foreach($input as $key=>$value) {
-				if (is_numeric($key)) $key = $this->numeric_prefix.$key;
-				if (!empty($var)) $var_to = $var.'_'.$key;
-				else $var_to = $key;
-
-				if (!isset($output)) $output = '';
-				$this -> _outputVars($var_to, $value, $handle);
-			}
-		} else {
-			// Ausgabe des Inhalts
-			if ($input === true) $input = 'true';
-			elseif ($input === false) $input = 'false';
-			elseif ($input === null) $input = 'null';
-			else {
-				$input = trim(stripslashes($input));
-			}
-
-			$body = $input;
-			fwrite($handle, '&'.$var.'='.rawurlencode($body));
-		}
+	public function get($content) {
+		file_put_contents($this->file, $content);
+		return $content;
 	}
 }

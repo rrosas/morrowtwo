@@ -22,16 +22,14 @@
 
 namespace Morrow\Libraries;
 
-class Dummy
-	{
-	private $encoding;
+class Dummy {
+	protected $encoding;
 	
 	public $salutation;
 	public $firstname;
 	public $lastname;
 	
-	public function __construct( $encoding = 'utf-8' )
-		{
+	public function __construct( $encoding = 'utf-8' ) {
 		$this->encoding = $encoding;
 		
 		$this->salutation['female'] = 'Frau';
@@ -49,15 +47,13 @@ class Dummy
 		$this->city = array('Berlin', 'Hamburg', 'München', 'Köln', 'Frankfurt am Main', 'Essen', 'Dortmund', 'Stuttgart', 'Düsseldorf', 'Bremen', 'Hannover', 'Duisburg', 
 			'Leipzig', 'Nürnberg', 'Dresden', 'Bochum', 'Wuppertal', 'Bielefeld', 'Mannheim', 'Bonn', 'Münster');
 		$this->tld = array('de', 'com', 'info', 'net', 'org', 'ch', 'at');
-		}
+	}
 	
-	public function get( $gender = null )
-		{
-		if (!isset($gender))
-			{
+	public function get( $gender = null ) {
+		if (!isset($gender)) {
 			$genders = array('male', 'female');
 			$gender = $genders[ array_rand($genders) ];
-			}
+		}
 		
 		$data['salutation'] = $this->getSalutation( $gender );
 		$data['firstname'] = $this->getFirstname( $gender );
@@ -68,50 +64,44 @@ class Dummy
 		$data['nickname'] = $this->getNickname( $data['firstname'], $data['lastname'] );
 		
 		return $data;
-		}
+	}
 
-	public function getSalutation( $gender )
-		{
+	public function getSalutation( $gender ) {
 		$gender = $this->salutation[ $gender ];
 		return $this->_encode( $gender );
-		}
+	}
 	
-	public function getFirstname( $gender )
-		{
+	public function getFirstname( $gender ) {
 		$count = count($this->firstname[ $gender ]);
 		$nr = rand(0, $count-1);
 		$data = $this->firstname[ $gender ][ $nr ];
 		
-		if (rand(1,5) == 5)
-			{
+		if (rand(1,5) == 5) {
 			$nr = rand(0, $count-1);
 			$data .= '-'.$this->firstname[ $gender ][ $nr ];
-			}
+		}
 		
 		$data = $this->_encode( $data );
 		return $data;
-		}
+	}
 	
-	public function getLastname()
-		{
+	public function getLastname() {
 		$count = count($this->lastname);
 		$nr = rand(0, $count-1);
 		$data = $this->lastname[ $nr ];
 		
-		if (rand(1,5) == 5)
-			{
+		if (rand(1,5) == 5) {
 			$nr = rand(0, $count-1);
 			$data .= '-'.$this->lastname[ $nr ];
-			}
+		}
 
 		if (rand(0,1)) $data = $this->_simplify( $data );
 			
 		$data = $this->_encode( $data );
 		return $data;
-		}
+	}
 	
-	public function getCity()
-		{
+	public function getCity() {
 		$count = count($this->city);
 		$nr = rand(0, $count-1);
 		$data = $this->city[ $nr ];
@@ -119,17 +109,15 @@ class Dummy
 
 		$data = $this->_encode( $data );
 		return $data;
-		}
+	}
 
-	public function getZip()
-		{
+	public function getZip() {
 		$data = rand(1000, 99999);
 		$data = str_pad($data, 5, '0', STR_PAD_LEFT);
 		return $data;
-		}
+	}
 
-	public function getEmail( $firstname, $lastname )
-		{
+	public function getEmail( $firstname, $lastname ) {
 		$data = $this->getNickname($firstname, $lastname);
 		$data = strtolower($data);
 		
@@ -141,10 +129,9 @@ class Dummy
 		
 		$data = $this->_simplify( $data );
 		return $data;
-		}
+	}
 	
-	protected function getNickname( $firstname, $lastname )
-		{
+	protected function getNickname( $firstname, $lastname ) {
 		// create variations of names
 		$variation[] = $firstname . '_' . rand(0,99);
 		$variation[] = $firstname . rand(0,99);
@@ -163,30 +150,26 @@ class Dummy
 		$count = count($variation);
 		$data = $variation[ rand(0, $count-1) ];
 		return $data		;
-		}
+	}
 	
-	protected function _encode( $data )
-		{
+	protected function _encode( $data ) {
 		return iconv("ISO-8859-1", $this->encoding, $data);
-		}
+	}
 
-	protected function _simplify($data)
-		{
+	protected function _simplify($data) {
 		$replacements['in'] = array('ö', 'ä', 'ü', 'ß');
 		$replacements['out'] = array('oe', 'ae', 'ue', 'ss');
 
 		return str_replace($replacements['in'], $replacements['out'], $data);
-		}
+	}
 		
-	protected function _getMnemonicValue()
-		{
+	protected function _getMnemonicValue() {
 		$vowels = "aeiouy";
 		$consonants = "bcdfghjklmnprstvwxz"; 
-		for ($i=0; $i<4; $i++)
-			{
+		for ($i=0; $i<4; $i++) {
 			$password[] = $consonants [ rand(0, strlen($consonants)-1) ];
 			$password[] = $vowels [ rand(0, strlen($vowels)-1) ];
-			}
-		return implode('', $password);
 		}
+		return implode('', $password);
 	}
+}

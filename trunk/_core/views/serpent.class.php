@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Serpent {
+class Serpent extends AbstractView {
 	public $mimetype	= 'text/html';
 	public $charset		= 'utf-8';
 
@@ -35,13 +35,12 @@ class Serpent {
 	public $autoescape		= true;
 	public $plugin_config	= false;
 
-	public function __construct($view) {
+	public function __construct() {
 		// Template holen
 		$this->page = \Morrow\Factory::load('page');
 		$this->content_template = $this->page->get('alias');
 		$this->language = \Morrow\Factory::load('language');
 		
-		//require_once( FW_PATH.'_core/external/serpent_1.2.4/source/serpent.class.php' );
 		require_once( FW_PATH.'_core/external/serpent_1.3/source/serpent.class.php' );
 	}
 
@@ -54,8 +53,7 @@ class Serpent {
 		// assign template and frame_template to page
 		$content['page']['template'] = $this->template;
 
-		
-		$_engine = new Serpent();
+		$_engine = new \Serpent();
 		$_engine->compile_dir	= PROJECT_PATH.'temp/_templates_compiled/';
 		$_engine->force_compile	= $this->force_compile;
 		$_engine->default_resource = $this->default_resource;
@@ -65,20 +63,19 @@ class Serpent {
 		// handle mappings
 		$mappings = array(
 			'url' => '\\Morrow\\Factory::load("url")->makeurl',
-			'cycle' => '\\Morrow\\Factory::load("HelperView")->cycle',
-			'mailto' => '\\Morrow\\Factory::load("HelperView")->mailto',
-			'hidelink' => '\\Morrow\\Factory::load("HelperView")->hidelink',
-			'thumb' => '\\Morrow\\Factory::load("HelperView")->thumb',
-			'image' => '\\Morrow\\Factory::load("HelperView")->image',
+			'cycle' => '\\Morrow\\Helpers\\View::cycle',
+			'mailto' => '\\Morrow\\Helpers\\View::mailto',
+			'hidelink' => '\\Morrow\\Helpers\\View::hidelink',
+			'thumb' => '\\Morrow\\Helpers\\View::thumb',
+			'image' => '\\Morrow\\Helpers\\View::image',
 			'truncate' => '\\Morrow\\Factory::load("HelperString")->truncate',
-			'strip' => 'ob_start(array(\\Morrow\\Factory::load("HelperView"), "strip")) //',
+			'strip' => 'ob_start(array("\\Morrow\\Helpers\\View::strip")) //',
 			'endstrip' => 'ob_end_flush',
-			'loremipsum' => '\\Morrow\\Factory::load("HelperView")->loremipsum',
+			'loremipsum' => '\\Morrow\\Helpers\\View::loremipsum',
 			'formlabel' => '\\Morrow\\Factory::load("formhtml")->getLabel',
 			'formelement' => '\\Morrow\\Factory::load("formhtml")->getElement',
 			'formerror' => '\\Morrow\\Factory::load("formhtml")->getError',
 			'formupload' => '\\Morrow\\Factory::load("formhtml")->getInputImage',
-			'date' => '\\Morrow\\Factory::load("HelperTime")->strftime',
 			'_' => '\\Morrow\\Factory::load("language")->_',
 		);
 		foreach ($this->mappings as $key => $value) {

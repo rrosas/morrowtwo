@@ -45,7 +45,7 @@ class Form {
 
 	/* for use only in MorrowTwo context! */
 	protected function morrow_construct_vars(){
-		$page = Factory::load('page');
+		$page = \Morrow\Factory::load('page');
 		$alias = $page->get('alias');
 			
 		#elements definition
@@ -57,7 +57,7 @@ class Form {
 		$settings['elements'] = $elements;
 		
 		#language content / locale
-		$language = Factory::load('language');
+		$language = \Morrow\Factory::load('language');
 		$settings['locale'] = $language->getLocale();
 		
 		return $settings;
@@ -234,7 +234,7 @@ class Form {
 			return true;
 		}
 		else {
-			trigger_error("Class '" . $validator . "' does not exist.",E_USER_ERROR);
+			throw new \Exception("Class '" . $validator . "' does not exist.");
 			return false;
 		}
 	}
@@ -255,7 +255,7 @@ class Form {
 		if(!$this->_checkElements($formname, $fieldname)) return false;
 
 		if($this->elements[$formname][$fieldname]->type != "set"){
-			trigger_error("Element '" . $fieldname . "' ist not type 'set'.",E_USER_ERROR);
+			throw new \Exception("Element '" . $fieldname . "' ist not type 'set'.");
 			return false;
 		}
 		
@@ -288,11 +288,11 @@ class Form {
 
 	protected function  _checkElements($formname, $fieldname=null){
 		if(!isset($this->elements[$formname])){
-			trigger_error("Missing Form-Def for '" . $formname . "' !",E_USER_ERROR);
+			throw new \Exception("Missing Form-Def for '" . $formname . "' !");
 			return false;
 		}
 		if($fieldname !== null && !isset($this->elements[$formname][$fieldname])){
-			trigger_error("Element '" . $fieldname . "' does not exist in Form-Def '" . $formname . "'",E_USER_ERROR);
+			throw new \Exception("Element '" . $fieldname . "' does not exist in Form-Def '" . $formname . "'");
 			return false;
 		}
 		return true;

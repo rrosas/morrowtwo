@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Xml {
+class Xml extends AbstractView {
 	public $mimetype	= 'application/xml';
 	public $charset		= 'UTF-8';
 	
@@ -45,7 +45,7 @@ class Xml {
 		return $handle;
 	}
 
-	private function _outputXML($input) {
+	protected function _outputXML($input) {
 		$attributes = '';
 		$output = '';
 		

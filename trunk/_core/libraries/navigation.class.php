@@ -29,14 +29,14 @@ class Navigation {
 	public function __construct($data = null) {
 		if (is_null($data)) {
 			// get simple tree from language class
-			$language = Factory::load('language');
+			$language = \Morrow\Factory::load('language');
 			$data = $language->getTree();
 
 			// fills $nodes and $tree
 			$this->add($data);
 
 			// set active page
-			$page = Factory::load('page');
+			$page = \Morrow\Factory::load('page');
 			$this->setActive($page->get('alias'));
 		} else {
 			// fills $nodes and $tree
@@ -54,7 +54,7 @@ class Navigation {
 				if (is_string($node)) $node = array('title' => $node);
 				
 				if (!isset($node['title']) or empty($node['title'])) {
-					throw new Exception(__CLASS__ . "': You have to define a title for id '{$id}'.");
+					throw new \Exception(__CLASS__ . "': You have to define a title for id '{$id}'.");
 				}
 				
 				// add other information
@@ -90,7 +90,7 @@ class Navigation {
 	}
 
 	public function setActive($id) {
-		if (!isset($this->nodes[$id])) { throw new Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
+		if (!isset($this->nodes[$id])) { throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
 		
 		// set active id to retrieve the breadcrumb
 		$this->active_id = $id;
@@ -123,7 +123,7 @@ class Navigation {
 		// return full tree
 		if (is_null($id)) return $this->tree;
 
-		if (!isset($this->nodes[$id])) { throw new Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
+		if (!isset($this->nodes[$id])) { throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
 		return $this->nodes[$id];
 	}
 
@@ -141,7 +141,7 @@ class Navigation {
 		$breadcrumb = array();
 		
 		// handle not set active node
-		if (!isset($this->nodes[$this->active_id])) { throw new Exception(__METHOD__.': you did not set an active node so you cannot retrieve a breadcrumb.'); return; }
+		if (!isset($this->nodes[$this->active_id])) { throw new \Exception(__METHOD__.': you did not set an active node so you cannot retrieve a breadcrumb.'); return; }
 		
 		// get actual node
 		$actual = $this->nodes[$this->active_id];

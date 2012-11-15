@@ -22,7 +22,7 @@
 
 namespace Morrow\Views;
 
-class Csv {
+class Csv extends AbstractView {
 	public $mimetype	= 'text/csv';
 	public $charset		= 'utf-8';
 
@@ -36,7 +36,7 @@ class Csv {
 		return $handle;
 	}
 
-	private function _outputCSV($input, $handle) {
+	protected function _outputCSV($input, $handle) {
 		foreach($input as $nr=>$row) {
 			// use first row for headlines
 			if ($nr == 0 && $this->table_header === true) {
@@ -47,7 +47,7 @@ class Csv {
 		}
 	}
 
-	private function _createRow($input) {
+	protected function _createRow($input) {
 		foreach ($input as $key=>$value) {
 			$temp = str_replace('"','""',$value);
 			$temp = preg_replace("=(\r\n|\r|\n)=","\n",$temp);
