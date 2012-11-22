@@ -2,7 +2,7 @@
 
 == Introduction ==
 
-Beside Serpent it is also possible to use PHP itself as template language. Useful, if you need best performance in your application or you are not familiar with Serpent.
+It's possible to use PHP itself and also [View Handlers#Serpent] as template language. PHP is useful, if you need best performance in your application or you are not familiar with Serpent.
 
 == Example ==
 *Controller code:*
@@ -39,4 +39,5 @@ class PageController extends GlobalController {
 == View properties ==
 
 MorrowTwo Framework is ready :)
+
 Documentation you'll find here
