@@ -112,7 +112,7 @@ If not otherwise defined, an error message will be wrapped in a `<span>` tag tha
 === notices ===
 "required" controls on/off mode of validation
 '~' shortcut for '<?php' and '?>'
-'~~' shortcut for '<?php echo'>
+'~''~' shortcut for '<?php echo'>
 
 === _getInputImage()_ ===
 
