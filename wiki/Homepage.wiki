@@ -20,3 +20,12 @@ OK, some people simply need a feature list. Now, here is a list which shows what
   * Not only HTML can be outputted. There are additional view   handlers for: XML, JSON, CSV, Excel and Flash !LoadVars files
   * Granular adjustable caching
   * Extensive form validation
+
+
+== How to read ==
+
+After installation you will work with the 'main' folder. Especially with '_templates' as the view component and '_controller' as the functional processing component of the MVC architecture. 
+
+Therefore you should start to read the ViewHandlers chapter of this documentation to understand, which different types of ViewHandlers are presented by the framework and how to use them by the given examples. 
+
+Please note that the fresh installation is using Serpent ViewHandler.
