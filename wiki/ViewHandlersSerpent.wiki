@@ -21,6 +21,9 @@ class PageController extends GlobalController {
 	
 }}}
 
+*Notices*
+ 'Serpent' is used as handler, more possible handler are available in [ViewHandlers]
+
  "data" is used to make variable $data available in view.
 
 *Template code:*
