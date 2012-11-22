@@ -313,7 +313,7 @@ You will have to take care of the submit button and its internationalization, yo
         ~~FormHTML::getLabel('myform', 'email', array('errorclass' => 'error'));~:
         ~~FormHTML::getElement('myform', 'email', array('errorclass' => 'error'));~<br /><br />
     <input type="submit" name="submit" value="SEND" />
-{/form}
+</form>
  
 <!-- ... Template-Code -->
 }}}
