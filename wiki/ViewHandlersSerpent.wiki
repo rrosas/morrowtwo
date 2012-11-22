@@ -1,3 +1,52 @@
-See the project page for documentation:
+= Serpent =
+
+== Introduction ==
+
+It's possible to use PHP itself and also [ViewHandlersSerpent Serpent] as template language. PHP is useful, if you need best performance in your application or you are not familiar with Serpent.
+
+== Example ==
+*Controller code:*
+{{{
+<?php
+
+class PageController extends GlobalController {
+	
+	public function run() {
+		$data = "<p>Documentation you'll find
+                         <a href='http://code.google.com/p/morrowtwo/wiki/Homepage'>here</a>	
+		         </p>";
+		$this->view->setHandler('Serpent');
+		$this->view->setContent($data, "data");
+	}
+	
+}}}
+
+ "data" is used to make variable $data available in view.
+
+*Template code:*
+{{{
+~:extend('_index')~
+
+~[body]~
+	MorrowTwo Framework is ready :)
+	<?= $data; ?>
+	
+	
+	
+~[/body]~
+
+}}}
+
+
+== View properties ==
+{{{
+MorrowTwo Framework is ready :)
+
+Documentation you'll find here
+
+}}}
+
+== Serpent project page ==
+*See the project page for documentation*
 
 https://code.google.com/p/serpent-php-template-engine/
