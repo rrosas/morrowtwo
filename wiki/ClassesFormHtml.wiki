@@ -97,6 +97,23 @@ If not otherwise defined, an error message will be wrapped in a `<span>` tag tha
   * value - overwrite the error text with this value
   * self-defined - all other params are are made into HTML attributes for the wrapping tag.
 
+=== example ===
+{{{
+// contact form
+		$elements['contactform'] = array( "name" => array("required" => true,),);
+
+<form action="~~:url($page.path)~" method="post">
+	~~FormHTML::getError( 'contactform' , 'name');
+        ~~FormHTML::getLabel('contactform', 'name', array('errorclass' => 'error', 'value' => 'Name'));~:
+        ~~FormHTML::getElement('contactform', 'name', array('errorclass' => 'error'));~<br /><br />
+</form>
+}}}
+
+=== notices ===
+"required" controls on/off mode of validation
+'~' shortcut for '<?php' and '?>'
+'~~' shortcut for '<?php echo'>
+
 === _getInputImage()_ ===
 
 string static getInputImage( string $el_name )
