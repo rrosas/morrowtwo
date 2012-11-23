@@ -8,7 +8,22 @@ The Form.class allows you to control the flow of your forms more efficiently. On
 
 == Example ==
 
-The following demonstrates a simple form handling task. A form is submitted validated and something is done with the data if the input was valid. 
+The following demonstrates a simple form handling task. 
+
+Let's start with the form in Serpent in a separate view e.g. home.php:
+
+{{{
+
+<form action="~~:url($page.path)~" method="post">
+		~~FormHTML::getError( 'myform' , 'name');
+                ~~FormHTML::getLabel('myform', 'name', array('errorclass' => 'error', 'value' => 'Name'));~:
+                ~~FormHTML::getElement('myform', 'name', array('errorclass' => 'error'));~<br /><br />
+    <input type="submit" name="submit" value="SEND" />
+</form>
+
+}}}
+
+A form is submitted validated and something is done with the data if the input was valid. 
 
 {{{
 <?php
@@ -30,6 +45,23 @@ if($this -> form -> isSubmitted('myform')) {
         }
 }
  
+// ... Controller-Code
+?>
+}}}
+
+In contrast to define a form separately in a template view, you can also put it in the controller and load it by the function load:
+
+{{{
+<?
+// ... Conroller-Code
+
+$elements['contactform'] = array("name" => array("required" => true,),
+						   "email" => array("required" => true,),
+						   "message" => array("required" => true,),
+						  );
+
+$this->form->loadDef($elements);
+
 // ... Controller-Code
 ?>
 }}}
