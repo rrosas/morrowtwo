@@ -35,10 +35,18 @@ If a path does not begin with a slash, then the URL will be returned beginning w
   * link to a different domain: http://domain.tld/path/
 `*` if a file does not exist or cannot be found, the path will be treated as a page.
 
+example with Serpent in view:
+{{{
+   <p>
+      <a href="~~:url('/')~">back</a>
+   </p>
+}}}
+
 === _redirect()_ ===
 {{{
 void redirect( String $path [, array $query = array ][, array $replacements ])
 }}}
+
 causes a clean http redirect to a new page or website. Valid values for *$path* are the same as for makeUrl().
 
   * *$path:* either a relative path to page in the same Morrow installation or a full URL to another site.
