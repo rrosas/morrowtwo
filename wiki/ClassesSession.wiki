@@ -7,7 +7,7 @@
 The class for accessing the user session with methods for getting, setting and deleting content. The Session.Class utilizes dot.syntax. 
 The Session.Class is always initialized by Morrow and the use of the PHP global variable *$`_`SESSION is not possible*. 
 
-Session is not interested in the way sessioning is handled by PHP and uses whatever is the default setting (usually PHP saves to the file system). The Session class can be exended to take care of different session handling methods. Morrow provides a class for saving sessions in the database: DBSession. This can also be used as an example for defining one's own session handling.
+Session is not interested in the way sessioning is handled by PHP and uses whatever is the default setting (usually PHP saves to the file system). The Session class can be extended to take care of different session handling methods. Morrow provides a class for saving sessions in the database: DBSession. This can also be used as an example for defining one's own session handling.
 
 == Example ==
 {{{
