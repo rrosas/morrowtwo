@@ -4,7 +4,9 @@
 
 == Introduction ==
 
-This class accesses a sitesearch database created with the [FiltersSiteSearch Sitesearch] filter. Those in combination provide a simple way to integrate a site wide search engine.
+This class accesses a sitesearch database created with the [FiltersSiteSearch Sitesearch] filter which is necessary to be created first. 
+
+Those in combination provide a simple way to integrate a site wide search engine.
 
 == Example ==
 {{{
