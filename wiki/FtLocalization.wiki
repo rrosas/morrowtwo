@@ -29,7 +29,7 @@ For each of the languages you define in your config, you will have to create a f
 
 === The Language PHP File ===
 
-The PHP file contains further configuration variables that apply only to this language. This includes the name of the language an date and currency formats. You can extend the definitions for your own purposes, but the provided keys should be defined in any case, since Morrow needs them.
+The PHP file contains further configuration variables that apply only to this language. This includes the name of the language, the date and the currency formats. You can extend the definitions for your own purposes, but the provided keys should be defined in any case, since Morrow needs them.
 
 {{{
 <?php
@@ -67,7 +67,7 @@ $content['greeting'] =  'Hello!';
 
 == Passing Language Content to View ==
 
-In order to pass content to your view handler, you have seen that you must call the view method setContent. For language content it is the same, but first you must retrieve it. For this purpose there is the method getContent in the Language class, which requires the page alias of the content you want (usually it is the alias of the current page).
+In order to pass content to your view handler, you have seen that you must call the view method _setContent_. For language content it is the same, but first you must retrieve it. For this purpose there is the method _getContent_ in the Language class, which requires the page alias of the content you want (usually it is the alias of the current page).
 
 {{{
 <?php
