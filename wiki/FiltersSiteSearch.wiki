@@ -6,11 +6,6 @@ Sitesearch is a simple web page spider which indexes the actual viewed page. It 
 
 The access to the indexed data and the search calls are done via the Sitesearch user class.
 
-If you work on a linux system you can index your whole site with the following shell command:
-{{{
-wget --recursive --level=inf --no-parent --delete-after -nv --no-directories http://path-to-your-homepage.com
-}}}
-
 == Example ==
 *Controller code:*
 {{{
@@ -46,6 +41,13 @@ This will not get indexed.
 </body>
 </html>
 }}}
+
+If you work on a linux system you can index your whole site with the following shell command:
+{{{
+wget --recursive --level=inf --no-parent --delete-after -nv --no-directories http://path-to-your-homepage.com
+}}}
+
+If you work on a mac os system you could download wget for mac and index your whole site with the same shell command.
 
 == Filter properties ==
 
