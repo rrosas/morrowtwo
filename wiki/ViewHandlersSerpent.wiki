@@ -40,6 +40,7 @@ class PageController extends GlobalController {
 
 }}}
 
+Furthermore you should know that Serpent is a powerful template engine, which compiles and generate templates in the following directory: */temp/_templates_compiled/*. Therefore are write & read rights necessary. If the Serpent engine is not allowed to read and write in that directory, than you should delete the old compiled templates and let them renew again.
 
 == View properties ==
 {{{
