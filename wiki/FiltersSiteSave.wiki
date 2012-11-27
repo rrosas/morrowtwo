@@ -35,7 +35,7 @@ $this->view->setFilter('save', $directory . $filename);
 Otherwise you will get this error message:
 
 {{{
-//www.your.domain.de:
+//www.yourdomain.de:
 
 phpfile_put_contents(.htm) [function.file-put-contents]: failed to open stream: Permission denied
 
