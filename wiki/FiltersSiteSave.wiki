@@ -10,7 +10,7 @@ The Save filter just saves the output of the main view as a file.
 <?php
 // ... Controller code
  
-$filename = $this->page->get('alias') . '.html'; 
+$filename = $this->page->get('alias') . 'alias.html'; 
 $this->view->setFilter('save', $filename);
  
 // ... Controller code
@@ -21,9 +21,11 @@ Notice that you have to manage the rights permissions for the output file. In th
 
 {{{
 <?php
+
 // ... Controller code
-$directory = '/main/temp/';
-$filename = $this->page->get('alias') . '.html'; 
+// save filter
+$directory = 'main/temp/';
+$filename = $this->page->get('home') . 'home.htm'; 
 $this->view->setFilter('save', $directory . $filename);
  
 // ... Controller code
