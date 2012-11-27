@@ -43,7 +43,7 @@ Take a look at the other view handlers to see what is possible.
 
 == The Page array == 
 
-One question is still open. In the example for the frame template we used the key page which was not set before. So where does it com from?
+One question is still open. In the example for the frame template we used the key page which was not set before. So where does it comes from?
 Now, the page array is provided by the framework and gives you many URLs and info we think could be very helpful on generating templates. It is automatically passed to the view handler.
 
 Here is the content of the page array for an example page:
