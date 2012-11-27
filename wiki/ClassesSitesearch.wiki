@@ -20,6 +20,8 @@ $results = $this->sitesearch->get($q);
 ?>
 }}}
 
+The result array will return two elements: data and timestamp. You will get your search results with the array element 'data'.
+
 == Methods ==
 
 === _`__`construct()_ ===
