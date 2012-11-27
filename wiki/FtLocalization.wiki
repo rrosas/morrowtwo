@@ -55,7 +55,7 @@ $config = array(
 
 == The Language Folder ==
 
-The language folder must contain the files _global.php and _tree.php. The first is for language definitions that exend over all pages. The second contains the definition of the project navigation tree, which has it's own chapter: [ClassesNavigation Navigation]. Furthermore you can define contents that are only for individual pages by creating files that have the page alias as their name (`_`i18n/*language/alias*.php)
+The language folder must contain the files _global.php and _tree.php. The first is for language definitions that extend over all pages. The second contains the definition of the project navigation tree, which has it's own chapter: [ClassesNavigation Navigation]. Furthermore you can define contents that are only for individual pages by creating files that have the page alias as their name (`_`i18n/*language/alias*.php)
 
 === Global / Page Language Content ===
 
