@@ -17,6 +17,19 @@ $this->view->setFilter('save', $filename);
 ?>
 }}}
 
+Notice that you have to manage the rights permissions for the output file. In this example the output would be set in the root directory. Remember: you'll never want to give writable rights to the root directory of your project. So you could choose another directory for the output :
+
+{{{
+<?php
+// ... Controller code
+$directory = '/main/temp/';
+$filename = $this->page->get('alias') . '.html'; 
+$this->view->setFilter('save', $directory . $filename);
+ 
+// ... Controller code
+?>
+}}}
+
 == Filter properties ==
 
 || Type || Keyname || Default || Description ||
