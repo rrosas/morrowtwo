@@ -153,4 +153,22 @@ Each display type has its own methods for outputing labels, errors and form fiel
 
 = !FormHtmlElement =
 
-coming soon!
+== Select ==
+{{{
+//view home.htm
+
+~~FormHTML::getError( 'contactform' , 'title');~
+~~FormHTML::getLabel('contactform', 'title', array('errorclass' => 'error', 'value' => 'Title'));~:
+~~FormHTML::getElement('contactform', 'title', array('errorclass' => 'error', 'displaytype' => 'select'));~<br /><br />
+
+}}}
+
+== Textarea ==
+
+{{{
+
+~~FormHTML::getError( 'contactform' , 'message');~
+~~FormHTML::getLabel('contactform', 'message', array('errorclass' => 'error', 'value' => 'Message'));~:
+~~FormHTML::getElement('contactform', 'message', array('errorclass' => 'error', "displaytype" => "textarea"));~<br /><br />
+
+}}}
