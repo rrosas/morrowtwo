@@ -172,3 +172,13 @@ Each display type has its own methods for outputing labels, errors and form fiel
 ~~FormHTML::getElement('contactform', 'message', array('errorclass' => 'error', "displaytype" => "textarea"));~<br /><br />
 
 }}}
+
+== Password ==
+
+{{{
+
+~~FormHTML::getError( 'contactform' , 'password');~
+~~FormHTML::getLabel('contactform', 'password', array('errorclass' => 'error', 'value' => 'Password'));~:
+~~FormHTML::getElement('contactform', 'password', array('errorclass' => 'error', 'displaytype' => 'password'));~<br /><br />
+
+}}}
