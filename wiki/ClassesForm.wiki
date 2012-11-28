@@ -6,6 +6,26 @@
 
 The Form.class allows you to control the flow of your forms more efficiently. Once your form is properly defined, you can choose between several methods to check and handle input or add fields dynamically based on, for example, database queries. Later you can change your definitions without having to touch the controller. To get started using the form class read the introduction to Form Handling.
 
+== Define your form ==
+
+You should know that you have to define all elements of your form separately in the folder _forms_ of your project e.g. _main/forms_. The file you have created in that folder should have the same name like the class and the view which are processing your form.
+
+{{{
+# /main/_forms/home.php
+
+<?php
+		
+   // contact form
+   $elements['contactform'] = array("name" => array("required" => true,),
+						      "email" => array("required" => true,
+								      "checktype" => "Email",
+										),
+							"message" => array( "required" => true,),
+						     );
+ }}}
+
+From that point on you shouldn't forget to extend your definition for every element you wanna use in that form.
+
 == Example ==
 
 The following demonstrates a simple form handling task. 
