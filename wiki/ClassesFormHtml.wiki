@@ -187,9 +187,7 @@ Each display type has its own methods for outputing labels, errors and form fiel
 
 {{{
 
-~~FormHTML::getError( 'contactform' , 'title');~
-~~FormHTML::getLabel('contactform', 'title', array('errorclass' => 'error', 'value' => 'Title'));~:
-~~FormHTML::getElement('contactform', 'title', array('errorclass' => 'error', 'displaytype' => 'hidden'));~<br /><br />
+~~FormHTML::getElement('contactform', 'secret', array('errorclass' => 'error', 'displaytype' => 'hidden'));~<br /><br />
 
 }}}
 
@@ -198,7 +196,17 @@ Each display type has its own methods for outputing labels, errors and form fiel
 {{{
 
 ~~FormHTML::getError( 'contactform' , 'file');~
-~~FormHTML::getLabel('contactform', 'file', array('errorclass' => 'error', 'value' => 'Title'));~:
+~~FormHTML::getLabel('contactform', 'file', array('errorclass' => 'error', 'value' => 'File'));~:
 ~~FormHTML::getElement('contactform', 'file', array('errorclass' => 'error', 'displaytype' => 'file'));~<br /><br />
+        
+}}}
+
+== Date ==
+
+{{{
+
+~~FormHTML::getError( 'contactform' , 'birthday');~
+~~FormHTML::getLabel('contactform', 'birthday', array('errorclass' => 'error', 'value' => 'Birthday'));~:
+~~FormHTML::getElement('contactform', 'birthday', array('errorclass' => 'error', 'displaytype' => 'date'));~<br /><br />
         
 }}}
