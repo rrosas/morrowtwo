@@ -192,3 +192,13 @@ Each display type has its own methods for outputing labels, errors and form fiel
 ~~FormHTML::getElement('contactform', 'title', array('errorclass' => 'error', 'displaytype' => 'hidden'));~<br /><br />
 
 }}}
+
+== File ==
+
+{{{
+
+~~FormHTML::getError( 'contactform' , 'file');~
+~~FormHTML::getLabel('contactform', 'file', array('errorclass' => 'error', 'value' => 'Title'));~:
+~~FormHTML::getElement('contactform', 'file', array('errorclass' => 'error', 'displaytype' => 'file'));~<br /><br />
+        
+}}}
