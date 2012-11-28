@@ -210,3 +210,13 @@ Each display type has its own methods for outputing labels, errors and form fiel
 ~~FormHTML::getElement('contactform', 'birthday', array('errorclass' => 'error', 'displaytype' => 'date'));~<br /><br />
         
 }}}
+
+== Checkbox ==
+
+{{{
+
+~~FormHTML::getError( 'contactform' , 'newsletter');~
+~~FormHTML::getLabel('contactform', 'newsletter', array('errorclass' => 'error', 'value' => 'Newsletter'));~:
+~~FormHTML::getElement('contactform', 'newsletter', array('errorclass' => 'error', 'displaytype' => 'checkbox'));~<br /><br />
+
+}}}
