@@ -17,14 +17,14 @@ You should know that you have to define all elements of your form separately in 
 		
    // contact form
    $elements['contactform'] = array("name" => array("required" => true,),
-						      "email" => array("required" => true,
+						     "email" => array("required" => true,
 								      "checktype" => "Email",
-										),
-							"message" => array( "required" => true,),
+								     ),
+						     "message" => array( "required" => true,),
 						     );
  }}}
 
-From that point on you shouldn't forget to extend your definition for every element you wanna use in that form.
+From that point on you shouldn't forget to extend your definition for every element you wanna use in that form. Otherwise it wouldn't be processed either by the controller nor by the view.
 
 == Example ==
 
