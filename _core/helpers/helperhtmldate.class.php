@@ -1,22 +1,22 @@
 <?php
 /*////////////////////////////////////////////////////////////////////////////////
-    MorrowTwo - a PHP-Framework for efficient Web-Development
-    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+MorrowTwo - a PHP-Framework for efficient Web-Development
+Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
-    This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
+This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 
-    MorrowTwo is free software:  you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+MorrowTwo is free software:  you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Lesser General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
@@ -26,10 +26,22 @@
 
 class HelperHtmlDate{
 	static	$defaults = array();
-
 	static public function getOutput($el_key, $date_str=null, $date_format="%d%m%Y", $start_year=null, $end_year=null, $params=array()){
-		
-	        self::$defaults = array(
+		if (!function_exists('getOperator'))
+			function getOperator($string, &$operator){
+				$number = substr($string, 1);
+				if($string{0} == '+'){
+					$operator = $number;
+					return true;
+				}
+				if($string{0} == '-'){
+					$operator = $number*(-1);
+					return true;
+				}
+				return false;
+			}
+
+		self::$defaults = array(
 			'_Year' => date('Y'),
 			'_Month' => date('m'),
 			'_Day' => date('d'),
@@ -38,7 +50,6 @@ class HelperHtmlDate{
 			'_Sec' =>  '00',
 		);
 
-	
 		if($start_year == null)  $start_year=date("Y")-1;
 		if($end_year == null)  $end_year=date("Y")+5;
 
@@ -49,12 +60,8 @@ class HelperHtmlDate{
 			$end_year=date("Y")+$operator;
 		}
 
-		if($end_year < $start_year) $end_year = $start_year;
-
 		if($date_str === null) $date_str = "today";
-		else if($date_str == ''){
-			$date_str = "0000-00-00 00:00:00";
-		}
+		else if($date_str == '') $date_str = "0000-00-00 00:00:00";
 
 		if(!preg_match("/[0-9]{0,4}-[0-9]{0,2}-[0-9]{0,2} [0-9]{2}:[0-9]{2}:[0-9]{2}/", $date_str)) {
 			$date_str = date('Y-m-d H:i:s', strtotime($date_str));
@@ -70,17 +77,16 @@ class HelperHtmlDate{
 
 		#groups
 		$sep_match = "([^%]*)";
-                preg_match_all("/(%[a-zA-Z]{1})?(" . $sep_match . "?)/", $date_format, $matches);
+		preg_match_all("/(%[a-zA-Z]{1})?(" . $sep_match . "?)/", $date_format, $matches);
 		$options = $matches[1];
 		$separators = $matches[2];
 
-                $_html_result = '';
+		$_html_result = '';
 		foreach($options as $k=>$op){
 			$_html_result .= self::getOptions($el_key, $op, $start_year, $end_year, $params);
 			$_html_result .= $separators[$k];
 		}
 		foreach(self::$defaults as $ln=>$left){
-
 			$_html_result .= '<input type="hidden" name="'. $el_key . '[' .$ln.']" value="'.$left.'" />';
 		}
 
@@ -118,24 +124,24 @@ class HelperHtmlDate{
 			case '%H': 
 				$name = "[_Hour]";
 				$sel = self::$defaults['_Hour'];
-                                $options = $hours;
-                                $stt = date('Y') . "-01-01 %s:00:00";
-                                unset(self::$defaults['_Hour']);
-                                break;
+				$options = $hours;
+				$stt = date('Y') . "-01-01 %s:00:00";
+				unset(self::$defaults['_Hour']);
+				break;
 			case '%M': 
 				$name = "[_Min]";
 				$sel = self::$defaults['_Min'];
-                                $options = $min;
-                                $stt = date('Y') . "-01-01 00:%s:00";
-                                unset(self::$defaults['_Min']);
-                                break;
+				$options = $min;
+				$stt = date('Y') . "-01-01 00:%s:00";
+				unset(self::$defaults['_Min']);
+				break;
 			case '%S': 
 				$name = "[_Sec]";
 				$sel = self::$defaults['_Sec'];
-                                $options = $min;
-                                $stt = date('Y') . "-01-01 00:00:%s";
-                                unset(self::$defaults['_Sec']);
-                                break;
+				$options = $min;
+				$stt = date('Y') . "-01-01 00:00:%s";
+				unset(self::$defaults['_Sec']);
+				break;
 			case "%d":
 			case "%e":
 				$name = "[_Day]";
@@ -165,7 +171,7 @@ class HelperHtmlDate{
 			default:
 				return $format;
 		}
-			
+
 		$selected = array();
 		$output = array();
 		foreach($options as $k=>$opt){
@@ -183,17 +189,3 @@ class HelperHtmlDate{
 	}
 }
 
-function getOperator($string, &$operator){
-		$number = substr($string, 1);
-		if($string{0} == '+'){
-			$operator = $number;
-			return true;
-		}
-		if($string{0} == '-'){
-			$operator = $number*(-1);
-			return true;
-		}
-		
-		return false;
-		
-	}
