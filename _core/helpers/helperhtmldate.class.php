@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class HelperHtmlDate{
 	static	$defaults = array();
 	static public function getOutput($el_key, $date_str=null, $date_format="%d%m%Y", $start_year=null, $end_year=null, $params=array()){
-		if (!function_exists('getOperator'))
+		if (!function_exists('getOperator')) {
 			function getOperator($string, &$operator){
 				$number = substr($string, 1);
 				if($string{0} == '+'){
@@ -40,6 +40,7 @@ class HelperHtmlDate{
 				}
 				return false;
 			}
+		}
 
 		self::$defaults = array(
 			'_Year' => date('Y'),
