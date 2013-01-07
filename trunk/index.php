@@ -43,9 +43,9 @@ function dump() {
 
 /* load framework
 ********************************************************************************************/
-require(FW_PATH . '/_core/factory.class.php');
-require(FW_PATH . '/_core/loader.class.php');
-require(FW_PATH . '/_core/morrow.class.php');
+require(FW_PATH . '/_morrow/factory.class.php');
+require(FW_PATH . '/_morrow/loader.class.php');
+require(FW_PATH . '/_morrow/morrow.class.php');
 
 new Morrow();
 

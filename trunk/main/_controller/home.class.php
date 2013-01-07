@@ -6,14 +6,14 @@ class PageController extends DefaultController {
 	public function run() {
 		
 		/*
-		echo Helpers\General::cleanPath( FW_PATH );
-		echo Libraries\Time::create()->get('datetime');
+		dump( Helpers\General::cleanPath( FW_PATH ) );
+		dump( Libraries\Time::create()->get('datetime') );
+		$this->benchmark->start('fd');
+		dump(Factory::load('benchmark')->get());
 		*/
 		
-		/*
-		dump(Factory::load('benchmark')->start('fd'));
-		dump($this->benchmark->get());
-		*/
+		// Extending morrow with external classes and without name conflicts
+		//dump(Factory::load('test')->get());
 		
 		// get all constants defined via Morrow
 		/*
@@ -31,8 +31,8 @@ class PageController extends DefaultController {
 		
 		/*
 		try {
-			echo DateTime::createFromFormat('2012-08-01');
-		} catch (Exception $e) {
+			echo \DateTime::createFromFormat('2012-08-01');
+		} catch (\Exception $e) {
 			echo 'Wurst!';
 		}
 		*/
