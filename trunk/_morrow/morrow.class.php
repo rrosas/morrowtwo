@@ -71,11 +71,11 @@ class Morrow {
 	// registers the config files in the config class
 	protected function _loadConfigVars($path) {
 		// load main config
-		$config = include ($path.'_config/_default.php');
+		$config = include ($path.'_configs/_default.php');
 
 		// overwrite with server specific config
-		$file1 = $path.'_config/'.$_SERVER['HTTP_HOST'].'.php';
-		$file2 = $path.'_config/'.$_SERVER['SERVER_ADDR'].'.php';
+		$file1 = $path.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
+		$file2 = $path.'_configs/'.$_SERVER['SERVER_ADDR'].'.php';
 		if (is_file($file1)) $config = include($file1);
 		elseif (is_file($file2)) $config = include($file2);
 
@@ -278,7 +278,7 @@ class Morrow {
 		$this->view = Factory::load('view');
 				
 		// declare the controller to be loaded
-		$controller_path		= PROJECT_PATH.'_controller/';
+		$controller_path		= PROJECT_PATH.'_controllers/';
 		$global_controller_file	= $controller_path.'_default.class.php';
 		$page_controller_file	= $controller_path.$alias.'.class.php';
 
