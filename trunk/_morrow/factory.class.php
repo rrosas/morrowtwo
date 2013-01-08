@@ -30,7 +30,7 @@ class Factory {
 	public static function load($params) {
 		// get factory config
 		$params = explode(':', $params);
-		$classname = __NAMESPACE__ . '\\Libraries\\' . strtolower($params[0]);
+		$classname = __NAMESPACE__ . '\\' . strtolower($params[0]);
 		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
 		$namespace = (isset($params[2])) ? $params[2] : 'user';
 		

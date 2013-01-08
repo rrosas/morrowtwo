@@ -32,9 +32,9 @@ class Php extends AbstractView {
 
 	public function __construct($view) {
 		// Template holen
-		$this->page = \Morrow\Factory::load('page');
+		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
 		$this->content_template = $this->page->get('alias');
-		$this->language = \Morrow\Factory::load('language');
+		$this->language = \Morrow\Factory::load('Morrow\Libraries\language');
 	}
 
 	public function getOutput($content, $handle) {

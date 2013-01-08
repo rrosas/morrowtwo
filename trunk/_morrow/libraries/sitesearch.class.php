@@ -41,8 +41,8 @@ class Sitesearch {
 			$this->$key = $value;
 		}
 
-		$this->db = \Morrow\Factory::load('db:dbsitesearch', $this->db_config);
-		$this->bm = \Morrow\Factory::load('benchmark:benchmarksitesearch');
+		$this->db = \Morrow\Factory::load('Morrow\Libraries\db:dbsitesearch', $this->db_config);
+		$this->bm = \Morrow\Factory::load('Morrow\Libraries\benchmark:benchmarksitesearch');
 	}
 
 	public function getAll($where = '') {

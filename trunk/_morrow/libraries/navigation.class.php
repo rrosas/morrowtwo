@@ -29,14 +29,14 @@ class Navigation {
 	public function __construct($data = null) {
 		if (is_null($data)) {
 			// get simple tree from language class
-			$language = \Morrow\Factory::load('language');
+			$language = \Morrow\Factory::load('Morrow\Libraries\language');
 			$data = $language->getTree();
 
 			// fills $nodes and $tree
 			$this->add($data);
 
 			// set active page
-			$page = \Morrow\Factory::load('page');
+			$page = \Morrow\Factory::load('Morrow\Libraries\page');
 			$this->setActive($page->get('alias'));
 		} else {
 			// fills $nodes and $tree

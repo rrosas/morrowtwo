@@ -9,11 +9,18 @@ class PageController extends DefaultController {
 		dump( Helpers\General::cleanPath( FW_PATH ) );
 		dump( Libraries\Time::create()->get('datetime') );
 		$this->benchmark->start('fd');
-		dump(Factory::load('benchmark')->get());
+		dump(Factory::load('Libraries\benchmark')->get());
 		*/
 		
 		// Extending morrow with external classes and without name conflicts
-		//dump(Factory::load('test')->get());
+		dump(Factory::load('Morrow\Libraries\test')->get());
+		/*
+		$this->load('Libraries\test', 'bar');
+		dump($this->test->get());
+		*/
+		
+		// load a model
+		$test = Factory::load('Models\Test');
 		
 		// get all constants defined via Morrow
 		/*

@@ -51,8 +51,8 @@ class DBSession extends Session{
 		#setting the session handlers
 		$junk =  session_set_save_handler(array($this, "on_session_start"),array($this,"on_session_end"),array($this,"on_session_read"),array($this,"on_session_write"),array($this,"on_session_destroy"),array($this,"on_session_gc"));
 
-		$this->config = \Morrow\Factory::load('config');
-		$this->db = \Morrow\Factory::load('db',$this->config->get('session.db'));
+		$this->config = \Morrow\Factory::load('Morrow\Libraries\config');
+		$this->db = \Morrow\Factory::load('Morrow\Libraries\db',$this->config->get('session.db'));
 
 		#important!: call the parent constructor
 		parent::__construct($data);

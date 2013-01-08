@@ -26,7 +26,7 @@ class Url {
 
 	public function __construct(){
 		ini_set('arg_separator.output', '&amp;');
-		$this->page = \Morrow\Factory::load('page');
+		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
 	}
 
 	// wie parse_url, gibt jedoch immer den kompletten Satz an Schlüsseln zurück
@@ -103,7 +103,7 @@ class Url {
 		if(empty($scheme)) {
 			// load only once
 			if (!isset($this->config)) {
-				$this->config = \Morrow\Factory::load('config');
+				$this->config = \Morrow\Factory::load('Morrow\Libraries\config');
 				$this->config_all = $this->config->get();
 			}
 			$config =& $this->config;
@@ -113,7 +113,7 @@ class Url {
 			}
 
 			if (!isset($this->language)) {
-				$this->language = \Morrow\Factory::load('language');
+				$this->language = \Morrow\Factory::load('Morrow\Libraries\language');
 				$this->language_possible = $this->language->getPossible();
 				$this->language_default = $this->language->getDefault();
 			}

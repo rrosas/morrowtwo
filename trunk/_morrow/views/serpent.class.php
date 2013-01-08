@@ -37,9 +37,9 @@ class Serpent extends AbstractView {
 
 	public function __construct() {
 		// Template holen
-		$this->page = \Morrow\Factory::load('page');
+		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
 		$this->content_template = $this->page->get('alias');
-		$this->language = \Morrow\Factory::load('language');
+		$this->language = \Morrow\Factory::load('Morrow\Libraries\language');
 		
 		require_once( FW_PATH.'_morrow/externals/serpent_1.3/source/serpent.class.php' );
 	}
@@ -62,21 +62,21 @@ class Serpent extends AbstractView {
 
 		// handle mappings
 		$mappings = array(
-			'url' => '\\Morrow\\Factory::load("url")->makeurl',
+			'url' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\url")->makeurl',
 			'cycle' => '\\Morrow\\Helpers\\View::cycle',
 			'mailto' => '\\Morrow\\Helpers\\View::mailto',
 			'hidelink' => '\\Morrow\\Helpers\\View::hidelink',
 			'thumb' => '\\Morrow\\Helpers\\View::thumb',
 			'image' => '\\Morrow\\Helpers\\View::image',
-			'truncate' => '\\Morrow\\Factory::load("HelperString")->truncate',
+			'truncate' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\HelperString")->truncate',
 			'strip' => 'ob_start(array("\\Morrow\\Helpers\\View::strip")) //',
 			'endstrip' => 'ob_end_flush',
 			'loremipsum' => '\\Morrow\\Helpers\\View::loremipsum',
-			'formlabel' => '\\Morrow\\Factory::load("formhtml")->getLabel',
-			'formelement' => '\\Morrow\\Factory::load("formhtml")->getElement',
-			'formerror' => '\\Morrow\\Factory::load("formhtml")->getError',
-			'formupload' => '\\Morrow\\Factory::load("formhtml")->getInputImage',
-			'_' => '\\Morrow\\Factory::load("language")->_',
+			'formlabel' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\formhtml")->getLabel',
+			'formelement' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\formhtml")->getElement',
+			'formerror' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\formhtml")->getError',
+			'formupload' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\formhtml")->getInputImage',
+			'_' => '\\Morrow\\Factory::load("Morrow\\\Libraries\\\language")->_',
 		);
 		foreach ($this->mappings as $key => $value) {
 			$mappings[$key] = $value;

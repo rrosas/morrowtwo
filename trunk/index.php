@@ -36,7 +36,7 @@ define('FW_PATH', __DIR__ .'/');
 /* define dump function
 ********************************************************************************************/
 function dump() {
-	$debug = \Morrow\Factory::load('debug');
+	$debug = \Morrow\Factory::load('Libraries\debug');
 	$args = func_get_args();
 	echo $debug->dump($args);
 }

@@ -30,7 +30,7 @@ class Session {
 		if (ini_get('session.auto_start') != true){
 			
 			// set cookie params
-			$config = \Morrow\Factory::load('config')->get('session');
+			$config = \Morrow\Factory::load('Morrow\Libraries\config')->get('session');
 			session_set_cookie_params($config['lifetime'], $config['path'], $config['domain'], $config['secure'], $config['httponly']);
 			
 			// _GET has been removed, if session id comes from input, get it now

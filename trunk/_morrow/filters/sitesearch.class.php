@@ -69,8 +69,8 @@ class Sitesearch extends AbstractFilter {
 		$output = $original_output;
 
 		// load needed classes
-		$this->url = \Morrow\Factory::load('url');
-		$this->searchdb		= \Morrow\Factory::load('db:searchdb', $this->db_config);
+		$this->url = \Morrow\Factory::load('Morrow\Libraries\url');
+		$this->searchdb		= \Morrow\Factory::load('Morrow\Libraries\db:searchdb', $this->db_config);
 
 		// connect to DB and do maintenance
 		$this->searchdb->connect();

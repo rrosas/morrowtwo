@@ -39,7 +39,7 @@ class Debug {
 	
 	public function __construct() {
 		// read config from config class
-		$config = \Morrow\Factory::load('config');
+		$config = \Morrow\Factory::load('Morrow\Libraries\config');
 		$this->config = $config->get('debug');
 
 		// error types

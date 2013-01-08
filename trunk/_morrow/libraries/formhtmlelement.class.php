@@ -27,7 +27,7 @@ abstract class formhtmlelement{
 	protected $page;	
 
 	public function __construct(){
-		$this->page = \Morrow\Factory::load('page');
+		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
 	}
 
 	public function getLabel($value, $for_id, $params){

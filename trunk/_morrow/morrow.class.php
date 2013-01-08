@@ -44,7 +44,7 @@ class Morrow {
 	public function ExceptionHandler($exception) {
 		try {
 			// load errorhandler
-			$debug = Factory::load('debug');
+			$debug = Factory::load('Morrow\Libraries\debug');
 			$debug->errorhandler($exception);
 		} catch (\Exception $e) {
 			// useful if the \Exception handler itself contains errors
@@ -53,18 +53,27 @@ class Morrow {
 	}
 	
 	protected function autoload($classname) {
+		print_r($classname);
+		
 		// First we try the external libs. That way the user can replace all core libs if he wants to
-		$classname = preg_replace('=^Morrow=i', '_morrow', $classname);
-		$classname = preg_replace('=^User=i', '_user', $classname);
 		$classname = str_replace('\\', '/', strtolower($classname));
 		
-		// first try to find the user replaced or added class
-		if (strpos($classname, '_morrow') === 0) {
-			$try[] = FW_PATH . str_replace('_morrow/', '_user/', $classname).'.class.php';
+		
+		if (defined('PROJECT_PATH')) {
+			$try[] = PROJECT_PATH . str_replace('morrow/', '_user/', $classname).'.class.php';
+			
+			// try to load a model
+			if (strpos($classname, '/models/') !== false) {
+				$try[] = PROJECT_PATH . str_replace('morrow/models/', '_models/', $classname).'.class.php';
+			}
 		}
-		// then the original morrow class
-		$try[] = FW_PATH . $classname.'.class.php';
+		
+		// first try to find the user replaced or added class
+		$try[] = FW_PATH . str_replace('morrow/', '_morrow/', $classname).'.class.php';
+		//$try[] = FW_PATH . str_replace('morrow/', '', $classname).'.class.php';
 
+		print_r($try);
+		
 		foreach($try as $path) { if(is_file($path)) { include ($path); break; } }	
 	}
 	
@@ -90,7 +99,8 @@ class Morrow {
 		
 		/* register main config in the config class
 		********************************************************************************************/
-		$this->config = Factory::load('config'); // config class for config vars
+		$this->config = Factory::load('Morrow\Libraries\config'); // config class for config vars
+
 		// load vars
 		$config = $this->_loadConfigVars(FW_PATH);
 
@@ -112,9 +122,9 @@ class Morrow {
 
 		/* load classes
 		********************************************************************************************/
-		$this->page		= Factory::load('page'); // config class for page vars
-		$this->url		= Factory::load('url'); // url class
-		$this->input	= Factory::load('input'); // input class for all user input
+		$this->page		= Factory::load('Morrow\Libraries\page'); // config class for page vars
+		$this->url		= Factory::load('Morrow\Libraries\url'); // url class
+		$this->input	= Factory::load('Morrow\Libraries\input'); // input class for all user input
 
 		/* define project
 		********************************************************************************************/
@@ -170,7 +180,7 @@ class Morrow {
 		********************************************************************************************/
 		$sessionHandler = $this->config->get('session.handler');
 		if($sessionHandler == '') $sessionHandler = 'session';
-		$session = Factory::load($sessionHandler.':session', $this->input->get());
+		$session = Factory::load('Morrow\Libraries\\' . $sessionHandler.':session', $this->input->get());
 		
 		/* load languageClass and define alias
 		********************************************************************************************/
@@ -182,7 +192,7 @@ class Morrow {
 			PROJECT_PATH . '_templates/*',
 			PROJECT_PATH . '*.php'
 		);
-		$this->language = Factory::load('language', $lang_settings);
+		$this->language = Factory::load('Morrow\Libraries\language', $lang_settings);
 
 		// language via path
 		$nodes = $this->page->get('nodes');
@@ -275,7 +285,7 @@ class Morrow {
 
 		/* load controller and render page
 		********************************************************************************************/
-		$this->view = Factory::load('view');
+		$this->view = Factory::load('Morrow\Libraries\view');
 				
 		// declare the controller to be loaded
 		$controller_path		= PROJECT_PATH.'_controllers/';

@@ -31,10 +31,6 @@ namespace Morrow;
 class Loader {
 	protected $_params = array();
 	
-	public function __construct() {
-		$this->load('page');
-	}
-
 	protected function load($params) {
 		// get arguments
 		$factory_args = func_get_args();
@@ -42,19 +38,19 @@ class Loader {
 		// get instance name in params string
 		$params = explode(':', $params);
 		$classname = strtolower($params[0]);
-		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
+		$namespace = (isset($params[1])) ? strtolower($params[1]) : $classname;
 		
 		// save params for later
-		$this->_params[$instancename] = $factory_args;
+		$this->_params[$namespace] = $factory_args;
 	}
 
 	public function __get($instancename) {
-		return $this->_load($instancename);
+		return $this->_load($instancename, strtolower('Morrow\Libraries\\' . $instancename));
 	}
 
-	protected function _load($instancename) {
+	protected function _load($instancename, $namespace) {
 		// get arguments
-		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array( $instancename ) ;
+		$factory_args = (isset($this->_params[$namespace])) ? $this->_params[$namespace] : array( $namespace ) ;
 		
 		// assign the new class
 		$this->$instancename = call_user_func_array( array(__NAMESPACE__ . '\\Factory','load'), $factory_args );

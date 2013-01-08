@@ -181,7 +181,7 @@ class Language {
 		the variable langcheck is stored in the session.
 	*/
 	public function setFromClient(){
-		$session = \Morrow\Factory::load("session");
+		$session = \Morrow\Factory::load("Morrow\Libraries\session");
 		$lang = $this->get();
 		if ($session->get("framework.langcheck") !== null) return;
 
@@ -198,7 +198,7 @@ class Language {
 		
 		// there was a change so redirect
 		if (isset($new)) {
-			$url = \Morrow\Factory::load('url');
+			$url = \Morrow\Factory::load('Morrow\Libraries\url');
 			$url->redirect('', array('language' => $new));
 		}
 	}

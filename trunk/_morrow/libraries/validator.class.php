@@ -26,7 +26,7 @@ class Validator {
 	public static function checkUsername($value, &$error) {
 		// check the format of the username
 		if(!preg_match("=^[a-z0-9_]{5,20}$=i", $value)) {
-			$error = \Morrow\Factory::load('language')->_('Invalid Username. Allowed are only a-z, 0-9, _. Additionally the length must be between 5 and 20 characters.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Invalid Username. Allowed are only a-z, 0-9, _. Additionally the length must be between 5 and 20 characters.');
 			return false;
 		}
 		return true;
@@ -37,7 +37,7 @@ class Validator {
 		if($img_attr[2] === IMAGETYPE_JPEG) {
 			return true;
 		}
-		$error = \Morrow\Factory::load('language')->_('Image is not a valid JPEG.');
+		$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Image is not a valid JPEG.');
 		return false;
 	}
 
@@ -48,14 +48,14 @@ class Validator {
 		$localpart = "[a-z0-9!#$%&'*+-/\=?^_`{|}~]"; // RFC 2822
 		$domainpart = "[\.a-z0-9-]";
 		if (!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+\.$domainpart+)$=i", $var, $match)) {
-			$error = \Morrow\Factory::load('language')->_('Email address is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Email address is not valid.');
 			return false;
 		}
 		
 		// dnscheck
 		$host = $match[2];
 		if(!(checkdnsrr($host, 'MX') || checkdnsrr($host, 'A'))) {
-			$error = \Morrow\Factory::load('language')->_('Email address is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Email address is not valid.');
 			return false;
 		}
 		
@@ -64,11 +64,11 @@ class Validator {
 		
 	public static function checkPassword($value, &$error, $compare_value=null) {
 		if(strlen($value) > 0 && strlen($value) < 5) {
-			$error = \Morrow\Factory::load('language')->_('Passwords must be at least 5 characters long.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Passwords must be at least 5 characters long.');
 			return false;
 		}
 		if($compare_value !== null && $value != $compare_value) {
-			$error = \Morrow\Factory::load('language')->_('Passwords are not identical.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Passwords are not identical.');
 			return false;
 		}
 		return true;
@@ -80,7 +80,7 @@ class Validator {
 			$sep = $locale['currency']['separator'];
 		}
 		if(!preg_match("=^[0-9]{1,}({$sep}[0-9]{0,4})?$=",$value)) { 
-			$error = \Morrow\Factory::load('language')->_('Price not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Price not valid.');
 			return false;
 		}
 		return true;
@@ -88,7 +88,7 @@ class Validator {
 
 	public static function checkValidDate($value, &$error) {
 		if(!preg_match('/([0-9]{0,4})-([0-9]{0,2})-([0-9]{0,2})/',$value, $matches)) {
-			$error = \Morrow\Factory::load('language')->_('The date is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('The date is not valid.');
 			return false;
 		}
 		$y = $matches[1];
@@ -96,12 +96,12 @@ class Validator {
 		$d = $matches[3];
 
 		if(empty($y) || empty($d) || empty($m)) {
-			$error = \Morrow\Factory::load('language')->_('The date is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('The date is not valid.');
 			return false;
 		}
 
 		if(!checkdate ( $m, $d, $y )) {
-			$error = \Morrow\Factory::load('language')->_('The date is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('The date is not valid.');
 			return false;
 		}
 		return true;
@@ -119,7 +119,7 @@ class Validator {
 		}
 		
 		if($return != true) {
-			$error = \Morrow\Factory::load('language')->_('The date is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('The date is not valid.');
 		}
 		
 		return $return;
@@ -134,12 +134,12 @@ class Validator {
 			if($age >= 18) return true;
 		}
 		
-		return \Morrow\Factory::load('language')->_('You must be at least 18 years old.');
+		return \Morrow\Factory::load('Morrow\Libraries\language')->_('You must be at least 18 years old.');
 	}
 	
 	public static function checkGermanZip($value, &$error) {
 		 if(!preg_match("=^[0-9]{5,5}*$=",$value)) {
-			$error = \Morrow\Factory::load('language')->_('Zip is not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Zip is not valid.');
 			return false;
 		 }
 		return true;
@@ -150,7 +150,7 @@ class Validator {
 		$session_captcha = $session->get('captcha');
 		$session->delete('captcha');
 		if (strtolower($captcha) != strtolower($session_captcha)) {
-			$error = \Morrow\Factory::load('language')->_('Captcha does not match.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Captcha does not match.');
 			return false;
 		}
 		return true;
@@ -158,7 +158,7 @@ class Validator {
 	
 	public static function checkInteger($value, &$error) {
 		if(!preg_match('=^[0-9]*$=',$value)) { 
-			$error = \Morrow\Factory::load('language')->_('Not a number.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Not a number.');
 			return false;
 		}
 		return true;
@@ -168,7 +168,7 @@ class Validator {
 		$return = (is_numeric($value)) ? true : false;
 		
 		if($return != true) {
-			$error = \Morrow\Factory::load('language')->_('Not a number.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('Not a number.');
 		}
 		
 		return $return;
@@ -182,7 +182,7 @@ class Validator {
 		}
 		
 		if($return != true) {
-			$error = \Morrow\Factory::load('language')->_('EAN Code not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('EAN Code not valid.');
 		}
 		
 		return $return;
@@ -196,7 +196,7 @@ class Validator {
 		}
     	
 		if($return != true) {
-			$error = \Morrow\Factory::load('language')->_('UPC Code not valid.');
+			$error = \Morrow\Factory::load('Morrow\Libraries\language')->_('UPC Code not valid.');
 		}
 		
     	return $return;

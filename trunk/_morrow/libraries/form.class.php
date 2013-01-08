@@ -45,7 +45,7 @@ class Form {
 
 	/* for use only in MorrowTwo context! */
 	protected function morrow_construct_vars(){
-		$page = \Morrow\Factory::load('page');
+		$page = \Morrow\Factory::load('Morrow\Libraries\page');
 		$alias = $page->get('alias');
 			
 		#elements definition
@@ -57,7 +57,7 @@ class Form {
 		$settings['elements'] = $elements;
 		
 		#language content / locale
-		$language = \Morrow\Factory::load('language');
+		$language = \Morrow\Factory::load('Morrow\Libraries\language');
 		$settings['locale'] = $language->getLocale();
 		
 		return $settings;
