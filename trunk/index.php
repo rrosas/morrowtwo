@@ -44,7 +44,6 @@ function dump() {
 /* load framework
 ********************************************************************************************/
 require(FW_PATH . '/_core/factory.class.php');
-require(FW_PATH . '/_core/loader.class.php');
 require(FW_PATH . '/_core/morrow.class.php');
 
 new Core\Morrow();
@@ -52,6 +51,5 @@ new Core\Morrow();
 /*
 $time_end = microtime(true);
 $time = $time_end - $time_start;
-Factory::load('log')->set(round($time*1000, 2).' ms');
+Core\Factory::load('Libraries\log')->set(round($time*1000, 2).' ms');
 */
-

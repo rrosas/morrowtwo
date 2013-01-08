@@ -2,20 +2,24 @@
 
 namespace Morrow;
 
+//use Morrow\Core\Libraries as Libs;
+//use Exception;
+//use Morrow\Core\Factory;
+
 class PageController extends DefaultController {
 	public function run() {
 		
-		/*
-		dump( Core\Helpers\General::cleanPath( FW_PATH ) );
-		dump( Core\Libraries\Time::create()->get('datetime') );
-		$this->benchmark->start('fd');
-		dump(Core\Factory::load('Libraries\benchmark')->get());
-		*/
+		//dump( Core\Helpers\General::cleanPath( FW_PATH ) );
+		//dump( Core\Libraries\Time::create()->get('datetime') );
+		//dump( Libs\Time::create()->get('datetime') );
+		//$this->benchmark->start('fd');
+		//dump(Core\Factory::load('Libraries\benchmark')->get());
 		
 		// Extending morrow with external classes and without name conflicts
-		//dump(Core\Factory::load('Libraries\test')->get());
+		//dump(Factory::load('Libraries\test')->get());
 		// is the same as
 		//dump(Core\Factory::load('\Morrow\Core\Libraries\test')->get());
+		
 		/*
 		$this->load('Libraries\test:test1', 'bar');
 		$this->load('Libraries\test:test2', 'bar2');
@@ -27,8 +31,8 @@ class PageController extends DefaultController {
 		//$test = Core\Factory::load('\Morrow\Models\Test');
 		//$test = Core\Factory::load('\Morrow\Models\Test');
 		
-		// get all constants defined via Morrow
 		/*
+		// get all constants defined via Morrow
 		$constants = current(array_intersect_key(get_defined_constants(true), array('user' => '')));
 		dump($constants);
 		

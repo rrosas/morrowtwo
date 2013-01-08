@@ -27,4 +27,9 @@ return array(
 	'debug.output.headers'		=> false,
 	'debug.output.flatfile'		=> false,
 	'debug.password'			=> 'password',
+
+// routing rules
+	'routing' => array(
+		'/' => 'home/',
+	),
 );
