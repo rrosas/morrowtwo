@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Views;
+namespace Morrow\Core\Views;
 
 class Flash extends AbstractView {
 	public $mimetype	= 'text/plain';

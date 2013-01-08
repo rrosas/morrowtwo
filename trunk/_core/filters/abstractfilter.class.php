@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Filters;
+namespace Morrow\Core\Filters;
 
 abstract class AbstractFilter {
 	abstract public function get($content);

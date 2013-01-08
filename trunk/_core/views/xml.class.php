@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Views;
+namespace Morrow\Core\Views;
 
 class Xml extends AbstractView {
 	public $mimetype	= 'application/xml';

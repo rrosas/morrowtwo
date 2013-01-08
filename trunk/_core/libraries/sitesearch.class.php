@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class Sitesearch {
 	protected $contextradius = 50;
@@ -41,8 +41,8 @@ class Sitesearch {
 			$this->$key = $value;
 		}
 
-		$this->db = \Morrow\Factory::load('Morrow\Libraries\db:dbsitesearch', $this->db_config);
-		$this->bm = \Morrow\Factory::load('Morrow\Libraries\benchmark:benchmarksitesearch');
+		$this->db = \Morrow\Core\Factory::load('Libraries\db:dbsitesearch', $this->db_config);
+		$this->bm = \Morrow\Core\Factory::load('Libraries\benchmark:benchmarksitesearch');
 	}
 
 	public function getAll($where = '') {

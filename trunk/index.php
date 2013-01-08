@@ -36,18 +36,18 @@ define('FW_PATH', __DIR__ .'/');
 /* define dump function
 ********************************************************************************************/
 function dump() {
-	$debug = \Morrow\Factory::load('Libraries\debug');
+	$debug = Core\Factory::load('Libraries\debug');
 	$args = func_get_args();
 	echo $debug->dump($args);
 }
 
 /* load framework
 ********************************************************************************************/
-require(FW_PATH . '/_morrow/factory.class.php');
-require(FW_PATH . '/_morrow/loader.class.php');
-require(FW_PATH . '/_morrow/morrow.class.php');
+require(FW_PATH . '/_core/factory.class.php');
+require(FW_PATH . '/_core/loader.class.php');
+require(FW_PATH . '/_core/morrow.class.php');
 
-new Morrow();
+new Core\Morrow();
 
 /*
 $time_end = microtime(true);

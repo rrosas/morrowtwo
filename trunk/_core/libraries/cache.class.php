@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class Cache {
 	protected $cachedir;
@@ -31,7 +31,7 @@ class Cache {
 		if (is_null($cachedir)) $cachedir = PROJECT_PATH.'temp/_codecache/';
 
 		// clean params
-		$cachedir = \Morrow\Helpers\General::cleanPath($cachedir);
+		$cachedir = \Morrow\Core\Helpers\General::cleanPath($cachedir);
 		if ($cachedir === false) return false;
 
 		// validation

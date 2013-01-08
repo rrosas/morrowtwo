@@ -20,9 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
-require("./_morrow/externals/PHPMailer_v5.0.2/class.phpmailer.php");
+require("./_core/externals/PHPMailer_v5.0.2/class.phpmailer.php");
 
 class Mail extends PHPMailer {
 	public function __construct($config) {

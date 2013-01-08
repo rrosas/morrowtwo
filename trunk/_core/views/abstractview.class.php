@@ -21,7 +21,7 @@
 
 
 
-namespace Morrow\Views;
+namespace Morrow\Core\Views;
 
 abstract class AbstractView {
 	// properties

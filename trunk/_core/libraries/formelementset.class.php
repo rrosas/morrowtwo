@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class FormElementSet extends FormElement{
 	public $type = "set";
@@ -107,7 +107,7 @@ class FormElementSet extends FormElement{
 		if($this->multiple) {
 			$this->comparefield = null;
 			if($this->required && (!is_array($this->value) || count($this->value) == 0)){
-				$this->setError(Factory::load('Morrow\Libraries\language')->_('This field is required.'));
+				$this->setError(Factory::load('Libraries\language')->_('This field is required.'));
 				return false;
 			}
 			return true;

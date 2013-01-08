@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Helpers;
+namespace Morrow\Core\Helpers;
 
 class Url {
 	public static function trimSlashes($path) {

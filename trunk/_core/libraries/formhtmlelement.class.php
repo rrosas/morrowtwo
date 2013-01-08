@@ -21,13 +21,13 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 abstract class formhtmlelement{
 	protected $page;	
 
 	public function __construct(){
-		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
+		$this->page = \Morrow\Core\Factory::load('Libraries\page');
 	}
 
 	public function getLabel($value, $for_id, $params){

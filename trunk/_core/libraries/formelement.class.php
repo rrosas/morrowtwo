@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class FormElement{
 	public $type = "simple";
@@ -92,7 +92,7 @@ class FormElement{
 
 
 	public function setValue($value, $overwrite = false){
-		$session = \Morrow\Factory::load("Morrow\Libraries\session");
+		$session = \Morrow\Core\Factory::load("Morrow\Libraries\session");
 		$tf_key = 'TMP_FILES.' . $this->name;
 		if(is_array($value)){
 			#special: file
@@ -182,12 +182,12 @@ class FormElement{
 		}
 
 		if($this->required && $this->value === ''){
-			$this->setError(\Morrow\Factory::load('Morrow\Libraries\language')->_("This field is required."));
+			$this->setError(\Morrow\Core\Factory::load('Libraries\language')->_("This field is required."));
 			return false;
 		}
 		#else if($this->value !== '' && $this->checktype != null){
 		else if($this->checktype != null && ($this->value !== '' || $this->comparefield != null)){
-			$validator = \Morrow\Factory::load('Morrow\Libraries\\' . $validator_class);
+			$validator = \Morrow\Core\Factory::load('Libraries\\' . $validator_class);
 			$function = "check" . $this->checktype;
 			if(!method_exists($validator,$function)){
 				throw new \Exception("Method $function does not exist in class " . get_class($validator) . "!");
@@ -196,7 +196,7 @@ class FormElement{
 				if(!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)){
 					$this->setError($errorkey);
 					#if it was a file, remove it from session
-					$session = \Morrow\Factory::load("Morrow\Libraries\session");
+					$session = \Morrow\Core\Factory::load("Libraries\session");
 					$tf_key = 'TMP_FILES.' . $this->name;
 					if($session->get($tf_key)!='') {
 						$session->delete($tf_key);

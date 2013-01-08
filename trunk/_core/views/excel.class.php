@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Views;
+namespace Morrow\Core\Views;
 
 class Excel extends AbstractView {
 	public $mimetype	= 'application/vnd.ms-excel';

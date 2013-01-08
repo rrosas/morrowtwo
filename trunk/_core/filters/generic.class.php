@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Filters;
+namespace Morrow\Core\Filters;
 
 class Generic extends AbstractFilter {
 	public $userfunction = '';

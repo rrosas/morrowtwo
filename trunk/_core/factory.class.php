@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Core;
 
 // This class manages all classes the framework is working with
 class Factory {
@@ -30,9 +30,14 @@ class Factory {
 	public static function load($params) {
 		// get factory config
 		$params = explode(':', $params);
-		$classname = __NAMESPACE__ . '\\' . strtolower($params[0]);
+		
+		// if there was passed an relative path add the current namespace
+		$classname = strtolower($params[0]);
+		if ($params[0]{0} != '\\') {
+			$classname = __NAMESPACE__ . '\\' . $classname;
+		}
+		
 		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
-		$namespace = (isset($params[2])) ? $params[2] : 'user';
 		
 		// all other args are arguments for the new class
 		$factory_args = func_get_args();
@@ -40,7 +45,7 @@ class Factory {
 		else                           $args = null;
 		
 		// Wenn sie schon instanziert wurde, zurückgeben, ansonsten anlegen
-		$instance =& self::$instances[$namespace][$instancename];
+		$instance =& self::$instances[$instancename];
 		
 		if (isset($instance)) {
 			if ($instance instanceof $classname) return $instance;
@@ -63,12 +68,9 @@ class Factory {
 
 	public static function debug() {
 		$returner = array();
-		foreach (self::$instances['internal'] as $class=>$value) {
-			$returner['internal'][$class] = get_class($value);
+		foreach (self::$instances as $class=>$value) {
+			$returner[$class] = get_class($value);
 		}
-		foreach (self::$instances['user'] as $class=>$value) {
-			$returner['user'][$class] = get_class($value);
-		}
-		dump($returner);
+		\Morrow\dump($returner);
 	}
 }

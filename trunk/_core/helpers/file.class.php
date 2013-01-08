@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Helpers;
+namespace Morrow\Core\Helpers;
 
 class File {
 	public static function safeFileName($filename) {

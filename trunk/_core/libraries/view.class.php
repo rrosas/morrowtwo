@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class View {
 	protected $cachetime = 0;
@@ -191,7 +191,7 @@ class View {
 			$displayClassName = $this->mode;
 			
 			// assign class (DO NOT USE the factory)
-			$classname = '\\Morrow\\Views\\' . $displayClassName;
+			$classname = '\\Morrow\\Core\\Views\\' . $displayClassName;
 			$this->handler = new $classname($this);
 		}
 		return $this->handler;

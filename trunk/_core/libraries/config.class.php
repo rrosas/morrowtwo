@@ -20,17 +20,17 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class Config {
 	protected $data = array(); // The array with parsed data
 
 	public function get($identifier = null) {
-		$returner = \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier);
+		$returner = \Morrow\Core\Helpers\General::array_dotSyntaxGet($this->data, $identifier);
 		return $returner;
 	}
 
 	public function set($identifier, $value) {
-		return \Morrow\Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
+		return \Morrow\Core\Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
 	}
 }

@@ -20,13 +20,13 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class Url {
 
 	public function __construct(){
 		ini_set('arg_separator.output', '&amp;');
-		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
+		$this->page = \Morrow\Core\Factory::load('Libraries\page');
 	}
 
 	// wie parse_url, gibt jedoch immer den kompletten Satz an Schlüsseln zurück
@@ -103,7 +103,7 @@ class Url {
 		if(empty($scheme)) {
 			// load only once
 			if (!isset($this->config)) {
-				$this->config = \Morrow\Factory::load('Morrow\Libraries\config');
+				$this->config = \Morrow\Core\Factory::load('Libraries\config');
 				$this->config_all = $this->config->get();
 			}
 			$config =& $this->config;
@@ -113,7 +113,7 @@ class Url {
 			}
 
 			if (!isset($this->language)) {
-				$this->language = \Morrow\Factory::load('Morrow\Libraries\language');
+				$this->language = \Morrow\Core\Factory::load('Libraries\language');
 				$this->language_possible = $this->language->getPossible();
 				$this->language_default = $this->language->getDefault();
 			}
@@ -128,7 +128,7 @@ class Url {
 			}
 
 			// path: trim slashes
-			if($path != '') $path = \Morrow\Helpers\General::url_trimSlashes($path);
+			if($path != '') $path = \Morrow\Core\Helpers\General::url_trimSlashes($path);
 
 			// project  && lang handling
 			$pathparts = explode('/',$path);
@@ -185,7 +185,7 @@ class Url {
 			// create complete url with domain
 			if ($rel2abs) {
 				$domain_parts = $this->parse($this->page_get['base_href']);
-				$domain_parts['path'] = \Morrow\Helpers\General::url_trimSlashes($domain_parts['path']);
+				$domain_parts['path'] = \Morrow\Core\Helpers\General::url_trimSlashes($domain_parts['path']);
 				$host = $domain_parts['host'] . '/';
 				if(!empty($domain_parts['path'])) $host .= $domain_parts['path'] . '/';
 				if(empty($scheme)) $scheme = $domain_parts['scheme'].'://';

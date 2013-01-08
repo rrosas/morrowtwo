@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Views;
+namespace Morrow\Core\Views;
 
 class Csv extends AbstractView {
 	public $mimetype	= 'text/csv';

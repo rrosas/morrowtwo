@@ -1,6 +1,6 @@
 <?php
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 include(PROJECT_PATH . '_user/externals/test.class.php');
 

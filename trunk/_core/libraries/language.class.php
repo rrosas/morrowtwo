@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class Language {
 	protected $language = null;
@@ -48,7 +48,7 @@ class Language {
 		// set default parameters
 		$this->default = $settings['default'];
 		$this->possible = $settings['possible'];
-		$this->language_path = \Morrow\Helpers\General::cleanPath($settings['language_path']);
+		$this->language_path = \Morrow\Core\Helpers\General::cleanPath($settings['language_path']);
 		$this->i18n_path = $settings['i18n_path'];
 		
 		// check if there is a valid language file for the possible languages
@@ -127,7 +127,7 @@ class Language {
 
 	protected function _loadFile($file, $dotSyntaxExplode = true){
 		if(!is_file($file)) return array();
-		if ($dotSyntaxExplode) return \Morrow\Helpers\General::array_dotSyntaxExplode(include($file));
+		if ($dotSyntaxExplode) return \Morrow\Core\Helpers\General::array_dotSyntaxExplode(include($file));
 		return include($file);
 	}
 
@@ -181,7 +181,7 @@ class Language {
 		the variable langcheck is stored in the session.
 	*/
 	public function setFromClient(){
-		$session = \Morrow\Factory::load("Morrow\Libraries\session");
+		$session = \Morrow\Core\Factory::load("Libraries\session");
 		$lang = $this->get();
 		if ($session->get("framework.langcheck") !== null) return;
 
@@ -198,7 +198,7 @@ class Language {
 		
 		// there was a change so redirect
 		if (isset($new)) {
-			$url = \Morrow\Factory::load('Morrow\Libraries\url');
+			$url = \Morrow\Core\Factory::load('Libraries\url');
 			$url->redirect('', array('language' => $new));
 		}
 	}

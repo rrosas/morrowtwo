@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Filters;
+namespace Morrow\Core\Filters;
 
 class Sitesearch extends AbstractFilter {
 	// some new properties
@@ -69,8 +69,8 @@ class Sitesearch extends AbstractFilter {
 		$output = $original_output;
 
 		// load needed classes
-		$this->url = \Morrow\Factory::load('Morrow\Libraries\url');
-		$this->searchdb		= \Morrow\Factory::load('Morrow\Libraries\db:searchdb', $this->db_config);
+		$this->url = \Morrow\Core\Factory::load('Libraries\url');
+		$this->searchdb		= \Morrow\Core\Factory::load('Libraries\db:searchdb', $this->db_config);
 
 		// connect to DB and do maintenance
 		$this->searchdb->connect();

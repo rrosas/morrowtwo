@@ -20,14 +20,14 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class PageSession extends Session{
 	protected $alias = '';
 	protected $section = '';
 	
 	public function __construct(){
-		$page = \Morrow\Factory::load('Morrow\Libraries\page');
+		$page = \Morrow\Core\Factory::load('Libraries\page');
 		$this->alias = $page->get('alias');
 		$this->section = 'page.' . $this->alias; 
 	}

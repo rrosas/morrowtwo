@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Helpers;
+namespace Morrow\Core\Helpers;
 
 class String {
 	public static function truncate($string, $length = 80, $etc = '...', $break_words = false, $middle = false) {

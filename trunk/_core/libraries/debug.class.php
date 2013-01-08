@@ -21,7 +21,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Libraries;
+namespace Morrow\Core\Libraries;
 
 class Debug {
 	protected $config;
@@ -39,7 +39,7 @@ class Debug {
 	
 	public function __construct() {
 		// read config from config class
-		$config = \Morrow\Factory::load('Morrow\Libraries\config');
+		$config = \Morrow\Core\Factory::load('Libraries\config');
 		$this->config = $config->get('debug');
 
 		// error types

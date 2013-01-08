@@ -20,7 +20,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Views;
+namespace Morrow\Core\Views;
 
 class Php extends AbstractView {
 	public $mimetype	= 'text/html';
@@ -32,9 +32,9 @@ class Php extends AbstractView {
 
 	public function __construct($view) {
 		// Template holen
-		$this->page = \Morrow\Factory::load('Morrow\Libraries\page');
+		$this->page = \Morrow\Core\Factory::load('Libraries\page');
 		$this->content_template = $this->page->get('alias');
-		$this->language = \Morrow\Factory::load('Morrow\Libraries\language');
+		$this->language = \Morrow\Core\Factory::load('Libraries\language');
 	}
 
 	public function getOutput($content, $handle) {
