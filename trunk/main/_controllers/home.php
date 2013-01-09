@@ -51,5 +51,9 @@ class PageController extends DefaultController {
 			echo 'Wurst!';
 		}
 		*/
+
+		require(PROJECT_PATH . '_user/Zend/Text/Figlet/Figlet.php');
+		$figlet = new \Zend\Text\Figlet\Figlet();
+		echo $figlet->render('Zend');
 	}
 }
