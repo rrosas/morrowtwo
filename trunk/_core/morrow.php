@@ -63,11 +63,11 @@ class Morrow {
 		$classname = str_replace('models/', '_models/', $classname);
 		
 		if (defined('PROJECT_PATH')) {
-			$try[] = PROJECT_PATH . str_replace('core/', '_user/', $classname).'.class.php';
+			$try[] = PROJECT_PATH . str_replace('core/', '_user/', $classname).'.php';
 		}
 		
 		// first try to find the user replaced or added class
-		$try[] = FW_PATH . str_replace('core/', '_core/', $classname).'.class.php';
+		$try[] = FW_PATH . str_replace('core/', '_core/', $classname).'.php';
 
 		foreach($try as $path) { if(is_file($path)) { include ($path); break; } }	
 	}
@@ -284,8 +284,8 @@ class Morrow {
 				
 		// declare the controller to be loaded
 		$controller_path		= PROJECT_PATH.'_controllers/';
-		$global_controller_file	= $controller_path.'_default.class.php';
-		$page_controller_file	= $controller_path.$alias.'.class.php';
+		$global_controller_file	= $controller_path.'_default.php';
+		$page_controller_file	= $controller_path.$alias.'.php';
 
 		$this->page->set('controller', $page_controller_file);
 		$this->page->set('path', implode('/', $nodes).'/');

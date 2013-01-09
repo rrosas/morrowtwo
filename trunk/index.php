@@ -27,7 +27,7 @@ $time_start = microtime(true);
 
 // compress the output
 if(!ob_start("ob_gzhandler")) ob_start();
-		
+
 // include E_STRICT in error_reporting
 error_reporting(E_ALL | E_STRICT);
 
@@ -43,8 +43,8 @@ function dump() {
 
 /* load framework
 ********************************************************************************************/
-require(FW_PATH . '/_core/factory.class.php');
-require(FW_PATH . '/_core/morrow.class.php');
+require(FW_PATH . '/_core/factory.php');
+require(FW_PATH . '/_core/morrow.php');
 
 new Core\Morrow();
 
