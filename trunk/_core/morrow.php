@@ -52,22 +52,27 @@ class Morrow {
 		}
 	}
 	
-	protected function autoload($classname) {
+	// this autoloader follows the PSR-0 standard
+	protected function autoload($namespace) {
+		$nodes = explode('\\', strtolower($namespace));
+		
+		// strip the vendor namespace "Morrow" if necessary
+		if ($nodes[0] == 'morrow') {
+			unset($nodes[0]);
+			// rewrite models or core node 
+			if (in_array($nodes[1], array('models', 'core'))) $nodes[1] = '_' . $nodes[1];
+		}
+		
+		// Each _ character in the CLASS NAME is converted to a DIRECTORY_SEPARATOR. The _ character has no special meaning in the namespace.
+		$classname = DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, array_pop($nodes)) . '.php';
+
 		// First we try the external libs. That way the user can replace all core libs if he wants to
-		$classname = str_replace('\\', '/', strtolower($classname));
-		
-		// strip the root namespace "Morrow"
-		$classname = preg_replace('|^morrow/|', '', $classname);
-		
-		// rewrite models node
-		$classname = str_replace('models/', '_models/', $classname);
-		
 		if (defined('PROJECT_PATH')) {
-			$try[] = PROJECT_PATH . str_replace('core/', '_user/', $classname).'.php';
+			$try[] = PROJECT_PATH . str_replace('_core', '_user', implode(DIRECTORY_SEPARATOR, $nodes)) . $classname;
 		}
 		
 		// first try to find the user replaced or added class
-		$try[] = FW_PATH . str_replace('core/', '_core/', $classname).'.php';
+		$try[] = FW_PATH . implode(DIRECTORY_SEPARATOR, $nodes) . $classname;
 
 		foreach($try as $path) { if(is_file($path)) { include ($path); break; } }	
 	}

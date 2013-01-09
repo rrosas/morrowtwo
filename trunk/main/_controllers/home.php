@@ -28,8 +28,7 @@ class PageController extends DefaultController {
 		*/
 		
 		// load a model
-		//$test = Core\Factory::load('\Morrow\Models\Test');
-		//$test = Core\Factory::load('\Morrow\Models\Test');
+		// $test = Core\Factory::load('\Morrow\Models\Test');
 		
 		/*
 		// get all constants defined via Morrow
