@@ -1,5 +1,4 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -21,35 +20,20 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Helpers;
 
-$time_start = microtime(true);
-
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
-
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
-
-define('FW_PATH', __DIR__ .'/');
-
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Core\Factory::load('Libraries\Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
+class Ini {
+	public static function parsePhpIniSize($val) {
+		$val = trim($val);
+		$last = strtolower($val[strlen($val)-1]);
+		switch($last) {
+			case 'g':
+				$val *= 1024;
+			case 'm':
+				$val *= 1024;
+			case 'k':
+				$val *= 1024;
+		}
+		return $val;
+	}		
 }
-
-/* load framework
-********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Factory.php');
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
-new Core\Morrow();
-
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Core\Factory::load('Libraries\Log')->set(round($time*1000, 2).' ms');
-*/

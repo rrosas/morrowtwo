@@ -1,5 +1,4 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -21,35 +20,18 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Libraries;
 
-$time_start = microtime(true);
+class PageSession extends Session{
+	protected $alias = '';
+	protected $section = '';
+	
+	public function __construct(){
+		$page = \Morrow\Core\Factory::load('Libraries\Page');
+		$this->alias = $page->get('alias');
+		$this->section = 'page.' . $this->alias; 
+	}
 
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
-
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
-
-define('FW_PATH', __DIR__ .'/');
-
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Core\Factory::load('Libraries\Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
+ 	public function __destruct(){
+	}
 }
-
-/* load framework
-********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Factory.php');
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
-new Core\Morrow();
-
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Core\Factory::load('Libraries\Log')->set(round($time*1000, 2).' ms');
-*/

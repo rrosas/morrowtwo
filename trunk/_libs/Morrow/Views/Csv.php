@@ -1,5 +1,4 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -21,35 +20,40 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Views;
 
-$time_start = microtime(true);
+class Csv extends AbstractView {
+	public $mimetype	= 'text/csv';
+	public $charset		= 'utf-8';
 
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
+	public $separator	= ';';
+	public $linebreaks	= "\n";
+	public $delimiter 	= '"';
+	public $table_header= true;
+	
+	public function getOutput($content, $handle) {
+		$this->_outputCSV($content['content'], $handle);
+		return $handle;
+	}
 
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
+	protected function _outputCSV($input, $handle) {
+		foreach($input as $nr=>$row) {
+			// use first row for headlines
+			if ($nr == 0 && $this->table_header === true) {
+				fwrite($handle, $this -> _createRow( array_keys($row) ));
+			}
 
-define('FW_PATH', __DIR__ .'/');
+			fwrite($handle, $this -> _createRow($row));
+		}
+	}
 
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Core\Factory::load('Libraries\Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
+	protected function _createRow($input) {
+		foreach ($input as $key=>$value) {
+			$temp = str_replace('"','""',$value);
+			$temp = preg_replace("=(\r\n|\r|\n)=","\n",$temp);
+			$input[$key] = $this->delimiter.$temp.$this->delimiter;
+		}
+		$output = implode($this->separator, $input).$this->linebreaks;
+		return $output;
+	}
 }
-
-/* load framework
-********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Factory.php');
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
-new Core\Morrow();
-
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Core\Factory::load('Libraries\Log')->set(round($time*1000, 2).' ms');
-*/

@@ -21,35 +21,36 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Libraries;
 
-$time_start = microtime(true);
+class formfilter{
 
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
+	public static function outDate($values){
+		$y = $values['_Year'];
+		$m = $values['_Month'];
+		$d = $values['_Day'];
+		$h = $values['_Hour'];
+		$min = $values['_Min'];
+		$sec = $values['_Sec'];
+		if(empty($y) && empty($m) && empty($d)) return '';
+		$out = sprintf("%s-%s-%s %s:%s:%s", $y, $m, $d, $h, $min, $sec);
+		return $out;
+	}
+	public static function inDate($value){
+		if(is_array($value)) return $value;
+		$values = array();
+		if(preg_match("/([0-9]{4})-([0-9]{2})-([0-9]{2}) ?([0-9]{2})?:?([0-9]{2})?:?([0-9]{2})?/", $value, $matches)){
+			$values['_Year'] = $matches[1];
+			$values['_Month'] = $matches[2];
+			$values['_Day'] = $matches[3];
+			$values['_Hour'] = (isset($matches[4]))?$matches[4]:'00';
+			$values['_Min'] = (isset($matches[5]))?$matches[5]:'00';
+			$values['_Sec'] = (isset($matches[6]))?$matches[6]:'00';
+			return $values;
+		}
+		return $value;
 
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
 
-define('FW_PATH', __DIR__ .'/');
-
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Core\Factory::load('Libraries\Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
+	}
 }
 
-/* load framework
-********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Factory.php');
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
-new Core\Morrow();
-
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Core\Factory::load('Libraries\Log')->set(round($time*1000, 2).' ms');
-*/

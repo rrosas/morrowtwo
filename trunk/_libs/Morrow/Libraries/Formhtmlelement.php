@@ -21,35 +21,28 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Libraries;
 
-$time_start = microtime(true);
+abstract class formhtmlelement{
+	protected $page;	
 
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
+	public function __construct(){
+		$this->page = \Morrow\Core\Factory::load('Libraries\Page');
+	}
 
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
+	public function getLabel($value, $for_id, $params){
+		return "<label for=\"" . $for_id . "\" " . HelperHtmlFormAttributes::getAttributeString($params, 'label') . ">$value</label>";
+	}
+	public function getError($value, $params, $tagname){
+		 return "<$tagname " . HelperHtmlFormAttributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
+	}
 
-define('FW_PATH', __DIR__ .'/');
+	abstract public function getDisplay($name, $values, $id, $params, $options, $multiple);	
+	abstract public function getReadonly($name, $values, $id, $params, $options, $multiple);	
 
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Core\Factory::load('Libraries\Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
+	public function getListDisplay($values, $params, $options=array()){
+		return $values;
+	}	
+
+
 }
-
-/* load framework
-********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Factory.php');
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
-new Core\Morrow();
-
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Core\Factory::load('Libraries\Log')->set(round($time*1000, 2).' ms');
-*/

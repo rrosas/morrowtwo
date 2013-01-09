@@ -1,5 +1,4 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -21,35 +20,23 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Libraries;
 
-$time_start = microtime(true);
+class formhtmlelementPassword extends formhtmlelement{
 
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
+	public function getDisplay($name, $values, $id, $params, $options, $multiple){	
+		return "<input id=\"" . $id . "\" type=\"password\" name=\"" . $name . "\" value=\"\" " .  HelperHtmlFormAttributes::getAttributeString($params, 'input')  . " />";
+		
+	}
 
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
+	public function getReadonly($name, $values, $id, $params, $options, $multiple){
+                $content .= '<div '. HelperHtmlFormAttributes::getAttributeString($params, 'div') .'>*******</div>';
+                return $content;
+	}	
 
-define('FW_PATH', __DIR__ .'/');
+	public function getListDisplay($values, $params, $options=array()){
+		return '******';
+	}	
 
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Core\Factory::load('Libraries\Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
+
 }
-
-/* load framework
-********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Factory.php');
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
-new Core\Morrow();
-
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Core\Factory::load('Libraries\Log')->set(round($time*1000, 2).' ms');
-*/
