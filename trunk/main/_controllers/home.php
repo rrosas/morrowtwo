@@ -2,7 +2,6 @@
 
 namespace Morrow;
 
-//use Morrow\Libraries as Libs;
 //use Exception;
 //use \Zend\Text\Figlet\Figlet;
 
