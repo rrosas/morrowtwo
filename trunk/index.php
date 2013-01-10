@@ -43,9 +43,7 @@ function dump() {
 
 /* load framework
 ********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Factory.php');
 require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-
 new Core\Morrow();
 
 /*

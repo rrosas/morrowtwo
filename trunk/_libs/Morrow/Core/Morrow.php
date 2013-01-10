@@ -102,6 +102,10 @@ class Morrow {
 
 	// This function contains the main application flow
 	protected function _run() {
+		/* load the factory
+		********************************************************************************************/
+		require(FW_PATH . '/_libs/Morrow/Factory.php');
+		
 		/* register autoloader
 		********************************************************************************************/
 		spl_autoload_register(array($this, 'autoload'));
