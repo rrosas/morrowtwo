@@ -94,8 +94,8 @@ class Morrow {
 		// overwrite with server specific config
 		$file1 = $path.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
 		$file2 = $path.'_configs/'.$_SERVER['SERVER_ADDR'].'.php';
-		if (is_file($file1)) $config = include($file1);
-		elseif (is_file($file2)) $config = include($file2);
+		if (is_file($file1)) $config = array_merge($config, include($file1));
+		elseif (is_file($file2)) $config = array_merge($config, include($file2));
 
 		return $config;
 	}
@@ -172,7 +172,7 @@ class Morrow {
 		********************************************************************************************/
 		// load vars
 		$config = $this->_loadConfigVars(PROJECT_PATH);
-
+		
 		// register project config in config class
 		foreach ($config as $key=>$array) {
 			$this->config->set($key, $array);
