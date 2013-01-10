@@ -22,6 +22,8 @@
 
 namespace Morrow\Views;
 
+use Morrow\Factory;
+
 class Serpent extends AbstractView {
 	public $mimetype	= 'text/html';
 	public $charset		= 'utf-8';
@@ -37,11 +39,11 @@ class Serpent extends AbstractView {
 
 	public function __construct() {
 		// Template holen
-		$this->page = \Morrow\Core\Factory::load('Libraries\Page');
+		$this->page = Factory::load('Page');
 		$this->content_template = $this->page->get('alias');
-		$this->language = \Morrow\Core\Factory::load('Libraries\Language');
+		$this->language = Factory::load('Language');
 		
-		require_once( __DIR__ . '/../Externals/serpent_1.3/source/serpent.class.php' );
+		require_once( __DIR__ . '/../../serpent_1.3/source/serpent.class.php' );
 	}
 
 	public function getOutput($content, $handle) {
@@ -62,21 +64,21 @@ class Serpent extends AbstractView {
 
 		// handle mappings
 		$mappings = array(
-			'url' => '\\Morrow\\Core\\Factory::load("Libraries\\\Url")->makeurl',
+			'url' => '\\Morrow\\Factory::load("Url")->makeurl',
 			'cycle' => '\\Morrow\\Helpers\\View::cycle',
 			'mailto' => '\\Morrow\\Helpers\\View::mailto',
 			'hidelink' => '\\Morrow\\Helpers\\View::hidelink',
 			'thumb' => '\\Morrow\\Helpers\\View::thumb',
 			'image' => '\\Morrow\\Helpers\\View::image',
-			'truncate' => '\\Morrow\\Core\\Factory::load("Libraries\\\Helpers\\\String")->truncate',
+			'truncate' => '\\Morrow\\Factory::load("Helpers\\\String")->truncate',
 			'strip' => 'ob_start(array("\\Morrow\\Helpers\\View::strip")) //',
 			'endstrip' => 'ob_end_flush',
 			'loremipsum' => '\\Morrow\\Helpers\\View::loremipsum',
-			'formlabel' => '\\Morrow\\Core\\Factory::load("Libraries\\\Formhtml")->getLabel',
-			'formelement' => '\\Morrow\\Core\\Factory::load("Libraries\\\Formhtml")->getElement',
-			'formerror' => '\\Morrow\\Core\\Factory::load("Libraries\\\Formhtml")->getError',
-			'formupload' => '\\Morrow\\Core\\Factory::load("Libraries\\\Formhtml")->getInputImage',
-			'_' => '\\Morrow\\Core\\Factory::load("Libraries\\\Language")->_',
+			'formlabel' => '\\Morrow\\Factory::load("Formhtml")->getLabel',
+			'formelement' => '\\Morrow\\Factory::load("Formhtml")->getElement',
+			'formerror' => '\\Morrow\\Factory::load("Formhtml")->getError',
+			'formupload' => '\\Morrow\\Factory::load("Formhtml")->getInputImage',
+			'_' => '\\Morrow\\Factory::load("Language")->_',
 		);
 		foreach ($this->mappings as $key => $value) {
 			$mappings[$key] = $value;

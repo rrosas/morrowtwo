@@ -22,6 +22,8 @@
 
 namespace Morrow\Views;
 
+use Morrow\Factory;
+
 class Php extends AbstractView {
 	public $mimetype	= 'text/html';
 	public $charset		= 'utf-8';
@@ -32,9 +34,9 @@ class Php extends AbstractView {
 
 	public function __construct($view) {
 		// Template holen
-		$this->page = \Morrow\Core\Factory::load('Libraries\Page');
+		$this->page = Factory::load('Page');
 		$this->content_template = $this->page->get('alias');
-		$this->language = \Morrow\Core\Factory::load('Libraries\Language');
+		$this->language = Factory::load('Language');
 	}
 
 	public function getOutput($content, $handle) {

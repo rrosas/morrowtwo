@@ -23,6 +23,8 @@
 
 namespace Morrow\Core;
 
+use Morrow\Factory;
+
 class Morrow {
 	public function __construct() {
 		$this->_run();
@@ -44,7 +46,7 @@ class Morrow {
 	public function ExceptionHandler($exception) {
 		try {
 			// load errorhandler
-			$debug = Factory::load('Libraries\Debug');
+			$debug = Factory::load('Debug');
 			$debug->errorhandler($exception);
 		} catch (\Exception $e) {
 			// useful if the \Exception handler itself contains errors
@@ -53,6 +55,7 @@ class Morrow {
 	}
 	
 	// this autoloader follows the PSR-0 standard
+	// be careful because there is an exception for models
 	protected function autoload($namespace) {
 		// explode namespace to single nodes
 		$namespace_nodes = explode('\\', $namespace);
@@ -66,12 +69,21 @@ class Morrow {
 		// First we try the external libs. That way the user can replace all core libs if he wants to
 		if (defined('PROJECT_PATH')) {
 			$try[] = PROJECT_PATH . $classpath;
+			
+			if (isset($namespace_nodes[1]) && $namespace_nodes[1] == 'Models') {
+				$try[] = PROJECT_PATH . '_models' . $classname;
+			}
 		}
 		
 		// first try to find the user replaced or added class
 		$try[] = FW_PATH . $classpath;
-
-		foreach($try as $path) { if(is_file($path)) { include ($path); break; } }	
+		
+		$found = false;
+		foreach($try as $path) { if(is_file($path)) { $found = true; include ($path); break; } }	
+		
+		if (!$found) {
+			throw new \Exception("Could not autoload $namespace trying the following paths:<br /><br />".implode('<br />', $try));
+		}
 	}
 	
 	// registers the config files in the config class
@@ -96,7 +108,7 @@ class Morrow {
 		
 		/* register main config in the config class
 		********************************************************************************************/
-		$this->config = Factory::load('Libraries\Config'); // config class for config vars
+		$this->config = Factory::load('Config'); // config class for config vars
 
 		// load vars
 		$config = $this->_loadConfigVars(FW_PATH);
@@ -119,9 +131,9 @@ class Morrow {
 
 		/* load classes
 		********************************************************************************************/
-		$this->page		= Factory::load('Libraries\Page'); // config class for page vars
-		$this->url		= Factory::load('Libraries\Url'); // url class
-		$this->input	= Factory::load('Libraries\Input'); // input class for all user input
+		$this->page		= Factory::load('Page'); // config class for page vars
+		$this->url		= Factory::load('Url'); // url class
+		$this->input	= Factory::load('Input'); // input class for all user input
 
 		/* define project
 		********************************************************************************************/
@@ -176,7 +188,7 @@ class Morrow {
 		********************************************************************************************/
 		$sessionHandler = $this->config->get('session.handler');
 		if($sessionHandler == '') $sessionHandler = 'Session';
-		$session = Factory::load('Libraries\\' . $sessionHandler.':session', $this->input->get());
+		$session = Factory::load($sessionHandler.':session', $this->input->get());
 		
 		/* load languageClass and define alias
 		********************************************************************************************/
@@ -188,7 +200,7 @@ class Morrow {
 			PROJECT_PATH . '_templates/*',
 			PROJECT_PATH . '*.php'
 		);
-		$this->language = Factory::load('Libraries\Language', $lang_settings);
+		$this->language = Factory::load('Language', $lang_settings);
 
 		// language via path
 		$nodes = $this->page->get('nodes');
@@ -281,7 +293,7 @@ class Morrow {
 
 		/* load controller and render page
 		********************************************************************************************/
-		$this->view = Factory::load('Libraries\View');
+		$this->view = Factory::load('View');
 				
 		// declare the controller to be loaded
 		$controller_path		= PROJECT_PATH.'_controllers/';

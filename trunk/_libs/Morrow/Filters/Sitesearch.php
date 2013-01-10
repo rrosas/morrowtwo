@@ -22,6 +22,8 @@
 
 namespace Morrow\Filters;
 
+use Morrow\Factory;
+
 class Sitesearch extends AbstractFilter {
 	// some new properties
 	public $buildindex			= true;
@@ -69,8 +71,8 @@ class Sitesearch extends AbstractFilter {
 		$output = $original_output;
 
 		// load needed classes
-		$this->url = \Morrow\Core\Factory::load('Libraries\Url');
-		$this->searchdb		= \Morrow\Core\Factory::load('Libraries\Db:searchdb', $this->db_config);
+		$this->url = Factory::load('Url');
+		$this->searchdb		= Factory::load('Db:searchdb', $this->db_config);
 
 		// connect to DB and do maintenance
 		$this->searchdb->connect();

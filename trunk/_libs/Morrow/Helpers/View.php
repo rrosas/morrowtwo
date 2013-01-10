@@ -22,6 +22,8 @@
 
 namespace Morrow\Helpers;
 
+use Morrow\Factory;
+
 class View {
 	public static $cycles = array();
 	
@@ -89,11 +91,11 @@ class View {
 
 	public static function thumb($filepath, $params = array()) {
 		try {
-			$path = Factory::load('Libraries\Image')->get($filepath, $params);
+			$path = Factory::load('Image')->get($filepath, $params);
 			$path = str_replace(FW_PATH, '', $path);
 		} catch (Exception $e) {
 			if (isset($params['fallback'])) {
-				$path = Factory::load('Libraries\Image')->get($params['fallback'], $params);
+				$path = Factory::load('Image')->get($params['fallback'], $params);
 				$path = str_replace(FW_PATH, '', $path);
 			} else {
 				if (!isset($params['width'])) $params['width'] = 100;
