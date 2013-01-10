@@ -4,31 +4,41 @@ namespace Morrow;
 
 //use Morrow\Libraries as Libs;
 //use Exception;
-//use Morrow\Core\Factory;
+//use \Zend\Text\Figlet\Figlet;
 
 class PageController extends DefaultController {
 	public function run() {
-		//dump( Helpers\General::cleanPath( FW_PATH ) );
-		//dump( Libraries\Time::create()->get('datetime') );
-		//dump( Libs\Time::create()->get('datetime') );
-		//$this->benchmark->start('fd');
-		//dump(Core\Factory::load('Libraries\Benchmark')->get());
+		/*
+		dump( Helpers\General::cleanPath( FW_PATH ) );
+		dump( Time::create()->get('datetime') );
+		$this->benchmark->start('fd');
+		dump(Factory::load('Benchmark')->get());
+		*/
 		
 		// Extending morrow with external classes and without name conflicts
-		//dump(Core\Factory::load('Libraries\Test')->get());
+		//dump(Factory::load('Test')->get());
 		// is the same as
-		//dump(Factory::load('\Morrow\Libraries\test')->get());
+		//dump(Factory::load('\Morrow\Test')->get());
 		
 		/*
-		$this->load('Libraries\Test:test1', 'bar');
-		$this->load('Libraries\Test:test2', 'bar2');
+		$this->load('Test:test1', 'bar');
+		$this->load('Test:test2', 'bar2');
 		dump($this->test1->get());
 		dump($this->test2->get());
 		*/
 		
 		// load a model ******************************************************************************
-		//$test = Core\Factory::load('\Morrow\Models\Test');
+		//$test = Factory::load('Models\Test');
 		
+		/*
+		// http://framework.zend.com/manual/2.0/en/modules/zend.text.figlet.html
+		$figlet = new \Zend\Text\Figlet\Figlet();
+		//$figlet = new Figlet();
+		$text = $figlet->render('Morrow');
+		$this->view->setHandler('plain');
+		$this->view->setContent($text);
+		*/
+
 		// get all constants defined via Morrow
 		/*
 		$constants = current(array_intersect_key(get_defined_constants(true), array('user' => '')));
@@ -43,6 +53,33 @@ class PageController extends DefaultController {
 		dump($functions);
 		*/
 		
+		// Zend Mail Test
+		/*
+		$transport = new \Zend\Mail\Transport\Smtp();
+		$options   = new \Zend\Mail\Transport\SmtpOptions(array(
+			'host'              => 'smtp.googlemail.com',
+			'port'              => '465',
+			'connection_class'  => 'login',
+			'connection_config' => array(
+				'username' => 'ministry.robot@googlemail.com',
+				'password' => 'fyOGMafo',
+				'ssl'      => 'ssl',
+			),
+		));
+		$transport->setOptions($options);
+		
+		$message = new \Zend\Mail\Message();
+		$message	-> setEncoding("UTF-8")
+					-> addFrom('ministry.robot@googlemail.com', 'Ministry Robot')
+					-> setSender('ministry.robot@googlemail.com', 'Ministry Robot')
+					-> addTo('christoph.erdmann@ministry.de', 'Christoph')
+					-> setSubject('TestBetreff')
+					-> setBody('Das ist der Text des Mails.')
+		;
+		
+		$transport->send($message);
+		*/
+		
 		/*
 		try {
 			echo \DateTime::createFromFormat('2012-08-01');
@@ -50,12 +87,5 @@ class PageController extends DefaultController {
 			echo 'Wurst!';
 		}
 		*/
-
-		http://framework.zend.com/manual/2.0/en/modules/zend.text.figlet.html
-		$figlet = new \Zend\Text\Figlet\Figlet();
-		$text = $figlet->render('Morrow');
-		
-		$this->view->setHandler('plain');
-		$this->view->setCOntent($text);
 	}
 }

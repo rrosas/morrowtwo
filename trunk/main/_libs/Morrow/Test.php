@@ -1,8 +1,8 @@
 <?php
 
-namespace Morrow\Libraries;
+namespace Morrow;
 
-include(__DIR__ . '/../Externals/test.class.php');
+include(__DIR__ . '/../test.class.php');
 
 class Test extends \Test {
 	protected $value;

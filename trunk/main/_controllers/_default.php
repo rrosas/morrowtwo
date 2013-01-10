@@ -2,7 +2,7 @@
 
 namespace Morrow;
 
-class DefaultController extends Core\Loader {
+class DefaultController extends Loader {
 	public function setup() {
 		$this->View->setHandler('serpent');
 	}
