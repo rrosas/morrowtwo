@@ -199,8 +199,8 @@ class Morrow {
 		$lang_settings['possible'] = $this->config->get('languages');
 		$lang_settings['language_path'] = PROJECT_PATH . '_i18n/';
 		$lang_settings['i18n_path'] = array(
-			FW_PATH . '_core/*.php',
-			PROJECT_PATH . '_user/*.php',
+			FW_PATH . '__libs/*.php',
+			PROJECT_PATH . '_libs/*.php',
 			PROJECT_PATH . '_templates/*',
 			PROJECT_PATH . '*.php'
 		);

@@ -3,7 +3,7 @@
 namespace Morrow;
 
 //use Exception;
-//use \Zend\Text\Figlet\Figlet;
+//use Zend\Text\Figlet\Figlet;
 
 class PageController extends DefaultController {
 	public function run() {
@@ -37,7 +37,7 @@ class PageController extends DefaultController {
 		$this->view->setHandler('plain');
 		$this->view->setContent($text);
 		*/
-
+		
 		// get all constants defined via Morrow
 		/*
 		$constants = current(array_intersect_key(get_defined_constants(true), array('user' => '')));

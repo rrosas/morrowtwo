@@ -28,8 +28,11 @@ class Image {
 	
 	public function __construct() {
 		// params
-		$default_cache_dir = PROJECT_PATH.'temp/thumbs/';
+		$default_cache_dir = PROJECT_PATH . 'temp/thumbs/';
 		$counter = strftime( $this->cache_counter );
+
+		// create temp dir if it does not exist
+		if (!is_dir($default_cache_dir)) mkdir($default_cache_dir);
 		
 		// delete all folders that are not the current
 		$files = scandir( $default_cache_dir );

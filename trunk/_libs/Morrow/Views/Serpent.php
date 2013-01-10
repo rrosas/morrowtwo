@@ -56,12 +56,15 @@ class Serpent extends AbstractView {
 		$content['page']['template'] = $this->template;
 
 		$_engine = new \Serpent();
-		$_engine->compile_dir	= PROJECT_PATH.'temp/_templates_compiled/';
+		$_engine->compile_dir	= PROJECT_PATH.'temp/_serpent_templates_compiled/';
 		$_engine->force_compile	= $this->force_compile;
 		$_engine->default_resource = $this->default_resource;
 		$_engine->default_compiler = $this->default_compiler;
 		$_engine->setCharset( $this->charset );
 
+		// create temp dir if it does not exist
+		if (!is_dir($_engine->compile_dir)) mkdir($_engine->compile_dir);
+		
 		// handle mappings
 		$mappings = array(
 			'url' => '\\Morrow\\Factory::load("Url")->makeurl',

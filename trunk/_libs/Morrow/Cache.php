@@ -32,6 +32,10 @@ class Cache {
 
 		// clean params
 		$cachedir = \Morrow\Helpers\General::cleanPath($cachedir);
+
+		// create temp dir if it does not exist
+		if (!is_dir($cachedir)) mkdir($cachedir);
+		
 		if ($cachedir === false) return false;
 
 		// validation
