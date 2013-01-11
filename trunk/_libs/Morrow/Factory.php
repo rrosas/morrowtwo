@@ -26,6 +26,7 @@ namespace Morrow;
 // This class manages all classes the framework is working with
 class Factory {
 	public static $instances;
+	protected $_params = array();
 	
 	public static function load($params) {
 		// get factory config
@@ -72,5 +73,26 @@ class Factory {
 			$returner[$class] = get_class($value);
 		}
 		\Morrow\dump($returner);
+	}
+
+	protected function prepare() {
+		$args = func_get_args();
+		
+		// get instance name in params string
+		$params = explode(':', $args[0]);
+		$classname = strtolower($params[0]);
+		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
+		
+		// save params for later
+		$this->_params[$instancename] = $args;
+	}
+
+	public function __get($instancename) {
+		// get arguments
+		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array(ucfirst($instancename));
+		
+		// assign the new class
+		$this->$instancename = call_user_func_array( array(__NAMESPACE__ . '\\Factory','load'), $factory_args );
+		return $this->$instancename;
 	}
 }
