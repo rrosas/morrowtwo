@@ -2,8 +2,8 @@
 
 namespace Morrow;
 
-class DefaultController extends Loader {
+class DefaultController extends Factory {
 	public function setup() {
-		$this->View->setHandler('serpent');
+		$this->view->setHandler('serpent');
 	}
 }
