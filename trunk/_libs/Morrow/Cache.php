@@ -200,7 +200,7 @@ class Cache {
 		$pattern = basename($pattern);
 		$pattern = preg_replace("=[^\w\*\?]=i", '', $pattern);
 		$pattern = strtolower($pattern);
-		$pattern = preg_replace('=([\*|\?])=', '.$1',$pattern);
+		$pattern = preg_replace('=([\*|\?])=', '.$1', $pattern);
 		$pattern = "=^".$pattern."$=";
 
 		// delete the matching files

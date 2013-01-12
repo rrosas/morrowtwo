@@ -60,7 +60,7 @@ class Pager {
 	public function getTotalPages() {
 		/* Make sure we don't devide by zero */
 		$result = 1;
-		if($this->TotalResults != 0 && $this->ResultsPerPage != 0) {
+		if ($this->TotalResults != 0 && $this->ResultsPerPage != 0) {
 			$result = ceil($this->TotalResults / $this->ResultsPerPage);
 		}
 		
@@ -75,15 +75,15 @@ class Pager {
 	}
 
 	public function getEndOffset() {
-		if($this->getStartOffset() > ($this->TotalResults - $this->ResultsPerPage)) $offset = $this->TotalResults;
-		elseif($this->getStartOffset() != 0) $offset = $this->getStartOffset() + $this->ResultsPerPage - 1;
+		if ($this->getStartOffset() > ($this->TotalResults - $this->ResultsPerPage)) $offset = $this->TotalResults;
+		elseif ($this->getStartOffset() != 0) $offset = $this->getStartOffset() + $this->ResultsPerPage - 1;
 		else $offset = $this->ResultsPerPage;
 		
 		return $offset;
 	}
 
 	public function getCurrentPage() {
-		if(isset($this->input[$this->PageVarName])) {
+		if (isset($this->input[$this->PageVarName])) {
 			$page = $this->input[$this->PageVarName];
 			if (is_numeric($page) and $page > 0) $this->CurrentPage = $page;
 		}

@@ -25,9 +25,9 @@ namespace Morrow;
 class Session {
 	static protected $data = array(); // The array with parsed data
 	protected $section = "main";
- 
- 	public function __construct($data){
-		if (ini_get('session.auto_start') != true){
+
+	public function __construct($data) {
+		if (ini_get('session.auto_start') != true) {
 			
 			// set cookie params
 			$config = Factory::load('Config')->get('session');
@@ -35,39 +35,38 @@ class Session {
 			
 			// _GET has been removed, if session id comes from input, get it now
 			$session_id = isset($data[session_name()]) ? $data[session_name()] : null;
-			if(!is_null($session_id) && !empty($session_id)){
+			if (!is_null($session_id) && !empty($session_id)) {
 				session_id($session_id);
 			}
 			session_start();
 		}
- 		$this->prevent_session_fixation();
+		$this->prevent_session_fixation();
 		self::$data = $_SESSION;
 	}
 
- 	public function __destruct(){
+	public function __destruct() {
 		$_SESSION = array();
 		$_SESSION = self::$data;
 		session_write_close();
 	}
 
-	public final function get($identifier = null){
-		if($identifier != null) $identifier  = $this->section  . "." . $identifier;
+	public final function get($identifier = null) {
+		if ($identifier != null) $identifier  = $this->section  . "." . $identifier;
 		else $identifier = $this->section;
 		return helperArray::dotSyntaxGet(self::$data, $identifier);
 	}
 
-	public final function set($identifier, $value){
+	public final function set($identifier, $value) {
 		$identifier  = $this->section . "." . $identifier;
 		helperArray::dotSyntaxSet(self::$data, $identifier, $value);
 	}
 
-	public final function delete($identifier = null){
-		if($this->get($identifier) !== null){
+	public final function delete($identifier = null) {
+		if ($this->get($identifier) !== null) {
 			$pidentifier = $this->section . "." . $identifier;
-			if($identifier == null){
+			if ($identifier == null) {
 				helperArray::dotSyntaxDelete(self::$data, $this->section);
-			}
-			else{
+			} else {
 				helperArray::dotSyntaxDelete(self::$data, $pidentifier);
 			}
 		}

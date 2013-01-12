@@ -26,12 +26,12 @@ class PageSession extends Session{
 	protected $alias = '';
 	protected $section = '';
 	
-	public function __construct(){
+	public function __construct() {
 		$page = Factory::load('Page');
 		$this->alias = $page->get('alias');
 		$this->section = 'page.' . $this->alias; 
 	}
 
- 	public function __destruct(){
+	public function __destruct() {
 	}
 }

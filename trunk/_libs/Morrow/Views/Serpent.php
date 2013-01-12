@@ -60,7 +60,7 @@ class Serpent extends AbstractView {
 		$_engine->force_compile	= $this->force_compile;
 		$_engine->default_resource = $this->default_resource;
 		$_engine->default_compiler = $this->default_compiler;
-		$_engine->setCharset( $this->charset );
+		$_engine->setCharset($this->charset);
 
 		// create temp dir if it does not exist
 		if (!is_dir($_engine->compile_dir)) mkdir($_engine->compile_dir);
@@ -88,16 +88,10 @@ class Serpent extends AbstractView {
 		}
 
 		// set compiler config
-		$_engine->addPluginConfig('compiler', 'serpent', array(
-			'mappings' => $mappings
-		));
+		$_engine->addPluginConfig('compiler', 'serpent', array('mappings' => $mappings));
 		
 		// set resource config
-		$_engine->addPluginConfig('resource', 'file', array(
-			'template_dir' => PROJECT_PATH.'_templates/',
-			'suffix' => $this->template_suffix,
-			'language' => $this->language->get()
-		));
+		$_engine->addPluginConfig('resource', 'file', array('template_dir' => PROJECT_PATH.'_templates/', 'suffix' => $this->template_suffix, 'language' => $this->language->get()));
 		
 		// set additional config
 		$conf =& $this->plugin_config;
@@ -106,7 +100,7 @@ class Serpent extends AbstractView {
 		}
 		
 		$_engine->pass($content);
-		fwrite($handle, $_engine->render($this->template) );
+		fwrite($handle, $_engine->render($this->template));
 		
 		return $handle;
 	}

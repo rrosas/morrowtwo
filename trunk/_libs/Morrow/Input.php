@@ -77,9 +77,9 @@ class Input {
 		$arrays = func_get_args();
 		$base = array_shift($arrays);
 		if (!is_array($base)) $base = empty($base) ? array() : array($base);
-		foreach($arrays as $append) {
+		foreach ($arrays as $append) {
 			if (!is_array($append)) $append = array($append);
-			foreach($append as $key => $value) {
+			foreach ($append as $key => $value) {
 				if (!array_key_exists($key, $base)) {
 					$base[$key] = $append[$key];
 					continue;
@@ -98,12 +98,12 @@ class Input {
 	// this method puts them back in a more useful format
 	protected function _getFileData($_files) {
 		$return_files = array();
-		if(is_array($_files)) {
-			foreach($_files as $fkey => $fvalue) {
-				if(is_array($fvalue)) {
-					foreach($fvalue as $varname=>$varpair) {
-						if(is_array($varpair)) {
-							foreach($varpair as $fieldname=>$varvalue) {
+		if (is_array($_files)) {
+			foreach ($_files as $fkey => $fvalue) {
+				if (is_array($fvalue)) {
+					foreach ($fvalue as $varname=>$varpair) {
+						if (is_array($varpair)) {
+							foreach ($varpair as $fieldname=>$varvalue) {
 								$return_files[$fkey][$fieldname][$varname]=$varvalue;
 							}
 						} else {
@@ -122,9 +122,8 @@ class Input {
 				$var[$key] = $this->_removeXss($value);
 			}
 		} else {
-			if (is_scalar($var))
-				$var = $this->_removeXss($var);
-			}
+			if (is_scalar($var)) $var = $this->_removeXss($var);
+		}
 		return $var;
 	}
 	

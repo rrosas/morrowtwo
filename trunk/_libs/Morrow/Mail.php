@@ -47,7 +47,7 @@ class Mail extends PHPMailer {
 		if (isset($this->forceTo) && is_array($this->forceTo) && count($this->forceTo)>0 ) {
 			$this->ClearAllRecipients();
 			foreach ($this->forceTo as $email) {
-				$this->AddAddress( $email, 'Development User' );
+				$this->AddAddress($email, 'Development User');
 			}
 		}
 		

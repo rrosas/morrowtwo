@@ -64,7 +64,7 @@ class Time {
 
 		// check type
 		$types = array_keys($this->types);
-		if (!in_array( $type, $types )) throw new \Exception('type "'.$type.'" no valid. Valid types are "'.implode('", "', $types).'".');
+		if (!in_array($type, $types)) throw new \Exception('type "'.$type.'" no valid. Valid types are "'.implode('", "', $types).'".');
 		
 		$timestamp = $this->time;
 

@@ -37,22 +37,22 @@ class DBSession extends Session{
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 	**/
- 
+
 	protected $config = null;
 	protected $db = null;
 	protected $format = '%Y%m%d%H%M%S';
 	protected $table = null;
 
- 	public function __construct($data){
-		if (ini_get('session.auto_start') == true){
+	public function __construct($data) {
+		if (ini_get('session.auto_start') == true) {
 			throw new \Exception('You must turn off session.auto_start in your php.ini or use different session handler');
 		}
 
 		#setting the session handlers
-		$junk =  session_set_save_handler(array($this, "on_session_start"),array($this,"on_session_end"),array($this,"on_session_read"),array($this,"on_session_write"),array($this,"on_session_destroy"),array($this,"on_session_gc"));
+		$junk = session_set_save_handler(array($this, "on_session_start"), array($this,"on_session_end"), array($this,"on_session_read"), array($this,"on_session_write"), array($this,"on_session_destroy"), array($this,"on_session_gc"));
 
 		$this->config = Factory::load('Config');
-		$this->db = Factory::load('Db',$this->config->get('session.db'));
+		$this->db = Factory::load('Db', $this->config->get('session.db'));
 
 		#important!: call the parent constructor
 		parent::__construct($data);
@@ -75,12 +75,9 @@ class DBSession extends Session{
 
 		$sth = $this->db->Result($stmt, array($key, strftime($this->format))); 
 		
-		if($sth['NUM_ROWS'] > 0)
-		{
+		if ($sth['NUM_ROWS'] > 0) {
 			return($sth['RESULT'][0]['session_data']);
-		}
-		else
-		{
+		} else {
 			return '';
 		}
 	}
@@ -94,20 +91,14 @@ class DBSession extends Session{
 				);
 
 
-		$this->db->replace( $this->config->get('session.db.table'), $data);
-		
+		$this->db->replace($this->config->get('session.db.table'), $data);
 	}
 
 	protected function on_session_destroy($key) {
-
 		$this->db->delete($this->config->get('session.db.table'), "where session_id = ?", false, $key);
-
 	}
 
-	protected function on_session_gc($max_lifetime) 
-	{
-		
+	protected function on_session_gc($max_lifetime) {
 		$this->db->delete($this->config->get('session.db.table'), "where session_expiration < ?", false, strftime($this->format));
-
 	}
 }

@@ -55,49 +55,49 @@ class Dummy {
 			$gender = $genders[ array_rand($genders) ];
 		}
 		
-		$data['salutation'] = $this->getSalutation( $gender );
-		$data['firstname'] = $this->getFirstname( $gender );
+		$data['salutation'] = $this->getSalutation($gender);
+		$data['firstname'] = $this->getFirstname($gender);
 		$data['lastname'] = $this->getLastname();
 		$data['zip'] = $this->getZip();
 		$data['city'] = $this->GetCity();
-		$data['email'] = $this->getEmail( $data['firstname'], $data['lastname'] );
-		$data['nickname'] = $this->getNickname( $data['firstname'], $data['lastname'] );
+		$data['email'] = $this->getEmail($data['firstname'], $data['lastname']);
+		$data['nickname'] = $this->getNickname($data['firstname'], $data['lastname']);
 		
 		return $data;
 	}
 
-	public function getSalutation( $gender ) {
-		$gender = $this->salutation[ $gender ];
-		return $this->_encode( $gender );
+	public function getSalutation($gender) {
+		$gender = $this->salutation[$gender];
+		return $this->_encode($gender);
 	}
 	
-	public function getFirstname( $gender ) {
-		$count = count($this->firstname[ $gender ]);
+	public function getFirstname($gender) {
+		$count = count($this->firstname[$gender]);
 		$nr = rand(0, $count-1);
-		$data = $this->firstname[ $gender ][ $nr ];
+		$data = $this->firstname[$gender][$nr];
 		
-		if (rand(1,5) == 5) {
+		if (rand(1, 5) == 5) {
 			$nr = rand(0, $count-1);
-			$data .= '-'.$this->firstname[ $gender ][ $nr ];
+			$data .= '-'.$this->firstname[$gender][$nr];
 		}
 		
-		$data = $this->_encode( $data );
+		$data = $this->_encode($data);
 		return $data;
 	}
 	
 	public function getLastname() {
 		$count = count($this->lastname);
 		$nr = rand(0, $count-1);
-		$data = $this->lastname[ $nr ];
+		$data = $this->lastname[$nr];
 		
-		if (rand(1,5) == 5) {
+		if (rand(1, 5) == 5) {
 			$nr = rand(0, $count-1);
-			$data .= '-'.$this->lastname[ $nr ];
+			$data .= '-'.$this->lastname[$nr];
 		}
 
-		if (rand(0,1)) $data = $this->_simplify( $data );
+		if (rand(0, 1)) $data = $this->_simplify($data);
 			
-		$data = $this->_encode( $data );
+		$data = $this->_encode($data);
 		return $data;
 	}
 	
@@ -105,9 +105,9 @@ class Dummy {
 		$count = count($this->city);
 		$nr = rand(0, $count-1);
 		$data = $this->city[ $nr ];
-		if (rand(0,1)) $data = $this->_simplify( $data );
+		if (rand(0, 1)) $data = $this->_simplify($data);
 
-		$data = $this->_encode( $data );
+		$data = $this->_encode($data);
 		return $data;
 	}
 
@@ -117,42 +117,42 @@ class Dummy {
 		return $data;
 	}
 
-	public function getEmail( $firstname, $lastname ) {
+	public function getEmail($firstname, $lastname) {
 		$data = $this->getNickname($firstname, $lastname);
 		$data = strtolower($data);
 		
 		// create the the second part
 		$count = count($this->tld);
 		$nr = rand(0, $count-1);
-		$host = $this->_getMnemonicValue().'.'.$this->tld[ $nr ];
+		$host = $this->_getMnemonicValue().'.'.$this->tld[$nr];
 		$data .= '@'.$host;
 		
-		$data = $this->_simplify( $data );
+		$data = $this->_simplify($data);
 		return $data;
 	}
 	
-	protected function getNickname( $firstname, $lastname ) {
+	protected function getNickname($firstname, $lastname) {
 		// create variations of names
-		$variation[] = $firstname . '_' . rand(0,99);
-		$variation[] = $firstname . rand(0,99);
-		$variation[] = $firstname . '_' . rand(1960,1995);
-		$variation[] = $firstname . rand(1960,1995);
+		$variation[] = $firstname . '_' . rand(0, 99);
+		$variation[] = $firstname . rand(0, 99);
+		$variation[] = $firstname . '_' . rand(1960, 1995);
+		$variation[] = $firstname . rand(1960, 1995);
 
-		$variation[] = $lastname . '_' . rand(0,99);
-		$variation[] = $lastname . rand(0,99);
-		$variation[] = $lastname . '_' . rand(1960,1995);
-		$variation[] = $lastname . rand(1960,1995);
+		$variation[] = $lastname . '_' . rand(0, 99);
+		$variation[] = $lastname . rand(0, 99);
+		$variation[] = $lastname . '_' . rand(1960, 1995);
+		$variation[] = $lastname . rand(1960, 1995);
 
 		$variation[] = $firstname . '.' . $lastname;
 		$variation[] = $firstname{0} . '.' . $lastname;
 		$variation[] = $firstname . '.' . $lastname{0};
 		
 		$count = count($variation);
-		$data = $variation[ rand(0, $count-1) ];
-		return $data		;
+		$data = $variation[rand(0, $count-1)];
+		return $data;
 	}
 	
-	protected function _encode( $data ) {
+	protected function _encode($data) {
 		return iconv("ISO-8859-1", $this->encoding, $data);
 	}
 
@@ -167,8 +167,8 @@ class Dummy {
 		$vowels = "aeiouy";
 		$consonants = "bcdfghjklmnprstvwxz"; 
 		for ($i=0; $i<4; $i++) {
-			$password[] = $consonants [ rand(0, strlen($consonants)-1) ];
-			$password[] = $vowels [ rand(0, strlen($vowels)-1) ];
+			$password[] = $consonants[rand(0, strlen($consonants)-1)];
+			$password[] = $vowels[rand(0, strlen($vowels)-1)];
 		}
 		return implode('', $password);
 	}

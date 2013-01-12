@@ -22,32 +22,25 @@
 
 namespace Morrow;
 
-class Db extends PDO
-	{
+class Db extends PDO {
 	protected $connected = false;	// are we already connected?
 	protected $config; // the database configuration
 	protected $cache = array(); // column cache for *safe() functions
 	
-	public function __construct($config)
-		{
+	public function __construct($config) {
 		$this -> config = $config;		
-		}
+	}
 
-	public function connect()
-		{
-		if (!$this->connected)
-			{
-			if($this->config['host']{0} == '/')
-				{
+	public function connect() {
+		if (!$this->connected) {
+			if ($this->config['host']{0} == '/') {
 				$connector = $this->config['driver'].':unix_socket='.$this->config['host'].';dbname='.$this->config['db'];
-				}
-			else
-				{
+			} else {
 				$connector = $this->config['driver'].':host='.$this->config['host'].';dbname='.$this->config['db'];
-				}
+			}
 			
 			// sqlite
-			if(isset($this->config['file'])){
+			if (isset($this->config['file'])) {
 				$connector = $this->config['driver'].':'.$this->config['file'].'';
 			}
 			
@@ -57,26 +50,24 @@ class Db extends PDO
 			$this -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // on errors we want to get \Exceptions
 
 			// set encoding
-			if(isset($this->config['encoding'])){
+			if (isset($this->config['encoding'])) {
 				parent::exec('SET NAMES '.$this->config['encoding']);
 			}
 
 			$this->connected = true;
-			}
 		}
+	}
 		
-	public function result($query, $params = NULL)
-		{
+	public function result($query, $params = null) {
 		if (is_scalar($params)) $params = array($params);
 				
 		// search for access keys
-		$accesskey = NULL;
+		$accesskey = null;
 		$found = preg_match('=SELECT.+>([a-z_]+).+FROM=is', $query, $match);
-		if ($found === 1)
-			{
+		if ($found === 1) {
 			$accesskey = $match[1];
 			$query = str_replace('>'.$accesskey, $accesskey, $query);
-			}
+		}
 		
 		// do query
 		$this->connect();
@@ -86,21 +77,18 @@ class Db extends PDO
 		$returner['NUM_ROWS'] = count($returner['RESULT']);
 		
 		// if an access key was provided rearrange array
-		if (!is_null($accesskey))
-			{
+		if (!is_null($accesskey)) {
 			$newreturner = array();
-			foreach ($returner['RESULT'] as $row)
-				{
+			foreach ($returner['RESULT'] as $row) {
 				$newreturner[$row[$accesskey]] = $row;
-				}
-			$returner['RESULT'] = $newreturner;
 			}
-
-		return $returner;
+			$returner['RESULT'] = $newreturner;
 		}
 
-	public function result_calc_found_rows($query, $params = NULL)
-		{
+		return $returner;
+	}
+
+	public function result_calc_found_rows($query, $params = null) {
 		if (is_scalar($params)) $params = array($params);
 
 		// because of two queries we should use transactions if available
@@ -111,16 +99,15 @@ class Db extends PDO
 		$returner = $this->result($query, $params);
 
 		// get found rows
-		$sql = $this->query('SELECT FOUND_ROWS() AS FOUND_ROWS')->fetch( PDO::FETCH_ASSOC );
+		$sql = $this->query('SELECT FOUND_ROWS() AS FOUND_ROWS')->fetch(PDO::FETCH_ASSOC);
 		$returner['FOUND_ROWS'] = $sql['FOUND_ROWS'];
 	
 		$this->commit();
 		
 		return $returner;
-		}
+	}
 		
-	public function insert($table,$array,$insertid = false)
-		{
+	public function insert($table,$array,$insertid = false) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
@@ -132,95 +119,80 @@ class Db extends PDO
 		$returner['SUCCESS'] = $sth->execute($binds);
 		if ($insertid == true) $returner['INSERT_ID'] = $this->lastInsertId();
 		return $returner;
-		}
+	}
 
-	public function insertSafe($table,$array,$insertid = false)
-		{
+	public function insertSafe($table,$array,$insertid = false) {
 		$array = $this->_safe($table, $array);
-		return $this -> Insert($table,$array,$insertid);
-		}
+		return $this -> Insert($table, $array, $insertid);
+	}
 		
-	protected function _createUpdateValues($array)
-		{
+	protected function _createUpdateValues($array) {
 		$values = array();
 		$tokens = array();
 		
 		// divide normal values from function calls
-		foreach ($array as $key=>$value)
-			{
-			if (is_array($value))
-				{
+		foreach ($array as $key=>$value) {
+			if (is_array($value)) {
 				$tokens[] = '`'.$key.'`='.$value['FUNC'];
-				}
-			else
-				{
+			} else {
 				$tokens[] = '`'.$key.'`=?';
 				$values[] = $value;
-				}
 			}
+		}
 		
 		$tokens = implode(', ', $tokens);	
 
 		$returner = compact('tokens', 'values');
 		return $returner;
-		}
+	}
 
-	public function update($table,$array,$where='',$affected_rows=false, $where_tokens=array() )
-		{
+	public function update($table, $array, $where='', $affected_rows=false, $where_tokens=array()) {
 		$array = $this->_createUpdateValues($array);
 		extract($array);
 		
 		// add tokens of where clause
 		if (is_scalar($where_tokens)) $where_tokens = array($where_tokens);
-		foreach ($where_tokens as $value)
-			{
+		foreach ($where_tokens as $value) {
 			$values[] = $value;
-			}
+		}
 		
 		$query = "UPDATE $table SET $tokens $where";
 
 		$this->connect();
 		$sth = $this->prepare($query);
 		
-		$returner['SUCCESS'] = $sth->execute( $values );
+		$returner['SUCCESS'] = $sth->execute($values);
 		if ($affected_rows) $returner['AFFECTED_ROWS'] = $sth->rowCount();
 		return $returner;
-		}
+	}
 
-	public function updateSafe($table,$array,$where='',$affected_rows=false, $where_tokens=array() )
-		{
+	public function updateSafe($table, $array, $where='', $affected_rows=false, $where_tokens=array()) {
 		$array = $this->_safe($table, $array);
-		return $this -> Update($table,$array,$where,$affected_rows, $where_tokens);
-		}
+		return $this -> Update($table, $array, $where, $affected_rows, $where_tokens);
+	}
 	
-	protected function _createInsertAndReplaceValues($array)
-		{
+	protected function _createInsertAndReplaceValues($array) {
 		$keys = array();
 		$values = array();
 		$binds = array();
 		
-		foreach ($array as $value)
-			{
-			if (is_array($value))
-				{
+		foreach ($array as $value) {
+			if (is_array($value)) {
 				$values[] = $value['FUNC'];
-				}
-			else
-				{
+			} else {
 				$values[] = '?';
 				$binds[] = $value;
-				}
 			}
+		}
 
 		$keys = implode(',', array_keys($array));
 		$values = implode(',', $values);
 		
 		$returner = compact('keys', 'values', 'binds');
 		return $returner;
-		}
+	}
 
-	public function replace($table,$array,$insertid = false)
-		{
+	public function replace($table,$array,$insertid = false) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
@@ -232,59 +204,51 @@ class Db extends PDO
 		$returner['SUCCESS'] = $sth->execute($binds);
 		if ($insertid == true) $returner['INSERT_ID'] = $this->lastInsertId();
 		return $returner;
-		}
+	}
 
-	public function replaceSafe($table,$array,$insertid = false)
-		{
+	public function replaceSafe($table,$array,$insertid = false) {
 		$array = $this->_safe($table, $array);
-		return $this -> Replace($table,$array,$insertid);
-		}
+		return $this -> Replace($table, $array, $insertid);
+	}
 		
-	public function delete($table, $where, $affected_rows=false, $where_tokens=array())
-		{
+	public function delete($table, $where, $affected_rows=false, $where_tokens=array()) {
 		// add tokens of where clause
 		$values = array();
 		if (is_scalar($where_tokens)) $where_tokens = array($where_tokens);
-		foreach ($where_tokens as $value)
-			{
+		foreach ($where_tokens as $value) {
 			$values[] = $value;
-			}
+		}
 		
 		$query = "DELETE FROM $table $where";
 
 		$this->connect();
 		$sth = $this->prepare($query);
 		
-		$returner['SUCCESS'] = $sth->execute( $values );
+		$returner['SUCCESS'] = $sth->execute($values);
 		if ($affected_rows) $returner['AFFECTED_ROWS'] = $sth->rowCount();
 		return $returner;
-		}
+	}
 	
-	public function exec($query)
-		{
+	public function exec($query) {
 		$this->connect();
 		$returner['AFFECTED_ROWS'] = parent::exec($query);
 		return $returner;
-		}
+	}
 
-	public function query($query)
-		{
+	public function query($query) {
 		$this->connect();
 		$params = func_get_args();
-		return call_user_func_array( array($this, 'parent::query'), $params);
-		}
+		return call_user_func_array(array($this, 'parent::query'), $params);
+	}
 
-	public function	beginTransaction()
-		{
+	public function	beginTransaction() {
 		$this->connect();
 		$status = parent::beginTransaction();
 		return $status;
-		}
+	}
 		
-	protected function _safe($table, $array)
-		{
-		if (!isset($this->cache[$table]))
-			{
+	protected function _safe($table, $array) {
+		if (!isset($this->cache[$table])) {
 			$this->connect();
 			$query = 'SHOW COLUMNS FROM '.$table;
 			$sth = $this->prepare($query);
@@ -293,12 +257,13 @@ class Db extends PDO
 			
 			foreach ($result as $row) $columns[] = $row['Field'];
 			$this->cache[$table] = $columns;
-			}
+		}
 		
 		// remove all not existent keys
-		foreach ($array as $key=>$value)
+		foreach ($array as $key=>$value) {
 			if (!in_array($key, $this->cache[$table])) unset ($array[$key]);
-
-		return $array;
 		}
+		
+		return $array;
 	}
+}

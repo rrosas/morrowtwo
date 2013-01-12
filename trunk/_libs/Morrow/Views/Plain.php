@@ -35,7 +35,9 @@ class Plain extends AbstractView {
 			return $content;
 		}
 		
-		if (!is_scalar($content)) { throw new \Exception(__CLASS__.': The content variable for this handler has to be scalar or a resource of type "stream".'); }
+		if (!is_scalar($content)) {
+			throw new \Exception(__CLASS__.': The content variable for this handler has to be scalar or a resource of type "stream".');
+		}
 		fwrite($handle, $content);
 		return $handle;
 	}

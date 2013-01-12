@@ -32,13 +32,13 @@ class Language {
 	protected $i18n_checked = false;
 	protected $i18n_path = null;
 
-	public function __construct($settings){
+	public function __construct($settings) {
 		// check for required setting keys
 		$required = array("possible", "language_path", "i18n_path");
-		if(count(array_diff($required, array_keys($settings))) > 0){
-			throw new \Exception("Missing key(s). Required params are : " . implode(", ",$required));
+		if (count(array_diff($required, array_keys($settings))) > 0) {
+			throw new \Exception("Missing key(s). Required params are : " . implode(", ", $required));
 		}
-		if(!is_array($settings['possible'])) {
+		if (!is_array($settings['possible'])) {
 			$settings['default'] = $settings['possible'];
 			$settings['possible'] = array($settings['default']);
 		} else {
@@ -52,26 +52,26 @@ class Language {
 		$this->i18n_path = $settings['i18n_path'];
 		
 		// check if there is a valid language file for the possible languages
-		foreach($this->possible as $pos) {
-			if(!$this->isValid($pos)){
+		foreach ($this->possible as $pos) {
+			if (!$this->isValid($pos)) {
 				throw new \Exception($pos . " is not a valid language. Missing File: " . $this->language_path . $pos . '/l10n.php');
 			}
 		}
 		
 		// language was provided
-		if(isset($settings['language']) && $this->isValid($settings['language'])){
+		if (isset($settings['language']) && $this->isValid($settings['language'])) {
 			$this->language = $settings['language'];
 		}
 		
 		// still not defined: default
-		if($this->language == null) $this->language = $this->default;
+		if ($this->language == null) $this->language = $this->default;
 
 		// now load l10n
 		$this->locale = $this->getLocale();
 	}
 
-	public function set($lang = null){
-		if($this->isValid($lang)){
+	public function set($lang = null) {
+		if ($this->isValid($lang)) {
 			$this->language = $lang;
 			$this->locale = $this->getLocale();
 
@@ -82,32 +82,32 @@ class Language {
 		return false;
 	}
 
-	public function get(){
+	public function get() {
 		return $this->language;
 	}
 
-	public function getPossible(){
+	public function getPossible() {
 		return $this->possible;
 	}
 
-	public function getDefault(){
+	public function getDefault() {
 		return $this->default;
 	}
 
-	public function isValid($lang){
+	public function isValid($lang) {
 		return in_array($lang, $this->possible);
 	}
 
-	public function getConfig($lang = null){
-		if(is_null($lang)) $lang = $this->get();
+	public function getConfig($lang = null) {
+		if (is_null($lang)) $lang = $this->get();
 
 		$file = $this->language_path . $lang . '/l10n.php';
 		$config = $this->_loadFile($file);
 		return $config;
 	}
 
-	public function getContent(){
-		if ($this->content == null){
+	public function getContent() {
+		if ($this->content == null) {
 			$file = $this->language_path . $this->language . '/i18n.php';
 			$this->content = $this->_loadFile($file, false);
 		}
@@ -115,17 +115,17 @@ class Language {
 		return $this->content;
 	}
 
-	public function getFormContent(){
+	public function getFormContent() {
 		$file = $this->language_path . $this->get() . '/forms.php';
 		return $this->_loadFile($file);
 	}
 
-	public function getTree(){
+	public function getTree() {
 		$file = $this->language_path . $this->get() . '/tree.php';
 		return $this->_loadFile($file);
 	}
 
-	protected function _loadFile($file, $dotSyntaxExplode = true){
+	protected function _loadFile($file, $dotSyntaxExplode = true) {
 		if(!is_file($file)) return array();
 		if ($dotSyntaxExplode) return \Morrow\Helpers\General::array_dotSyntaxExplode(include($file));
 		return include($file);
@@ -141,34 +141,34 @@ class Language {
 	}
 
 	public function setLocale() {
-		if (!setlocale(LC_TIME, $this->locale['keys'])){
+		if (!setlocale(LC_TIME, $this->locale['keys'])) {
 			exec('locale -a', $locales);
 			$locales = implode("<br />", $locales);
 			throw new \Exception(__METHOD__.'<br>setLocale() failed. These are the locales installed on this system:<br />'.$locales);
 		}
 	}
 
-	public function getTranslations($alias){
+	public function getTranslations($alias) {
 		$translations = array();
-		foreach($this->possible as $availLang){
-			if($availLang != $this->get() && $this->translationExists($availLang, $alias)){
+		foreach ($this->possible as $availLang) {
+			if ($availLang != $this->get() && $this->translationExists($availLang, $alias)) {
 				$config = $this->getConfig($availLang);
 				$availLangTitle = $availLang;
-				if(isset($config['title'])) $availLangTitle = $config['title'];
+				if (isset($config['title'])) $availLangTitle = $config['title'];
 				$translations[$availLang] = $availLangTitle;
 			}
 		}
 		return $translations;
 	}
 
-	public function translationExists($lang, $alias){
+	public function translationExists($lang, $alias) {
 		#where is tree?
 		$path = $this->language_path . $lang . '/';
 		$global = $path . '_tree.php';
-		if(is_file($global)){
+		if (is_file($global)) {
 			include($global);
-			foreach($tree as $branch){
-				if(isset($branch[$alias])) return true;
+			foreach ($tree as $branch) {
+				if (isset($branch[$alias])) return true;
 			}
 		}
 		return false;
@@ -180,7 +180,7 @@ class Language {
 		To make sure that it is only called once (after that the user decides), 
 		the variable langcheck is stored in the session.
 	*/
-	public function setFromClient(){
+	public function setFromClient() {
 		$session = Factory::load("Session");
 		$lang = $this->get();
 		if ($session->get("framework.langcheck") !== null) return;
@@ -190,7 +190,10 @@ class Language {
 		foreach ($browser_langs as $bl) {
 			foreach ($this->getPossible() as $possible) {
 				$config = $this->getLocale($possible);
-				if (in_array($bl, $config['keys'])) { $new = $possible; break(2); }
+				if (in_array($bl, $config['keys'])) {
+					$new = $possible;
+					break(2);
+				}
 			}
 		}
 		
@@ -213,23 +216,20 @@ class Language {
 	protected function _getBrowserLanguages() {
 		$ayLang = array();
 		$aySeen = array();
-		if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))
-			{
-			foreach(explode(',',$_SERVER['HTTP_ACCEPT_LANGUAGE']) as $llang)
-				{
+		if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+			foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $llang) {
 				preg_match("#^(.*?)([-_].*?)?(\;q\=(.*))?$#i", $llang, $ayM);
 				$q = isset($ayM[4]) ? $ayM[4] : '1.0';
 				$lang = strtolower(trim($ayM[1]));
-				if(!in_array($lang, $aySeen))
-					{
+				if (!in_array($lang, $aySeen)) {
 					$ayLang[$q] = $lang;
 					$aySeen[] = $lang;
-					}
 				}
-			uksort($ayLang, create_function('$a,$b','return ($a>$b) ? -1 : 1;'));
 			}
-		return $ayLang;
+			uksort($ayLang, create_function('$a,$b', 'return ($a>$b) ? -1 : 1;'));
 		}
+		return $ayLang;
+	}
 
 	public function _($string) {
 		if ($this->language == $this->possible[0]) return $string;
@@ -312,12 +312,12 @@ class Language {
 	protected function _var_export($array, $section) {
 		if (empty($array)) return '';
 
-		$returner = "\n  /* $section */\n";
+		$returner = "\n\t/* $section */\n";
 		foreach ($array as $k=>$v) {
 			$key = str_replace("'", "\'", $k);
 			$value = str_replace("'", "\'", $v);
 
-			$returner .= str_pad("    '$key'", 40, ' ');
+			$returner .= str_pad("\t'$key'", 40, ' ');
 			$returner .= '=> ';
 			$returner .= "'$value',\n";
 		}

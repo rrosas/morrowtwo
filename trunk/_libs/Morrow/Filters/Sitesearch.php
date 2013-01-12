@@ -76,8 +76,8 @@ class Sitesearch extends AbstractFilter {
 
 		// connect to DB and do maintenance
 		$this->searchdb->connect();
-		$this->_createTableIfNotExists( $this->db_tablename );
-		if (rand(1, $this->gc_divisor) === 1) $this->_deleteOldEntries( $this->db_tablename );
+		$this->_createTableIfNotExists($this->db_tablename);
+		if (rand(1, $this->gc_divisor) === 1) $this->_deleteOldEntries($this->db_tablename);
 				
 		// create url for current page
 		$url = $this->url->makeUrl('');
@@ -143,7 +143,7 @@ class Sitesearch extends AbstractFilter {
 		$save_to_db = true;
 		foreach ($this->exclude_patterns as $patterns) {
 			foreach ($patterns as $field=>$pattern) {
-				if (preg_match($pattern, $replace[$field]))	{
+				if (preg_match($pattern, $replace[$field])) {
 					$save_to_db = false;
 					break;
 				}

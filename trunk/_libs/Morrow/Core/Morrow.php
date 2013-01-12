@@ -75,7 +75,13 @@ class Morrow {
 		$try[] = FW_PATH . $classpath;
 		
 		$found = false;
-		foreach($try as $path) { if(is_file($path)) { $found = true; include ($path); break; } }	
+		foreach ($try as $path) {
+			if (is_file($path)) {
+				$found = true;
+				include ($path);
+				break;
+			}
+		}	
 		
 		if (!$found) {
 			throw new \Exception("Could not autoload $namespace trying the following paths:<br /><br />".implode('<br />', $try));
@@ -160,18 +166,18 @@ class Morrow {
 		$project_relpath = $project_folder;
 
 		// search for projects in splitted request
-		foreach($inpath as $project_url) {
-			if($project_url == $possible_project_path) {
+		foreach ($inpath as $project_url) {
+			if ($project_url == $possible_project_path) {
 				$project_relpath = $project_url;
-				 // reset splitted nodes in config
+				// reset splitted nodes in config
 				array_shift($url_nodes);
 				$this->page->set('nodes', $url_nodes);
 			}
 		}
 
 		// define project constants
-		define ('PROJECT_PATH', FW_PATH . $project_relpath . '/');
-		define ('PROJECT_RELPATH', $project_relpath);
+		define('PROJECT_PATH', FW_PATH . $project_relpath . '/');
+		define('PROJECT_RELPATH', $project_relpath);
 
 		/* register project config in the config class
 		********************************************************************************************/
@@ -213,7 +219,7 @@ class Morrow {
 
 		// language via path
 		$nodes = $this->page->get('nodes');
-		if(isset($nodes[0]) && $this->language->isValid($nodes[0])) {
+		if (isset($nodes[0]) && $this->language->isValid($nodes[0])) {
 			$input_lang_nodes = array_shift($nodes);
 			$this->page->set('nodes', $nodes);
 		}
@@ -224,7 +230,7 @@ class Morrow {
 		// language via input
 		$input_lang = $this->input->get('language');
 
-		if($input_lang === null && isset($input_lang_nodes)) {
+		if ($input_lang === null && isset($input_lang_nodes)) {
 			$input_lang = $input_lang_nodes;
 		}
 
@@ -234,7 +240,7 @@ class Morrow {
 		/* url routing
 		********************************************************************************************/
 		$routes	= $this->config->get('routing');
-		$url	= implode('/',$this->page->get('nodes')); #$this->input->get('morrow_content');
+		$url	= implode('/', $this->page->get('nodes')); #$this->input->get('morrow_content');
 		$url	= trim($url, '/');
 	
 		// iterate all rules

@@ -50,7 +50,7 @@ class Xml extends AbstractView {
 		$output = '';
 		
 		// get attributes
-		foreach($input as $key=>$value) {
+		foreach ($input as $key=>$value) {
 			$attribute = array();
 
 			if ($key[0] == $this->attribute_tag) {
@@ -64,7 +64,7 @@ class Xml extends AbstractView {
 		}
 
 		// run through all keys
-		foreach($input as $key=>$value) {
+		foreach ($input as $key=>$value) {
 			// set attribs
 			if (isset($attributes[$key])) $attr = ' '.$attributes[$key]; else $attr = '';
 

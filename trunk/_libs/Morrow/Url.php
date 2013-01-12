@@ -24,7 +24,7 @@ namespace Morrow;
 
 class Url {
 
-	public function __construct(){
+	public function __construct() {
 		ini_set('arg_separator.output', '&amp;');
 		$this->page = Factory::load('Page');
 	}
@@ -53,7 +53,7 @@ class Url {
 
 		// URL zusammenbauen
 		$url = '';
-		if(!empty($parts['scheme'])) $url .= $parts['scheme'].'://';
+		if (!empty($parts['scheme'])) $url .= $parts['scheme'].'://';
 		$url .= $parts['user'];
 		if (!empty($parts['pass'])) $url .= ':'.$parts['pass'];
 		if (!empty($parts['user']) OR !empty($parts['pass'])) $url .= '@';
@@ -75,13 +75,13 @@ class Url {
 
 
 	public function makeUrl($path, $query=array(), $replacements=array(), $rel2abs=false, $sep=null) {
-		if($sep !== null) {
+		if ($sep !== null) {
 			ini_set('arg_separator.output', $sep);
 		}
 		
 		// remember whether a slash was at the beginning
 		$absolute = false;
-		if(isset($path[0]) && $path[0] == '/') $absolute = true;
+		if (isset($path[0]) && $path[0] == '/') $absolute = true;
 
 		// take path apart
 		$parts		= $this->parse($path);
@@ -94,13 +94,13 @@ class Url {
 		$fragment	= ( !empty($parts['fragment']) ) ? '#' . $parts['fragment'] :'';
 		
 		// combine query in path with query-array
-		if(!empty($querystring)) {
+		if (!empty($querystring)) {
 			parse_str($querystring, $query_array);
 			$query = array_merge($query_array, $query);
 		}
 
 		// only for internal:
-		if(empty($scheme)) {
+		if (empty($scheme)) {
 			// load only once
 			if (!isset($this->config)) {
 				$this->config = Factory::load('Config');
@@ -118,7 +118,7 @@ class Url {
 				$this->language_default = $this->language->getDefault();
 			}
 			
-			if(empty($path)) {
+			if (empty($path)) {
 				// path empty?
 				$path = $this->page->get('fullpath');
 				$parts	= $this->parse($path);
@@ -128,57 +128,55 @@ class Url {
 			}
 
 			// path: trim slashes
-			if($path != '') $path = trim($path, '/');
+			if ($path != '') $path = trim($path, '/');
 
 			// project  && lang handling
-			$pathparts = explode('/',$path);
+			$pathparts = explode('/', $path);
 			$lang = '';
 			$project = "";
 			// for use with files
 			$project_folder = $this->config_all['projects'][0] . '/';
 
 			// project from context
-			if(!$absolute) {
+			if (!$absolute) {
 				$project = $this->page_get['project_relpath']; 
 				$project_folder = $project;
 				// remove it if it is the default folder
-			}
-			// project explicitly named - so switch
-			elseif(isset($pathparts[0]) && (in_array($pathparts[0], $this->config_all['projects'])) || $pathparts[0] == $this->config_all['projects'][0]) {
+			} elseif (isset($pathparts[0]) && (in_array($pathparts[0], $this->config_all['projects'])) || $pathparts[0] == $this->config_all['projects'][0]) {
+				// project explicitly named - so switch
 				$project = array_shift($pathparts) . "/";
 				$project_folder = $project;
 			}
-			if($project == $this->config_all['projects'][0] . '/') $project = '';
+			if ($project == $this->config_all['projects'][0] . '/') $project = '';
 
 			// language in path?
-			if(isset($pathparts[0]) && in_array($pathparts[0], $this->language_possible)) {
+			if (isset($pathparts[0]) && in_array($pathparts[0], $this->language_possible)) {
 				$lang = array_shift($pathparts);
 			}
 
 			// put it back together
-			$path = implode('/',$pathparts);
+			$path = implode('/', $pathparts);
 
 			// if lang as get-param, it has precedence
 			// load language
 			if (!isset($this->language_get)) $this->language_get = $this->language->get();
 			
-			if(isset($query['language'])) {
+			if (isset($query['language'])) {
 				$lang = $query['language'];
 				unset($query['language']);
-			} else if($this->language_get != $this->language_default) {
+			} else if ($this->language_get != $this->language_default) {
 				$lang = $this->language_get;
 			}
 
-			if(!empty($lang)) $lang .= '/';
+			if (!empty($lang)) $lang .= '/';
 
 			// check if it is a file
-			if(is_file(FW_PATH . $project_folder . $path)) {
+			if (is_file(FW_PATH . $project_folder . $path)) {
 				// add project_folder
 				$path = $project_folder . $path;
-			}
-			// otherwise add lang and project path and slash
-			else {
-				if(!empty($path)) $path .= '/';
+			} else {
+				// otherwise add lang and project path and slash
+				if (!empty($path)) $path .= '/';
 				$path = $project . $lang . $path;
 			}
 
@@ -187,13 +185,13 @@ class Url {
 				$domain_parts = $this->parse($this->page_get['base_href']);
 				$domain_parts['path'] = trim($domain_parts['path'], '/');
 				$host = $domain_parts['host'] . '/';
-				if(!empty($domain_parts['path'])) $host .= $domain_parts['path'] . '/';
-				if(empty($scheme)) $scheme = $domain_parts['scheme'].'://';
+				if (!empty($domain_parts['path'])) $host .= $domain_parts['path'] . '/';
+				if (empty($scheme)) $scheme = $domain_parts['scheme'].'://';
 			}
 		}
 
 		$qstring = '';
-		if(count($query) > 0) {
+		if (count($query) > 0) {
 			$qstring = '?' . http_build_query($query);
 		}
 

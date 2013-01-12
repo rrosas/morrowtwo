@@ -92,7 +92,7 @@ class Factory {
 		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array(ucfirst($instancename));
 		
 		// assign the new class
-		$this->$instancename = call_user_func_array( array(__NAMESPACE__ . '\\Factory','load'), $factory_args );
+		$this->$instancename = call_user_func_array(array(__NAMESPACE__ . '\\Factory','load'), $factory_args);
 		return $this->$instancename;
 	}
 }

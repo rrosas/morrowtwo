@@ -71,11 +71,10 @@ class Debug {
 		$body .= 'Meldung:    '.$errstr."\n";
 		$body .= 'Backtrace:  '."\n\n";
 
-		foreach ($backtrace as $value)
-			{
+		foreach ($backtrace as $value) {
 			$body .= '       File: '.$value['file']." (Line ".$value['line'].")\n";
 			$body .= '   Function: '.$value['class'].$value['type'].$value['function'].'()'."\n\n";
-			}
+		}
 		$body .= "\n";
 
 		file_put_contents($fn, $body, FILE_APPEND);
@@ -249,7 +248,7 @@ class Debug {
 		
 		$file = explode("<br />", $file);
 
-		foreach($file as $key=>$value) {
+		foreach ($file as $key=>$value) {
 			$temp = strip_tags($value);
 			if (empty($temp)) $value = '&nbsp;';
 			$value = '<span>'.$value.'</span>';
@@ -325,12 +324,12 @@ class Debug {
 		$prefix = 'unique';
 		$suffix = 'value';
 
-		if($scope) $vals = $scope;
+		if ($scope) $vals = $scope;
 		else $vals = $GLOBALS;
 
 		$old = $var;
-		$var = $new = $prefix.rand().$suffix; $vname = FALSE;
-		foreach($vals as $key => $val) if($val === $new) $vname = $key;
+		$var = $new = $prefix.rand().$suffix; $vname = false;
+		foreach($vals as $key => $val) if ($val === $new) $vname = $key;
 		$var = $old;
 
 		$output = '<div class="args">';
@@ -340,7 +339,7 @@ class Debug {
 		return $output;
 	}
 
-	protected function dump_php_recursive(&$var, $var_name = NULL, $indent = NULL, $reference = NULL, $depth = 0) {
+	protected function dump_php_recursive(&$var, $var_name = null, $indent = null, $reference = null, $depth = 0) {
 		$colors = array(
 			'String' => 'green',
 			'Integer' => 'red',
@@ -370,26 +369,26 @@ class Debug {
 			$type = ucfirst(gettype($avar));
 
 			// (for historical reasons "double" is returned in case of a float, and not simply "float") 
-			if($type == "Double") { $type = "Float"; }
-			if($type == "Unknown type") { $type = "String"; }
+			if ($type == "Double") $type = "Float";
+			if ($type == "Unknown type") $type = "String";
 			
-			if(is_array($avar)) {
+			if (is_array($avar)) {
 				$count = count($avar);
 				$output .= "$indent" . ($var_name ? "$var_name => ":"") . "<span style='color:$grey'>$type ($count)</span><br />$indent(<br />";
 				$keys = array_keys($avar);
-				foreach($keys as $name) {
+				foreach ($keys as $name) {
 					$value = &$avar[$name];
 					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
 					else $output .= $this->dump_php_recursive($value, "['$name']", $indent.$do_dump_indent, $reference, $depth);
 				}
 				$output .= "$indent)<br />";
-			} elseif(is_object($avar)) {
+			} elseif (is_object($avar)) {
 				$parent_class = get_parent_class($avar) ? ' extends '.get_parent_class($avar) : '';
 				
 				$output .= "$indent$var_name <span style='color:$grey'>$type(".get_class($avar).$parent_class.")</span><br />$indent{<br />";
 
 				// output methods
-				$reflectionClass = new \ReflectionClass( get_class($avar) );
+				$reflectionClass = new \ReflectionClass(get_class($avar));
 				foreach ($reflectionClass->getMethods() as $method) {
 					$output .= "$indent$do_dump_indent";
 					$output .= "<span style='color: #0099c5'>";
@@ -406,19 +405,19 @@ class Debug {
 				// output members
 				$members = get_object_vars($avar);
 				if (count($members) > 0) $output .= "$indent$do_dump_indent<br />";
-				foreach($members as $name=>$value) {
+				foreach ($members as $name=>$value) {
 					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
 					else $output .= $this->dump_php_recursive($value, "$${name}", $indent.$do_dump_indent, $reference, $depth);
 				}
 				$output .= "$indent}<br />";
-			} elseif(is_resource($avar)) {
+			} elseif (is_resource($avar)) {
 				$output .= "$indent$var_name <span style='color:$grey'>$type(".get_resource_type($avar).")</span><br />$indent{<br />";
 				try {
 					$meta_data = stream_get_meta_data($avar);
 				} catch (Exception $e) {
 					$meta_data = array();
 				}
-				foreach($meta_data as $key=>$value) {
+				foreach ($meta_data as $key=>$value) {
 					$output .= $this->dump_php_recursive($value, "['$key']", $indent.$do_dump_indent, $reference);
 				}
 				$output .= "$indent)<br />";
@@ -426,9 +425,9 @@ class Debug {
 				$output .= "$indent$var_name = <span style='color:$grey'>$type(".strlen((string)$avar).")</span> <span style='color: ${colors[$type]}'>";
 				
 				// rewrite output
-				if(is_string($avar)) $output .= "\"".htmlspecialchars($avar)."\"</span><br />";
-				elseif(is_bool($avar)) $output .= ($avar == 1 ? "TRUE":"FALSE")."</span><br />";
-				elseif(is_null($avar)) $output .= "NULL</span><br />";
+				if (is_string($avar)) $output .= "\"".htmlspecialchars($avar)."\"</span><br />";
+				elseif (is_bool($avar)) $output .= ($avar == 1 ? "TRUE":"FALSE")."</span><br />";
+				elseif (is_null($avar)) $output .= "NULL</span><br />";
 				else $output .= "$avar</span><br />";
 			}
 			

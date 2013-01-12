@@ -24,14 +24,14 @@ namespace Morrow;
 
 class View {
 	protected $cachetime = 0;
-	protected $mode = NULL;
+	protected $mode = null;
 	protected $filename;
 	protected $handler;
 	protected $header = array();
 	protected $cacheetag = true;
 
-	protected $properties	= array();
-	protected $filters	= array();
+	protected $properties = array();
+	protected $filters = array();
 
 	public $content;
 
@@ -124,19 +124,18 @@ class View {
 		
 		// add charset and mimetype to hash
 		// if we change one of those we also want to see the actual view
-		$hash = md5( $hash . $displayHandler->charset . $displayHandler->mimetype );
+		$hash = md5($hash . $displayHandler->charset . $displayHandler->mimetype);
 		
 		if ($this->cacheetag) $this->header[] = 'ETag: '.$hash; // HTTP 1.1
 		$this->header[] = 'Vary:';
 		
-		// no caching
 		if ($this->cachetime == 0) {
+			// no caching
 			if ($this->cacheetag) $this->header[] = 'Cache-Control: no-cache, must-revalidate';
 			else $this->header[] = 'Cache-Control: no-store, no-cache, must-revalidate'; // to overwrite default php setting with "no-store"
-		}
-		// caching
-		else {
-			$fileexpired = strtotime( $this->cachetime );
+		} else {
+			// caching
+			$fileexpired = strtotime($this->cachetime);
 			$filemaxage = $fileexpired-time();
 
 			// HTTP 1.0
@@ -186,7 +185,7 @@ class View {
 
 	// return instance of a display handler
 	protected function getDisplayHandler() {
-		if($this->handler == null) {
+		if ($this->handler == null) {
 			// get viewhandler
 			$displayClassName = $this->mode;
 			

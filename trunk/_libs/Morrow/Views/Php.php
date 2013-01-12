@@ -48,13 +48,13 @@ class Php extends AbstractView {
 		// language specific templates
 		$lang = $this->language->get();
 		$lang_template = $this->template . '.' . $lang;
-		if(is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix)) {
+		if (is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix)) {
 			$this->template = $lang_template;
 		}
 
 		// language specific content template
 		$lang_template = $this->content_template . '.' . $lang;
-		if(is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix)) {
+		if (is_file(PROJECT_PATH . '_templates/' . $lang_template . $this->template_suffix)) {
 			$this->content_template = $lang_template;
 		}
 		

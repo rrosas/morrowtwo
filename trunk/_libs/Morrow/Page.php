@@ -22,4 +22,5 @@
 
 namespace Morrow;
 
-class Page extends Config {}
+class Page extends Config {
+}

@@ -90,7 +90,10 @@ class Navigation {
 	}
 
 	public function setActive($id) {
-		if (!isset($this->nodes[$id])) { throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
+		if (!isset($this->nodes[$id])) {
+			throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.');
+			return;
+		}
 		
 		// set active id to retrieve the breadcrumb
 		$this->active_id = $id;
@@ -123,7 +126,10 @@ class Navigation {
 		// return full tree
 		if (is_null($id)) return $this->tree;
 
-		if (!isset($this->nodes[$id])) { throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.'); return; }
+		if (!isset($this->nodes[$id])) {
+			throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.');
+			return;
+		}
 		return $this->nodes[$id];
 	}
 
@@ -141,7 +147,10 @@ class Navigation {
 		$breadcrumb = array();
 		
 		// handle not set active node
-		if (!isset($this->nodes[$this->active_id])) { throw new \Exception(__METHOD__.': you did not set an active node so you cannot retrieve a breadcrumb.'); return; }
+		if (!isset($this->nodes[$this->active_id])) {
+			throw new \Exception(__METHOD__.': you did not set an active node so you cannot retrieve a breadcrumb.');
+			return;
+		}
 		
 		// get actual node
 		$actual = $this->nodes[$this->active_id];

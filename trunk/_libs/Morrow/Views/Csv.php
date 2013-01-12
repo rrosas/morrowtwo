@@ -37,10 +37,10 @@ class Csv extends AbstractView {
 	}
 
 	protected function _outputCSV($input, $handle) {
-		foreach($input as $nr=>$row) {
+		foreach ($input as $nr=>$row) {
 			// use first row for headlines
 			if ($nr == 0 && $this->table_header === true) {
-				fwrite($handle, $this -> _createRow( array_keys($row) ));
+				fwrite($handle, $this -> _createRow(array_keys($row)));
 			}
 
 			fwrite($handle, $this -> _createRow($row));
@@ -49,8 +49,8 @@ class Csv extends AbstractView {
 
 	protected function _createRow($input) {
 		foreach ($input as $key=>$value) {
-			$temp = str_replace('"','""',$value);
-			$temp = preg_replace("=(\r\n|\r|\n)=","\n",$temp);
+			$temp = str_replace('"', '""', $value);
+			$temp = preg_replace("=(\r\n|\r|\n)=", "\n", $temp);
 			$input[$key] = $this->delimiter.$temp.$this->delimiter;
 		}
 		$output = implode($this->separator, $input).$this->linebreaks;

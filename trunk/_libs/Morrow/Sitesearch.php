@@ -48,10 +48,8 @@ class Sitesearch {
 	public function getAll($where = '') {
 		$results = $this->db->Result("
 			SELECT url,title,searchdata,bytes,strftime('%s', changed) as changed, *
-			FROM searchdata
-			".$where."
-		");
-		
+			FROM searchdata ".$where
+		);
 		$returner = $results['RESULT'];
 		return $returner;
 	}
@@ -75,7 +73,8 @@ class Sitesearch {
 		}
 		array_push($replacements, $this->limit);
 		
-		$results = $this->db->Result("
+		$results = $this->db->Result(
+			"
 			SELECT url,title,searchdata,bytes,strftime('%s', changed) as changed
 			FROM searchdata
 			WHERE
