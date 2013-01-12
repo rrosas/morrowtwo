@@ -128,7 +128,7 @@ class Url {
 			}
 
 			// path: trim slashes
-			if($path != '') $path = \Morrow\Helpers\General::url_trimSlashes($path);
+			if($path != '') $path = trim($path, '/');
 
 			// project  && lang handling
 			$pathparts = explode('/',$path);
@@ -185,7 +185,7 @@ class Url {
 			// create complete url with domain
 			if ($rel2abs) {
 				$domain_parts = $this->parse($this->page_get['base_href']);
-				$domain_parts['path'] = \Morrow\Helpers\General::url_trimSlashes($domain_parts['path']);
+				$domain_parts['path'] = trim($domain_parts['path'], '/');
 				$host = $domain_parts['host'] . '/';
 				if(!empty($domain_parts['path'])) $host .= $domain_parts['path'] . '/';
 				if(empty($scheme)) $scheme = $domain_parts['scheme'].'://';

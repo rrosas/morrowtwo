@@ -181,7 +181,7 @@ class Language {
 		the variable langcheck is stored in the session.
 	*/
 	public function setFromClient(){
-		$session = Factory::load("Libraries\Session");
+		$session = Factory::load("Session");
 		$lang = $this->get();
 		if ($session->get("framework.langcheck") !== null) return;
 

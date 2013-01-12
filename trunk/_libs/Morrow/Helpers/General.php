@@ -41,11 +41,6 @@ class General {
 		return $dir;
 	}
 	
-	public static function url_trimSlashes($path) {
-		$path = preg_replace('=^/*(.*?)/*$=si', '$1', $path);
-		return $path;
-	}
-	
 	// This function orders an array like in a sql query
 	public static function array_orderby($data, $orderby) {
 		// all the references are part of a workaround which only occurs with array_multisort and call_user_func_array in PHP >= 5.3

@@ -92,7 +92,7 @@ class FormElement{
 
 
 	public function setValue($value, $overwrite = false){
-		$session = Factory::load("Libraries\Session");
+		$session = Factory::load("Session");
 		$tf_key = 'TMP_FILES.' . $this->name;
 		if(is_array($value)){
 			#special: file
@@ -187,7 +187,7 @@ class FormElement{
 		}
 		#else if($this->value !== '' && $this->checktype != null){
 		else if($this->checktype != null && ($this->value !== '' || $this->comparefield != null)){
-			$validator = Factory::load('\' . $validator_class);
+			$validator = Factory::load('\\' . $validator_class);
 			$function = "check" . $this->checktype;
 			if(!method_exists($validator,$function)){
 				throw new \Exception("Method $function does not exist in class " . get_class($validator) . "!");

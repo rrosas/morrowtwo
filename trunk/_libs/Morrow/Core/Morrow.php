@@ -26,10 +26,6 @@ namespace Morrow\Core;
 use Morrow\Factory;
 
 class Morrow {
-	public function __construct() {
-		$this->_run();
-	}
-
 	public function errorHandler($errno, $errstr, $errfile, $errline) {
 		// get actual error_reporting
 		$error_reporting = error_reporting();
@@ -101,13 +97,22 @@ class Morrow {
 	}
 
 	// This function contains the main application flow
-	protected function _run() {
-		/* load the factory
+	public function __construct() {
+		/* global settings
 		********************************************************************************************/
-		require(FW_PATH . '/_libs/Morrow/Factory.php');
+		// compress the output
+		if(!ob_start("ob_gzhandler")) ob_start();
+
+		// include E_STRICT in error_reporting
+		error_reporting(E_ALL | E_STRICT);
+
+		// define the global FW_PATH constant
+		define('FW_PATH', realpath(__DIR__ .'/../../..') . '/');
+
+		// load the factory
+		require(FW_PATH . '_libs/Morrow/Factory.php');
 		
-		/* register autoloader
-		********************************************************************************************/
+		// register autoloader
 		spl_autoload_register(array($this, 'autoload'));
 		
 		/* register main config in the config class
@@ -141,7 +146,7 @@ class Morrow {
 
 		/* define project
 		********************************************************************************************/
-		$url			= \Morrow\Helpers\General::url_trimSlashes($this->input->get('morrow_content'));
+		$url			= trim($this->input->get('morrow_content'), '/');
 		$url_nodes		= explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
@@ -191,7 +196,7 @@ class Morrow {
 		/* load session
 		********************************************************************************************/
 		$sessionHandler = $this->config->get('session.handler');
-		if($sessionHandler == '') $sessionHandler = 'Session';
+		if (empty($sessionHandler)) $sessionHandler = 'Session';
 		$session = Factory::load($sessionHandler.':session', $this->input->get());
 		
 		/* load languageClass and define alias
@@ -230,12 +235,12 @@ class Morrow {
 		********************************************************************************************/
 		$routes	= $this->config->get('routing');
 		$url	= implode('/',$this->page->get('nodes')); #$this->input->get('morrow_content');
-		$url	= \Morrow\Helpers\General::url_trimSlashes($url);
+		$url	= trim($url, '/');
 	
 		// iterate all rules
 		foreach ($routes as $rule=>$new_url) {
-			$rule		= \Morrow\Helpers\General::url_trimSlashes($rule);
-			$new_url	= \Morrow\Helpers\General::url_trimSlashes($new_url);
+			$rule		= trim($rule, '/');
+			$new_url	= trim($new_url, '/');
 
 			// rebuild route to a preg pattern
 			$preg_route	= preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters. the four backslashes match just one
@@ -255,7 +260,7 @@ class Morrow {
 			// if there is an asterisk the last entry is for the params
 			if (strpos($rule, '*') !== false) {
 				$blind_parameters = array_pop($hits);
-				$blind_parameters = \Morrow\Helpers\General::url_trimSlashes($blind_parameters);
+				$blind_parameters = trim($blind_parameters, DIRECTORY_SEPARATOR);
 				$blind_parameters = explode('/', $blind_parameters);
 				
 				// get asterisk param names

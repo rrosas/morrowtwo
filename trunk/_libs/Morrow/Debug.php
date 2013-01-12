@@ -264,10 +264,15 @@ class Debug {
 		return '<ol start="'.($linestart+1).'">'.$file.'</ol>';
 	}
 
-		
 	/* main method
 	********************************************************************************************/
-	public function dump($input) {
+	public static function dump() {
+		$debug = Factory::load('Debug');
+		$args = func_get_args();
+		echo $debug->_dump($args);
+	}
+		
+	protected function _dump($input) {
 		// get function call position
 		$backtrace = debug_backtrace();
 		$backtrace = $backtrace[1];

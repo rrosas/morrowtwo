@@ -21,33 +21,11 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
-
-$time_start = microtime(true);
-
-// compress the output
-if(!ob_start("ob_gzhandler")) ob_start();
-
-// include E_STRICT in error_reporting
-error_reporting(E_ALL | E_STRICT);
-
-define('FW_PATH', __DIR__ .'/');
-
-/* define dump function
-********************************************************************************************/
-function dump() {
-	$debug = Factory::load('Debug');
-	$args = func_get_args();
-	echo $debug->dump($args);
-}
+//$time_start = microtime(true);
 
 /* load framework
 ********************************************************************************************/
-require(FW_PATH . '/_libs/Morrow/Core/Morrow.php');
-new Core\Morrow();
+require('_libs/Morrow/Core/Morrow.php');
+new Morrow\Core\Morrow();
 
-/*
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-Factory::load('Log')->set(round($time*1000, 2).' ms');
-*/
+//Morrow\Factory::load('Log')->set(round((microtime(true) - $time_start)*1000, 2).' ms');
