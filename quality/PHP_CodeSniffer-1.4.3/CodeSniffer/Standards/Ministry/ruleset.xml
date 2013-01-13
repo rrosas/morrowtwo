@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<ruleset name="Ministry">
+ <description>The Ministry coding standard.</description>
+
+  <!-- PHP code MUST use only UTF-8 without BOM. -->
+ <rule ref="Generic.Files.ByteOrderMark"/>
+
+ <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
+
+ <!-- Class names MUST be declared in StudlyCaps. -->
+ <rule ref="Squiz.Classes.ValidClassName"/>
+
+<!-- Include some additional sniffs from the Generic standard -->
+ <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
+ <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+ <rule ref="Generic.PHP.LowerCaseConstant"/>
+ <rule ref="Generic.PHP.DisallowShortOpenTag"/>
+ <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+
+ <!-- Use Unix newlines -->
+ <rule ref="Generic.Files.LineEndings">
+  <properties>
+   <property name="eolChar" value="\n"/>
+  </properties>
+ </rule>
+
+ <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
+ <rule ref="Zend.Files.ClosingTag"/>
+
+ <!-- When present, there MUST be one blank line after the namespace declaration. -->
+ <rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
+
+ <!-- When present, all use declarations MUST go after the namespace declaration.
+      There MUST be one use keyword per declaration.
+      There MUST be one blank line after the use block. -->
+ <rule ref="PSR2.Namespaces.UseDeclaration"/>
+
+  <!-- Visibility MUST be declared on all methods. -->
+ <rule ref="Squiz.Scope.MethodScope"/>
+ <rule ref="Squiz.WhiteSpace.ScopeKeywordSpacing"/>
+
+ <rule ref="Squiz.Functions.LowercaseFunctionKeywords"/>
+
+ <!-- In the argument list, there MUST NOT be a space before each comma, and there MUST be one space after each comma. -->
+ <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
+  <properties>
+   <property name="equalsSpacing" value="1"/>
+  </properties>
+ </rule>
+
+ <!-- Method arguments with default values MUST go at the end of the argument list. -->
+ <rule ref="PEAR.Functions.ValidDefaultValue"/>
+
+ <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
+
+<!-- The general style rules for control structures are as follows:
+ There MUST be one space after the control structure keyword
+ There MUST NOT be a space after the opening parenthesis
+ There MUST NOT be a space before the closing parenthesis
+ There MUST be one space between the closing parenthesis and the opening brace
+ The structure body MUST be indented once
+ The closing brace MUST be on the next line after the body -->
+ <rule ref="Squiz.ControlStructures.ControlSignature">
+  <properties>
+   <property name="ignoreComments" value="true"/>
+  </properties>
+ </rule>
+ <rule ref="Squiz.WhiteSpace.ScopeClosingBrace"/>
+ <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
+ <rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
+ <rule ref="Squiz.ControlStructures.LowercaseDeclaration"/>
+
+ <!-- The keyword elseif SHOULD be used instead of else if so that all control keywords look like single words. -->
+  <rule ref="PSR2.ControlStructures.ElseIfDeclaration"/>
+
+</ruleset>
+
