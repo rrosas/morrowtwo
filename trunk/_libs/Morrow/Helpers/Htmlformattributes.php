@@ -22,42 +22,41 @@
 
 namespace Morrow\Helpers;
 
-class HtmlFormAttributes{
-
+class HtmlFormAttributes {
 	static protected $global_attributes = array('id', 'class', 'style', 'title', 'dir', 'lang', 'onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown', 'onkeyup', 'autofocus');
 	static protected $attributes = array(
-			"input" => array('accept', 'accesskey', 'align', 'alt', 'checked', 'disabled', 'ismap', 'maxlength', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'size', 'src', 'tabindex', 'type', 'usemap', 'value'),
-			"textarea" => array('accesskey', 'cols', 'disabled', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'rows','tabindex'),
-			"select" => array('disabled', 'multiple', 'name', 'onblur', 'onchange', 'onfocus', 'size', 'tabindex'),
-			"option" => array('disabled', 'label', 'selected', 'value'),
-			"label" => array('accesskey', 'for', 'onblur', 'onfocus'),
-			"legend" => array('accesskey', 'align'),
-			"fieldset" => array(),
-			);
+		"input" => array('accept', 'accesskey', 'align', 'alt', 'checked', 'disabled', 'ismap', 'maxlength', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'size', 'src', 'tabindex', 'type', 'usemap', 'value'),
+		"textarea" => array('accesskey', 'cols', 'disabled', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'rows','tabindex'),
+		"select" => array('disabled', 'multiple', 'name', 'onblur', 'onchange', 'onfocus', 'size', 'tabindex'),
+		"option" => array('disabled', 'label', 'selected', 'value'),
+		"label" => array('accesskey', 'for', 'onblur', 'onfocus'),
+		"legend" => array('accesskey', 'align'),
+		"fieldset" => array(),
+	);
 
-	static public function filterAttributes($tagname, $attributes){
+	static public function filterAttributes($tagname, $attributes) {
 		$tagname = strtolower($tagname);
-		foreach($attributes as $key=>$value){
+		foreach ($attributes as $key => $value) {
 			$attr = strtolower($key);
-			if(!in_array($attr, self::$global_attributes)){
-				if(!isset(self::$attributes[$tagname]) || !in_array($attr, self::$attributes[$tagname])){
+			if (!in_array($attr, self::$global_attributes)) {
+				if (!isset(self::$attributes[$tagname]) || !in_array($attr, self::$attributes[$tagname])) {
 					unset($attributes[$key]);
 				}
 			}
 		}
-		return $attributes;		
+		return $attributes;
 	}
 
-	static public function getAttributeString($attributes, $tagname = null, $filter = true){
+	static public function getAttributeString($attributes, $tagname = null, $filter = true) {
 		// special case for textarea which needs cols and rows to be valid
 		if ($tagname == 'textarea') {
-			$attributes = array_merge( array('cols' => 40, 'rows' => '10'), $attributes);
+			$attributes = array_merge(array('cols' => 40, 'rows' => '10'), $attributes);
 		}
 		
-		if($filter && !is_null($tagname)) $attributes = self::filterAttributes($tagname, $attributes);
+		if ($filter && !is_null($tagname)) $attributes = self::filterAttributes($tagname, $attributes);
 
 		$attr_sets = array();
-		foreach($attributes as $pk=>$pv){
+		foreach ($attributes as $pk => $pv) {
 			$attr_sets[] = "$pk=\"$pv\"";
 		}
 		$attributes = implode(" ", $attr_sets);

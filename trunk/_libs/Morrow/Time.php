@@ -106,7 +106,7 @@ class Time {
 		);
 
 		$fragment = array();
-		foreach ($chunks as $i=>$value) {
+		foreach ($chunks as $i => $value) {
 			$seconds = $value[0];
 			$key = $value[1];
 			$count = floor($since / $seconds);

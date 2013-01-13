@@ -192,7 +192,7 @@ class Cache {
 		$files = scandir($dir);
 
 		// files with leading dot must not be deleted
-		foreach ($files as $key=>$file) {
+		foreach ($files as $key => $file) {
 			if ($file[0] == '.') unset($files[$key]);
 		}
 
@@ -205,7 +205,7 @@ class Cache {
 
 		// delete the matching files
 		$result = 0;
-		foreach ($files as $key=>$file) {
+		foreach ($files as $key => $file) {
 			if (preg_match($pattern, $file)) {
 				$result++;
 				unlink($dir.$file);

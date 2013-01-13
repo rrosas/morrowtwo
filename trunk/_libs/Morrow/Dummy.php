@@ -29,7 +29,7 @@ class Dummy {
 	public $firstname;
 	public $lastname;
 	
-	public function __construct( $encoding = 'utf-8' ) {
+	public function __construct($encoding = 'utf-8') {
 		$this->encoding = $encoding;
 		
 		$this->salutation['female'] = 'Frau';
@@ -49,7 +49,7 @@ class Dummy {
 		$this->tld = array('de', 'com', 'info', 'net', 'org', 'ch', 'at');
 	}
 	
-	public function get( $gender = null ) {
+	public function get($gender = null) {
 		if (!isset($gender)) {
 			$genders = array('male', 'female');
 			$gender = $genders[ array_rand($genders) ];

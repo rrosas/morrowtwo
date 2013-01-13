@@ -67,7 +67,7 @@ class Php extends AbstractView {
 		$content['page']['template'] = $this->template;
 
 		// assign vars
-		foreach ($content as $key=>$value) {
+		foreach ($content as $key => $value) {
 			$$key = $value;
 		}
 

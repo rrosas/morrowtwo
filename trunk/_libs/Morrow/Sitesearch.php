@@ -37,7 +37,7 @@ class Sitesearch {
 		);
 
 		// apply config
-		foreach ($config as $key=>$value) {
+		foreach ($config as $key => $value) {
 			$this->$key = $value;
 		}
 
@@ -63,7 +63,7 @@ class Sitesearch {
 		$q2 = explode(' ', $q);
 		$q_count = count($q2);
 		
-		foreach ($q2 as $key=>$value) {
+		foreach ($q2 as $key => $value) {
 			$q2[$key] = '%'.$value.'%';
 		}
 
@@ -73,8 +73,7 @@ class Sitesearch {
 		}
 		array_push($replacements, $this->limit);
 		
-		$results = $this->db->Result(
-			"
+		$results = $this->db->Result("
 			SELECT url,title,searchdata,bytes,strftime('%s', changed) as changed
 			FROM searchdata
 			WHERE
@@ -94,7 +93,7 @@ class Sitesearch {
 		if (!isset($results['RESULT'][0])) return;
 
 		$phrases = explode(' ', $q);
-		foreach ($results['RESULT'] as $key=>$result) {
+		foreach ($results['RESULT'] as $key => $result) {
 			$new =& $results['RESULT'][$key];
 			
 			$raw = helperString::excerpt($result['searchdata'], $q, $this->contextradius);
@@ -133,7 +132,7 @@ class Sitesearch {
 		$words = explode(' ', $q);
 
 		// exclude all words shorter than 2 chars
-		foreach ($words as $key=>$word) {
+		foreach ($words as $key => $word) {
 			if (strlen($word) < 3) unset ($words[$key]);
 		}
 

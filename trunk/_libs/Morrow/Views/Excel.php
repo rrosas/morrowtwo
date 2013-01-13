@@ -39,7 +39,7 @@ class Excel extends AbstractView {
 
 	protected function _output($input, $handle) {
 		fwrite($handle, '<table cellpadding="0" cellspacing="0" border="0">');
-		foreach ($input as $nr=>$row) {
+		foreach ($input as $nr => $row) {
 
 			if ($nr == 0 && $this->table_header === true) {
 				fwrite($handle, '<tr>');

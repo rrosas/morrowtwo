@@ -36,7 +36,7 @@ class Xml extends AbstractView {
 		// count subkeys. if there is more than one we have to generate an auto container
 		// we have to take care of attributes
 		$count = 0;
-		foreach ($content['content'] as $key=>$item) {
+		foreach ($content['content'] as $key => $item) {
 			if ($key{0} != ':') $count++;
 		}
 		
@@ -50,12 +50,12 @@ class Xml extends AbstractView {
 		$output = '';
 		
 		// get attributes
-		foreach ($input as $key=>$value) {
+		foreach ($input as $key => $value) {
 			$attribute = array();
 
 			if ($key[0] == $this->attribute_tag) {
 				$newkey = substr($key, 1);
-				foreach ($value as $pkey=>$pvalue) {
+				foreach ($value as $pkey => $pvalue) {
 					$attribute[] = $pkey.'="'.htmlspecialchars($pvalue).'"';
 				}
 				$attributes[$newkey] = implode(' ', $attribute);
@@ -64,7 +64,7 @@ class Xml extends AbstractView {
 		}
 
 		// run through all keys
-		foreach ($input as $key=>$value) {
+		foreach ($input as $key => $value) {
 			// set attribs
 			if (isset($attributes[$key])) $attr = ' '.$attributes[$key]; else $attr = '';
 

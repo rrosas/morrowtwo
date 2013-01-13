@@ -34,10 +34,11 @@ class Http {
 		try {
 			// CURLOPT_FOLLOWLOCATION cannot be activated when in safe_mode or an open_basedir is set
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		} catch (Exception $e) {}
+		} catch (\Exception $e) {
+		}
 		curl_setopt($ch, CURLOPT_HEADER, true);
 		curl_setopt($ch, CURLOPT_HTTPGET, true);
-		curl_setopt($ch, CURLOPT_ENCODING , "gzip");
+		curl_setopt($ch, CURLOPT_ENCODING, "gzip");
 		
 		// Trust invalid certificate
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -89,7 +90,7 @@ class Http {
 			
 			// POST request
 			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS,  $post);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		}
 		
 		// HEAD

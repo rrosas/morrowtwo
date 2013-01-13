@@ -162,7 +162,7 @@ class Language {
 	}
 
 	public function translationExists($lang, $alias) {
-		#where is tree?
+		// where is tree?
 		$path = $this->language_path . $lang . '/';
 		$global = $path . '_tree.php';
 		if (is_file($global)) {
@@ -271,7 +271,7 @@ class Language {
 
 		
 		// handle string escape sequences
-		foreach ($catalog as $i=>$v) {
+		foreach ($catalog as $i => $v) {
 			eval("\$catalog[\$i] = ".$v.";");
 		}
 
@@ -279,7 +279,7 @@ class Language {
 		ksort($catalog);
 
 		// check the difference between the catalog and the existing language files
-		foreach ($this->possible as $i=>$al) {
+		foreach ($this->possible as $i => $al) {
 			if ($i === 0) continue;
 
 			$path = $this->language_path . $al . '/i18n.php';
@@ -313,7 +313,7 @@ class Language {
 		if (empty($array)) return '';
 
 		$returner = "\n\t/* $section */\n";
-		foreach ($array as $k=>$v) {
+		foreach ($array as $k => $v) {
 			$key = str_replace("'", "\'", $k);
 			$value = str_replace("'", "\'", $v);
 

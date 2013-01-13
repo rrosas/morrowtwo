@@ -129,7 +129,7 @@ class Morrow {
 		$config = $this->_loadConfigVars(FW_PATH);
 
 		// register config in class
-		foreach ($config as $key=>$array) {
+		foreach ($config as $key => $array) {
 			$this->config->set($key, $array);
 		}
 			
@@ -185,7 +185,7 @@ class Morrow {
 		$config = $this->_loadConfigVars(PROJECT_PATH);
 		
 		// register project config in config class
-		foreach ($config as $key=>$array) {
+		foreach ($config as $key => $array) {
 			$this->config->set($key, $array);
 		}
 
@@ -224,9 +224,6 @@ class Morrow {
 			$this->page->set('nodes', $nodes);
 		}
 		
-		#$alias = implode('_', $nodes);
-		#$this->page->set('alias', $alias);
-
 		// language via input
 		$input_lang = $this->input->get('language');
 
@@ -240,11 +237,11 @@ class Morrow {
 		/* url routing
 		********************************************************************************************/
 		$routes	= $this->config->get('routing');
-		$url	= implode('/', $this->page->get('nodes')); #$this->input->get('morrow_content');
+		$url	= implode('/', $this->page->get('nodes'));
 		$url	= trim($url, '/');
 	
 		// iterate all rules
-		foreach ($routes as $rule=>$new_url) {
+		foreach ($routes as $rule => $new_url) {
 			$rule		= trim($rule, '/');
 			$new_url	= trim($new_url, '/');
 
@@ -282,12 +279,12 @@ class Morrow {
 				$params = array_combine($param_keys[1], $hits);
 				
 				// replace all known params in new_url
-				foreach ($params as $key=>$param) {
+				foreach ($params as $key => $param) {
 					$new_url = str_replace(":$key", $params[$key], $new_url);
 				}
 
 				// register new params in the input class
-				foreach ($params as $key=>$param) {
+				foreach ($params as $key => $param) {
 					$this->input->set($key, $param);
 				}
 			}

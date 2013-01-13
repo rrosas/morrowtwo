@@ -28,7 +28,7 @@ class File {
 		$pattern = $pathinfo['filename'];
 		$pattern = preg_replace("=[^\w\*\?]=i", '', $pattern);
 		$pattern = strtolower($pattern);
-		$pattern = preg_replace('=([\*|\?])=', '.$1',$pattern);
+		$pattern = preg_replace('=([\*|\?])=', '.$1', $pattern);
 		if(isset($pathinfo['extension'])) $pattern . "." . $pathinfo['extension'];
 		return $pattern;
 	}
@@ -40,7 +40,7 @@ class File {
 			$c++;
 			$a = $a/1024;
 		}
-		return number_format($a,($c ? 2 : 0),$dec_point, $thousands_sep).' '.$unim[$c];
+		return number_format($a, ($c ? 2 : 0), $dec_point, $thousands_sep).' '.$unim[$c];
 	}
 
 	public static function dirlist($dir, $endings = null) {
@@ -48,12 +48,12 @@ class File {
 		$d = dir($dir);
 		$list = array();
 		while (false !== ($entry = $d->read())) {
-		   if($entry{0} == '.') continue;
-		   $pi = pathinfo($entry);
-		   if(!is_dir($dir . "/" . $entry) && ($endings != null && (!isset($pi['extension']) || !in_array($pi['extension'], $endings)))) continue;
-		   $k = 'files';
-		   if(is_dir($dir . "/" . $entry)) $k = 'dirs';
-		   $list[$k][] = $entry;
+			if($entry{0} == '.') continue;
+			$pi = pathinfo($entry);
+			if(!is_dir($dir . "/" . $entry) && ($endings != null && (!isset($pi['extension']) || !in_array($pi['extension'], $endings)))) continue;
+			$k = 'files';
+			if(is_dir($dir . "/" . $entry)) $k = 'dirs';
+			$list[$k][] = $entry;
 		}
 		$d->close();
 		return $list;
@@ -191,11 +191,11 @@ class File {
 		
 		$path = rtrim($path, '/').'/';
 		$handle = opendir($path);
-		for (;false !== ($file = readdir($handle));) {
+		for (; false !== ($file = readdir($handle));) {
 			if($file == "." or $file == ".." ) continue;
 			
 			$fullpath = $path.$file;
-			if(!is_link($fullpath) &&  is_dir($fullpath) ) {
+			if (!is_link($fullpath) && is_dir($fullpath)) {
 				self::rmdir_recurse($fullpath);
 			} else {
 				unlink($fullpath);
@@ -219,7 +219,7 @@ class File {
 			chmod($dst, $dir_permissions);
 		}
 		
-		while(false !== ( $file = readdir($dir)) ) {
+		while (false !== ( $file = readdir($dir)) ) {
 			if ($file{0} == '.') continue;
 
 			if (is_link($src . $file)) {

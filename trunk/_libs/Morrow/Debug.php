@@ -87,7 +87,7 @@ class Debug {
 		$error .= '<h1 class="exception">'.$errstr.'</h1>';
 
 		$count = 0;
-		foreach ($backtrace as $key=>$value) {
+		foreach ($backtrace as $key => $value) {
 			// only if file is available
 			if (!empty($value['file']) && is_file($value['file'])) {
 				$id_file = 'errorhandler_file_'.$this->errorcounter.'_'.$count;
@@ -177,7 +177,7 @@ class Debug {
 		}
 		
 		$content = str_split($content, 5000);
-		foreach ($content as $i=>$c) {
+		foreach ($content as $i => $c) {
 			$c = base64_encode($c);
 			header('X-Debug-'.($this->x_debug_count+$i).': '.$c);
 		}
@@ -210,7 +210,7 @@ class Debug {
 		
 		// clean array
 		$backtrace_keys = array('file'=>'', 'line'=>'', 'class'=>'', 'object'=>'', 'type'=>'', 'function'=>'', 'args'=>array());
-		foreach ($backtrace as $key=>$value) {
+		foreach ($backtrace as $key => $value) {
 			$backtrace[$key] = array_merge($backtrace_keys, $value);
 		}
 		
@@ -248,7 +248,7 @@ class Debug {
 		
 		$file = explode("<br />", $file);
 
-		foreach ($file as $key=>$value) {
+		foreach ($file as $key => $value) {
 			$temp = strip_tags($value);
 			if (empty($temp)) $value = '&nbsp;';
 			$value = '<span>'.$value.'</span>';
@@ -405,7 +405,7 @@ class Debug {
 				// output members
 				$members = get_object_vars($avar);
 				if (count($members) > 0) $output .= "$indent$do_dump_indent<br />";
-				foreach ($members as $name=>$value) {
+				foreach ($members as $name => $value) {
 					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
 					else $output .= $this->dump_php_recursive($value, "$${name}", $indent.$do_dump_indent, $reference, $depth);
 				}
@@ -414,10 +414,10 @@ class Debug {
 				$output .= "$indent$var_name <span style='color:$grey'>$type(".get_resource_type($avar).")</span><br />$indent{<br />";
 				try {
 					$meta_data = stream_get_meta_data($avar);
-				} catch (Exception $e) {
+				} catch (\Exception $e) {
 					$meta_data = array();
 				}
-				foreach ($meta_data as $key=>$value) {
+				foreach ($meta_data as $key => $value) {
 					$output .= $this->dump_php_recursive($value, "['$key']", $indent.$do_dump_indent, $reference);
 				}
 				$output .= "$indent)<br />";

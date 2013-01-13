@@ -48,7 +48,7 @@ class Form {
 		$page = Factory::load('Page');
 		$alias = $page->get('alias');
 			
-		#elements definition
+		// elements definition
 		$elements = array();
 		$g_deffile = PROJECT_PATH . "_forms/_global.php";
 		$deffile = PROJECT_PATH . "_forms/" . $alias  . ".php";
@@ -56,7 +56,7 @@ class Form {
 		if (is_file($deffile)) include($deffile);
 		$settings['elements'] = $elements;
 		
-		#language content / locale
+		// language content / locale
 		$language = Factory::load('Language');
 		$settings['locale'] = $language->getLocale();
 		
@@ -78,8 +78,8 @@ class Form {
 	}
 
 	protected function _parseDef($formdef) {
-		foreach ($formdef as $formkey=>$element_def) {
-			foreach ($element_def as $key=>$el) {
+		foreach ($formdef as $formkey => $element_def) {
+			foreach ($element_def as $key => $el) {
 				$required = isset($el['required'])?$el['required']:false;
 				$checktype = isset($el['checktype'])?$el['checktype']:null;
 				$comparefield = isset($el['compare'])?$el['compare']:null;
@@ -88,10 +88,10 @@ class Form {
 				switch ($el['type']) {
 					case 'set':
 						$new_element = new FormElementSet($this, $key, $required, $checktype);
-						#options
+						// options
 						$options = isset($el['options'])?$el['options']:array();
 						$new_element->setOptions($options);
-						#multiple = true/false
+						// multiple = true/false
 						$multiple = isset($el['multiple'])?$el['multiple']:false;
 						$new_element->setMultipleSelect($multiple);
 						break;
@@ -105,7 +105,7 @@ class Form {
 				if (isset($el['label'])) {
 					$new_element->setLabel($el['label']);
 				}
-				#default value in element definition
+				// default value in element definition
 				if (isset($el['default'])) {
 					$new_element->setDefault($el['default']);
 				}
@@ -113,7 +113,7 @@ class Form {
 				$new_element->comparefield = $comparefield;
 				$new_element->arguments = $arguments;	
 				$this->elements[$formkey][$key] = $new_element;
-				#new def has been loaded after input
+				// new def has been loaded after input
 				if (isset($this->_rawinput[$formkey][$key])) $this->elements[$formkey][$key]->setValue($this->_rawinput[$formkey][$key], true);
 			}
 		}
@@ -129,7 +129,7 @@ class Form {
 		$errors = array();
 		if ($formname == null) $formname = $this->submittedForm;
 		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key=>$eldef) {
+			foreach ($this->elements[$formname] as $key => $eldef) {
 				if ($eldef->error != null) $errors[$key] = $eldef->error;
 			}
 		}
@@ -148,7 +148,7 @@ class Form {
 		$values = array();
 		if ($formname == null) $formname = $this->submittedForm;
 		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key=>$eldef) {
+			foreach ($this->elements[$formname] as $key => $eldef) {
 				$values[$key] = $eldef->value;
 			}
 		}
@@ -174,7 +174,7 @@ class Form {
 		//dump(array($formname, $values));
 		
 		if (!$this->_checkElements($formname)) return false;
-		foreach ($this->elements[$formname] as $key=>$elobj) {
+		foreach ($this->elements[$formname] as $key => $elobj) {
 			$overwrite = $overwriteall;
 			if (isset($values[$key])) $overwrite = true;
 			else $values[$key] = '';
@@ -185,7 +185,7 @@ class Form {
 	public function clearValues($formname = null) {
 		if ($formname == null) $formname = $this->submittedForm;
 		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key=>$eldef) {
+			foreach ($this->elements[$formname] as $key => $eldef) {
 				$eldef->setValue(null, true);
 			}
 			return true;
@@ -196,7 +196,7 @@ class Form {
 	public function resetValues($formname = null) {
 		if ($formname == null) $formname = $this->submittedForm;
 		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key=>$eldef) {
+			foreach ($this->elements[$formname] as $key => $eldef) {
 				$eldef->setValue('', true);
 				$eldef->setValue($eldef->getDefault());
 			}
@@ -205,7 +205,7 @@ class Form {
 	return false;
 	}
 
-	#only for setting user input (from _POST/_GET)
+	// only for setting user input (from _POST/_GET)
 	public function setInput($input) {
 		$this->_rawinput = $input;
 		$this->submitted = false;
@@ -215,7 +215,7 @@ class Form {
 		// check submitted an which form
 		$formkeys = array_keys($this->elements);
 		
-		foreach ($this->elements as $formkey=>$def) {
+		foreach ($this->elements as $formkey => $def) {
 			if (!isset($input[$formkey])) continue;
 
 			$this->submitted = true;
@@ -236,18 +236,18 @@ class Form {
 		}
 	}
 
-	public function validate($formname=null,$limit = null) {
+	public function validate($formname = null, $limit = null) {
 		if ($formname == null) $formname = $this->submittedForm;
 		if (!$this->_checkElements($formname)) return false;
 
-		foreach ($this->elements[$formname] as $key=>$element) {	
+		foreach ($this->elements[$formname] as $key => $element) {	
 			if (is_array($limit) && !in_array($key, $limit)) continue;
 			if (!$element->validate($formname, $this->_validator)) $this->has_errors = true;
 		}
 		return !$this->has_errors;
 	}
 
-	public function fillSet($formname, $fieldname, $sets, $replaceall=false, $default = null) {
+	public function fillSet($formname, $fieldname, $sets, $replaceall = false, $default = null) {
 		if (!$this->_checkElements($formname, $fieldname)) return false;
 
 		if ($this->elements[$formname][$fieldname]->type != "set") {
@@ -267,12 +267,12 @@ class Form {
 	public function multiplyField($formname, $fieldname, $key_label) {
 		$old_el = $this->elements[$formname][$fieldname];
 		$els = array();
-		foreach ($key_label as $key=>$label) {
+		foreach ($key_label as $key => $label) {
 			$new_name = $fieldname . '(' . $key . ')';
 			$new_el = clone $old_el;
 			$new_el->setLabel($label);
 			$new_el->setName($new_name);
-			#maybe there was input for this field?
+			// maybe there was input for this field?
 			if (isset($this->_rawinput[$formname][$new_name])) {
 				$new_el->setValue($this->_rawinput[$formname][$new_name], true);
 			}
@@ -281,7 +281,7 @@ class Form {
 		unset($this->elements[$formname][$fieldname]);
 	}
 
-	protected function  _checkElements($formname, $fieldname=null) {
+	protected function  _checkElements($formname, $fieldname = null) {
 		if (!isset($this->elements[$formname])) {
 			throw new \Exception("Missing Form-Def for '" . $formname . "' !");
 			return false;

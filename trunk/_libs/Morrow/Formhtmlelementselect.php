@@ -22,72 +22,65 @@
 
 namespace Morrow;
 
-class formhtmlelementSelect extends formhtmlelement{
+class FormhtmlelementSelect extends Formhtmlelement {
+	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
+		$classes = array();
+		$class = '';
+		$styles = '';
+		if (isset($params['opt_classes'])) {
+			$classes = $params['opt_classes'];
+		}
+		if (isset($params['class'])) {
+			$class = $params['class'];
+		}
+		if (isset($params['styles'])) {
+			$styles = $params['styles'];
+		}
+		$multiplestr = "";
+		if ($multiple) { 
+			$multiplestr = "multiple=\"multiple\"";
+			$name .= "[]";
+		}
+		$output = array_values($options);
+		$keys = array_keys($options);
+		$content = "<select id=\"$id\" name=\"$name\"  " . HelperHtmlFormAttributes::getAttributeString($params, 'select') . " $multiplestr>" . chr(10);
+		$content .= HelperHtmlOptions::getOutput('', $keys, $output, $values, $class, $styles, $classes);
 
-	public function getDisplay($name, $values, $id, $params, $options, $multiple){	
-			$classes = array();
-			$class = '';
-			$styles = '';
-			if(isset($params['opt_classes'])){
-				$classes = $params['opt_classes'];
-			}
-			if(isset($params['class'])){
-				$class = $params['class'];
-			}
-			if(isset($params['styles'])){
-				$styles = $params['styles'];
-			}
-			$multiplestr = "";
-			if($multiple){ 
-				$multiplestr = "multiple=\"multiple\"";
-				$name .= "[]";
-			}
-			$output = array_values($options);
-			$keys = array_keys($options);
-			$content = "<select id=\"$id\" name=\"$name\"  " . HelperHtmlFormAttributes::getAttributeString($params, 'select') . " $multiplestr>" . chr(10);
-			$content .= HelperHtmlOptions::getOutput('', $keys, $output, $values, $class,$styles, $classes);
-
-			$content .= "</select>" . chr(10);
-			return $content;
-		
+		$content .= "</select>" . chr(10);
+		return $content;
 	}
 
-	public function getReadonly($name, $values, $id, $params, $options, $multiple){
-		if($multiple){ 
+	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
+		if ($multiple) {
 			$name .= "[]";
 		}
 		$content = '';
-		if(is_array($values)){
-			foreach($values as $value){
+		if (is_array($values)) {
+			foreach ($values as $value) {
 				$content .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />';
 				$content .= '<div '. HelperHtmlFormAttributes::getAttributeString($params, 'div') .'>'.$options[$value].'</div>';
 			}
-		}
-		else {
+		} else {
 			$value = $values;
-			if(isset($options[$values])) $value = $options[$values];
+			if (isset($options[$values])) $value = $options[$values];
 			$content .= '<input type="hidden" name="'.$name.'" value="'.$values.'" />';
 			$content .= '<div '. HelperHtmlFormAttributes::getAttributeString($params, 'div') .'>'.$value.'</div>';
 		}
-                return $content;
-	}	
+		return $content;
+	}
 
-	public function getListDisplay($values, $params, $options = array()){
+	public function getListDisplay($values, $params, $options = array()) {
 		$content = '';
-		if(is_array($values)){
+		if (is_array($values)) {
 			$tmp_content = array();
-			foreach($values as $value){
+			foreach ($values as $value) {
 				$tmp_content[] = isset($options[$value]) ? htmlspecialchars($options[$value], ENT_QUOTES, $this->page->get('charset')) : htmlspecialchars($value, ENT_QUOTES, $this->page->get('charset'));
 			}
-			#$content = implode(', ', $tmp_content);
 			$content = '<ul><li>' . implode('</li><li>', $tmp_content) . '</li></ul>';
-		}
-		else{
+		} else {
 			$content = isset($options[$values]) ? $options[$values] : $values;
 			$content = htmlspecialchars($content, ENT_QUOTES, $this->page->get('charset'));
 		}
 		return $content;
-	}	
-
-
+	}
 }

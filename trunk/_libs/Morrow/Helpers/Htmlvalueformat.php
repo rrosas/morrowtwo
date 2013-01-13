@@ -22,7 +22,7 @@
 
 
 namespace Morrow\Helpers;
-	
+
 /*
 e.g.:
 ~~ htmlvalueformat::format($value, $currency, $numberFormat) ~
@@ -66,45 +66,43 @@ class HtmlValueFormat {
 		return $defaults[$what];
 	}
 	
-	public static function format($VALUE, $currency, $numberFormat=false) {
+	public static function format($VALUE, $currency, $numberFormat = false) {
 		// format -------------------------------------------------
-		$currency = self::loadDefaults('format' , $currency);
-		if($VALUE < '0') {
+		$currency = self::loadDefaults('format', $currency);
+		if ($VALUE < '0') {
 			$currency['plus'] = '';
 			$currency['zero'] = '';
-		}
-		elseif($VALUE > '0') {
+		} elseif ($VALUE > '0') {
 			$currency['minus'] = '';
 			$currency['zero'] = '';
+		} else { 
+			$currency['plus'] = '';
+			$currency['minus'] = '';
 		}
-		else { 
- 			$currency['plus'] = '';
- 			$currency['minus'] = '';
-		}
-		$fvalue = number_format(abs($VALUE) , $currency['decimal'] , $currency['separator'] , $currency['thou']);
+		$fvalue = number_format(abs($VALUE), $currency['decimal'], $currency['separator'], $currency['thou']);
 		$currency['value'] = $fvalue;
 		$fvalue = $currency['format'];
- 		foreach($currency as $index=>$trash) {
- 			$muster = "/\[$index\]/";
- 			$fvalue = preg_replace($muster , $currency[$index] , $fvalue);
+		foreach ($currency as $index => $trash) {
+			$muster = "/\[$index\]/";
+			$fvalue = preg_replace($muster, $currency[$index], $fvalue);
 		}
 		// clean up all not used parser
-		$fvalue = preg_replace("/\[(.*?)\]/" , "", $fvalue);
+		$fvalue = preg_replace("/\[(.*?)\]/", "", $fvalue);
 		
 		// html attributes -----------------------------------------
-		if($numberFormat!=false) {
-			$numberFormat = self::loadDefaults('attr' , $numberFormat);
+		if ($numberFormat != false) {
+			$numberFormat = self::loadDefaults('attr', $numberFormat);
 				// tag
 			$_tag = $numberFormat['tag'];
 			unset($numberFormat['tag']);
-			$_attr = NULL;
+			$_attr = null;
 				// isset ALL
-			if(isset($numberFormat['all'])) {
+			if (isset($numberFormat['all'])) {
 				$_attr = $numberFormat['all'];
 				unset($numberFormat['all']);
 			}
 				// selected
-			foreach($numberFormat as $lim=>$attr) {
+			foreach ($numberFormat as $lim => $attr) {
 				eval ("if($VALUE$lim) \$_attr = '$attr';");
 			}
 			$fvalue = "<$_tag $_attr>$fvalue</$_tag>";
@@ -114,11 +112,11 @@ class HtmlValueFormat {
 		
 	protected static function loadDefaults($what, $numberFormat) {
 		$defaults = self::defaults($what);
- 		foreach($defaults as $index=>$default) {
- 			if(!isset($numberFormat[$index])) {
- 				$numberFormat[$index] = $default;
- 				}
- 			}
- 		return $numberFormat;
- 	}
+		foreach ($defaults as $index => $default) {
+			if (!isset($numberFormat[$index])) {
+				$numberFormat[$index] = $default;
+			}
+		}
+		return $numberFormat;
+	}
 }

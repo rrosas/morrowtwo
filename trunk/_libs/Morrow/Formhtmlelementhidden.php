@@ -22,21 +22,17 @@
 
 namespace Morrow;
 
-class formhtmlelementHidden extends formhtmlelement{
-
-	public function getDisplay($name, $values, $id, $params, $options, $multiple){	
+class FormhtmlelementHidden extends Formhtmlelement {
+	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		return "<input id=\"" . $id . "\" type=\"hidden\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  HelperHtmlFormAttributes::getAttributeString($params, 'input')  . " />";
-		
 	}
 
-	public function getReadonly($name, $values, $id, $params, $options, $multiple){
+	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
 		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
-                return $content;
-	}	
+		return $content;
+	}
 
-	public function getListDisplay($values, $params, $options=array()){
+	public function getListDisplay($values, $params, $options = array()) {
 		return '';
-	}	
-
-
+	}
 }

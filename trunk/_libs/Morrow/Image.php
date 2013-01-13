@@ -76,11 +76,14 @@ class Image {
 		$defaults['height'] = array('integer', null);
 
 		// validate params
-		foreach ($defaults as $key=>$value) {
+		foreach ($defaults as $key => $value) {
 			if (isset($params[$key])) {
 				// check type
 				$type = gettype($params[$key]);
-				if ($type !== $value[0]) { throw new \Exception(__CLASS__.': "'.$key.'" has to be of type "'.$value[0].'"'); return; }
+				if ($type !== $value[0]) {
+					throw new \Exception(__CLASS__.': "'.$key.'" has to be of type "'.$value[0].'"');
+					return;
+				}
 			} else {
 				// set default
 				if (!is_null($value[1])) $params[$key] = $value[1];
@@ -141,7 +144,10 @@ class Image {
 		$img_height = imagesy($img_obj);
 
 		$imagesize = getimagesize($frame_file);
-		if ($imagesize[0] != $imagesize[1] OR $imagesize[0]%3 OR !file_exists($frame_file)) { throw new \Exception('wrong dimensions of "frame"-image or width and height is not a multiplier of 3'); return; }
+		if ($imagesize[0] != $imagesize[1] OR $imagesize[0]%3 OR !file_exists($frame_file)) {
+			throw new \Exception('wrong dimensions of "frame"-image or width and height is not a multiplier of 3');
+			return;
+		}
 
 		// "frame"-Bild laden und initialisieren
 		$frame = imagecreatefrompng($frame_file);
@@ -187,7 +193,7 @@ class Image {
 	}
 	
 	protected function _getCacheFilename($file_path, &$params) {
-		if (!is_readable($file_path)) { throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); }
+		if (!is_readable($file_path)) throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable');
 
 		$types = array('jpg', 'gif', 'png');
 		if (!isset($params['type']) OR !is_string($params['type']) OR !in_array($params['type'], $types))
@@ -195,7 +201,7 @@ class Image {
 		
 		// create hash for caching
 		$filemtime = filemtime($file_path);
-		$hash = md5($file_path.$filemtime.implode('',$params));
+		$hash = md5($file_path.$filemtime.implode('', $params));
 		$filename = $this->cache_dir.$hash.'.'.$params['type'];
 		return $filename;
 	}
@@ -220,7 +226,7 @@ class Image {
 		$params['pointsize '] = '60';
 
 		// create parameters from $_GET
-		foreach ($params as $key=>$value) $params[$key] = "-$key $value";
+		foreach ($params as $key => $value) $params[$key] = "-$key $value";
 
 		$params = implode(' ', $params);
 		$command = "convert $params '{$file}[0]'";
@@ -240,14 +246,14 @@ class Image {
 
 	// returns an image object of a given file path
 	public function load($file_path) {
-		if (!is_readable($file_path)) { throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable'); }
+		if (!is_readable($file_path)) throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable');
 
 		$data = getimagesize($file_path);
 
 		if ($data[2] == 1)	$img_obj = imagecreatefromgif($file_path);
 		elseif ($data[2] == 2)	$img_obj = imagecreatefromjpeg($file_path);
 		elseif ($data[2] == 3)	$img_obj = imagecreatefrompng($file_path);
-		else { throw new \Exception(__CLASS__.': file "'.$file_path.'" is not a valid image format'); }
+		else throw new \Exception(__CLASS__.': file "'.$file_path.'" is not a valid image format');
 		
 		return $img_obj;
 	}
@@ -276,10 +282,9 @@ class Image {
 		// first try gd to process
 		try {
 			$thumb = $this->get($data['filename'], $data['params'], false, $cache_file_name);
-		}
-		// now try imagemagick to preprocess
-		// im creates a temporary image which should be deleted after gd processing
-		catch (Exception $e) {
+		} catch (\Exception $e) {
+			// now try imagemagick to preprocess
+			// im creates a temporary image which should be deleted after gd processing
 			$thumb = $this->_im_get( $data['filename'] );
 			$tmp_file = $thumb;
 			
@@ -330,7 +335,7 @@ class Image {
 		elseif ($params['type'] === 'gif') imagegif($img_obj, $filename);
 		
 		return $filename;
-		}
+	}
 
 	
 	protected function preFilter($img_obj, $params) {
@@ -379,7 +384,7 @@ class Image {
 		$_DST['offset_w'] = 0;
 		$_DST['offset_h'] = 0;
 				
-		if($params['crop'] === true) {
+		if ($params['crop'] === true) {
 			$width_ratio = $_SRC['width']/$_DST['width'];
 			$height_ratio = $_SRC['height']/$_DST['height'];
 
@@ -397,9 +402,8 @@ class Image {
 						break;
 				}
 				$_SRC['width'] = round($_DST['width']*$height_ratio);
-			}
-			// crop on height
-			elseif ($width_ratio < $height_ratio) {
+			} elseif ($width_ratio < $height_ratio) {
+				// crop on height
 				switch($params['crop_position']) {
 					case '1':
 						$_DST['offset_h'] = 0;
@@ -421,7 +425,7 @@ class Image {
 			$_DST['height'] = $_SRC['height'];
 		}
 
-		### now create the image
+		// now create the image
 		$_SRC['image'] = $img_obj;
 
 		// if the source image is too big first scale down linear to an image four times bigger than the target image 
@@ -433,7 +437,7 @@ class Image {
 			
 			// preserve image transparancy
 			imagealphablending($_TMP['image'], false);
-			imagesavealpha($_TMP['image'],true);
+			imagesavealpha($_TMP['image'], true);
 
 			imagecopyresized($_TMP['image'], $_SRC['image'], 0, 0, $_DST['offset_w'], $_DST['offset_h'], $_TMP['width'], $_TMP['height'], $_SRC['width'], $_SRC['height']);
 			$_SRC['image'] = $_TMP['image'];
@@ -451,7 +455,7 @@ class Image {
 
 		// preserve image transparancy
 		imagealphablending($_DST['image'], false);
-		imagesavealpha($_DST['image'],true);
+		imagesavealpha($_DST['image'], true);
 
 		imagefill($_DST['image'], 0, 0, imagecolorallocate ($_DST['image'], 255, 255, 255));
 		imagecopyresampled($_DST['image'], $_SRC['image'], 0, 0, $_DST['offset_w'], $_DST['offset_h'], $_DST['width'], $_DST['height'], $_SRC['width'], $_SRC['height']);

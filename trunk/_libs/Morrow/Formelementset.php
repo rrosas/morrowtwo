@@ -28,60 +28,53 @@ class FormElementSet extends FormElement{
 	public $options = array();
 	public $multiple = false;
 
-	public function setDefault($value){
-		if(!isset($value)) {
+	public function setDefault($value) {
+		if (!isset($value)) {
 			$value = '';
-			if($this->multiple) $value = array();
-		}
-		else if($this->multiple && !is_array($value)) $value = array($value);
+			if ($this->multiple) $value = array();
+		} elseif ($this->multiple && !is_array($value)) $value = array($value);
 		$this->default = $value;
 		if ($this->value === null || ($this->multiple && count($this->value)==0)) $this->value = $this->default;
-		#$this->checktype = null;
 	}
 
-	public function getOptions(){
+	public function getOptions() {
 		return $this->options;
 	}
 	
-	public function setOptions($values){
+	public function setOptions($values) {
 		$this->options = $values;
 	}
 	
-	public function addOptions($values){
-		$this->options = array_merge($this->options,$values);
+	public function addOptions($values) {
+		$this->options = array_merge($this->options, $values);
 	}
 
-	public function setMultipleSelect($multiple){
+	public function setMultipleSelect($multiple) {
 		return $this->multiple = $multiple;
 	}
 
-	public function isMultipleSelect(){
+	public function isMultipleSelect() {
 		return $this->multiple;
 	}
 
-
-	public function setValue($value, $overwrite = false){
-		if($this->multiple) {
+	public function setValue($value, $overwrite = false) {
+		if ($this->multiple) {
 			$this->example = '';
-			if(is_array($value) && count($value)>0){
+			if (is_array($value) && count($value)>0) {
 				$this->value = array();
-				foreach($value as $idx=>$item){
+				foreach ($value as $idx => $item) {
 					$this->value[] = $item;
 				}
-	
-			}
-			else if($overwrite)  $this->value = array();
-		}
-		else {
+			} elseif ($overwrite) $this->value = array();
+		} else {
 			parent::setValue($value, $overwrite);
 		}
-
 	}
 
 	protected function _getKeysRecursive($array) {
 		$returner = array();
 		
-		foreach ($array as $key=>$value) {
+		foreach ($array as $key => $value) {
 			if (is_array($value)) $returner = array_merge($returner, $this->_getKeysRecursive($value));
 			else $returner[] = $key;
 		}
@@ -89,35 +82,29 @@ class FormElementSet extends FormElement{
 		return $returner;
 	}
 	
-	public function validate($formname, $validator_class = 'validator'){
+	public function validate($formname, $validator_class = 'validator') {
 		$options_to_check = $this->_getKeysRecursive($this->options);
 		
 		// remove values that have been set but are not in options
-		if(is_array($this->value)){
-			foreach($this->value as $idx=>$item){
-				if(!in_array($item, $options_to_check)){
+		if (is_array($this->value)) {
+			foreach ($this->value as $idx => $item) {
+				if (!in_array($item, $options_to_check)) {
 					unset($this->value[$idx]);
 				}
 			}
-		}
-		else if(!in_array($this->value, $options_to_check)){
+		} elseif (!in_array($this->value, $options_to_check)) {
 			$this->value = '';
 		}
 	
-		if($this->multiple) {
+		if ($this->multiple) {
 			$this->comparefield = null;
-			if($this->required && (!is_array($this->value) || count($this->value) == 0)){
+			if ($this->required && (!is_array($this->value) || count($this->value) == 0)) {
 				$this->setError(Factory::load('Language')->_('This field is required.'));
 				return false;
 			}
 			return true;
-
-
-		}
-		else{
+		} else {
 			return parent::validate($formname, $validator_class);
 		}
-
 	}
-
 }

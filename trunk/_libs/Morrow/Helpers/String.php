@@ -31,7 +31,7 @@ class String {
 			if (!$break_words && !$middle) {
 				$string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length+1));
 			}
-			if(!$middle) {
+			if (!$middle) {
 				return substr($string, 0, $length) . $etc;
 			} else {
 				return substr($string, 0, $length/2) . $etc . substr($string, -$length/2);
@@ -193,9 +193,8 @@ class String {
 				
 					$line .= sprintf("=%02X", $ord);
 					$count_line += 3;
-				}
-				// we have a character which doesn't encoding
-				else {
+				} else {
+					// we have a character which doesn't encoding
 					if ($count_line == $line_width) {
 						$line .= '=';
 						$returner[] = $line;

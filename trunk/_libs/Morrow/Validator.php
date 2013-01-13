@@ -62,7 +62,7 @@ class Validator {
 		return $var;
 	}
 		
-	public static function checkPassword($value, &$error, $compare_value=null) {
+	public static function checkPassword($value, &$error, $compare_value = null) {
 		if (strlen($value) > 0 && strlen($value) < 5) {
 			$error = Factory::load('Language')->_('Passwords must be at least 5 characters long.');
 			return false;
@@ -74,7 +74,7 @@ class Validator {
 		return true;
 	}
 
-	public static function checkCurrency($value, &$error, $compare_value=null, $locale=array()) {
+	public static function checkCurrency($value, &$error, $compare_value = null, $locale = array()) {
 		$sep = ".";
 		if (isset($locale['currency']['separator'])) {
 			$sep = $locale['currency']['separator'];
@@ -129,7 +129,7 @@ class Validator {
 		$return   = false;
 		
 		if (self::checkDate($birthday, $error) === true) {
-			$age = floor((date("Ymd") - Time::create($c.birthday)->date('Ymd')) / 10000);
+			$age = floor((date("Ymd") - Time::create($birthday)->date('Ymd')) / 10000);
 			
 			if ($age >= 18) return true;
 		}

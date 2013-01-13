@@ -73,7 +73,7 @@ class General {
 		for ($i=0; $i<=$count; $i=$i+2) {
 			$field = $params[$i];
 			$params[$i] = array();
-			foreach ($data as $ii=>$row) {
+			foreach ($data as $ii => $row) {
 				$temp[$field][] = strtolower($row[$field]);
 			}
 			
@@ -94,7 +94,7 @@ class General {
 			$r = $a1;
 		}
 
-		foreach($a1 as $k => $v) {
+		foreach ($a1 as $k => $v) {
 			if (is_array($v)) {
 				$temp = self::array_diff_key_recursive($a1[$k], $a2[$k]);
 				if (count($temp) > 0) {
@@ -111,11 +111,11 @@ class General {
 		$parameters = func_get_args();
 
 		// Validation
-		if(count($parameters) >= 2) {
+		if (count($parameters) >= 2) {
 			$_return = true;
 
-			foreach($parameters as $parameter) {
-				if(!is_array($parameter)) {
+			foreach ($parameters as $parameter) {
+				if (!is_array($parameter)) {
 					$_return = false;
 					throw new \Exception(__METHOD__ . ': Only arrays can be merged', E_USER_ERROR);
 					break;
@@ -125,15 +125,15 @@ class General {
 			throw new \Exception(__METHOD__ . ': Two or more arrays needed to be merged', E_USER_ERROR);
 		}
 
-		if($_return = true) {
+		if ($_return = true) {
 			$_return = array_shift($parameters);
 
-			foreach($parameters as $parameter) {
-				foreach($parameter as $key => $value) {
+			foreach ($parameters as $parameter) {
+				foreach ($parameter as $key => $value) {
 					$type = gettype($value);
 					switch($type) {
 						case 'array':
-							if(isset($_return[$key]) && is_array($_return[$key])) {
+							if (isset($_return[$key]) && is_array($_return[$key])) {
 								$_return[$key] = self::array_merge_recursive($_return[$key], $parameter[$key]);
 							} else {
 								$_return[$key] = $parameter[$key];
@@ -152,8 +152,12 @@ class General {
 
 	public static function array_dotSyntaxGet(&$array, $identifier) {
 		// Validierung
-		if (!is_array($array)) { throw new \Exception(__CLASS__.': first parameter has to be of type "array".'); }
-		if (!is_string($identifier) AND !is_null($identifier)) { throw new \Exception(__CLASS__.': second parameter has to be of type "string".'); }
+		if (!is_array($array)) {
+			throw new \Exception(__CLASS__.': first parameter has to be of type "array".');
+		}
+		if (!is_string($identifier) AND !is_null($identifier)) {
+			throw new \Exception(__CLASS__.': second parameter has to be of type "string".');
+		}
 		if (empty($identifier)) return $array;
 
 		// Referenz erstellen
@@ -163,9 +167,8 @@ class General {
 			// Wenn es den Array-Schlüssel gibt, Referenz erweitern
 			if (isset($returner[$part])) {
 				$returner =& $returner[$part];
-			}
-			// ansonsten Referenz löschen
-			else {
+			} else {
+				// ansonsten Referenz löschen
 				unset($returner);
 				break;
 			}
@@ -177,15 +180,21 @@ class General {
 
 	public static function array_dotSyntaxSet(&$array, $identifier, $value) {
 		// Validierung
-		if (!is_array($array)) { throw new \Exception(__CLASS__.': first parameter has to be of type "array".'); }
-		if (!is_string($identifier) OR empty($identifier)) { throw new \Exception(__CLASS__.': identifier has to be of type "string" and must not be empty.'); }
+		if (!is_array($array)) {
+			throw new \Exception(__CLASS__.': first parameter has to be of type "array".');
+		}
+		if (!is_string($identifier) OR empty($identifier)) {
+			throw new \Exception(__CLASS__.': identifier has to be of type "string" and must not be empty.');
+		}
 
 		// Referenz erstellen
 		$parts = explode('.', $identifier);
 		$returner =& $array;
 		
 		foreach ($parts as $part) {
-			if (strlen($part) === 0) { throw new \Exception(__CLASS__.': a key must not be empty.'); }
+			if (strlen($part) === 0) {
+				throw new \Exception(__CLASS__.': a key must not be empty.');
+			}
 			if (!isset($returner[$part])) {
 				$returner[$part] = '';
 			}
@@ -201,8 +210,8 @@ class General {
 
 	public static function array_dotSyntaxDelete(&$array, $identifier) {
 		// Validierung
-		if (!is_array($array)) { throw new \Exception(__CLASS__.': first parameter has to be of type "array".'); }
-		if (!is_string($identifier)) { throw new \Exception(__CLASS__.': second parameter has to be of type "string".'); }
+		if (!is_array($array)) throw new \Exception(__CLASS__.': first parameter has to be of type "array".');
+		if (!is_string($identifier)) throw new \Exception(__CLASS__.': second parameter has to be of type "string".');
 
 		// Referenz erstellen
 		$parts = explode('.', $identifier);
@@ -214,16 +223,15 @@ class General {
 				$parent =& $returner;
 				$rkey = $part;
 				$returner =& $returner[$part];
-			}
-			// ansonsten Referenz löschen
-			else {
+			} else {
+				// ansonsten Referenz löschen
 				unset($returner);
 				break;
 			}
 		}
 
 		if (isset($returner)) {
-		    unset($parent[$rkey]);
+			unset($parent[$rkey]);
 			return true;
 		} else {
 			throw new \Exception(__CLASS__.': identifier "'.$identifier.'" does not exist.');
@@ -234,14 +242,14 @@ class General {
 		$data = array();
 
 		// Iterate keys
-		foreach ($array as $rkey=>$row) {
+		foreach ($array as $rkey => $row) {
 			$parent =& $data;
-			$parts = explode('.',$rkey);
+			$parts = explode('.', $rkey);
 
 			// Iterate key parts
 			foreach ($parts as $part) {
 				// build values
-				if(!isset($parent[$part]) || !is_array($parent[$part])) {
+				if (!isset($parent[$part]) || !is_array($parent[$part])) {
 					if ($part === end($parts)) {
 						if (!is_array($row)) $parent[$part] = $row;
 						else $parent[$part] = self::array_dotSyntaxExplode($row);

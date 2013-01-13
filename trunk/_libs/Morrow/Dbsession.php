@@ -48,13 +48,13 @@ class DBSession extends Session{
 			throw new \Exception('You must turn off session.auto_start in your php.ini or use different session handler');
 		}
 
-		#setting the session handlers
+		// setting the session handlers
 		$junk = session_set_save_handler(array($this, "on_session_start"), array($this,"on_session_end"), array($this,"on_session_read"), array($this,"on_session_write"), array($this,"on_session_destroy"), array($this,"on_session_gc"));
 
 		$this->config = Factory::load('Config');
 		$this->db = Factory::load('Db', $this->config->get('session.db'));
 
-		#important!: call the parent constructor
+		// important!: call the parent constructor
 		parent::__construct($data);
 	}
 

@@ -40,7 +40,7 @@ class View {
 	public static function strip($buffer) {
 		$pat = array("=^\s+=", "=\s{2,}=", "=\s+\$=", "=>\s*<([a-z])=");
 		$rep = array("", " ", "", "><$1");
-		$buffer = preg_replace($pat,$rep,$buffer);
+		$buffer = preg_replace($pat, $rep, $buffer);
 		return $buffer;
 	}
 		
@@ -93,7 +93,7 @@ class View {
 		try {
 			$path = Factory::load('Image')->get($filepath, $params);
 			$path = str_replace(FW_PATH, '', $path);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			if (isset($params['fallback'])) {
 				$path = Factory::load('Image')->get($params['fallback'], $params);
 				$path = str_replace(FW_PATH, '', $path);
@@ -114,14 +114,14 @@ class View {
 		$comparator = filemtime($filepath);
 		$path       = PROJECT_PATH . 'temp/image/' . $id . '.png';
 		
-		if(!$cache->load($id, $comparator)) {
+		if (!$cache->load($id, $comparator)) {
 			$image = new ImageObject($filepath);
 			
-			foreach($calls as $method => $parameters) {
+			foreach ($calls as $method => $parameters) {
 				call_user_func_array(array($image, $method), $parameters);
 			}
 			
-			$image = $image->get('png', true, 9, NULL);
+			$image = $image->get('png', true, 9, null);
 			
 			$cache->save($id, $path, '+1 year', $comparator);
 			file_put_contents($path, $image);

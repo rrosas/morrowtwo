@@ -23,23 +23,23 @@
 
 namespace Morrow;
 
-class formfilter{
-
-	public static function outDate($values){
+class Formfilter {
+	public static function outDate($values) {
 		$y = $values['_Year'];
 		$m = $values['_Month'];
 		$d = $values['_Day'];
 		$h = $values['_Hour'];
 		$min = $values['_Min'];
 		$sec = $values['_Sec'];
-		if(empty($y) && empty($m) && empty($d)) return '';
+		if (empty($y) && empty($m) && empty($d)) return '';
 		$out = sprintf("%s-%s-%s %s:%s:%s", $y, $m, $d, $h, $min, $sec);
 		return $out;
 	}
-	public static function inDate($value){
-		if(is_array($value)) return $value;
+	
+	public static function inDate($value) {
+		if (is_array($value)) return $value;
 		$values = array();
-		if(preg_match("/([0-9]{4})-([0-9]{2})-([0-9]{2}) ?([0-9]{2})?:?([0-9]{2})?:?([0-9]{2})?/", $value, $matches)){
+		if (preg_match("/([0-9]{4})-([0-9]{2})-([0-9]{2}) ?([0-9]{2})?:?([0-9]{2})?:?([0-9]{2})?/", $value, $matches)) {
 			$values['_Year'] = $matches[1];
 			$values['_Month'] = $matches[2];
 			$values['_Day'] = $matches[3];
@@ -49,8 +49,5 @@ class formfilter{
 			return $values;
 		}
 		return $value;
-
-
 	}
 }
-

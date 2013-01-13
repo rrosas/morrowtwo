@@ -67,14 +67,14 @@ class Url {
 	}
 
 	// Führt ein sauberes HTTP-Redirect aus
-	public function redirect($path, $query=array(), $replacements=array(), $http_response_code=302) {
+	public function redirect($path, $query = array(), $replacements = array(), $http_response_code = 302) {
 		$url = $this->makeUrl($path, $query, $replacements, true, '&');
 		header('Location: '.$url, true, $http_response_code);
 		die('');
 	}
 
 
-	public function makeUrl($path, $query=array(), $replacements=array(), $rel2abs=false, $sep=null) {
+	public function makeUrl($path, $query = array(), $replacements = array(), $rel2abs = false, $sep = null) {
 		if ($sep !== null) {
 			ini_set('arg_separator.output', $sep);
 		}
@@ -164,7 +164,7 @@ class Url {
 			if (isset($query['language'])) {
 				$lang = $query['language'];
 				unset($query['language']);
-			} else if ($this->language_get != $this->language_default) {
+			} elseif ($this->language_get != $this->language_default) {
 				$lang = $this->language_get;
 			}
 

@@ -25,22 +25,21 @@ namespace Morrow\Helpers;
 class HtmlDate {
 	static	$defaults = array();
 
-	static public function getOutput($el_key, $date_str=null, $date_format="%d%m%Y", $start_year=null, $end_year=null, $params=array()){
- 		if (!function_exists('getOperator'))
-			function getOperator($string, &$operator){
-				$number = substr($string, 1);
-				if($string{0} == '+'){
-					$operator = $number;
-					return true;
-				}
-				if($string{0} == '-'){
-					$operator = $number*(-1);
-					return true;
-				}
-				return false;
-			}
+	static public function getOperator($string, &$operator) {
+		$number = substr($string, 1);
+		if ($string{0} == '+') {
+			$operator = $number;
+			return true;
+		}
+		if ($string{0} == '-') {
+			$operator = $number*(-1);
+			return true;
+		}
+		return false;
+	}
 
-       self::$defaults = array(
+	static public function getOutput($el_key, $date_str = null, $date_format = "%d%m%Y", $start_year = null, $end_year = null, $params = array()) {
+		self::$defaults = array(
 			'_Year' => date('Y'),
 			'_Month' => date('m'),
 			'_Day' => date('d'),
@@ -49,23 +48,22 @@ class HtmlDate {
 			'_Sec' =>  '00',
 		);
 
-	
-		if($start_year == null)  $start_year=date("Y")-1;
-		if($end_year == null)  $end_year=date("Y")+5;
+		if ($start_year == null) $start_year = date("Y")-1;
+		if ($end_year == null) $end_year = date("Y")+5;
 
-		if(getOperator($start_year, $operator )){
-			$start_year=date("Y")+$operator;
+		if (self::getOperator($start_year, $operator)) {
+			$start_year = date("Y")+$operator;
 		}
-		if(getOperator($end_year, $operator )){
-			$end_year=date("Y")+$operator;
+		if (self::getOperator($end_year, $operator )) {
+			$end_year = date("Y")+$operator;
 		}
 
-		if($date_str === null) $date_str = "today";
-		else if($date_str == ''){
+		if ($date_str === null) $date_str = "today";
+		elseif ($date_str == '') {
 			$date_str = "0000-00-00 00:00:00";
 		}
 
-		if(!preg_match("/[0-9]{0,4}-[0-9]{0,2}-[0-9]{0,2} [0-9]{2}:[0-9]{2}:[0-9]{2}/", $date_str)) {
+		if (!preg_match("/[0-9]{0,4}-[0-9]{0,2}-[0-9]{0,2} [0-9]{2}:[0-9]{2}:[0-9]{2}/", $date_str)) {
 			$date_str = date('Y-m-d H:i:s', strtotime($date_str));
 		}
 
@@ -77,35 +75,34 @@ class HtmlDate {
 		self::$defaults['_Min'] = $matches[5];
 		self::$defaults['_Sec'] = $matches[6];
 
-		#groups
+		// groups
 		$sep_match = "([^%]*)";
-                preg_match_all("/(%[a-zA-Z]{1})?(" . $sep_match . "?)/", $date_format, $matches);
+		preg_match_all("/(%[a-zA-Z]{1})?(" . $sep_match . "?)/", $date_format, $matches);
 		$options = $matches[1];
 		$separators = $matches[2];
 
-                $_html_result = '';
-		foreach($options as $k=>$op){
+		$_html_result = '';
+		foreach ($options as $k => $op) {
 			$_html_result .= self::getOptions($el_key, $op, $start_year, $end_year, $params);
 			$_html_result .= $separators[$k];
 		}
-		foreach(self::$defaults as $ln=>$left){
-
+		foreach (self::$defaults as $ln => $left) {
 			$_html_result .= '<input type="hidden" name="'. $el_key . '[' .$ln.']" value="'.$left.'" />';
 		}
 
 		return $_html_result;
 	}
 
-	protected static function getOptions($el_key, $format, $start_year, $end_year, $params = array()){
+	protected static function getOptions($el_key, $format, $start_year, $end_year, $params = array()) {
 		$class = ''; 
 		$style = array();
 		$classes = array(); 
 		$extras = array();
 
-		foreach($params as $key=>$value){
-			if($key == "class") $class = $value;
-			if($key == "style") $style = $value;
-			if($key == "classes") $classes = $value;
+		foreach ($params as $key => $value) {
+			if ($key == "class") $class = $value;
+			if ($key == "style") $style = $value;
+			if ($key == "classes") $classes = $value;
 			else $extras[$key] = $value;
 		}
 
@@ -113,38 +110,41 @@ class HtmlDate {
 		$month_codes = array("%b", "%B","%h", "%m");
 		$year_codes = array("%y", "%Y");
 
-		$days = range(0,31);
-		$months = range(0,12);
-		$years = range($start_year-1,$end_year);
+		$days = range(0, 31);
+		$months = range(0, 12);
+		$years = range($start_year-1, $end_year);
 
-		$hours = range(-1,23);
-		$min = range(-1,59);
-		$sec = range(-1,59);
+		$hours = range(-1, 23);
+		$min = range(-1, 59);
+		$sec = range(-1, 59);
 
-		switch ($format){
-			case '%p': return '';break;
-			case '%I': $format = '%H';
+		switch ($format) {
+			case '%p':
+				return '';
+				break;
+			case '%I':
+				$format = '%H';
 			case '%H': 
 				$name = "[_Hour]";
 				$sel = self::$defaults['_Hour'];
-                                $options = $hours;
-                                $stt = date('Y') . "-01-01 %s:00:00";
-                                unset(self::$defaults['_Hour']);
-                                break;
+				$options = $hours;
+				$stt = date('Y') . "-01-01 %s:00:00";
+				unset(self::$defaults['_Hour']);
+				break;
 			case '%M': 
 				$name = "[_Min]";
 				$sel = self::$defaults['_Min'];
-                                $options = $min;
-                                $stt = date('Y') . "-01-01 00:%s:00";
-                                unset(self::$defaults['_Min']);
-                                break;
+				$options = $min;
+				$stt = date('Y') . "-01-01 00:%s:00";
+				unset(self::$defaults['_Min']);
+				break;
 			case '%S': 
 				$name = "[_Sec]";
 				$sel = self::$defaults['_Sec'];
-                                $options = $min;
-                                $stt = date('Y') . "-01-01 00:00:%s";
-                                unset(self::$defaults['_Sec']);
-                                break;
+				$options = $min;
+				$stt = date('Y') . "-01-01 00:00:%s";
+				unset(self::$defaults['_Sec']);
+				break;
 			case "%d":
 			case "%e":
 				$name = "[_Day]";
@@ -177,30 +177,16 @@ class HtmlDate {
 			
 		$selected = array();
 		$output = array();
-		foreach($options as $k=>$opt){
-			if($k==0) {
+		foreach ($options as $k => $opt) {
+			if ($k==0) {
 				$options[$k] = '';
 				$output[$k] = '';
-			}
-			else{
-				$options[$k] = sprintf("%02s",$opt);
-				$output[$k] = strftime($format , strtotime(sprintf($stt, $opt)));
-				if($opt == $sel) $selected[] = $opt;
+			} else {
+				$options[$k] = sprintf("%02s", $opt);
+				$output[$k] = strftime($format, strtotime(sprintf($stt, $opt)));
+				if ($opt == $sel) $selected[] = $opt;
 			}
 		}
 		return HelperHtmlOptions::getOutput($el_key . $name, $options, $output, $selected, $class, $style, $classes, $extras);
 	}
-}
-
-function getOperator($string, &$operator) {
-	$number = substr($string, 1);
-	if($string{0} == '+'){
-		$operator = $number;
-		return true;
-	}
-	if($string{0} == '-'){
-		$operator = $number*(-1);
-		return true;
-	}
-	return false;
 }

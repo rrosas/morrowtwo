@@ -37,7 +37,7 @@ class Flash extends AbstractView {
 	protected function _outputVars($var, $input, $handle) {
 		if (is_array($input)) {
 			if (count($input) === 0) return '';
-			foreach ($input as $key=>$value) {
+			foreach ($input as $key => $value) {
 				if (is_numeric($key)) $key = $this->numeric_prefix.$key;
 				if (!empty($var)) $var_to = $var.'_'.$key;
 				else $var_to = $key;

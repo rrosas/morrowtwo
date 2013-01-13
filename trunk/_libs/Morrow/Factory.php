@@ -69,7 +69,7 @@ class Factory {
 
 	public static function debug() {
 		$returner = array();
-		foreach (self::$instances as $class=>$value) {
+		foreach (self::$instances as $class => $value) {
 			$returner[$class] = get_class($value);
 		}
 		\Morrow\dump($returner);

@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormElement{
+class FormElement {
 	public $type = "simple";
 	protected $_fh;
 
@@ -31,174 +31,164 @@ class FormElement{
 	public $comparefield = null;
 	public $arguments = null;
 
-	#aus lang
+	// aus lang
 	public $default;
 	public $example;
 	public $label; 
 	public $name;
 
-	#aus user input 
+	// aus user input 
 	public $value = null;
 
-	#aus formhandler / Lang
+	// aus formhandler / Lang
 	public $error = null;
 
-	public function __construct($formhandler, $name, $required=false, $checktype=null) {
+	public function __construct($formhandler, $name, $required = false, $checktype = null) {
 		$this->_fh = $formhandler;
 		$this->required = $required;
 		$this->checktype = $checktype;
 		$this->name = $name;
 	}
 
-	public function getType(){
+	public function getType() {
 		return $this->type;
 	}
 
-	public function setDefault($value){
-		if(!isset($value)) $value = '';
+	public function setDefault($value) {
+		if (!isset($value)) $value = '';
 		$this->default = $value;
 		if ($this->value === null) {
 			$this->value = $this->default;
 		}
 	}
 
-	public function getDefault(){
+	public function getDefault() {
 		return $this->default;
 	}
 
-	public function setName($name){
+	public function setName($name) {
 		$this->name = $name;
 	}
 
-	public function getName(){
+	public function getName() {
 		return $this->name;
 	}
 
-	public function setLabel($label){
+	public function setLabel($label) {
 		$this->label = $label;
 	}
 
-	public function getLabel(){
+	public function getLabel() {
 		return $this->label;
 	}
 
-	public function setRequired($required=true){
+	public function setRequired($required = true) {
 		$this->required = $required;
 	}
 
-	public function isRequired(){
+	public function isRequired() {
 		return $this->required;
 	}
 
-
-	public function setValue($value, $overwrite = false){
+	public function setValue($value, $overwrite = false) {
 		$session = Factory::load("Session");
 		$tf_key = 'TMP_FILES.' . $this->name;
-		if(is_array($value)){
-			#special: file
-			if(isset($value['tmp_name'])){
-				if(empty($value['tmp_name'])){
-					if($session->get($tf_key)!=''){
-						if(!empty($value['name']) && $value['error'] > 0){
+		if (is_array($value)) {
+			// special: file
+			if (isset($value['tmp_name'])) {
+				if (empty($value['tmp_name'])) {
+					if ($session->get($tf_key)!='') {
+						if (!empty($value['name']) && $value['error'] > 0) {
 							$session->delete($tf_key);
-						}
-						else{
+						} else {
 							$value = $session->get($tf_key);
-							#put file back to tmp
-							file_put_contents($value['tmp_name'],$value['src']);
+							// put file back to tmp
+							file_put_contents($value['tmp_name'], $value['src']);
 							unset($value['src']);
 						}
-					}
-					else {
+					} else {
 						$value = '';
 					}
-				}
-				else{
-					#save file to session
-					if(is_file($value['tmp_name'])){	
+				} else {
+					// save file to session
+					if (is_file($value['tmp_name'])) {
 						$session->set($tf_key, $value);
 						$session->set($tf_key . ".src", file_get_contents($value['tmp_name']));
 					}
 				}
-			}
-			else{
-				#check out-filter
-				if(isset($value['__filter'])){
+			} else {
+				// check out-filter
+				if (isset($value['__filter'])) {
 					$filtermethod = 'out' . $value['__filter'];
 					unset($value['__filter']);
 					$empty = true;
-					foreach($value as $v){
-						if(!empty($v)) $empty = false;
+					foreach ($value as $v) {
+						if (!empty($v)) $empty = false;
 					}
-					if($empty) $value = '';
-					else if(class_exists('formfilter') && method_exists('formfilter',$filtermethod)){
+					if ($empty) $value = '';
+					elseif (class_exists('formfilter') && method_exists('formfilter', $filtermethod)) {
 						$value = formfilter::$filtermethod($value);
 					}
 				}
 			}
 		}
 
-		#form called without submitting, remove any file-data stored in the session
-		if(!$this->_fh->isSubmitted() && $session->get($tf_key)!='') {
+		// form called without submitting, remove any file-data stored in the session
+		if (!$this->_fh->isSubmitted() && $session->get($tf_key)!='') {
 			$session->delete($tf_key);
 		}
 
-		if(empty($value) && !$overwrite){
+		if (empty($value) && !$overwrite) {
 			$value = $this->value;
 		}
 
-		if(!empty($this->example) && $value === $this->example) $value = "";
+		if (!empty($this->example) && $value === $this->example) $value = "";
 		$this->value = $value;
-		#the value should no longer be null
-		if($this->value === null) $this->value = '';
+		// the value should no longer be null
+		if ($this->value === null) $this->value = '';
 	}
 
-	public function getValue(){
+	public function getValue() {
 		if ($this->value === null) return '';
 
 		return $this->value;
 	}
 
-	public function setExample($value){
+	public function setExample($value) {
 		$this->example = $value;
 	}
 
-	public function getExample(){
+	public function getExample() {
 		return $this->example;
 	}
 
-	public function setError($value){
+	public function setError($value) {
 		$this->error = $value;
 	}
 
-	public function validate($formname, $validator_class = 'validator'){
-		if($this->value === null){
-			throw new \Exception("You must set all element values before validating (" . $this->name . ")");
-		}
+	public function validate($formname, $validator_class = 'validator') {
+		if ($this->value === null) throw new \Exception("You must set all element values before validating (" . $this->name . ")");
 
 		$compare = null;
-		if(isset($this->comparefield) && isset($this->_fh->elements[$formname][$this->comparefield])){
+		if (isset($this->comparefield) && isset($this->_fh->elements[$formname][$this->comparefield])) {
 			$compare = $this->_fh->elements[$formname][$this->comparefield]->getValue();
 		}
 
-		if($this->required && $this->value === ''){
+		if ($this->required && $this->value === '') {
 			$this->setError(Factory::load('Language')->_("This field is required."));
 			return false;
-		}
-		#else if($this->value !== '' && $this->checktype != null){
-		else if($this->checktype != null && ($this->value !== '' || $this->comparefield != null)){
+		} elseif ($this->checktype != null && ($this->value !== '' || $this->comparefield != null)) {
 			$validator = Factory::load('\\' . $validator_class);
 			$function = "check" . $this->checktype;
-			if(!method_exists($validator,$function)){
+			if (!method_exists($validator, $function)) {
 				throw new \Exception("Method $function does not exist in class " . get_class($validator) . "!");
-			}
-			else{
-				if(!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)){
+			} else {
+				if (!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)) {
 					$this->setError($errorkey);
-					#if it was a file, remove it from session
+					// if it was a file, remove it from session
 					$session = Factory::load("Libraries\Session");
 					$tf_key = 'TMP_FILES.' . $this->name;
-					if($session->get($tf_key)!='') {
+					if ($session->get($tf_key)!='') {
 						$session->delete($tf_key);
 					}
 					return false;
@@ -207,5 +197,4 @@ class FormElement{
 		}
 		return true;
 	}
-
 }

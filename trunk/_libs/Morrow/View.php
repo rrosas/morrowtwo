@@ -68,7 +68,7 @@ class View {
 		// overwrite default properties
 		$mimetype_changed = false;
 		if (isset($this->properties[$this->mode]))
-			foreach ($this->properties[$this->mode] as $key=>$value) {
+			foreach ($this->properties[$this->mode] as $key => $value) {
 				if (!isset($displayHandler->$key))
 					throw new \Exception(__CLASS__.': the property "'.$key.'" does not exist for handler "'.$this->mode.'".');
 				$displayHandler->$key = $value;
@@ -79,7 +79,7 @@ class View {
 		$this->content['page']['charset'] = $displayHandler->charset;
 		$this->content['page']['mimetype'] = $displayHandler->mimetype;
 		
-		### set standard header lines (those headers will be cached)
+		// set standard header lines (those headers will be cached)
 		// set download header
 		if (!empty($displayHandler->downloadable)) {
 			if (!$mimetype_changed) {
@@ -96,7 +96,7 @@ class View {
 		// set content type
 		$this->header[] = 'Content-Type: '.$displayHandler->mimetype.'; charset='.$displayHandler->charset;
 		
-		### output
+		// output
 		// create stream handle for the output
 		$handle = fopen('php://temp/maxmemory:'.(1*1024*1024), 'r+'); // 1MB
 

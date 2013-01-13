@@ -101,9 +101,9 @@ class Input {
 		if (is_array($_files)) {
 			foreach ($_files as $fkey => $fvalue) {
 				if (is_array($fvalue)) {
-					foreach ($fvalue as $varname=>$varpair) {
+					foreach ($fvalue as $varname => $varpair) {
 						if (is_array($varpair)) {
-							foreach ($varpair as $fieldname=>$varvalue) {
+							foreach ($varpair as $fieldname => $varvalue) {
 								$return_files[$fkey][$fieldname][$varname]=$varvalue;
 							}
 						} else {
@@ -118,7 +118,7 @@ class Input {
 
 	public function removeXss($var) {
 		if (is_array($var)) {
-			foreach ($var as $key=>$value) {
+			foreach ($var as $key => $value) {
 				$var[$key] = $this->_removeXss($value);
 			}
 		} else {

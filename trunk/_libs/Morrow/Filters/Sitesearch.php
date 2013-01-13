@@ -53,7 +53,7 @@ class Sitesearch extends AbstractFilter {
 		);
 		
 		// apply config
-		foreach ($config as $key=>$value) {
+		foreach ($config as $key => $value) {
 			$this->$key = $value;
 		}
 	}
@@ -142,7 +142,7 @@ class Sitesearch extends AbstractFilter {
 		// execute exclude patterns
 		$save_to_db = true;
 		foreach ($this->exclude_patterns as $patterns) {
-			foreach ($patterns as $field=>$pattern) {
+			foreach ($patterns as $field => $pattern) {
 				if (preg_match($pattern, $replace[$field])) {
 					$save_to_db = false;
 					break;

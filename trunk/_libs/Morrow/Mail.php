@@ -28,7 +28,7 @@ class Mail extends PHPMailer {
 	public function __construct($config) {
 		// set settings from config class
 		if (isset($config) && is_array($config))
-			foreach ($config as $key=>$value) {
+			foreach ($config as $key => $value) {
 				$this -> $key = $config[$key];
 			}
 	}

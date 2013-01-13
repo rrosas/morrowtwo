@@ -23,26 +23,24 @@
 
 namespace Morrow;
 
-abstract class formhtmlelement{
-	protected $page;	
+abstract class Formhtmlelement {
+	protected $page;
 
-	public function __construct(){
+	public function __construct() {
 		$this->page = Factory::load('Page');
 	}
 
-	public function getLabel($value, $for_id, $params){
+	public function getLabel($value, $for_id, $params) {
 		return "<label for=\"" . $for_id . "\" " . HelperHtmlFormAttributes::getAttributeString($params, 'label') . ">$value</label>";
 	}
-	public function getError($value, $params, $tagname){
-		 return "<$tagname " . HelperHtmlFormAttributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
+	public function getError($value, $params, $tagname) {
+		return "<$tagname " . HelperHtmlFormAttributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
 	}
 
-	abstract public function getDisplay($name, $values, $id, $params, $options, $multiple);	
-	abstract public function getReadonly($name, $values, $id, $params, $options, $multiple);	
+	abstract public function getDisplay($name, $values, $id, $params, $options, $multiple);
+	abstract public function getReadonly($name, $values, $id, $params, $options, $multiple);
 
-	public function getListDisplay($values, $params, $options=array()){
+	public function getListDisplay($values, $params, $options = array()) {
 		return $values;
-	}	
-
-
+	}
 }

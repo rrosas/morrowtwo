@@ -107,7 +107,7 @@ class Db extends PDO {
 		return $returner;
 	}
 		
-	public function insert($table,$array,$insertid = false) {
+	public function insert($table, $array, $insertid = false) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
@@ -121,7 +121,7 @@ class Db extends PDO {
 		return $returner;
 	}
 
-	public function insertSafe($table,$array,$insertid = false) {
+	public function insertSafe($table, $array, $insertid = false) {
 		$array = $this->_safe($table, $array);
 		return $this -> Insert($table, $array, $insertid);
 	}
@@ -131,7 +131,7 @@ class Db extends PDO {
 		$tokens = array();
 		
 		// divide normal values from function calls
-		foreach ($array as $key=>$value) {
+		foreach ($array as $key => $value) {
 			if (is_array($value)) {
 				$tokens[] = '`'.$key.'`='.$value['FUNC'];
 			} else {
@@ -146,7 +146,7 @@ class Db extends PDO {
 		return $returner;
 	}
 
-	public function update($table, $array, $where='', $affected_rows=false, $where_tokens=array()) {
+	public function update($table, $array, $where = '', $affected_rows = false, $where_tokens = array()) {
 		$array = $this->_createUpdateValues($array);
 		extract($array);
 		
@@ -166,7 +166,7 @@ class Db extends PDO {
 		return $returner;
 	}
 
-	public function updateSafe($table, $array, $where='', $affected_rows=false, $where_tokens=array()) {
+	public function updateSafe($table, $array, $where = '', $affected_rows = false, $where_tokens = array()) {
 		$array = $this->_safe($table, $array);
 		return $this -> Update($table, $array, $where, $affected_rows, $where_tokens);
 	}
@@ -192,7 +192,7 @@ class Db extends PDO {
 		return $returner;
 	}
 
-	public function replace($table,$array,$insertid = false) {
+	public function replace($table, $array, $insertid = false) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
@@ -206,12 +206,12 @@ class Db extends PDO {
 		return $returner;
 	}
 
-	public function replaceSafe($table,$array,$insertid = false) {
+	public function replaceSafe($table, $array, $insertid = false) {
 		$array = $this->_safe($table, $array);
 		return $this -> Replace($table, $array, $insertid);
 	}
 		
-	public function delete($table, $where, $affected_rows=false, $where_tokens=array()) {
+	public function delete($table, $where, $affected_rows = false, $where_tokens = array()) {
 		// add tokens of where clause
 		$values = array();
 		if (is_scalar($where_tokens)) $where_tokens = array($where_tokens);
@@ -260,7 +260,7 @@ class Db extends PDO {
 		}
 		
 		// remove all not existent keys
-		foreach ($array as $key=>$value) {
+		foreach ($array as $key => $value) {
 			if (!in_array($key, $this->cache[$table])) unset ($array[$key]);
 		}
 		
