@@ -31,9 +31,9 @@ class View {
 		$values = func_get_args();
 		$name = array_shift($values);
 		
-		if (!isset( self::$cycles[$name] )) self::$cycles[$name] = -1;
-		$index =&  self::$cycles[$name];
-		if ( !isset($values[ ++$index ]) ) $index = 0;
+		if (!isset(self::$cycles[$name])) self::$cycles[$name] = -1;
+		$index =& self::$cycles[$name];
+		if (!isset($values[++$index])) $index = 0;
 		return $values[ $index ];
 	}
 		

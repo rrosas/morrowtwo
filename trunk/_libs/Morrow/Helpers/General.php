@@ -23,21 +23,11 @@
 namespace Morrow\Helpers;
 
 class General {
-	// Bereinigt die Slashes bei Pfadangaben
+	// trims slashes on file paths
 	static public function cleanPath($dir, $absolute = false) {
-		if (!is_string($dir)) {
-			throw new \Exception(__CLASS__.': parameter has to be of type "string".');
-		}
-
-		// Doppelte Slashes durch einen ersetzen
-		$dir = str_replace('//', '/', $dir);
-		
-		// Slash am Ende 
-		if (substr($dir, -1) !== '/') $dir .= '/';
-		
-		// Slash am Anfang
-		if ($absolute === true && substr($dir, 0, 1) !== '/') $dir = '/'.$dir;
-		
+		$dir = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $dir);
+		$dir = rtrim($dir, DIRECTORY_SEPARATOR) . '/';
+		if ($absolute) $dir = '/' . $dir;
 		return $dir;
 	}
 	
@@ -150,25 +140,19 @@ class General {
 		return $_return;
 	}
 
-	public static function array_dotSyntaxGet(&$array, $identifier) {
-		// Validierung
-		if (!is_array($array)) {
-			throw new \Exception(__CLASS__.': first parameter has to be of type "array".');
-		}
-		if (!is_string($identifier) AND !is_null($identifier)) {
-			throw new \Exception(__CLASS__.': second parameter has to be of type "string".');
-		}
+	public static function array_dotSyntaxGet(array &$array, $identifier = '') {
 		if (empty($identifier)) return $array;
 
-		// Referenz erstellen
+		// create reference
 		$parts = explode('.', $identifier);
 		$returner =& $array;
+
 		foreach ($parts as $part) {
-			// Wenn es den Array-Schlüssel gibt, Referenz erweitern
 			if (isset($returner[$part])) {
+				// if the array key is set expand the reference
 				$returner =& $returner[$part];
 			} else {
-				// ansonsten Referenz löschen
+				// delete the reference
 				unset($returner);
 				break;
 			}
@@ -178,16 +162,8 @@ class General {
 		else return null;
 	}
 
-	public static function array_dotSyntaxSet(&$array, $identifier, $value) {
-		// Validierung
-		if (!is_array($array)) {
-			throw new \Exception(__CLASS__.': first parameter has to be of type "array".');
-		}
-		if (!is_string($identifier) OR empty($identifier)) {
-			throw new \Exception(__CLASS__.': identifier has to be of type "string" and must not be empty.');
-		}
-
-		// Referenz erstellen
+	public static function array_dotSyntaxSet(array &$array, $identifier, $value) {
+		// create reference
 		$parts = explode('.', $identifier);
 		$returner =& $array;
 		
@@ -208,23 +184,20 @@ class General {
 		return true;
 	}
 
-	public static function array_dotSyntaxDelete(&$array, $identifier) {
-		// Validierung
-		if (!is_array($array)) throw new \Exception(__CLASS__.': first parameter has to be of type "array".');
-		if (!is_string($identifier)) throw new \Exception(__CLASS__.': second parameter has to be of type "string".');
-
-		// Referenz erstellen
+	public static function array_dotSyntaxDelete(array &$array, $identifier) {
+		// create reference
 		$parts = explode('.', $identifier);
 		$returner =& $array;
 		$parent =& $array;
+
 		foreach ($parts as $part) {
-			// Wenn es den Array-Schlüssel gibt, Referenz erweitern
+			// if the array key is set expand the reference
 			if (isset($returner[$part]) && !empty($part)) {
 				$parent =& $returner;
 				$rkey = $part;
 				$returner =& $returner[$part];
 			} else {
-				// ansonsten Referenz löschen
+				// delete the reference
 				unset($returner);
 				break;
 			}
@@ -238,15 +211,15 @@ class General {
 		}
 	}
 
-	public static function array_dotSyntaxExplode($array) {
+	public static function array_dotSyntaxExplode(array $array) {
 		$data = array();
 
-		// Iterate keys
+		// iterate keys
 		foreach ($array as $rkey => $row) {
 			$parent =& $data;
 			$parts = explode('.', $rkey);
 
-			// Iterate key parts
+			// iterate key parts
 			foreach ($parts as $part) {
 				// build values
 				if (!isset($parent[$part]) || !is_array($parent[$part])) {
@@ -262,7 +235,7 @@ class General {
 		return $data;
 	}
 
-	public static function setKey($data, $field) {
+	public static function array_setKey($data, $field) {
 		$returner = array();
 		foreach ($data as $row) {
 			$returner[$row[$field]] = $row;
