@@ -4,7 +4,7 @@ return array(
 // debug
 	'debug.output.screen'	=> true,
 	'debug.output.headers'	=> false,
-	'debug.output.flatfile'	=> false,
+	'debug.output.logfile'	=> false,
 	'debug.password'		=> 'password',
 
 // mailer

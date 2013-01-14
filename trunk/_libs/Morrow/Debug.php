@@ -231,8 +231,8 @@ class Debug {
 			echo $error;
 		}
 
-		// log error in flatfile
-		if ($this->config['output']['flatfile'] == true) {
+		// log error in logfile
+		if ($this->config['output']['logfile'] == true) {
 			$this->errorhandler_file($errstr, $backtrace, $errordescription);
 		}
 
