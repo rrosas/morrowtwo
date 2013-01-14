@@ -2,8 +2,10 @@
 
 namespace Morrow\Models;
 
-class Test extends \Morrow\Loader {
+use Morrow\Debug;
+
+class Test extends \Morrow\Factory {
 	public function __construct() {
-		\Morrow\dump('Model "Test" found.');
+		Debug::dump('Model "Test" found.');
 	}
 }

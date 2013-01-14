@@ -317,11 +317,9 @@ class Morrow {
 		
 		$query = $this->input->getGet();
 		unset($query['morrow_content']);
-		//$fullpath = $this->url->makeUrl($this->page->get('path'), $query);
-		if (count($query) === 0)
-			$fullpath = $this->page->get('path');
-		else
-			$fullpath = $this->page->get('path').'?'.http_build_query($query, '', '&');
+
+		if (count($query) === 0) $fullpath = $this->page->get('path');
+		else $fullpath = $this->page->get('path').'?'.http_build_query($query, '', '&');
 		$this->page->set('fullpath', $fullpath);
 
 		// make sure to get language content for page alias
