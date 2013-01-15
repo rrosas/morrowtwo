@@ -166,7 +166,7 @@ class FormElement {
 		$this->error = $value;
 	}
 
-	public function validate($formname, $validator_class = 'validator') {
+	public function validate($formname, $validator_class = 'Validator') {
 		if ($this->value === null) throw new \Exception("You must set all element values before validating (" . $this->name . ")");
 
 		$compare = null;
@@ -178,7 +178,7 @@ class FormElement {
 			$this->setError(Factory::load('Language')->_("This field is required."));
 			return false;
 		} elseif ($this->checktype != null && ($this->value !== '' || $this->comparefield != null)) {
-			$validator = Factory::load('\\' . $validator_class);
+			$validator = Factory::load($validator_class);
 			$function = "check" . $this->checktype;
 			if (!method_exists($validator, $function)) {
 				throw new \Exception("Method $function does not exist in class " . get_class($validator) . "!");
