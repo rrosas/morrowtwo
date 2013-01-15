@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementTextArea extends Formhtmlelement {
+class Formhtmlelementtextarea extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		return "<textarea id=\"" . $id . "\" name=\"" . $name . "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'textarea')  . ">" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) ."</textarea>";
 	}

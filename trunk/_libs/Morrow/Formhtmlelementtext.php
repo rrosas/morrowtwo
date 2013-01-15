@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementText extends Formhtmlelement {
+class Formhtmlelementtext extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		return "<input id=\"" . $id . "\" type=\"text\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}

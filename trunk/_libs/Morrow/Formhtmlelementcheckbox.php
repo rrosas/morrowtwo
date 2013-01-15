@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementCheckbox extends formhtmlelement {
+class Formhtmlelementcheckbox extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		if ($values != '' && $values != 0) $params['checked'] = "checked";
 		$values = 1;

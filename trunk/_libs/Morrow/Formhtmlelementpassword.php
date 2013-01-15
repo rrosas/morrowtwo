@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementPassword extends Formhtmlelement {
+class Formhtmlelementpassword extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		return "<input id=\"" . $id . "\" type=\"password\" name=\"" . $name . "\" value=\"\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}

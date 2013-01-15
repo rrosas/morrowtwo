@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementGroup extends Formhtmlelement {
+class Formhtmlelementgroup extends Formhtmlelement {
 	public function getLabel($value, $for_id, $params) {
 		return "<legend " .  Helpers\Htmlformattributes::getAttributeString($params, 'legend') . ">$value</legend>";
 	}

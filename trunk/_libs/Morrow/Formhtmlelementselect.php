@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementSelect extends Formhtmlelement {
+class Formhtmlelementselect extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		$classes = array();
 		$class = '';

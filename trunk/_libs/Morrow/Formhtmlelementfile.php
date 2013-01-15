@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementFile extends Formhtmlelement {
+class Formhtmlelementfile extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		return "<input id=\"" . $id . "\" type=\"file\" name=\"" . $name . "\" value=\"\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}

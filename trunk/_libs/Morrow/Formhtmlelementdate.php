@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementDate extends Formhtmlelement {
+class Formhtmlelementdate extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		$date_str = '';
 		if (is_array($values)) {

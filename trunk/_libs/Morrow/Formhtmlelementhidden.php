@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class FormhtmlelementHidden extends Formhtmlelement {
+class Formhtmlelementhidden extends Formhtmlelement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		return "<input id=\"" . $id . "\" type=\"hidden\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}

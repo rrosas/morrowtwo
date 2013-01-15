@@ -23,7 +23,7 @@
 
 namespace Morrow;
 
-class FormHtml {
+class Formhtml {
 	public static $config = array();
 	
 	public static function setConfig($formname, $config) {
@@ -40,7 +40,7 @@ class FormHtml {
 		$_form = Factory::load('Form');
 
 		if (!$_form->getElement($formname, $el_name)) {
-			throw new \Exception("FormHtml::getLabel : missing definition for '$el_name'");
+			throw new \Exception("Formhtml::getLabel : missing definition for '$el_name'");
 			return '';
 		}
 
@@ -71,7 +71,7 @@ class FormHtml {
 
 		$id = "mw_" . $formname . "_" . $el_name;
 
-		$classname = 'formhtmlelement' . $display_type;
+		$classname = 'Formhtmlelement' . $display_type;
 		if (class_exists($classname)) {
 			$display_obj = Factory::load('\\' . $classname);
 			$content = $display_obj->getLabel($el_label, $id, $params);
@@ -90,7 +90,7 @@ class FormHtml {
 		elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
 		
 		if (!$_form->getElement($formname, $el_name)) {
-			throw new \Exception("FormHtml::getElement : missing definition for '$el_name'");
+			throw new \Exception("Formhtml::getElement : missing definition for '$el_name'");
 			return '';
 		}
 
@@ -173,7 +173,7 @@ class FormHtml {
 		}
 
 		$display_obj = null;
-		$classname = 'formhtmlelement' . $display_type;
+		$classname = 'Formhtmlelement' . $display_type;
 		if (!is_null($display_type) && class_exists($classname)) {
 			$display_obj = Factory::load('\\' . $classname);
 		} else {
@@ -196,7 +196,7 @@ class FormHtml {
 		$_form = Factory::load('Form');
 
 		if (!$_form->getElement($formname, $el_name)) {
-			throw new \Exception("FormHtml::getError : missing definition for '$el_name'");
+			throw new \Exception("Formhtml::getError : missing definition for '$el_name'");
 			return '';
 		}
 
@@ -225,7 +225,7 @@ class FormHtml {
 			$display_type = "text";
 			if (isset($params['dtype'])) $display_type = $params['dtype'];
 			elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
-			$classname = 'formhtmlelement' . $display_type;
+			$classname = 'Formhtmlelement' . $display_type;
 			if (class_exists($classname)) {
 				$display_obj = Factory::load('\\' . $classname);
 				$content = $display_obj->getError($content, $params, $tagname);
