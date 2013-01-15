@@ -22,7 +22,7 @@
 
 namespace Morrow;
 
-class Db extends PDO {
+class Db extends \PDO {
 	protected $connected = false;	// are we already connected?
 	protected $config; // the database configuration
 	protected $cache = array(); // column cache for *safe() functions
@@ -46,8 +46,8 @@ class Db extends PDO {
 			
 			parent::__construct($connector, $this->config['user'], $this->config['pass']);
 
-			$this -> setAttribute(PDO::ATTR_CASE, PDO::CASE_NATURAL); // leave column names as returned by the database driver
-			$this -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // on errors we want to get \Exceptions
+			$this -> setAttribute(\PDO::ATTR_CASE, \PDO::CASE_NATURAL); // leave column names as returned by the database driver
+			$this -> setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION); // on errors we want to get \Exceptions
 
 			// set encoding
 			if (isset($this->config['encoding'])) {
@@ -73,7 +73,7 @@ class Db extends PDO {
 		$this->connect();
 		$sth = $this->prepare($query);
 		$returner['SUCCESS'] = $sth->execute($params);
-		$returner['RESULT'] = $sth->fetchAll(PDO::FETCH_ASSOC);
+		$returner['RESULT'] = $sth->fetchAll(\PDO::FETCH_ASSOC);
 		$returner['NUM_ROWS'] = count($returner['RESULT']);
 		
 		// if an access key was provided rearrange array
@@ -99,7 +99,7 @@ class Db extends PDO {
 		$returner = $this->result($query, $params);
 
 		// get found rows
-		$sql = $this->query('SELECT FOUND_ROWS() AS FOUND_ROWS')->fetch(PDO::FETCH_ASSOC);
+		$sql = $this->query('SELECT FOUND_ROWS() AS FOUND_ROWS')->fetch(\PDO::FETCH_ASSOC);
 		$returner['FOUND_ROWS'] = $sql['FOUND_ROWS'];
 	
 		$this->commit();
@@ -253,7 +253,7 @@ class Db extends PDO {
 			$query = 'SHOW COLUMNS FROM '.$table;
 			$sth = $this->prepare($query);
 			$sth->execute();
-			$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$result = $sth->fetchAll(\PDO::FETCH_ASSOC);
 			
 			foreach ($result as $row) $columns[] = $row['Field'];
 			$this->cache[$table] = $columns;
