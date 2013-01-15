@@ -187,6 +187,6 @@ class HtmlDate {
 				if ($opt == $sel) $selected[] = $opt;
 			}
 		}
-		return HelperHtmlOptions::getOutput($el_key . $name, $options, $output, $selected, $class, $style, $classes, $extras);
+		return Htmloptions::getOutput($el_key . $name, $options, $output, $selected, $class, $style, $classes, $extras);
 	}
 }

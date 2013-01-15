@@ -53,21 +53,21 @@ class Session {
 	public final function get($identifier = null) {
 		if ($identifier != null) $identifier  = $this->section  . "." . $identifier;
 		else $identifier = $this->section;
-		return helperArray::dotSyntaxGet(self::$data, $identifier);
+		return Helpers\General::array_dotSyntaxGet(self::$data, $identifier);
 	}
 
 	public final function set($identifier, $value) {
 		$identifier  = $this->section . "." . $identifier;
-		helperArray::dotSyntaxSet(self::$data, $identifier, $value);
+		Helpers\General::array_dotSyntaxSet(self::$data, $identifier, $value);
 	}
 
 	public final function delete($identifier = null) {
 		if ($this->get($identifier) !== null) {
 			$pidentifier = $this->section . "." . $identifier;
 			if ($identifier == null) {
-				helperArray::dotSyntaxDelete(self::$data, $this->section);
+				Helpers\General::array_dotSyntaxDelete(self::$data, $this->section);
 			} else {
-				helperArray::dotSyntaxDelete(self::$data, $pidentifier);
+				Helpers\General::array_dotSyntaxDelete(self::$data, $pidentifier);
 			}
 		}
 	}

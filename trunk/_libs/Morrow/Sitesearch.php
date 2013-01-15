@@ -96,7 +96,7 @@ class Sitesearch {
 		foreach ($results['RESULT'] as $key => $result) {
 			$new =& $results['RESULT'][$key];
 			
-			$raw = helperString::excerpt($result['searchdata'], $q, $this->contextradius);
+			$raw = Helpers\String::excerpt($result['searchdata'], $q, $this->contextradius);
 			$new['searchdata']	= htmlspecialchars($raw['excerpt']);
 			$new['relevance']	= $raw['weight'];
 

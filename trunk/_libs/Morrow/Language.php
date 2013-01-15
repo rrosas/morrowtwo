@@ -48,7 +48,7 @@ class Language {
 		// set default parameters
 		$this->default = $settings['default'];
 		$this->possible = $settings['possible'];
-		$this->language_path = \Morrow\Helpers\General::cleanPath($settings['language_path']);
+		$this->language_path = Helpers\General::cleanPath($settings['language_path']);
 		$this->i18n_path = $settings['i18n_path'];
 		
 		// check if there is a valid language file for the possible languages
@@ -127,7 +127,7 @@ class Language {
 
 	protected function _loadFile($file, $dotSyntaxExplode = true) {
 		if(!is_file($file)) return array();
-		if ($dotSyntaxExplode) return \Morrow\Helpers\General::array_dotSyntaxExplode(include($file));
+		if ($dotSyntaxExplode) return Helpers\General::array_dotSyntaxExplode(include($file));
 		return include($file);
 	}
 

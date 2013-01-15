@@ -43,8 +43,8 @@ class FormhtmlelementSelect extends Formhtmlelement {
 		}
 		$output = array_values($options);
 		$keys = array_keys($options);
-		$content = "<select id=\"$id\" name=\"$name\"  " . HelperHtmlFormAttributes::getAttributeString($params, 'select') . " $multiplestr>" . chr(10);
-		$content .= HelperHtmlOptions::getOutput('', $keys, $output, $values, $class, $styles, $classes);
+		$content = "<select id=\"$id\" name=\"$name\"  " . Helpers\Htmlformattributes::getAttributeString($params, 'select') . " $multiplestr>" . chr(10);
+		$content .= Helpers\Htmloptions::getOutput('', $keys, $output, $values, $class, $styles, $classes);
 
 		$content .= "</select>" . chr(10);
 		return $content;
@@ -58,13 +58,13 @@ class FormhtmlelementSelect extends Formhtmlelement {
 		if (is_array($values)) {
 			foreach ($values as $value) {
 				$content .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />';
-				$content .= '<div '. HelperHtmlFormAttributes::getAttributeString($params, 'div') .'>'.$options[$value].'</div>';
+				$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.$options[$value].'</div>';
 			}
 		} else {
 			$value = $values;
 			if (isset($options[$values])) $value = $options[$values];
 			$content .= '<input type="hidden" name="'.$name.'" value="'.$values.'" />';
-			$content .= '<div '. HelperHtmlFormAttributes::getAttributeString($params, 'div') .'>'.$value.'</div>';
+			$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.$value.'</div>';
 		}
 		return $content;
 	}

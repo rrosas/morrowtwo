@@ -39,7 +39,7 @@ class Image {
 		foreach ($files as $file) {
 			if ($file{0} == '.') continue;
 			if (is_dir( $default_cache_dir.$file ) && $file != $counter) {
-				helperFile::rmdir_recurse( $default_cache_dir.$file );
+				Helpers\File::rmdir_recurse( $default_cache_dir.$file );
 			}
 		}
 

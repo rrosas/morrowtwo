@@ -24,7 +24,7 @@ namespace Morrow;
 
 class FormhtmlelementGroup extends Formhtmlelement {
 	public function getLabel($value, $for_id, $params) {
-		return "<legend " .  HelperHtmlFormAttributes::getAttributeString($params, 'legend') . ">$value</legend>";
+		return "<legend " .  Helpers\Htmlformattributes::getAttributeString($params, 'legend') . ">$value</legend>";
 	}
 
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
@@ -79,7 +79,7 @@ class FormhtmlelementGroup extends Formhtmlelement {
 		$content = '';
 		foreach ($values as $value) {
 			$content .= '<input type="hidden" name="'.$name.'" value="'.$value.'">';
-			$content .= '<div '. HelperHtmlFormAttributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($value, ENT_QUOTES, $this->page->get('charset')).'</div>';
+			$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($value, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		}
 		return $content;
 	}

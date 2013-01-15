@@ -75,7 +75,7 @@ class FormHtml {
 		if (class_exists($classname)) {
 			$display_obj = Factory::load('\\' . $classname);
 			$content = $display_obj->getLabel($el_label, $id, $params);
-		} else $content = "<label for=\"" . $id . "\" " .  HelperHtmlFormAttributes::getAttributeString($params, 'label') . ">$el_label</label>";
+		} else $content = "<label for=\"" . $id . "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'label') . ">$el_label</label>";
 
 		return $content;
 	}
@@ -134,11 +134,11 @@ class FormHtml {
 		// filter
 		$outfilter = null;
 		$infilter = null;
-		if (method_exists('formfilter', 'out' . $display_type)) {
+		if (method_exists('\Morrow\Formfilter', 'out' . $display_type)) {
 			$outfilter = 'out' . $display_type;
 		}
 
-		if (method_exists('formfilter', 'in' . $display_type)) {
+		if (method_exists('\Morrow\Formfilter', 'in' . $display_type)) {
 			$infilter = 'in' . $display_type;
 		}
 
@@ -229,7 +229,7 @@ class FormHtml {
 			if (class_exists($classname)) {
 				$display_obj = Factory::load('\\' . $classname);
 				$content = $display_obj->getError($content, $params, $tagname);
-			} else $content = "<$tagname " . HelperHtmlFormAttributes::getAttributeString($params, $tagname) .">$content</$tagname>";
+			} else $content = "<$tagname " . Helpers\Htmlformattributes::getAttributeString($params, $tagname) .">$content</$tagname>";
 		}
 
 		return $content;

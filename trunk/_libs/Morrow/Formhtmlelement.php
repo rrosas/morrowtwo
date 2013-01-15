@@ -31,10 +31,10 @@ abstract class Formhtmlelement {
 	}
 
 	public function getLabel($value, $for_id, $params) {
-		return "<label for=\"" . $for_id . "\" " . HelperHtmlFormAttributes::getAttributeString($params, 'label') . ">$value</label>";
+		return "<label for=\"" . $for_id . "\" " . Helpers\Htmlformattributes::getAttributeString($params, 'label') . ">$value</label>";
 	}
 	public function getError($value, $params, $tagname) {
-		return "<$tagname " . HelperHtmlFormAttributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
+		return "<$tagname " . Helpers\Htmlformattributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
 	}
 
 	abstract public function getDisplay($name, $values, $id, $params, $options, $multiple);

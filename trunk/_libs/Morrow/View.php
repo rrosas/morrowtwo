@@ -83,7 +83,7 @@ class View {
 		// set download header
 		if (!empty($displayHandler->downloadable)) {
 			if (!$mimetype_changed) {
-				$displayHandler->mimetype = helperFile::getMimeType($displayHandler->downloadable);
+				$displayHandler->mimetype = Helpers\File::getMimeType($displayHandler->downloadable);
 			}
 			$this->header[] = 'Content-Disposition: attachment; filename='.basename($displayHandler->downloadable);
 			

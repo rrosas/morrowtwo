@@ -32,13 +32,13 @@ class HtmlOptions {
 			$ostyle = (is_array($style) && isset($style[$i])) ? $style[$i] : '';
 
 			// add generated option to output
-			$_html_result .= HelperHtmlOptions::getOption($key, $values[$i], $selected, $ostyle, $class);
+			$_html_result .= Htmloptions::getOption($key, $values[$i], $selected, $ostyle, $class);
 		}
 
 		// add extras
 		$extra_str = '';
 		foreach ($extras as $_key => $_value) {
-			$extra_str .= ' '.$_key.'="'.HelperString::htmlSpecialChars($_value).'"';
+			$extra_str .= ' '.$_key.'="'.String::htmlSpecialChars($_value).'"';
 		}
 
 		if (!empty($name)) {
@@ -50,18 +50,18 @@ class HtmlOptions {
 
 	static public function getOption($key, $value, $selected, $stylevalue, $classall, $classvalue = '') {
 		if (!is_array($value)) {
-			$_html_result = '<option class="' .HelperString::htmlSpecialChars($classall).' '.HelperString::htmlSpecialChars($classvalue)
-				.'" style="' .HelperString::htmlSpecialChars($stylevalue)
-				.'" label="' .HelperString::htmlSpecialChars($value)
-				.'" value="' .HelperString::htmlSpecialChars($key) . '"';
+			$_html_result = '<option class="' .String::htmlSpecialChars($classall).' '.String::htmlSpecialChars($classvalue)
+				.'" style="' .String::htmlSpecialChars($stylevalue)
+				.'" label="' .String::htmlSpecialChars($value)
+				.'" value="' .String::htmlSpecialChars($key) . '"';
 			
 			if (!is_array($value) && in_array((string)$key, $selected)) {
 				$_html_result .= ' selected="selected"';
 			}
 
-			$_html_result .= '>' . HelperString::htmlSpecialChars($value) . '</option>' . chr(10);
+			$_html_result .= '>' . String::htmlSpecialChars($value) . '</option>' . chr(10);
 		} else {
-			$_html_result = HelperHtmlOptions::getOptGroup($key, $value, $selected, $stylevalue, $classall, $classvalue);
+			$_html_result = Htmloptions::getOptGroup($key, $value, $selected, $stylevalue, $classall, $classvalue);
 		}
 		return $_html_result;
 	}
@@ -73,13 +73,13 @@ class HtmlOptions {
 		elseif (isset($stylevalue[$key])) $style = $stylevalue[$key];
 		$class = $classvalue;
 
-		$optgroup_str = '<optgroup class="' .HelperString::htmlSpecialChars($classall)
-			.'" style="' .HelperString::htmlSpecialChars($style)
-			.'" label="' . HelperString::htmlSpecialChars($key) . '">' . chr(10);
+		$optgroup_str = '<optgroup class="' .String::htmlSpecialChars($classall)
+			.'" style="' .String::htmlSpecialChars($style)
+			.'" label="' . String::htmlSpecialChars($key) . '">' . chr(10);
 		foreach ($values as $key => $value) {
 			if (isset($stylevalue[$key])) $style = $stylevalue[$key];
 			if (isset($classvalue[$key])) $class = $classvalue[$key];
-			$optgroup_str .= HelperHtmlOptions::getOption($key, $value, $selected, $style, $classall, $class); 
+			$optgroup_str .= Htmloptions::getOption($key, $value, $selected, $style, $classall, $class); 
 		}
 		$optgroup_str .= "</optgroup>" . chr(10);
 		return $optgroup_str;

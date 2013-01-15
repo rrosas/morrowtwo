@@ -37,7 +37,7 @@ class FormhtmlelementDate extends Formhtmlelement {
 		if (isset($params['end_year'])) $end_year = $params['end_year'];
 
 		$content = "<span class=\"date\">";
-		$content .= HelperHtmlDate::getOutput($name, $date_str, $format, $start_year, $end_year, $params);
+		$content .= Helpers\Htmldate::getOutput($name, $date_str, $format, $start_year, $end_year, $params);
 		$content .= "</span>";
 		return $content;
 	}
