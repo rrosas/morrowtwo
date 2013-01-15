@@ -175,7 +175,7 @@ class Formhtml {
 		$display_obj = null;
 		$classname = '\\Morrow\\Formhtmlelement' . $display_type;
 		if (!is_null($display_type) && class_exists($classname)) {
-			$display_obj = Factory::load('\\' . $classname);
+			$display_obj = Factory::load($classname);
 		} else {
 			$display_obj = Factory::load('Formhtmlelement' . $default_dtype);
 		}
@@ -227,7 +227,7 @@ class Formhtml {
 			elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
 			$classname = '\\Morrow\\Formhtmlelement' . $display_type;
 			if (class_exists($classname)) {
-				$display_obj = Factory::load('\\' . $classname);
+				$display_obj = Factory::load($classname);
 				$content = $display_obj->getError($content, $params, $tagname);
 			} else $content = "<$tagname " . Helpers\Htmlformattributes::getAttributeString($params, $tagname) .">$content</$tagname>";
 		}

@@ -96,7 +96,7 @@ class Form {
 						$new_element->setMultipleSelect($multiple);
 						break;
 					default:
-						$new_element = new FormElement($this, $key, $required, $checktype);
+						$new_element = new Formelement($this, $key, $required, $checktype);
 						if ($el['type'] == "checkbox") $new_element->type = "checkbox";
 						if (isset($el['example'])) {
 							$new_element->setExample($el['example']);
