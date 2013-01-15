@@ -38,7 +38,8 @@ class Factory {
 			$classname = 'Morrow\\' . $classname;
 		}
 		
-		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
+		$instancename = (isset($params[1])) ? __NAMESPACE__ . '\\' . $params[1] : $classname;
+		$instancename = strtolower($instancename);
 		
 		// all other args are arguments for the new class
 		$factory_args = func_get_args();
@@ -72,7 +73,7 @@ class Factory {
 		foreach (self::$instances as $class => $value) {
 			$returner[$class] = get_class($value);
 		}
-		\Morrow\dump($returner);
+		\Morrow\Debug::dump($returner);
 	}
 
 	protected function prepare() {
