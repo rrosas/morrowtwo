@@ -38,7 +38,7 @@ class Factory {
 			$classname = 'Morrow\\' . $classname;
 		}
 		
-		$instancename = (isset($params[1])) ? __NAMESPACE__ . '\\' . $params[1] : $classname;
+		$instancename = (isset($params[1])) ? $params[1] : substr(strrchr($classname, '\\'), 1);
 		$instancename = strtolower($instancename);
 		
 		// all other args are arguments for the new class
