@@ -71,7 +71,7 @@ class Formhtml {
 
 		$id = "mw_" . $formname . "_" . $el_name;
 
-		$classname = 'Formhtmlelement' . $display_type;
+		$classname = '\\Morrow\\Formhtmlelement' . $display_type;
 		if (class_exists($classname)) {
 			$display_obj = Factory::load('\\' . $classname);
 			$content = $display_obj->getLabel($el_label, $id, $params);
@@ -173,7 +173,7 @@ class Formhtml {
 		}
 
 		$display_obj = null;
-		$classname = 'Formhtmlelement' . $display_type;
+		$classname = '\\Morrow\\Formhtmlelement' . $display_type;
 		if (!is_null($display_type) && class_exists($classname)) {
 			$display_obj = Factory::load('\\' . $classname);
 		} else {
@@ -225,7 +225,7 @@ class Formhtml {
 			$display_type = "text";
 			if (isset($params['dtype'])) $display_type = $params['dtype'];
 			elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
-			$classname = 'Formhtmlelement' . $display_type;
+			$classname = '\\Morrow\\Formhtmlelement' . $display_type;
 			if (class_exists($classname)) {
 				$display_obj = Factory::load('\\' . $classname);
 				$content = $display_obj->getError($content, $params, $tagname);
