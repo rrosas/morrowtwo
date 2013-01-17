@@ -186,7 +186,7 @@ class FormElement {
 				if (!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)) {
 					$this->setError($errorkey);
 					// if it was a file, remove it from session
-					$session = Factory::load("Libraries\Session");
+					$session = Factory::load("Session");
 					$tf_key = 'TMP_FILES.' . $this->name;
 					if ($session->get($tf_key)!='') {
 						$session->delete($tf_key);
