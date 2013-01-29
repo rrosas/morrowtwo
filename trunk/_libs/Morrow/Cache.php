@@ -1,22 +1,22 @@
 <?php
 /*////////////////////////////////////////////////////////////////////////////////
-    MorrowTwo - a PHP-Framework for efficient Web-Development
-    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+	MorrowTwo - a PHP-Framework for efficient Web-Development
+	Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
-    This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
+	This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 
-    MorrowTwo is free software:  you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	MorrowTwo is free software:  you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
@@ -84,13 +84,13 @@ class Cache {
 	*/
 	protected $user_droppable;
 
-    /**
-     * Initializes the cache class.
-     * 
-     * @param string $cachedir path to the cache directory.
-     * @param boolean $user_droppable If set to true, the cache is dropped if the client sends the HTTP header HTTP_CACHE_CONTROL. E.g. if the user reloads the page while the same page is already open.
-     * @return null
-     */
+	/**
+	 * Initializes the cache class.
+	 * 
+	 * @param string $cachedir path to the cache directory.
+	 * @param boolean $user_droppable If set to true, the cache is dropped if the client sends the HTTP header HTTP_CACHE_CONTROL. E.g. if the user reloads the page while the same page is already open.
+	 * @return null
+	 */
 	public function __construct($cachedir = null, $user_droppable = false) {
 		// set defaults
 		if (is_null($cachedir)) {
@@ -116,13 +116,13 @@ class Cache {
 		$this->user_droppable = $user_droppable;
 	}
 
-    /**
-     * Same as load(), but also returns the cache item data if the item has expired. Returns FALSE if there is no cached data yet. 
-     * 
-     * @param string $cache_id The cache descriptor id.
-     * @param mixed $comparator If the comparator changes the cache gets instantly stale.
-     * @return mixed Returns the cached data or FALSE if there is no cached data yet.
-     */
+	/**
+	 * Same as load(), but also returns the cache item data if the item has expired. Returns FALSE if there is no cached data yet. 
+	 * 
+	 * @param string $cache_id The cache descriptor id.
+	 * @param mixed $comparator If the comparator changes the cache gets instantly stale.
+	 * @return mixed Returns the cached data or FALSE if there is no cached data yet.
+	 */
 	public function get($cache_id, $comparator = null) {
 		// clean id
 		$cache_id = $this->_cleanId($cache_id);
@@ -147,13 +147,13 @@ class Cache {
 		return $item;		
 	}
 	
-    /**
-     * Gets a variable with a given $cache_id from cache, dependent on validity. With the $comparator you can pass an additional comparison variable of any type, which is also used in save(). Do the comparators differ the cache is not valid.
-     * 
-     * @param string $cache_id The cache descriptor id.
-     * @param mixed $comparator If the comparator changes the cache gets instantly stale.
-     * @return mixed Returns the cached variable on success or FALSE on failure or invalid cache. 
-     */
+	/**
+	 * Gets a variable with a given $cache_id from cache, dependent on validity. With the $comparator you can pass an additional comparison variable of any type, which is also used in save(). Do the comparators differ the cache is not valid.
+	 * 
+	 * @param string $cache_id The cache descriptor id.
+	 * @param mixed $comparator If the comparator changes the cache gets instantly stale.
+	 * @return mixed Returns the cached variable on success or FALSE on failure or invalid cache. 
+	 */
 	public function load($cache_id, $comparator = null) {
 		// get item
 		$item = $this->get($cache_id, $comparator);
@@ -165,20 +165,20 @@ class Cache {
 		return $item['object'];
 	}
 
-    /**
-     * Puts a variable with a given $cache_id into cache. $lifetime determines the maximum lifetime, given as a string strtotime() recognizes. With the $comparator you can pass an additional comparison variable of any type, which is also used in save(). Do the comparators differ the cache is not valid. You could for example pass the modification time of a file to renew the cache on change of that file. 
-     * 
-     * **Take care of references:** Circular references inside the variable you are caching will be stored. Any other reference will be lost. 
-     * 
-     * **Take care of objects:** The class uses serialize() to store variables. When serializing objects, PHP will attempt to call the member function sleep() prior to serialization. This is to allow the object to do any last minute clean-up, etc. prior to being serialized. Likewise, when the object is restored using unserialize() the wakeup() member function is called. 
-     * 
-     * @param string $cache_id The cache descriptor id.
-     * @param mixed $data 
-     * @param mixed $cachetime 
-     * @param mixed $comparator If the comparator changes the cache gets instantly stale.
-     * @param mixed $user_droppable If set to true, the cache is dropped if the client sends the HTTP header HTTP_CACHE_CONTROL. E.g. if the user reloads the page while the same page is already open.
-     * @return boolean Returns TRUE on success and FALSE on failure. 
-     */
+	/**
+	 * Puts a variable with a given $cache_id into cache. $lifetime determines the maximum lifetime, given as a string strtotime() recognizes. With the $comparator you can pass an additional comparison variable of any type, which is also used in save(). Do the comparators differ the cache is not valid. You could for example pass the modification time of a file to renew the cache on change of that file. 
+	 * 
+	 * **Take care of references:** Circular references inside the variable you are caching will be stored. Any other reference will be lost. 
+	 * 
+	 * **Take care of objects:** The class uses serialize() to store variables. When serializing objects, PHP will attempt to call the member function sleep() prior to serialization. This is to allow the object to do any last minute clean-up, etc. prior to being serialized. Likewise, when the object is restored using unserialize() the wakeup() member function is called. 
+	 * 
+	 * @param string $cache_id The cache descriptor id.
+	 * @param mixed $data The data to cache.
+	 * @param mixed $cachetime A lifetime in a format strtotime() supports.
+	 * @param mixed $comparator If the comparator changes the cache gets instantly stale.
+	 * @param mixed $user_droppable If set to true, the cache is dropped if the client sends the HTTP header HTTP_CACHE_CONTROL. E.g. if the user reloads the page while the same page is already open.
+	 * @return boolean Returns TRUE on success and FALSE on failure. 
+	 */
 	public function save($cache_id, $object, $cachetime, $comparator = null, $user_droppable = null) {
 		// if user_droppable is given it overwrites default
 		$user_droppable = !is_null($user_droppable) ? $user_droppable : $this->user_droppable ;
@@ -189,46 +189,28 @@ class Cache {
 		// define filename
 		$cachefile			= $this->cachedir.$cache_id;
 		$cachefile_tmp		= $cachefile.getmypid();
-		$cachefile_res		= $cachefile.'%res';
-		$cachefile_res_tmp	= $cachefile_res.getmypid();
 
 		// create cache file
-		$STATUS = array();
-		$STATUS['id']			= $cache_id;
-		$STATUS['created']		= time();
-		$STATUS['expires']		= strtotime(date('r').' '.$cachetime); // date(r) fixes a bug with older php5 versions
-		$STATUS['cachetime']	= $cachetime;
-		$STATUS['comparator']	= $this->_createComparator($comparator);
-		$STATUS['user_droppable']= $user_droppable;
+		$cache_item						= array();
+		$cache_item['id']				= $cache_id;
+		$cache_item['created']			= time();
+		$cache_item['expires']			= strtotime(date('r').' '.$cachetime); // date(r) fixes a bug with older php5 versions
+		$cache_item['cachetime']		= $cachetime;
+		$cache_item['comparator']		= $this->_createComparator($comparator);
+		$cache_item['user_droppable']	= $user_droppable;
 
 		// add standard objects like arrays, objects and so on
-		if (!is_resource($object)) {
-			$STATUS['object']		= $object;
-
-			// create hash
-			$STATUS['object_hash']	= md5(serialize($object));
+		if (is_resource($object)) {
+			throw new \Exception(__CLASS__.': Is is not possible to cache a resource.');
 		} else {
-			// write resource file
-			$res_handle = fopen($cachefile_res_tmp, 'w');
-			rewind($object);
-			stream_copy_to_stream($object, $res_handle);
-			fclose($res_handle);
-			
-			// create real cache file
-			$io_result = rename($cachefile_res_tmp, $cachefile_res);
+			$cache_item['object']		= $object;
 
 			// create hash
-			$STATUS['object_hash']	= md5_file($cachefile_res);
-
-			// could it be renamed? otherwise delete temporary file
-			if ($io_result === false) {
-				unlink($cachefile_res_tmp);
-				return false;
-			}
+			$cache_item['object_hash']	= md5(serialize($object));
 		}
 
 		// write cache file
-		$io_result = file_put_contents($cachefile_tmp, serialize($STATUS));
+		$io_result = file_put_contents($cachefile_tmp, serialize($cache_item));
 
 		// could cachefile be written?
 		if ($io_result === false) return false;
@@ -242,15 +224,15 @@ class Cache {
 			return false;
 		}
 
-		return $STATUS;
+		return $cache_item;
 	}
 
-    /**
-     * Deletes all cache ids with a given pattern $cache_pattern. The pattern works with from shell known wildcards "*" and "?". The pattern "result_*" for example deletes alle cache ids which start with "result_". 
-     * 
-     * @param string $cache_pattern A cache id with shell wildcard patterns.
-     * @return int Returns the number of deleted cache ids. 
-     */
+	/**
+	 * Deletes all cache ids with a given pattern $cache_pattern. The pattern works with from shell known wildcards "*" and "?". The pattern "result_*" for example deletes alle cache ids which start with "result_". 
+	 * 
+	 * @param string $cache_pattern A cache id with shell wildcard patterns.
+	 * @return int Returns the number of deleted cache ids. 
+	 */
 	public function delete($cache_pattern) {
 		$files = scandir($this->dir);
 
@@ -277,29 +259,29 @@ class Cache {
 		return $result;
 	}
 
-    /**
-     * Adds the cached data to a cache item array.
-     * 
-     * @param array $cache_item
-     * @return mixed Returns the changed cache item or false if the cache data does not exist.
-     */
-	protected function _getObject($item) {
+	/**
+	 * Adds the cached data to a cache item array.
+	 * 
+	 * @param array $cache_item An array with all the meta data of a cache item
+	 * @return mixed Returns the changed cache item or false if the cache data does not exist.
+	 */
+	protected function _getObject($cache_item) {
 		// load handle if necessary
-		if (!isset($item['object'])) {
-			if (!is_file($item['cachefile_res'])) return false;
-			$item['object'] = fopen($item['cachefile_res'], 'r');
+		if (!isset($cache_item['object'])) {
+			if (!is_file($cache_item['cachefile_res'])) return false;
+			$cache_item['object'] = fopen($cache_item['cachefile_res'], 'r');
 		}
 		
-		return $item;
+		return $cache_item;
 	}
 	
-    /**
-     * Returns TRUE if cache item is valid and FALSE if not. 
-     * 
-     * @param array $cache_item
-     * @param mixed $comparator If the comparator changes the cache gets instantly stale.
-     * @return boolean Returns TRUE if cache item is valid and FALSE if not. 
-     */
+	/**
+	 * Returns TRUE if cache item is valid and FALSE if not. 
+	 * 
+	 * @param array $cache_item An array with all the meta data of a cache item
+	 * @param mixed $comparator If the comparator changes the cache gets instantly stale.
+	 * @return boolean Returns TRUE if cache item is valid and FALSE if not. 
+	 */
 	protected function _isValid($cache_item, $comparator = null) {
 		// were no-cache headers sent?
 		if ($cache_item['user_droppable'] && isset($_SERVER['HTTP_CACHE_CONTROL']) && preg_match('/max-age=0|no-cache/i', $_SERVER['HTTP_CACHE_CONTROL'])) return false;
@@ -314,24 +296,22 @@ class Cache {
 		return true;
 	}
 	
-    /**
-     * Creates a filesafe cache id.
-     * 
-     * @param string $id A string intended to be a cache id.
-     * @return string Returns a filesafe cache id.
-     */
+	/**
+	 * Creates a filesafe cache id.
+	 * 
+	 * @param string $id A string intended to be a cache id.
+	 * @return string Returns a filesafe cache id.
+	 */
 	protected function _cleanId($id) {
-		$id = preg_replace("=[^\w\.]=i", '_', $id);
-		$id = strtolower($id);
-		return $id;
+		return preg_replace("=[^\w\.]=i", '_', strtolower($id));
 	}
 
-    /**
-     * Creates a MD5 hashed comparator string from any variable.
-     * 
-     * @param mixed $input A variable of any type to be used as comparator.
-     * @return string Returns a comparator string.
-     */
+	/**
+	 * Creates a MD5 hashed comparator string from any variable.
+	 * 
+	 * @param mixed $input A variable of any type to be used as comparator.
+	 * @return string Returns a comparator string.
+	 */
 	protected function _createComparator($input) {
 		if (is_array($input) OR is_object($input)) {
 			// So that _sleep is not called of origin object

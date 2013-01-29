@@ -72,7 +72,7 @@ class Benchmark {
 	*/
 	protected $data;
 
-    /**
+	/**
      * Starts a new section to be benchmarked with a given name $section. If a section was started before and not stopped so far, it will automatically be stopped. 
      * 
      * @param string $section Name of the benchmarked section.
@@ -96,7 +96,7 @@ class Benchmark {
 		$this->active		= true;
 	}
 
-    /**
+	/**
      * Stops benchmarking of the actual section. 
      * 
      * @return null
@@ -125,7 +125,7 @@ class Benchmark {
 		$this->active	= false;
 	}
 
-    /**
+	/**
      * Returns an array of all so far benchmarked sections with the measured times. 
      * 
      * @return array
