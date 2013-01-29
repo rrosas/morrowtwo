@@ -19,17 +19,65 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
-
 namespace Morrow;
 
+/**
+* With this class it is possible to measure the time (real time and processor time) between two markers. 
+*
+* Example
+* ---------
+*
+* ~~~
+* // ... Controller code
+*  
+* $this->benchmark->start('Section 1');
+*  
+* // ... The code to be benchmarked
+*  
+* $this->benchmark->stop();
+* $benchmarking_results = $this->benchmark->get();
+* print_r($benchmarking_results);
+*  
+* // ... Controller code
+* ~~~
+*/
 class Benchmark {
-	protected $section;	// the name of the actual measured section
-	protected $active;	// is measuring active at the moment
-	protected $realtime;	// start value of measuring in real time
-	protected $proctime;	// start value of measuring in proc time
-	protected $time_all;	// overall time of measuring
-	protected $data;		// the data of measuring
+	/**
+	* the name of the actual measured section
+	* @var string $section
+	*/
+	protected $section;
 
+	/**
+	* is measuring active at the moment
+	* @var boolean $active
+	*/
+	protected $active;
+
+	/**
+	* start value of measuring in real time
+	* @var string $realtime
+	*/
+	protected $realtime;
+	
+	/**
+	* start value of measuring in proc time
+	* @var string $proctime
+	*/
+	protected $proctime;
+
+	/**
+	* the collected data
+	* @var array $data
+	*/
+	protected $data;
+
+    /**
+     * Starts a new section to be benchmarked with a given name $section. If a section was started before and not stopped so far, it will automatically be stopped. 
+     * 
+     * @param string $section Name of the benchmarked section.
+     * @return null
+     */
 	public function start($section = 'Unknown section') {
 		if ($this->active) $this->stop();
 
@@ -48,6 +96,11 @@ class Benchmark {
 		$this->active		= true;
 	}
 
+    /**
+     * Stops benchmarking of the actual section. 
+     * 
+     * @return null
+     */
 	public function stop() {
 		$temp['section'] = $this->section;
 
@@ -72,6 +125,11 @@ class Benchmark {
 		$this->active	= false;
 	}
 
+    /**
+     * Returns an array of all so far benchmarked sections with the measured times. 
+     * 
+     * @return array
+     */
 	public function get() {
 		if ($this->active) $this->stop();
 
