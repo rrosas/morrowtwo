@@ -74,7 +74,7 @@ class Url {
 	}
 
 
-	public function makeUrl($path, $query = array(), $replacements = array(), $rel2abs = false, $sep = null) {
+	public function makeUrl($path = '', $query = array(), $replacements = array(), $rel2abs = false, $sep = null) {
 		if ($sep !== null) {
 			ini_set('arg_separator.output', $sep);
 		}

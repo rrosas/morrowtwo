@@ -1,36 +1,118 @@
 <?php
 /*////////////////////////////////////////////////////////////////////////////////
-    MorrowTwo - a PHP-Framework for efficient Web-Development
-    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+	MorrowTwo - a PHP-Framework for efficient Web-Development
+	Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
-    This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
+	This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 
-    MorrowTwo is free software:  you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	MorrowTwo is free software:  you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
 namespace Morrow;
 
+/**
+* For access to databases we use the PHP own PDO (PHP Data Objects). But we extended it a little bit to simplify your everyday life.
+* 
+* You have access to all methods as described in the documentation for PDO. Furthermore we added or rewrote the following methods.
+* 
+* Examples
+* ---------
+*
+* ~~~{.php}
+* // ... Controller code
+*  
+* $this->prepare('db', $this->config->get('db'));
+*  
+* // Query with a prepared statement using named placeholder
+* $sql = $this->db->result('
+*     SELECT *
+*     FROM table
+*     WHERE id = :id
+* ', array('id'=>$this->input->get('id'))
+* );
+* Debug::dump($sql);
+*  
+* // Query with a prepared statement using "?" placeholder
+* // If you just want to pass one parameter you can also pass it directly without using an array
+* $sql = $this->db->result('
+*     SELECT *
+*     FROM table
+*     WHERE id = ?
+* ', $this->input->get('id'));
+*  
+* Debug::dump($sql);
+*  
+* // ... Controller code
+* ~~~
+*
+* If you prefix a field name in your query with an ">", then this column value will be used as key for the result set instead of a numerically indexed array. This way you will get an array which can be easily accessed via an unique key. 
+* You must only use fields with the ">" operator whose values are unique. Otherwise all rows with the same field value will become one row. 
+*
+* ~~~{.php}
+* // ... Controller code
+*  
+* $this->prepare('db', $this->config->get('db'));
+*  
+* // Query with a prepared statement using named placeholder
+* $sql = $this->db->Result('
+*    SELECT *, >id
+*    FROM table
+* ');
+* Debug::dump($sql);
+*  
+* // ... Controller code
+* ~~~
+*/
 class Db extends \PDO {
-	protected $connected = false;	// are we already connected?
-	protected $config; // the database configuration
-	protected $cache = array(); // column cache for *safe() functions
+	/**
+	 * Are we already connected
+	 * @var boolean $connected
+	 */
+	protected $connected = false;
+
+	/**
+	 * The database configuration
+	 * @var array $config
+	 */
+	protected $config;
+
+	/**
+	 * Column cache for *safe() functions
+	 * @var array $cache
+	 */
+	protected $cache = array();
 	
+	/**
+	 * This method overwrites the standard method. The constructor accepts an array with parameters for specifying the database driver (`mysql`, `sqlite`, etc.), the database host, the database name and for the username and password. Usually you define it in the config files of the framework.
+	 * 
+	 * The keys for the parameters are `driver`, `host`, `db`, `user` and `pass`. 
+	 *
+	 * @param array $config database connection parameters
+	 * @return null
+	 */
 	public function __construct($config) {
-		$this -> config = $config;		
+		$this -> config = $config;
 	}
 
+	/**
+	 * Connects to the Database.
+	 * 
+	 * Because we added Lazy initialization to PDO you only have to call this method if you use PDOs own functions and you did not call any of our methods before. 
+	 * 
+	 * @return null
+	 */
 	public function connect() {
 		if (!$this->connected) {
 			if ($this->config['host']{0} == '/') {
@@ -58,8 +140,15 @@ class Db extends \PDO {
 		}
 	}
 		
-	public function result($query, $params = null) {
-		if (is_scalar($params)) $params = array($params);
+	/**
+	 * This method sends a query to the database and returns the result. 
+	 * 
+	 * @param  string $query  The SQL query to send.
+	 * @param  array $token An array with the prepared statement parameters (indexed or associative array, depends on the use of the prepared statement syntax)
+	 * @return array Returns an array with the keys `SUCCESS` (true if the query could successfully sent to the db, otherwise false), `RESULT` (array The complete result set of the request) and `NUM_ROWS` (integer 	The count of returned results). 
+	 */
+	public function result($query, $token = null) {
+		if (is_scalar($token)) $token = array($token);
 				
 		// search for access keys
 		$accesskey = null;
@@ -72,7 +161,7 @@ class Db extends \PDO {
 		// do query
 		$this->connect();
 		$sth = $this->prepare($query);
-		$returner['SUCCESS'] = $sth->execute($params);
+		$returner['SUCCESS'] = $sth->execute($token);
 		$returner['RESULT'] = $sth->fetchAll(\PDO::FETCH_ASSOC);
 		$returner['NUM_ROWS'] = count($returner['RESULT']);
 		
@@ -88,6 +177,15 @@ class Db extends \PDO {
 		return $returner;
 	}
 
+	/**
+	 * The same as result(), but with the difference that an additional key `FOUND_ROWS` contains the count of rows if you had left out the LIMIT in your query. 
+	 *
+	 * *For MySQL only*
+	 *
+	 * @param  string $query  The SQL query to send.
+	 * @param  array $token An array with the prepared statement parameters (indexed or associative array, depends on the use of the prepared statement syntax)
+	 * @return array Returns an array with the keys `SUCCESS` (true if the query could successfully sent to the db, otherwise false), `RESULT` (array The complete result set of the request), `NUM_ROWS` (integer The count of returned results) and `FOUND_ROWS` (integer The count of results without the LIMIT). 
+	 */
 	public function result_calc_found_rows($query, $params = null) {
 		if (is_scalar($params)) $params = array($params);
 
@@ -106,7 +204,29 @@ class Db extends \PDO {
 		
 		return $returner;
 	}
-		
+	
+	/**
+	 * Inserts a new row. Every key in the array `$data` represents a field in the table.
+	 *
+	 * It is also possible to pass an array with the key `FUNC` as value. In that case it will not been sent as string but as expression. 
+	 *
+	 * ~~~{.php}
+	 * // Controller code
+	 * 
+	 * $data = array(
+	 *     'foo' => 'bar',
+	 *     'foo2' => array('FUNC' => 'foo2+1')
+	 * );
+	 * $this->db->insert('table', $data, true);
+	 * 
+	 * // Controller code
+	 * ~~~
+	 * 
+	 * @param	string	$table  The table name the query refers to.
+	 * @param  array $array The data to insert into the table
+	 * @param  boolean $insertid Set to true to return the entry ID of the new created database row
+	 * @return array An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created database row) 
+	 */
 	public function insert($table, $array, $insertid = false) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
@@ -121,31 +241,40 @@ class Db extends \PDO {
 		return $returner;
 	}
 
+	/**
+	 * The same as insert(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted. So it is made sure that there is always sent a valid query.
+	 *
+	 * This method is slower than insert(), because all field names of the target table has to be figured out with a second query. 
+	 */
 	public function insertSafe($table, $array, $insertid = false) {
 		$array = $this->_safe($table, $array);
 		return $this -> Insert($table, $array, $insertid);
 	}
-		
-	protected function _createUpdateValues($array) {
-		$values = array();
-		$tokens = array();
-		
-		// divide normal values from function calls
-		foreach ($array as $key => $value) {
-			if (is_array($value)) {
-				$tokens[] = '`'.$key.'`='.$value['FUNC'];
-			} else {
-				$tokens[] = '`'.$key.'`=?';
-				$values[] = $value;
-			}
-		}
-		
-		$tokens = implode(', ', $tokens);	
-
-		$returner = compact('tokens', 'values');
-		return $returner;
-	}
-
+	
+	/**
+	 * Updates a row. Every key in the array `$data` represents a field in the table.
+	 *
+	 * It is also possible to pass an array with the key `FUNC` as value. In that case it will not been sent as string but as expression.
+	 *
+	 * ~~~{.php}
+	 * // ... Controller-Code
+	 *
+	 * $data = array(
+	 *     'foo' => 'bar',
+	 *     'foo2' => array('FUNC' => 'foo2+1')
+	 * );
+	 * $this->db->update($table, $data, 'where id = ?', true, 1);
+	 *
+	 * // ... Controller-Code
+	 * ~~~
+	 * 
+	 * @param	string	$table  The table name the query refers to.
+	 * @param	array	$array	The data to insert into the table
+	 * @param	string	$where   The where condition in the update query
+	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
+	 * @param	mixed	$where_tokens	An array (or a scalar) for use as a Prepared Statement in the where clause. Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `AFFECTED_ROWS` (int The count of the affected rows) 
+	 */
 	public function update($table, $array, $where = '', $affected_rows = false, $where_tokens = array()) {
 		$array = $this->_createUpdateValues($array);
 		extract($array);
@@ -166,11 +295,157 @@ class Db extends \PDO {
 		return $returner;
 	}
 
+	/**
+	 * The same as update(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted. So it is made sure that there is always sent a valid query.
+	 *
+	 * This method is slower than update(), because all field names of the target table has to be figured out with a second query. 
+	 */
 	public function updateSafe($table, $array, $where = '', $affected_rows = false, $where_tokens = array()) {
 		$array = $this->_safe($table, $array);
 		return $this -> Update($table, $array, $where, $affected_rows, $where_tokens);
 	}
 	
+	/**
+	 * This method inserts a new row or updates an entry if the key already exists. Every key in the array `$data` represents a field in the table.
+	 *
+	 * It is also possible to pass an array with the key `FUNC` as value. In that case it will not been sent as string but as expression. 
+	 *
+	 * ~~~{.php}
+	 * // ... Controller-Code
+	 * 
+	 * $data = array(
+	 *         'foo' => 'bar',
+	 *         'foo2' => array('FUNC' => 'foo2+1')
+	 * );
+	 * $this->db->replace('table', $data, true);
+	 *
+	 * // ... Controller-Code
+	 * ~~~
+	 * 
+	 * @param	string	$table  The table name the query refers to.
+	 * @param	array	$array	The data to replace
+	 * @param	boolean	$insertid Set to true to return the entry ID of the new created or changed database row
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created or changed database row) 
+	 */
+	public function replace($table, $array, $insertid = false) {
+		$array = $this->_createInsertAndReplaceValues($array);
+		extract($array);
+		
+		$query = "REPLACE INTO $table ($keys) VALUES ($values)";
+
+		$this->connect();
+		$sth = $this->prepare($query);
+
+		$returner['SUCCESS'] = $sth->execute($binds);
+		if ($insertid == true) $returner['INSERT_ID'] = $this->lastInsertId();
+		return $returner;
+	}
+
+	/**
+	 * The same as replace(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted.
+	 * So it is made sure that there is always sent a valid query.
+	 *
+	 * This method is slower than replace(), because all field names of the target table has to be figured out with a second query. 
+	 */
+	public function replaceSafe($table, $array, $insertid = false) {
+		$array = $this->_safe($table, $array);
+		return $this -> Replace($table, $array, $insertid);
+	}
+		
+	/**
+	 * Deletes a database row.
+	 *
+	 * @param	string	$table	The table name the query refers to.
+	 * @param	string	$where	The where condition in the update query
+	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
+	 * @param	mixed	$where_tokens	An array (or a scalar) for use as a Prepared Statement in the where clause. Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `AFFECTED_ROWS` (int The count of the affected rows) 
+	 */
+	public function delete($table, $where, $affected_rows = false, $where_tokens = array()) {
+		// add tokens of where clause
+		$values = array();
+		if (is_scalar($where_tokens)) $where_tokens = array($where_tokens);
+		foreach ($where_tokens as $value) {
+			$values[] = $value;
+		}
+		
+		$query = "DELETE FROM $table $where";
+
+		$this->connect();
+		$sth = $this->prepare($query);
+		
+		$returner['SUCCESS'] = $sth->execute($values);
+		if ($affected_rows) $returner['AFFECTED_ROWS'] = $sth->rowCount();
+		return $returner;
+	}
+	
+	/**
+	 * The same as exec() from PDO with the difference that it connects to the database automatically.
+	 * 
+	 * @param	string	$query	The query to execute
+	 * @return	int	The count of the affected rows
+	 */
+	public function exec($query) {
+		$this->connect();
+		$returner['AFFECTED_ROWS'] = parent::exec($query);
+		return $returner;
+	}
+
+	/**
+	 * The same as query() from PDO with the difference that it connects to the database automatically.
+	 * 
+	 * @param	string	$query	The query to execute
+	 * @return	object	The result as a PDOStatement object
+	 */
+	public function query($query) {
+		$this->connect();
+		$params = func_get_args();
+		return call_user_func_array(array($this, 'parent::query'), $params);
+	}
+
+	/**
+	 * The same as beginTransaction() from PDO with the difference that it connects to the database automatically.
+	 * 
+	 * @return	boolean	Returns TRUE on success and FALSE on failure
+	 */
+	public function	beginTransaction() {
+		$this->connect();
+		$status = parent::beginTransaction();
+		return $status;
+	}
+		
+	/**
+	 * Creates an update string of an associative array for use in a SQL query
+	 * 
+	 * @param	array $array An associative array: column_name > value
+	 * @return	string
+	 */
+	protected function _createUpdateValues($array) {
+		$values = array();
+		$tokens = array();
+		
+		// divide normal values from function calls
+		foreach ($array as $key => $value) {
+			if (is_array($value)) {
+				$tokens[] = '`'.$key.'`='.$value['FUNC'];
+			} else {
+				$tokens[] = '`'.$key.'`=?';
+				$values[] = $value;
+			}
+		}
+		
+		$tokens = implode(', ', $tokens);	
+
+		$returner = compact('tokens', 'values');
+		return $returner;
+	}
+
+	/**
+	 * Creates an insert and replace string of an associative array for use in a SQL query
+	 * 
+	 * @param	array $array An associative array: column_name > value
+	 * @return	string
+	 */
 	protected function _createInsertAndReplaceValues($array) {
 		$keys = array();
 		$values = array();
@@ -192,61 +467,13 @@ class Db extends \PDO {
 		return $returner;
 	}
 
-	public function replace($table, $array, $insertid = false) {
-		$array = $this->_createInsertAndReplaceValues($array);
-		extract($array);
-		
-		$query = "REPLACE INTO $table ($keys) VALUES ($values)";
-
-		$this->connect();
-		$sth = $this->prepare($query);
-
-		$returner['SUCCESS'] = $sth->execute($binds);
-		if ($insertid == true) $returner['INSERT_ID'] = $this->lastInsertId();
-		return $returner;
-	}
-
-	public function replaceSafe($table, $array, $insertid = false) {
-		$array = $this->_safe($table, $array);
-		return $this -> Replace($table, $array, $insertid);
-	}
-		
-	public function delete($table, $where, $affected_rows = false, $where_tokens = array()) {
-		// add tokens of where clause
-		$values = array();
-		if (is_scalar($where_tokens)) $where_tokens = array($where_tokens);
-		foreach ($where_tokens as $value) {
-			$values[] = $value;
-		}
-		
-		$query = "DELETE FROM $table $where";
-
-		$this->connect();
-		$sth = $this->prepare($query);
-		
-		$returner['SUCCESS'] = $sth->execute($values);
-		if ($affected_rows) $returner['AFFECTED_ROWS'] = $sth->rowCount();
-		return $returner;
-	}
-	
-	public function exec($query) {
-		$this->connect();
-		$returner['AFFECTED_ROWS'] = parent::exec($query);
-		return $returner;
-	}
-
-	public function query($query) {
-		$this->connect();
-		$params = func_get_args();
-		return call_user_func_array(array($this, 'parent::query'), $params);
-	}
-
-	public function	beginTransaction() {
-		$this->connect();
-		$status = parent::beginTransaction();
-		return $status;
-	}
-		
+	/**
+	 * Removes all keys from an array which are not available in the given table
+	 * 
+	 * @param	string $table The table name to compare the array with
+	 * @param	array $array An associative array: column_name > value
+	 * @return	array
+	 */
 	protected function _safe($table, $array) {
 		if (!isset($this->cache[$table])) {
 			$this->connect();

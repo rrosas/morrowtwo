@@ -181,7 +181,6 @@ class General {
 			$returner = self::array_dotSyntaxExplode($value);
 		}
 		else $returner = $value;
-		return true;
 	}
 
 	public static function array_dotSyntaxDelete(array &$array, $identifier) {
@@ -205,7 +204,6 @@ class General {
 
 		if (isset($returner)) {
 			unset($parent[$rkey]);
-			return true;
 		} else {
 			throw new \Exception(__CLASS__.': identifier "'.$identifier.'" does not exist.');
 		}

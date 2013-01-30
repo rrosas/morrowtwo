@@ -177,7 +177,7 @@ class Morrow {
 
 		// define project constants
 		define('PROJECT_PATH', FW_PATH . $project_relpath . '/');
-		define('PROJECT_RELPATH', $project_relpath);
+		define('PROJECT_RELPATH', $project_relpath . '/');
 
 		/* register project config in the config class
 		********************************************************************************************/
@@ -197,7 +197,7 @@ class Morrow {
 		/* define project paths
 		********************************************************************************************/
 		$this->page->set('project_path', $domain.$project_relpath.'/');
-		$this->page->set('project_relpath', $project_relpath.'/');
+		$this->page->set('project_relpath', PROJECT_RELPATH);
 
 		/* load session
 		********************************************************************************************/

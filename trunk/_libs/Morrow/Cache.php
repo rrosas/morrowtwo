@@ -43,7 +43,7 @@ namespace Morrow;
 * }
 *
 * // your data
-* print_r($result);
+* Debug::dump($result);
 *
 * // ... Controller code
 * ~~~
@@ -66,7 +66,7 @@ namespace Morrow;
 * }
 * 
 * // your data
-* print_r($result);
+* Debug::dump($result);
 * 
 * // ... Controller code
 * ~~~
@@ -117,7 +117,7 @@ class Cache {
 	}
 
 	/**
-	 * Same as load(), but also returns the cache item data if the item has expired. Returns FALSE if there is no cached data yet. 
+	 * Returns the cache item data also if the item is already stale. Returns FALSE if there is no cached data yet. 
 	 * 
 	 * @param string $cache_id The cache descriptor id.
 	 * @param mixed $comparator If the comparator changes the cache gets instantly stale.

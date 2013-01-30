@@ -36,7 +36,7 @@ namespace Morrow;
 *  
 * $this->benchmark->stop();
 * $benchmarking_results = $this->benchmark->get();
-* print_r($benchmarking_results);
+* Debug::dump($benchmarking_results);
 *  
 * // ... Controller code
 * ~~~
