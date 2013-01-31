@@ -22,26 +22,71 @@
 
 namespace Morrow;
 
+/**
+ * This class handles the access to input that comes from the outside of the framework: $_GET, $_POST and $_FILES. 
+ * It cleans the input vars and reformats the $_FILES array for a uniform access to it.
+ *
+ * Dot Syntax
+ * -----------
+ * 
+ * This class works with the extended dot syntax. So if you have keys like input_example.host and input_example.smtp in your input, you can call $this->input->get('input_example') to receive an array with the keys host and smtp.
+ * 
+ * Example
+ * -------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ *  
+ * // retrieve full framework configuration
+ * Debug::dump($this->input->get());
+ *  
+ * // ... Controller code
+ * ~~~
+ */
 class Input {
-	protected $post;
-	protected $get;
-	protected $data;
+	/**
+	 * Holds the data for GET input.
+	 * @var array $_get
+	 */
+	protected $_get;
+
+	/**
+	 * Holds the data for POST input.
+	 * @var array $_post
+	 */
+	protected $_post;
+
+	/**
+	 * Holds the data for file uploads.
+	 * @var array $_files
+	 */
+	protected $_files;
+
+	/**
+	 * Holds the data for GET, POST and file uploads. Comparable to $_REQUEST.
+	 * @var array $_data
+	 */
+	protected $_data;
 	
-	protected $magic_quotes_gpc;
-	
+	/**
+	 * Imports, unifies and cleans user input from PHP Superglobals.
+	 */
 	public function __construct() {
-		$this->get   = $this->clean($_GET);
-		$this->post  = $this->clean($_POST);
-		$this->files = $this->_getFileData($this->clean($_FILES));
-		$this->data  = $this->_array_merge_recursive_distinct($this->get, $this->post, $this->files);
+		$this->_get   = $this->tidy($_GET);
+		$this->_post  = $this->tidy($_POST);
+		$this->_files = $this->_getFileData($this->tidy($_FILES));
+		$this->_data  = $this->_array_merge_recursive_distinct($this->_get, $this->_post, $this->_files);
 	}
 
-	// Bereinigen von user input
-	public function clean($value) {
+	/**
+	 * Trims a string, unifies line breaks and deletes null bytes.
+	 * @param	mixed	$value	An array or scalar to clean up.
+	 * @return	mixed	The cleaned version of the input.
+	 */
+	public function tidy($value) {
 		if (is_array($value)) {
-			$value = array_map(array(&$this, 'clean'), $value);
+			$value = array_map(array(&$this, 'tidy'), $value);
 		} else {
-			// Folgendermaßen wird bereinigt
 			$value = trim($value);
 			// unify line breaks
 			$value = preg_replace("=(\r\n|\r)=", "\n", $value);
@@ -51,28 +96,58 @@ class Input {
 		return $value;
 	}
 
-	// Zugriff auf Get-Variablen
+	/**
+	 * Access to all user input (comparable to $_REQUEST).
+	 * @param string $identifier Config data to be retrieved.
+	 * @return mixed
+	 */
 	public function get($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->data, $identifier);
+		return Helpers\General::array_dotSyntaxGet($this->_data, $identifier);
 	}
 
+	/**
+	 * Access to user input that came per POST (comparable to $_POST).
+	 * @param string $identifier Config data to be retrieved.
+	 * @return mixed
+	 */
 	public function getPost($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->post, $identifier);
+		return Helpers\General::array_dotSyntaxGet($this->_post, $identifier);
 	}
 
+	/**
+	 * Access to user input that came per GET (comparable to $_GET).
+	 * @param string $identifier Config data to be retrieved.
+	 * @return mixed
+	 */
 	public function getGet($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->get, $identifier);
+		return Helpers\General::array_dotSyntaxGet($this->_get, $identifier);
 	}
 
+	/**
+	 * Access to user input that came per file upload (comparable to $_FILES).
+	 * @param string $identifier Config data to be retrieved.
+	 * @return mixed
+	 */
 	public function getFiles($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->files, $identifier);
+		return Helpers\General::array_dotSyntaxGet($this->_files, $identifier);
 	}
 
-	// import for URL Routing
+	/**
+	 * Sets an input value. Used for parameters coming from URL routing rules.
+	 * @param string $identifier Config data to be retrieved
+	 * @return mixed
+	 */
 	public function set($identifier, $value) {
-		Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
+		Helpers\General::array_dotSyntaxSet($this->_data, $identifier, $value);
 	}
 
+	/**
+	 * Merges any number of arrays.
+	 *
+	 * array_merge_recursive() does indeed merge arrays, but it converts values with duplicate keys to arrays rather than overwriting the value in the first array with the duplicate value in the second array, as array_merge does.
+	 * @param	array	$array	Any number of arrays.
+	 * @return	array
+	 */
 	protected function _array_merge_recursive_distinct () {
 		$arrays = func_get_args();
 		$base = array_shift($arrays);
@@ -94,8 +169,15 @@ class Input {
 		return $base;
 	}
 
-		// if arrays of formdata are used, php rearranges the array format of _FILE.
-	// this method puts them back in a more useful format
+	/**
+	 * Rearranges the format of $_FILE data.
+	 *
+	 * If arrays of formdata are used, php rearranges the array format of $_FILE.
+	 * This method puts them back in a more useful format.
+	 * 
+	 * @param	array	$_files	The data of $_FILES.
+	 * @return	array
+	 */
 	protected function _getFileData($_files) {
 		$return_files = array();
 		if (is_array($_files)) {
@@ -115,70 +197,4 @@ class Input {
 		}
 		return $return_files;
 	}
-
-	public function removeXss($var) {
-		if (is_array($var)) {
-			foreach ($var as $key => $value) {
-				$var[$key] = $this->_removeXss($value);
-			}
-		} else {
-			if (is_scalar($var)) $var = $this->_removeXss($var);
-		}
-		return $var;
-	}
-	
-	// http://kallahar.com/smallprojects/php_xss_filter_function.php
-	protected function _removeXss($val) {
-		// remove all non-printable characters. CR(0a) and LF(0b) and TAB(9) are allowed
-		// this prevents some character re-spacing such as <java\0script>
-		// note that you have to handle splits with \n, \r, and \t later since they *are* allowed in some inputs
-		$val = preg_replace('/([\x00-\x08,\x0b-\x0c,\x0e-\x19])/', '', $val);
-
-		// straight replacements, the user should never need these since they're normal characters
-		// this prevents like <IMG SRC=&#X40&#X61&#X76&#X61&#X73&#X63&#X72&#X69&#X70&#X74&#X3A&#X61&#X6C&#X65&#X72&#X74&#X28&#X27&#X58&#X53&#X53&#X27&#X29>
-		$search = 'abcdefghijklmnopqrstuvwxyz';
-		$search .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		$search .= '1234567890!@#$%^&*()';
-		$search .= '~`";:?+/={}[]-_|\'\\';
-		for ($i = 0; $i < strlen($search); $i++) {
-			// ;? matches the ;, which is optional
-			// 0{0,7} matches any padded zeros, which are optional and go up to 8 chars
-
-			// &#x0040 @ search for the hex values
-			$val = preg_replace('/(&#[xX]0{0,8}'.dechex(ord($search[$i])).';?)/i', $search[$i], $val); // with a ;
-			// &#00064 @ 0{0,7} matches '0' zero to seven times
-			$val = preg_replace('/(&#0{0,8}'.ord($search[$i]).';?)/', $search[$i], $val); // with a ;
-		}
-
-		// now the only remaining whitespace attacks are \t, \n, and \r
-		$ra1 = Array('javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'style', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound', 'title', 'base');
-		$ra2 = Array('onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload');
-		$ra = array_merge($ra1, $ra2);
-
-		$found = true; // keep replacing as long as the previous round replaced something
-		while ($found == true) {
-			$val_before = $val;
-			for ($i = 0; $i < sizeof($ra); $i++) {
-				$pattern = '/';
-				for ($j = 0; $j < strlen($ra[$i]); $j++) {
-					if ($j > 0) {
-						$pattern .= '(';
-						$pattern .= '(&#[xX]0{0,8}([9ab]);)';
-						$pattern .= '|';
-						$pattern .= '|(&#0{0,8}([9|10|13]);)';
-						$pattern .= ')*';
-					}
-					$pattern .= $ra[$i][$j];
-				}
-				$pattern .= '/i';
-				$replacement = substr($ra[$i], 0, 2).'<x>'.substr($ra[$i], 2); // add in <> to nerf the tag
-				$val = preg_replace($pattern, $replacement, $val); // filter out the hex tags
-				if ($val_before == $val) {
-					// no replacements were made, so exit the loop
-					$found = false;
-				}
-			}
-		}
-		return $val;
-	} 	
 }

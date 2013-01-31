@@ -23,47 +23,86 @@
 
 namespace Morrow;
 
+/**
+ * This class helps you to debug your application.
+ *
+ * You are able to change the behaviour of these methods with the following parameters you should set in your configuration files:
+ *
+ * Type | Keyname | Default | Description
+ * -----|---------|---------|------------
+ * bool | debug.output.screen | true | Defines if errors should be displayed on screen
+ * bool | debug.output.logfile | true | Defines if errors should be logged to the file system (`FW_PATH/_logs/`)
+ * bool | debug.output.headers | false | Experimental use
+ * string | debug.password | 'password' | Experimental use
+ */
 class Debug {
+	/**
+	 * The config object
+	 * @var object $config
+	 */
 	protected $config;
 
-	// Members for dump
-	public $maxdepth = 8; // the maximum recursion level
-	
-	// Members for errorhandler
+	/**
+	 * The last error which occured.
+	 * @var string $lasterror
+	 */
 	protected $lasterror;
+
+	/**
+	 * An errorcounter to output the css for displaying the error only once
+	 * @var int $errorcounter
+	 */
 	protected $errorcounter = 0;
-	protected $errortype;
+
+	/**
+	 * Contains all error types PHP is able to throw
+	 * @var array $errortypes
+	 */
+	protected $errortypes;
 	
-	// this variable stores the actual count of sent http debug headers
+	/**
+	 * Stores the actual count of sent http debug headers
+	 * @var int $x_debug_count
+	 */
 	protected $x_debug_count = 0; 
 	
+	/**
+	 * Initializes the class. This is done internally.
+	 */
 	public function __construct() {
 		// read config from config class
 		$config = Factory::load('Config');
 		$this->config = $config->get('debug');
 
 		// error types
-		$this->errortype[1]		= 'E_ERROR';
-		$this->errortype[2]		= 'E_WARNING';
-		$this->errortype[4]		= 'E_PARSE';
-		$this->errortype[8]		= 'E_NOTICE';
-		$this->errortype[16]	= 'E_CORE_ERROR';
-		$this->errortype[32]	= 'E_CORE_WARNING';
-		$this->errortype[64]	= 'E_COMPILE_ERROR';
-		$this->errortype[128]	= 'E_COMPILE_WARNING';
-		$this->errortype[256]	= 'E_USER_ERROR';
-		$this->errortype[512]	= 'E_USER_WARNING';
-		$this->errortype[1024]	= 'E_USER_NOTICE';
-		$this->errortype[2048]	= 'E_STRICT';
-		$this->errortype[4096]	= 'E_RECOVERABLE_ERROR';
-		$this->errortype[8192]	= 'E_DEPRECATED';
-		$this->errortype[16384]	= 'E_USER_DEPRECATED';
+		$this->errortypes[1]		= 'E_ERROR';
+		$this->errortypes[2]		= 'E_WARNING';
+		$this->errortypes[4]		= 'E_PARSE';
+		$this->errortypes[8]		= 'E_NOTICE';
+		$this->errortypes[16]		= 'E_CORE_ERROR';
+		$this->errortypes[32]		= 'E_CORE_WARNING';
+		$this->errortypes[64]		= 'E_COMPILE_ERROR';
+		$this->errortypes[128]		= 'E_COMPILE_WARNING';
+		$this->errortypes[256]		= 'E_USER_ERROR';
+		$this->errortypes[512]		= 'E_USER_WARNING';
+		$this->errortypes[1024]		= 'E_USER_NOTICE';
+		$this->errortypes[2048]		= 'E_STRICT';
+		$this->errortypes[4096]		= 'E_RECOVERABLE_ERROR';
+		$this->errortypes[8192]		= 'E_DEPRECATED';
+		$this->errortypes[16384]	= 'E_USER_DEPRECATED';
 	}
 
-	protected function errorhandler_file($errstr, $backtrace, $errorcode) {
+	/**
+	 * Writes an error to a logfile.
+	 *
+	 * @param	string	$errstr	The error which occured recently
+	 * @param	array	$backtrace	The backtrace array created via debug_backtrace()
+	 * @param	string	$errortype	The errortype that occured
+	 */
+	protected function _errorhandler_file($errstr, $backtrace, $errortype) {
 		$fn = FW_PATH.'/_logs/'.date("y-m-d").'.txt';
 
-		$body  = '############################## '.$errorcode."\n";
+		$body  = '############################## '.$errortype."\n";
 		$body .= 'Datum:      '.date("d.m.Y - H:i:s")."\n";
 		$body .= 'URL:        '.$_SERVER['REQUEST_URI']."\n";
 		$body .= 'IP:         '.$_SERVER['REMOTE_ADDR']."\n";
@@ -80,17 +119,24 @@ class Debug {
 		file_put_contents($fn, $body, FILE_APPEND);
 	}
 	
-	protected function errorhandler_output($errstr, $backtrace, $errordescription) {
+	/**
+	 * Outputs an error to the screen.
+	 *
+	 * @param	string	$errstr	The error which occured recently
+	 * @param	array	$backtrace	The backtrace array created via debug_backtrace()
+	 * @param	string	$errortype	The errortype that occured
+	 */
+	protected function _errorhandler_output($errstr, $backtrace, $errortype) {
 		// output error
 		$error = '<div class="dp_container">';
-		$error .= '<div class="skyline">'.$errordescription.'</div>';
+		$error .= '<div class="skyline">'.$errortype.'</div>';
 		$error .= '<h1 class="exception">'.$errstr.'</h1>';
 
 		$count = 0;
 		foreach ($backtrace as $key => $value) {
 			// only if file is available
 			if (!empty($value['file']) && is_file($value['file'])) {
-				$id_file = 'errorhandler_file_'.$this->errorcounter.'_'.$count;
+				$id_file = '_errorhandler_file_'.$this->errorcounter.'_'.$count;
 				$id_args = 'errorhandler_args_'.$this->errorcounter.'_'.$count;
 				$show = ($count === 0) ? 'style="display: block;"' : '';
 
@@ -103,7 +149,7 @@ class Debug {
 				$file = preg_replace('=[^/]+$=', '<strong>$0</strong>', $value['file']);
 				
 				$error .= '<h3>'.$file.' (Line '.$value['line'].')</h3>';
-				$error .= '<div class="file" id="'.$id_file.'" '.$show.'>'.$this->getContent($value['file'], $value['line']).'<div style="clear: both;"></div></div>';
+				$error .= '<div class="file" id="'.$id_file.'" '.$show.'>'.$this->_getContent($value['file'], $value['line']).'<div style="clear: both;"></div></div>';
 
 				if (count($value['args'])>0 and $count > 0) {
 					$dump = htmlspecialchars(print_r($value['args'], true));
@@ -118,12 +164,16 @@ class Debug {
 		$error .= '</div>';
 
 		// output css and js only at first call
-		if ($this->errorcounter === 1) $error .= $this->debug_styles();
+		if ($this->errorcounter === 1) $error .= $this->_debug_styles();
 
 		return $error;
 	}
 	
-	protected function debug_styles() {
+	/**
+	 * Return the CSS styling for dumps and errors
+	 * @return string
+	 */
+	protected function _debug_styles() {
 		return '
 			<style>
 			// css reset
@@ -169,6 +219,12 @@ class Debug {
 		';
 	}
 	
+	/**
+	 * Outputs errors via http headers
+	 * 
+	 * @param  string $content The error produced by _errorhandler_output
+	 * @return null
+	 */
 	protected function _output_http_headers($content) {
 		// we need this client header to proceed
 		if (!isset($_SERVER['HTTP_X_DEBUG_REQUEST']) || $_SERVER['HTTP_X_DEBUG_REQUEST'] != $this->config['password']) {
@@ -186,6 +242,11 @@ class Debug {
 		header('X-Debug-Count: '.$this->x_debug_count);
 	}
 	
+	/**
+	 * This method is called when an exception occurs
+	 * @param  object $exception The incoming Exception object
+	 * @return null
+	 */
 	public function errorhandler($exception) {
 		header("HTTP/1.1 500 Internal Server Error");
 
@@ -215,36 +276,42 @@ class Debug {
 		}
 		
 		// set the error code string
-		if ($exception instanceof ErrorException) $errordescription = $this->errortype[ $exception->getSeverity() ];
+		if ($exception instanceof ErrorException) $errordescription = $this->errortypes[ $exception->getSeverity() ];
 		elseif ($errcode == 0) $errordescription = 'EXCEPTION';
 		else $errordescription = 'EXCEPTION (Code '.$errcode.')';
 
 		// show error in firefox panel
 		if ($this->config['output']['headers'] == true) {
-			$error = $this->errorhandler_output($errstr, $backtrace, $errordescription);
+			$error = $this->_errorhandler_output($errstr, $backtrace, $errordescription);
 			$this->_output_http_headers($error);
 		}
 
 		// show error on screen
 		if ($this->config['output']['screen'] == true) {
-			$error = $this->errorhandler_output($errstr, $backtrace, $errordescription);
+			$error = $this->_errorhandler_output($errstr, $backtrace, $errordescription);
 			echo $error;
 		}
 
 		// log error in logfile
 		if ($this->config['output']['logfile'] == true) {
-			$this->errorhandler_file($errstr, $backtrace, $errordescription);
+			$this->_errorhandler_file($errstr, $backtrace, $errordescription);
 		}
-
-		return;
 	}
 
-	protected function getContent($errfile, $errline, $file_or_string = 'file') {
+	/**
+	 * Retrieves a code excerpt from a file.
+	 * 
+	 * @param	string	$errfile_or_string	The path to the file or the content directly.
+	 * @param	int		$errline	In which line did the error occur.
+	 * @param	string	$file_or_string	If the input a file path or a string.
+	 * @return	string	Returns a HTML string with the highlighted line.
+	 */
+	protected function _getContent($errfile_or_string, $errline, $file_or_string = 'file') {
 		$show_lines = 10;
 
 		// Ausschnitt aus der Datei holen
-		if ($file_or_string === 'file') $file = highlight_file($errfile, true);
-		else $file = highlight_string($errfile, true);
+		if ($file_or_string === 'file') $file = highlight_file($errfile_or_string, true);
+		else $file = highlight_string($errfile_or_string, true);
 		
 		$file = explode("<br />", $file);
 
@@ -265,13 +332,23 @@ class Debug {
 
 	/* main method
 	********************************************************************************************/
+	/**
+	 * Dumps any number of variables to the screen.
+	 * @param mixed $variable Pass a variable number of arguments to this method
+	 * @return null
+	 */
 	public static function dump() {
 		$debug = Factory::load('Debug');
 		$args = func_get_args();
 		echo $debug->_dump($args);
 	}
 		
-	protected function _dump($input) {
+	/**
+	 * Returns the HTML for dumped variables.
+	 * @param	mixed	$args	Variables of any type in an array.
+	 * @return	string	The HTML for the dumped variable.
+	 */
+	protected function _dump($args) {
 		// get function call position
 		$backtrace = debug_backtrace();
 		$backtrace = $backtrace[1];
@@ -283,7 +360,7 @@ class Debug {
 		}
 
 		$output = '';
-		foreach ($input as $arg) {
+		foreach ($args as $arg) {
 			// count errors to produce unique ids
 			$this->errorcounter++;
 
@@ -296,11 +373,11 @@ class Debug {
 			$output .= '<h3>'.$file.' (Line '.$backtrace['line'].')</h3>';
 
 			// add var content
-			$output .= $this->dump_php($arg);
+			$output .= $this->_dump_php($arg);
 			$output .= '</div>';
 			
 			// add styles
-			$output .= $this->debug_styles();
+			$output .= $this->_debug_styles();
 		}
 		
 		// output to debug console
@@ -311,7 +388,7 @@ class Debug {
 		// output to screen		
 		if ($this->config['output']['screen'] == false) return '';
 
-		return $output;
+		echo $output;
 	}
 
 
@@ -319,7 +396,12 @@ class Debug {
 	// Inspired from:     PHP.net Contributions
 	// Description: Helps with php debugging
 
-	protected function dump_php(&$var) {
+	/**
+	 * Returns the HTML for the args of dumped variables.
+	 * @param	mixed	$var	A variable of any type.
+	 * @return	string	The HTML for the dumped variable.
+	 */
+	protected function _dump_php(&$var) {
 		$scope = false;
 		$prefix = 'unique';
 		$suffix = 'value';
@@ -329,17 +411,28 @@ class Debug {
 
 		$old = $var;
 		$var = $new = $prefix.rand().$suffix; $vname = false;
-		foreach($vals as $key => $val) if ($val === $new) $vname = $key;
+		foreach ($vals as $key => $val) {
+			if ($val === $new) $vname = $key;
+		}
 		$var = $old;
 
 		$output = '<div class="args">';
-		$output .= $this->dump_php_recursive($var, '$'.$vname);
+		$output .= $this->_dump_php_recursive($var, '$'.$vname);
 		$output .= "</div>";
 		
 		return $output;
 	}
 
-	protected function dump_php_recursive(&$var, $var_name = null, $indent = null, $reference = null, $depth = 0) {
+	/**
+	 * Returns the inner HTML for a dumped variable.
+	 * @param	mixed	$var	A variable of any type.
+	 * @param	string	$var_name	The name of the variable to output
+	 * @param	string	$indent	The indentation level
+	 * @param	string	$reference	WTF?
+	 * @param	integer	$depth	The maximum recursion level to examine the variable
+	 * @return	string	HTML string
+	 */
+	protected function _dump_php_recursive(&$var, $var_name = null, $indent = null, $reference = null, $depth = 0) {
 		$colors = array(
 			'String' => 'green',
 			'Integer' => 'red',
@@ -349,13 +442,14 @@ class Debug {
 			'Resource' => 'black',
 		);
 		$grey = '#a2a2a2';
-		
+
 		$do_dump_indent = "<span style='color:#ccc;'>|</span> &nbsp;&nbsp; ";
 		$reference = $reference.$var_name;
 		$keyvar = 'the_do_dump_recursion_protection_scheme'; $keyname = 'referenced_object_name';
 		
 		$output = '';
 
+		$maxdepth = 8;
 		$depth++;
 
 		if (is_array($var) && isset($var[$keyvar])) {
@@ -378,8 +472,8 @@ class Debug {
 				$keys = array_keys($avar);
 				foreach ($keys as $name) {
 					$value = &$avar[$name];
-					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
-					else $output .= $this->dump_php_recursive($value, "['$name']", $indent.$do_dump_indent, $reference, $depth);
+					if ($depth > $maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
+					else $output .= $this->_dump_php_recursive($value, "['$name']", $indent.$do_dump_indent, $reference, $depth);
 				}
 				$output .= "$indent)<br />";
 			} elseif (is_object($avar)) {
@@ -406,8 +500,8 @@ class Debug {
 				$members = get_object_vars($avar);
 				if (count($members) > 0) $output .= "$indent$do_dump_indent<br />";
 				foreach ($members as $name => $value) {
-					if ($depth > $this->maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
-					else $output .= $this->dump_php_recursive($value, "$${name}", $indent.$do_dump_indent, $reference, $depth);
+					if ($depth > $maxdepth ) $output .= "$indent$do_dump_indent<b style='color:red'>Too much recursion ...</b><br />";
+					else $output .= $this->_dump_php_recursive($value, "$${name}", $indent.$do_dump_indent, $reference, $depth);
 				}
 				$output .= "$indent}<br />";
 			} elseif (is_resource($avar)) {
@@ -418,7 +512,7 @@ class Debug {
 					$meta_data = array();
 				}
 				foreach ($meta_data as $key => $value) {
-					$output .= $this->dump_php_recursive($value, "['$key']", $indent.$do_dump_indent, $reference);
+					$output .= $this->_dump_php_recursive($value, "['$key']", $indent.$do_dump_indent, $reference);
 				}
 				$output .= "$indent)<br />";
 			} else { // for boolean, string, integer, float

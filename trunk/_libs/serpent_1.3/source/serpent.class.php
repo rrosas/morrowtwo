@@ -12,8 +12,7 @@
 include( dirname(__FILE__).'/serpentResourceAbstract.class.php' );
 include( dirname(__FILE__).'/serpentCompilerAbstract.class.php' );
 
-class Serpent
-	{
+class Serpent {
 	// main config
 	public $compile_dir = '';
 	public $plugins_dir = array();
@@ -39,20 +38,27 @@ class Serpent
 	protected $_compiler = null;
 	protected $_plugin_config = array();
 
-	public function __construct()
-		{
+	public function __construct() {
 		$this->compile_dir = 'templates_compiled/';
 		$this->plugins_dir[] = dirname(__FILE__).'/plugins/';		
-		}
+	}
 
-	public function pass($vars)
-		{
-		$this->vars = $vars;
+	// input is getting tagged with a XSS string to check for unspecified output (raw or escape)
+	protected function _tagXSS($value) {
+		if (is_array($value)) {
+			$value = array_map(array(&$this, '_tagXSS'), $value);
+		} else {
+			if (is_string($value)) $value = '<!XSS!>' . $value . '<!/XSS!>';
 		}
+		return $value;
+	}
+
+	public function pass($vars) {
+		$this->vars = $this->_tagXSS($vars);
+	}
 	
 	// the main method to render a template
-	public function render($tpl, $resource_handler = null, $compiler_handler = null, $vars = null)
-		{
+	public function render($tpl, $resource_handler = null, $compiler_handler = null, $vars = null) {
 		// pass these vars if set
 		if (is_null($vars)) $vars = $this->vars;
 		
@@ -77,43 +83,47 @@ class Serpent
 		// include the extended templates
 		// foreach would not work here because an included template could fill the template stack
 		// (and foreach just works with a copy of the array and would not recognize the new template)
-		while (count($this->_template_stack[$this->render_id]) > 0)
-			{
+		while (count($this->_template_stack[$this->render_id]) > 0) {
 			include( array_shift($this->_template_stack[$this->render_id]) );
 			
 			// throw away the output of templates that only extend
 			if ( count($this->_template_stack[$this->render_id]) != 0) ob_clean();
-			}
+		}
 
 		// Now we have to set the old id as the current id if we leave this render branch
 		array_pop($this->render_id_stack);
 		$this->render_id = end($this->render_id_stack);
 		
-		return ob_get_clean();
+		// check for XSS strings
+		$content = ob_get_clean();
+		if (strpos($content, '<!XSS!>') !== false) {
+			preg_match('|<!XSS!>(.+?)<!/XSS!>|s', $content, $match);
+			throw new \Exception(
+				__CLASS__ . ": The use of following string was not specified: '" . $match[1] . "'.<br /><br />"
+				. "Use :raw() if you know that the input cannot contain a XSS attack.<br />"
+				. "Use :escape() to escape user input. Be careful: Also \$_SERVER variables can be dangerous.");
 		}
 
-	public function addPluginConfig($type, $name, $config)
-		{
+		return $content;
+	}
+
+	public function addPluginConfig($type, $name, $config) {
 		$this->_plugin_config[$type][$name] = $config;
-		}
+	}
 	
-	public function setCharset($_charset)
-		{
+	public function setCharset($_charset) {
 		$this->_charset = $_charset;
-		}
+	}
 	
 	// makes sure that a valid filename will be used for the compilation file
-	protected function _cleanFilename($filename)
-		{
+	protected function _cleanFilename($filename) {
 		return preg_replace('=[^a-z0-9_-]=i', '%', $filename);
-		}
+	}
 	
 	// load and init plugin
-	protected function _loadPlugin($type, $name)
-		{
+	protected function _loadPlugin($type, $name) {
 		// iterate all plugin dirs
-		foreach ($this->plugins_dir as $dir)
-			{
+		foreach ($this->plugins_dir as $dir) {
 			$file = $dir.'/'.$type.'.'.$name.'.php';
 			if (!is_file($file)) continue;
 
@@ -126,13 +136,12 @@ class Serpent
 			if (isset($this->_plugin_config[$type][$name])) $object->setConfig($this->_plugin_config[$type][$name]);
 			
 			return $object;
-			}
-		throw new \Exception($type.' handler "'.$name.'" does not exist.');
 		}
+		throw new \Exception($type.' handler "'.$name.'" does not exist.');
+	}
 	
 	// checks if a template has to be compiled and returns the path to the compiled template
-	protected function _render($tpl, $resource_handler = null, $compiler_handler = null)
-		{
+	protected function _render($tpl, $resource_handler = null, $compiler_handler = null) {
 		// get resource
 		if (is_null($resource_handler)) $resource_handler = $this->default_resource;
 		if (!isset($this->_resource[$resource_handler])) $this->_resource[$resource_handler] = $this->_loadPlugin('resource', $resource_handler);
@@ -145,34 +154,30 @@ class Serpent
 		$compiled_tpl = $this->compile_dir . $this->_cleanFilename( $resource_handler.'_'.$compiler_handler ) . '/' . $this->_cleanFilename( $resource->getTemplateId($tpl) );
 		
 		// force compile
-		if ($this->force_compile)
-			{
+		if ($this->force_compile) {
 			$this->_compileTemplate( $tpl, $resource, $compiled_tpl, $compiler_handler);
 			return $compiled_tpl;
-			}
+		}
 
 		// check if a compiled template exists
-		if (!file_exists( $compiled_tpl ))
-			{
+		if (!file_exists( $compiled_tpl )) {
 			$this->_compileTemplate( $tpl, $resource, $compiled_tpl, $compiler_handler);
 			return $compiled_tpl;
-			}
+		}
 		
 		// compare timestamp of tpl and compiled file
 		$compiled_tpl_time	= filemtime( $compiled_tpl );
 		$raw_tpl_mtime = $resource->getTimestamp( $tpl );
-		if ($compiled_tpl_time != $raw_tpl_mtime)
-			{
+		if ($compiled_tpl_time != $raw_tpl_mtime) {
 			$this->_compileTemplate( $tpl, $resource, $compiled_tpl, $compiler_handler);
 			return $compiled_tpl;
-			}
-		
-		return $compiled_tpl;
 		}
 		
+		return $compiled_tpl;
+	}
+		
 	// creates the compiled template
-	protected function _compileTemplate($tpl, $resource, $compiled_tpl, $compiler_handler)
-		{
+	protected function _compileTemplate($tpl, $resource, $compiled_tpl, $compiler_handler) {
 		$source		= $resource->getTemplate( $tpl );
 		$timestamp	= $resource->getTimestamp( $tpl );
 		
@@ -190,10 +195,9 @@ class Serpent
 		
 		// touch it to synch the mtime of the original and the compiled template
 		touch($compiled_tpl, $timestamp);
-		}
+	}
 
-	public function compile($source, $compiler_handler = null)
-		{
+	public function compile($source, $compiler_handler = null) {
 		// get compiler handler
 		if (is_null($compiler_handler)) $compiler_handler = $this->default_compiler;
 		
@@ -205,7 +209,7 @@ class Serpent
 		$compiled = trim($compiler->compile($source));
 		
 		return $compiled;
-		}
+	}
 		
 	// use this function for inheritance in the template
 	protected function _add_parent_template($tpl) {
@@ -213,8 +217,7 @@ class Serpent
 	}
 	
 	// used for the mapped function "block"
-	protected function _block($name)
-		{
+	protected function _block($name) {
 		// put the actual top name on top to use it on endblock() as variable name
 		$this->_block_name[$this->render_id][] = $name;
 
@@ -225,58 +228,53 @@ class Serpent
 			return true;
 			}
 		else return false;
-		}
+	}
 
 	// used for the mapped function "endblock"
-	protected function _endblock()
-		{
+	protected function _endblock() {
 		// get the actual block name
 		$name = array_pop($this->_block_name[$this->render_id]);
 		
 		// return only the first value of this block ever
-		if ( !isset($this->_block_content[$this->render_id][$name]) )
-			{
+		if (!isset($this->_block_content[$this->render_id][$name])) {
 			$this->_block_content[$this->render_id][$name] = ob_get_clean();
-			}
+		}
 		
 		return $this->_block_content[$this->render_id][$name];
-		}
+	}
 			
+	protected function _raw($var) {
+		if (!is_string($var)) return $var;
+		return substr($var, 7, -8);
+	}
+
 	// used for the mapped function "escape"
-	protected function _escape($var, $charset = null)
-		{
+	protected function _escape($var, $charset = null) {
 		if (is_null($charset)) $charset = $this->_charset;
 
-		if (is_array($var))
-			{
-			foreach ($var as $key=>$value)
-				{
+		if (is_array($var)) {
+			foreach ($var as $key=>$value) {
 				$var[$key] = $this->_escape($value, $charset);
-				}
 			}
-		else
-			{
-			if (is_string($var))
+		} else {
+			if (is_string($var)) {
 				$var = htmlspecialchars($var, ENT_QUOTES, $charset);
 			}
-		return $var;
 		}
+		return $var;
+	}
 
 	// used for the mapped function "unescape"
-	protected function _unescape($var)
-		{
-		if (is_array($var))
-			{
-			foreach ($var as $key=>$value)
-				{
+	protected function _unescape($var) {
+		if (is_array($var)) {
+			foreach ($var as $key=>$value) {
 				$var[$key] = $this->_unescape($value);
-				}
 			}
-		else
-			{
-			if (is_string($var))
+		} else {
+			if (is_string($var)) {
 				$var = htmlspecialchars_decode($var, ENT_QUOTES);
 			}
-		return $var;
 		}
+	return $var;
 	}
+}

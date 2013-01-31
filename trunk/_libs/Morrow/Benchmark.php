@@ -23,6 +23,7 @@ namespace Morrow;
 
 /**
 * With this class it is possible to measure the time (real time and processor time) between two markers. 
+* To clearify the difference between real time and processor time: If you benchmark a `sleep(1);`, the `realtime` will approximately be at 1 second, but the `proctime` will be 0, because the processor had nothing to do.
 *
 * Example
 * ---------
@@ -128,8 +129,8 @@ class Benchmark {
 	/**
      * Returns an array of all so far benchmarked sections with the measured times. 
      * 
-     * @return array
-     */
+     * @return array Returns an array with the keys `section`, `proctime`, `realtime`, `mem`, `realtime_ms`, `proctime_ms`.
+     */ 
 	public function get() {
 		if ($this->active) $this->stop();
 

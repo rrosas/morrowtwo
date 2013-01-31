@@ -25,7 +25,17 @@ namespace Morrow\Core;
 
 use Morrow\Factory;
 
+/**
+ * The main class which defines the cycle of a request.
+ */
 class Morrow {
+	/**
+	 * Will be set by the run() method as default error handler.
+	 * It throws an exception to normalize the handling of errors and exceptions.
+	 *
+	 * @param	Parameters are as defined by set_error_handler() in PHP.
+	 * @return	null
+	 */
 	public function errorHandler($errno, $errstr, $errfile, $errline) {
 		// get actual error_reporting
 		$error_reporting = error_reporting();
@@ -39,7 +49,12 @@ class Morrow {
 		throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
 	}
 
-	public function ExceptionHandler($exception) {
+	/**
+	 * Will be set by the run() method as global exception handler.
+	 * @param	object	$exception	The thrown exception.
+	 * @return null
+	 */
+	public function exceptionHandler($exception) {
 		try {
 			// load errorhandler
 			$debug = Factory::load('Debug');
@@ -50,9 +65,12 @@ class Morrow {
 		}
 	}
 	
-	// this autoloader follows the PSR-0 standard
-	// be careful because there is an exception for models
-	protected function autoload($namespace) {
+	/**
+	 * A PSR-0 compatible autoloader which maps a namespace to a file structure.
+	 * @param	string	$namespace	A fully defined class name incl. namespace path
+	 * @return	null
+	 */
+	protected function _autoload($namespace) {
 		// explode namespace to single nodes
 		$namespace_nodes = explode('\\', $namespace);
 		
@@ -88,21 +106,28 @@ class Morrow {
 		}
 	}
 	
-	// registers the config files in the config class
-	protected function _loadConfigVars($path) {
+	/**
+	 * Loads config files in an array.
+	 * First it searches for a file _default.php then it tries to load the config for the current HOST and then for the Server IP address.
+	 * @param	string	$directory	The directory path where the config files are.
+	 * @return	array	An array with the config.
+	 */
+	protected function _loadConfigVars($directory) {
 		// load main config
-		$config = include ($path.'_configs/_default.php');
+		$config = include ($directory.'_configs/_default.php');
 
 		// overwrite with server specific config
-		$file1 = $path.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
-		$file2 = $path.'_configs/'.$_SERVER['SERVER_ADDR'].'.php';
+		$file1 = $directory.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
+		$file2 = $directory.'_configs/'.$_SERVER['SERVER_ADDR'].'.php';
 		if (is_file($file1)) $config = array_merge($config, include($file1));
 		elseif (is_file($file2)) $config = array_merge($config, include($file2));
 
 		return $config;
 	}
 
-	// This function contains the main application flow
+	/**
+	 * This function contains the main application flow
+	 */
 	public function __construct() {
 		/* global settings
 		********************************************************************************************/
@@ -119,7 +144,7 @@ class Morrow {
 		require(FW_PATH . '_libs/Morrow/Factory.php');
 		
 		// register autoloader
-		spl_autoload_register(array($this, 'autoload'));
+		spl_autoload_register(array($this, '_autoload'));
 		
 		/* register main config in the config class
 		********************************************************************************************/

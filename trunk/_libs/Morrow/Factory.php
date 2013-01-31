@@ -23,31 +23,169 @@
 
 namespace Morrow;
 
-// This class manages all classes the framework is working with
+/**
+ * This class handles instances of classes (e.g. Singletons) and is heavily used by the Morrow framework internally.
+ * 
+ * The first parameter you always pass is an instance identifier which consists of a class name (case sensitive) and an instance name (case insensitive and optional) divided by a colon.
+ * All following parameters will be passed to the constructor of the class.
+ *
+ * Handling multiple instances
+ * ---------------------------
+ * 
+ * ~~~{.php}
+ * // inits the class "Dummy" with the internal instance name "dummy" (left out because it is optional)
+ * // Usually used for instantiating a Singleton.
+ * $first_instance  = Factory::load('Dummy');
+ *
+ * // inits the class "Dummy" with the internal instance name "dummy1" and returns a new instance.
+ * $second_instance = Factory::load('Dummy:dummy1');
+ *
+ * // inits the class "Dummy" with the internal instance name "dummy2" and passes constructor parameters.
+ * $third_instance  = Factory::load('Dummy:dummy2', 'foo', 'bar');
+ * ~~~
+ *
+ * Lazy loading
+ * ------------
+ * 
+ * The Factory has the ability to prepare the initialization of an object with predefined constructor parameters.
+ * This allows to lazyload classes while defining their constructor parameters at the beginning of the webpage lifecycle.
+ * It also doesn't use resources if a class instance is not used.
+ *
+ * If the constructor doesn't need parameters you don't have to prepare its loading of course.
+ * 
+ * ~~~{.php}
+ * // Deposit parameters for the instances which are passed when they are instantiated.
+ * Factory::prepare('Dummy', 'parameter1');
+ * Factory::prepare('Dummy:dummy1');
+ * Factory::prepare('Dummy:dummy2', 'parameter2');
+ *
+ * // some other code ...
+ *
+ * // The instance "dummy2" was prepared but is not loaded. So the class isn't instantiated.
+ * $dummy	= Factory::load('Dummy');
+ * $dummy1	= Factory::load('Dummy:dummy1');
+ * ~~~
+ *
+ * A typical real life example would be the initialization of a database connection.
+ * You would define the connection in the DefaultController but use it in the PageController.
+ *
+ * ~~~{.php}
+ * // in the GlobalController
+ * Factory::prepare('Db', Factory::load('Config')->get('db'));
+ *
+ * // in the PageController
+ * $query = Factory::load('Db')->result("
+ *     SELECT * FROM table
+ * ");
+ * ~~~
+ * 
+ * PSR-0 standard and namespaces
+ * -----------------------------
+ *
+ * The Morrow autoloader respects the [PSR-0 standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md).
+ * So it is e.g. possible to put the Zend Library into your PROJECT/_libs/ folder and use it out of the box as documented in the Zend documentation.
+ *
+ * ~~~{.php}
+ * $figlet = new \Zend\Text\Figlet\Figlet();
+ * $text = $figlet->render('Morrow');
+ * ~~~
+ *
+ * Your advantage using the Factory is that you have access to this instance from everywhere.
+ * 
+ * ~~~{.php}
+ * $figlet = Factory::load('\Zend\Text\Figlet\Figlet');
+ * $text = $figlet->render('Morrow');
+ * ~~~
+ *
+ * So as you can see the Factory does also take account of namespaces.
+ * For Morrow classes you don't have to specify the full namespace because relative namespaces are supposed to be in the Morrow namespace.
+ * 
+ * ~~~{.php}
+ * $instance  = Factory::load('Dummy');
+ * // is the same as
+ * $instance  = Factory::load('\Morrow\Dummy');
+ * ~~~
+ * 
+ * Shortcuts by extending the Factory
+ * ----------------------
+ *
+ * You can extend this class to gain handling advantages.
+ * The Morrow DefaultController extends the Factory by default so the following examples will work in Morrow controller files.
+ *
+ * If you access a not defined class member it will be understood as you want to use the class with the same name. 
+ * So it will get instantiated and returned. This way you can use a method of a class and instantiating it in one line.
+ * 
+ * ~~~{.php}
+ * <?php
+ *
+ * namespace Morrow;
+ *
+ * class PageController extends DefaultController { // the DefaultController extends the Factory
+ * 		public function run() {
+ *     		// Controller code
+ *
+ * 			$result = $this->dummy->get();
+ * 			
+ * 			// Controller code
+ * 		}
+ * }
+ * ~~~
+ *
+ * Preparation of parameters is also possible as known by the Factory examples above.
+ * 
+ * ~~~{.php}
+ * // Controller code
+ *
+ * $this->prepare('Dummy:dummy2', 'foobar');
+ * $result = $this->dummy2->get();
+ * 			
+ * // Controller code
+ * ~~~
+ */
 class Factory {
-	public static $instances;
-	protected $_params = array();
+	/**
+	 * All instances of classes the Factory manages.
+	 * @var array $_instances
+	 */
+	protected static $_instances;
 	
-	public static function load($params) {
+	/**
+	 * Holds the constructor parameters for use at initialization time of a class.
+	 * @var array $_params
+	 */
+	protected static $_params;
+	
+	/**
+	 * Initializes a class with optionally prepared constructor parameters and returns the instance.
+	 * @param	string	$instance_identifier
+	 * @return	object
+	 */
+	public static function load($instance_identifier) {
 		// get factory config
-		$params = explode(':', $params);
+		$instance_identifier = explode(':', $instance_identifier);
 		
 		// if there was passed an relative path add the current namespace
-		$classname = $params[0];
-		if ($params[0]{0} != '\\') {
+		$classname = $instance_identifier[0];
+		if ($instance_identifier[0]{0} != '\\') {
 			$classname = 'Morrow\\' . $classname;
 		}
 		
-		$instancename = (isset($params[1])) ? $params[1] : substr(strrchr($classname, '\\'), 1);
+		$instancename = (isset($instance_identifier[1])) ? $instance_identifier[1] : substr(strrchr($classname, '\\'), 1);
 		$instancename = strtolower($instancename);
 		
 		// all other args are arguments for the new class
 		$factory_args = func_get_args();
+
+		// if there were no constructor parameters passed look for prepared parameters
+		if (count($factory_args) <= 1) {
+			$factory_args = (isset(self::$_params[$instancename])) ? self::$_params[$instancename] : array(ucfirst($instancename));
+		}
+
 		if (count($factory_args) > 1)  $args = array_slice($factory_args, 1);
-		else                           $args = null;
+		else $args = null;
 		
-		// Wenn sie schon instanziert wurde, zurückgeben, ansonsten anlegen
-		$instance =& self::$instances[$instancename];
+		// if the instance was already instantiated return it, otherwise create it
+		$instance =& self::$_instances[$instancename];
 		
 		if (isset($instance)) {
 			if ($instance instanceof $classname) return $instance;
@@ -68,15 +206,15 @@ class Factory {
 		return $instance;
 	}
 
-	public static function debug() {
-		$returner = array();
-		foreach (self::$instances as $class => $value) {
-			$returner[$class] = get_class($value);
-		}
-		\Morrow\Debug::dump($returner);
-	}
-
-	protected function prepare() {
+	/**
+	 * Handles the preparation of class instantiation by deposit the constructor parameters.
+	 * That allows the lazy loading functionality.
+	 * 
+	 * @param	string	$instance_identifier
+	 * @param	mixed	$parameters Any number of constructor parameters
+	 * @return	null
+	 */
+	public static function prepare() {
 		$args = func_get_args();
 		
 		// get instance name in params string
@@ -85,15 +223,17 @@ class Factory {
 		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
 		
 		// save params for later
-		$this->_params[$instancename] = $args;
+		self::$_params[$instancename] = $args;
 	}
 
-	public function __get($instancename) {
-		// get arguments
-		$factory_args = (isset($this->_params[$instancename])) ? $this->_params[$instancename] : array(ucfirst($instancename));
-		
-		// assign the new class
-		$this->$instancename = call_user_func_array(array(__NAMESPACE__ . '\\Factory','load'), $factory_args);
-		return $this->$instancename;
+	/**
+	 * Allows to access and instantiating a class by accessing an object member.
+	 * @param	string	$instance_identifier
+	 * @return	object
+	 */
+	public function __get($instance_identifier) {
+		// init the new class and return it
+		$this->$instance_identifier = call_user_func(array(__NAMESPACE__ . '\\Factory','load'), ucfirst($instance_identifier));
+		return $this->$instance_identifier;
 	}
 }

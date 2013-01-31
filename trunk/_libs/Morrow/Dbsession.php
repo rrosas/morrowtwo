@@ -23,27 +23,78 @@
 
 namespace Morrow;
 
-class DBSession extends Session{
+/**
+* The DBSession class extends Session and is used in exactly the same way. The difference is that the session data is stored in a database.
+* Therefore a database table must be created and the database configuration must be communicated to the DBSession class as in the example below.
+* In Order to use the DBSession class, Morrow must be informed of the handler. This is done by setting `session.handler` to `dbsession`; 
+* 
+* Examples
+* ---------
+*
+* ~~~{.php}
+* // ... Config code
+*
+* $config['session.handler']      = 'dbsession';
+*
+* $config['session.db.driver']    = 'mysql';
+* $config['session.db.host']      = 'localhost';
+* $config['session.db.db']        = 'morrow';
+* $config['session.db.user']      = 'morrow_user';
+* $config['session.db.pass']      = '';
+* $config['session.db.table']     = 'sessions';
+*  
+* // ... Config code
+* ~~~
+*
+* Table Structure
+* ---------------
+*
+* The name of the table is variable and must be set in the configuration as `session.db.table`. The necessary columns are fixed and are:
+* 
+*    * **session_id:** Primary key, characters (length: 32)
+*    * **session_data:** text/characters
+*    * **session_expiration:** timestamp/date-time 
+* 
+* Example for MySql
+* -----------------
+*
+* ~~~{.sql}
+* CREATE TABLE `sessions` (
+*     `session_id` varchar(32) NOT NULL default '',
+*     `session_data` text NOT NULL,
+*     `session_expiration` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+*     primary key  (`session_id`)
+* ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
+* ~~~
+*/
+class DBSession extends Session {
+	/**
+	 * Contains the config object
+	 * @var object $config
+	 */
+	protected $config = null;
 
 	/**
-		Table Structure
-			 - Table name may vary and must be set in $config['session.db.table']
-
-		CREATE TABLE `sessions` (
-		  `session_id` varchar(32) NOT NULL default '',
-		  `session_data` text NOT NULL,
-		  `session_expiration` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-		  PRIMARY KEY  (`session_id`)
-		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-	**/
-
-	protected $config = null;
+	 * Contains the db object
+	 * @var object $db
+	 */
 	protected $db = null;
+	
+	/**
+	 * The format we use for the database timestamp
+	 * @var string $format
+	 */
 	protected $format = '%Y%m%d%H%M%S';
-	protected $table = null;
 
-	public function __construct($data) {
+	/**
+	 * Initializes the class.
+	 *
+	 * You do not have to call this yourself.
+	 * 
+	 * @param array $input An array which contain all user input (e.g. $_GET or $this->input->get())
+	 * @return null
+	 */
+	public function __construct($input) {
 		if (ini_get('session.auto_start') == true) {
 			throw new \Exception('You must turn off session.auto_start in your php.ini or use different session handler');
 		}
@@ -55,19 +106,26 @@ class DBSession extends Session{
 		$this->db = Factory::load('Db', $this->config->get('session.db'));
 
 		// important!: call the parent constructor
-		parent::__construct($data);
+		parent::__construct($input);
 	}
 
-
-
+	/**
+	 * passed to session_set_save_handler()
+	 */
 	protected function on_session_start($save_path, $session_name) {
 	}
 
+	/**
+	 * passed to session_set_save_handler()
+	 */
 	protected function on_session_end() {
 		// Nothing needs to be done in this function
 		// since we used persistent connection.
 	}
 
+	/**
+	 * passed to session_set_save_handler()
+	 */
 	protected function on_session_read($key) {
 		$stmt = "select session_data from " . $this->config->get('session.db.table');
 		$stmt .= " where session_id = ? ";
@@ -81,6 +139,10 @@ class DBSession extends Session{
 			return '';
 		}
 	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
 	protected function on_session_write($key, $val) {
 		$expires = '+' . ini_get('session.cache_expire') . ' Minutes';
 
@@ -94,10 +156,16 @@ class DBSession extends Session{
 		$this->db->replace($this->config->get('session.db.table'), $data);
 	}
 
+	/**
+	 * passed to session_set_save_handler()
+	 */
 	protected function on_session_destroy($key) {
 		$this->db->delete($this->config->get('session.db.table'), "where session_id = ?", false, $key);
 	}
 
+	/**
+	 * passed to session_set_save_handler()
+	 */
 	protected function on_session_gc($max_lifetime) {
 		$this->db->delete($this->config->get('session.db.table'), "where session_expiration < ?", false, strftime($this->format));
 	}
