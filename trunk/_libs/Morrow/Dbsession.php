@@ -67,7 +67,7 @@ namespace Morrow;
 * ) ENGINE=MEMORY DEFAULT CHARSET=utf8;
 * ~~~
 */
-class DBSession extends Session {
+class Dbsession extends Session {
 	/**
 	 * Contains the config object
 	 * @var object $config

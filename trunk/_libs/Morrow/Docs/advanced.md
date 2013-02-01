@@ -8,3 +8,4 @@ Advanced {#advanced}
 * \subpage localization
 * \subpage formhandling
 * \subpage multiplesites
+* \subpage security

@@ -30,12 +30,18 @@ namespace Morrow;
  *
  * Type | Keyname | Default | Description
  * -----|---------|---------|------------
- * bool | debug.output.screen | true | Defines if errors should be displayed on screen
- * bool | debug.output.logfile | true | Defines if errors should be logged to the file system (`FW_PATH/_logs/`)
- * bool | debug.output.headers | false | Experimental use
- * string | debug.password | 'password' | Experimental use
+ * bool | `debug.output.screen` | `true` | Defines if errors should be displayed on screen
+ * bool | `debug.output.logfile` | `true` | Defines if errors should be logged to the file system (`FW_PATH/_logs/`)
+ * bool | `debug.output.headers` | `false` | Experimental use
+ * string | `debug.password` | `password` | Experimental use
  */
 class Debug {
+	/**
+	 * The path to the log file
+	 * @var string $_logfile
+	 */
+	protected $_logfile;
+
 	/**
 	 * The config object
 	 * @var object $config
@@ -69,7 +75,9 @@ class Debug {
 	/**
 	 * Initializes the class. This is done internally.
 	 */
-	public function __construct() {
+	public function __construct($logfile) {
+		$this->_logfile = $logfile;
+
 		// read config from config class
 		$config = Factory::load('Config');
 		$this->config = $config->get('debug');
@@ -100,8 +108,6 @@ class Debug {
 	 * @param	string	$errortype	The errortype that occured
 	 */
 	protected function _errorhandler_file($errstr, $backtrace, $errortype) {
-		$fn = FW_PATH.'/_logs/'.date("y-m-d").'.txt';
-
 		$body  = '############################## '.$errortype."\n";
 		$body .= 'Datum:      '.date("d.m.Y - H:i:s")."\n";
 		$body .= 'URL:        '.$_SERVER['REQUEST_URI']."\n";
@@ -116,7 +122,7 @@ class Debug {
 		}
 		$body .= "\n";
 
-		file_put_contents($fn, $body, FILE_APPEND);
+		file_put_contents($this->_logfile, $body, FILE_APPEND);
 	}
 	
 	/**

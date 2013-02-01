@@ -91,12 +91,7 @@ class Cache {
 	 * @param boolean $user_droppable If set to true, the cache is dropped if the client sends the HTTP header HTTP_CACHE_CONTROL. E.g. if the user reloads the page while the same page is already open.
 	 * @return null
 	 */
-	public function __construct($cachedir = null, $user_droppable = false) {
-		// set defaults
-		if (is_null($cachedir)) {
-			$cachedir = PROJECT_PATH.'temp/_codecache/';
-		}
-
+	public function __construct($cachedir, $user_droppable = false) {
 		// clean cachedir
 		$cachedir = \Morrow\Helpers\General::cleanPath($cachedir);
 

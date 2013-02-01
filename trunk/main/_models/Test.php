@@ -2,7 +2,7 @@
 
 namespace Morrow\Models;
 
-use Morrow\Debug;
+//use Morrow\Debug;
 
 class Test extends \Morrow\Factory {
 	public function __construct() {

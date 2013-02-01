@@ -22,28 +22,63 @@
 
 namespace Morrow;
 
+/**
+ * This class is a simple solution to log various variables to a file for controlling issues.
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ *
+ * // variables to log
+ * $integer = 1;
+ * $string  = 'foobar';
+ * $boolean = false;
+ * $null    = null;
+ * $array   = array('foo'=>'bar', 'foo2'=>'bar2');
+ * $object  = new stdClass();
+ *
+ * // now log
+ * $this->log->set($integer, $string, $boolean, $null, $array, $object);
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Log {
-	protected $logfile;
+	/**
+	 * The path to the log file.
+	 * @var string $_logfile
+	 */
+	protected $_logfile;
 
-	public function __construct($args = null) {
-		// set defaults
-		$date = strftime('%Y-%m-%d');
-		if (!isset($args['logfile'])) $args['logfile'] = FW_PATH.'_logs/log_'.$date.'.txt';
-
-		$this->logfile = $args['logfile'];
-		return true;
+	/**
+	 * Initializes the log class.
+	 * @param	string	$logfile	The path to the logfile.
+	 */
+	public function __construct($logfile) {
+		$this->_logfile = $logfile;
 	}
 
+	/**
+	 * Logs data to the log file.
+	 * @param  mixed $args	 You can pass as many variables of any type as you want.
+	 */
 	public function set() {
-		$data['args'] = func_get_args();
-		$caller = debug_backtrace();
-		$data['caller']= $caller[0];
-		$data['formated_time'] = strftime('%Y-%m-%d %H:%M:%S', time());
-		$data['formated_microtime'] = sprintf("%'03d", microtime()*1000);
+		$data['args']				= func_get_args();
+		$caller						= debug_backtrace();
+		$data['caller']				= $caller[0];
+		$data['formated_time']		= strftime('%Y-%m-%d %H:%M:%S', time());
+		$data['formated_microtime']	= sprintf("%'03d", microtime()*1000);
 
 		return $this->_getOutputPlain($data);
 	}
 
+	/**
+	 * Formates the output to write it to the file.
+	 * @param	array	$data	The data array produced by set().
+	 * @return	`string`	The string that will be written to the logfile.
+	 */
 	protected function _getOutputPlain($data) {
 		// create output string
 		$output = 'date: '.$data['formated_time'].' .'.$data['formated_microtime']."\n";
@@ -63,7 +98,7 @@ class Log {
 
 		$output .= '=============================='."\n";
 
-		$result =  file_put_contents($this->logfile, $output, FILE_APPEND);
+		$result =  file_put_contents($this->_logfile, $output, FILE_APPEND);
 		if (is_integer($result)) return true;
 		else return false;
 	}

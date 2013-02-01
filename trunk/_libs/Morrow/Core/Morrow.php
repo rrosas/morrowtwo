@@ -145,7 +145,12 @@ class Morrow {
 		
 		// register autoloader
 		spl_autoload_register(array($this, '_autoload'));
-		
+
+		/* prepare some constructor variables
+		********************************************************************************************/
+		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
+		Factory::prepare('Debug', FW_PATH.'/_logs/'.date("y-m-d").'.txt');
+
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('Config'); // config class for config vars
@@ -204,6 +209,11 @@ class Morrow {
 		define('PROJECT_PATH', FW_PATH . $project_relpath . '/');
 		define('PROJECT_RELPATH', $project_relpath . '/');
 
+		/* prepare some constructor variables which need the PROJECT_PATH
+		********************************************************************************************/
+		Factory::prepare('Cache', PROJECT_PATH.'temp/_codecache/');
+		Factory::prepare('Image', PROJECT_PATH . 'temp/thumbs/');
+
 		/* register project config in the config class
 		********************************************************************************************/
 		// load vars
@@ -234,7 +244,7 @@ class Morrow {
 		********************************************************************************************/
 		$lang_settings['possible'] = $this->config->get('languages');
 		$lang_settings['language_path'] = PROJECT_PATH . '_i18n/';
-		$lang_settings['i18n_path'] = array(
+		$lang_settings['i18n_paths'] = array(
 			FW_PATH . '__libs/*.php',
 			PROJECT_PATH . '_libs/*.php',
 			PROJECT_PATH . '_templates/*',
@@ -257,7 +267,6 @@ class Morrow {
 		}
 
 		if ($input_lang !== null) $this->language->set($input_lang);
-		$this->language->setLocale();
 
 		/* url routing
 		********************************************************************************************/

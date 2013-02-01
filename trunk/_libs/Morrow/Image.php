@@ -23,31 +23,27 @@
 namespace Morrow;
 
 class Image {
-	public $cache_dir;
-	public $cache_counter = '%m';
+	protected $_cache_dir;
 	
-	public function __construct() {
+	public function __construct($cache_dir) {
 		// params
-		$default_cache_dir = PROJECT_PATH . 'temp/thumbs/';
-		$counter = strftime( $this->cache_counter );
+		$counter = strftime('%m');
 
-		// create temp dir if it does not exist
-		if (!is_dir($default_cache_dir)) mkdir($default_cache_dir);
+		// create cache dir if it does not exist
+		if (!is_dir($cache_dir)) mkdir($cache_dir);
 		
 		// delete all folders that are not the current
-		$files = scandir( $default_cache_dir );
+		$files = scandir($cache_dir);
 		foreach ($files as $file) {
 			if ($file{0} == '.') continue;
-			if (is_dir( $default_cache_dir.$file ) && $file != $counter) {
-				Helpers\File::rmdir_recurse( $default_cache_dir.$file );
+			if (is_dir($cache_dir.$file) && $file != $counter) {
+				Helpers\File::rmdir_recurse( $cache_dir.$file );
 			}
 		}
 
-		// // set cache dir and create if it not exists
-		$this->cache_dir = $default_cache_dir . $counter . '/';
-		if (!file_exists( $this->cache_dir )) {
-			mkdir( $this->cache_dir );
-		}
+		// create cache dir for the current cache counter
+		$this->_cache_dir = $cache_dir . $counter . '/';
+		if (!file_exists( $this->_cache_dir )) mkdir( $this->_cache_dir );
 	}
 	
 	protected function _unsharpMask($img) { 
@@ -202,12 +198,12 @@ class Image {
 		// create hash for caching
 		$filemtime = filemtime($file_path);
 		$hash = md5($file_path.$filemtime.implode('', $params));
-		$filename = $this->cache_dir.$hash.'.'.$params['type'];
+		$filename = $this->_cache_dir.$hash.'.'.$params['type'];
 		return $filename;
 	}
 
 	protected function _getParamsFromHash($cache_filename) {
-		$cache_params_filename = $this->cache_dir . $cache_filename . '_params';
+		$cache_params_filename = $this->_cache_dir . $cache_filename . '_params';
 		
 		if (!file_exists($cache_params_filename)) return false;
 		
