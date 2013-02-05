@@ -149,7 +149,7 @@ class Morrow {
 		/* prepare some constructor variables
 		********************************************************************************************/
 		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
-		Factory::prepare('Debug', FW_PATH.'/_logs/'.date("y-m-d").'.txt');
+		Factory::prepare('Debug', FW_PATH.'_logs/'.date("y-m-d").'.txt');
 
 		/* register main config in the config class
 		********************************************************************************************/
@@ -245,10 +245,10 @@ class Morrow {
 		$lang_settings['possible'] = $this->config->get('languages');
 		$lang_settings['language_path'] = PROJECT_PATH . '_i18n/';
 		$lang_settings['i18n_paths'] = array(
-			FW_PATH . '__libs/*.php',
-			PROJECT_PATH . '_libs/*.php',
-			PROJECT_PATH . '_templates/*',
-			PROJECT_PATH . '*.php'
+			FW_PATH			. '_libs/*.php',
+			PROJECT_PATH	. '_libs/*.php',
+			PROJECT_PATH	. '_templates/*',
+			PROJECT_PATH	. '*.php'
 		);
 		$this->language = Factory::load('Language', $lang_settings);
 
@@ -272,16 +272,15 @@ class Morrow {
 		********************************************************************************************/
 		$routes	= $this->config->get('routing');
 		$url	= implode('/', $this->page->get('nodes'));
-		$url	= trim($url, '/');
-	
+
 		// iterate all rules
 		foreach ($routes as $rule => $new_url) {
 			$rule		= trim($rule, '/');
 			$new_url	= trim($new_url, '/');
 
 			// rebuild route to a preg pattern
-			$preg_route	= preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters. the four backslashes match just one
-			$preg_route	= preg_replace('=/\\*[a-z0-9_]+=i', '(.*)', $preg_route); // match asterisk.
+			$preg_route	= preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters
+			$preg_route	= preg_replace('=/\\*[a-z0-9_]+=i', '(.*)', $preg_route); // match asterisk
 
 			$pattern	= '=^'.$preg_route.'$=i';
 
@@ -296,9 +295,7 @@ class Morrow {
 			
 			// if there is an asterisk the last entry is for the params
 			if (strpos($rule, '*') !== false) {
-				$blind_parameters = array_pop($hits);
-				$blind_parameters = trim($blind_parameters, DIRECTORY_SEPARATOR);
-				$blind_parameters = explode('/', $blind_parameters);
+				$blind_parameters = explode('/', trim($hits[0], '/'));
 				
 				// get asterisk param names
 				preg_match_all('=\*([a-z0-9_-]+)=i', $rule, $param_asterisk_keys);
@@ -327,13 +324,11 @@ class Morrow {
 		}
 
 		// set nodes in page class
-		if($this->config->get('url.case_insensitive')) $url = strtolower($url);
 		$url_nodes = explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
 		/* set alias
 		********************************************************************************************/
-		
 		$alias = implode('_', $url_nodes);
 		$this->page->set('alias', $alias);
 

@@ -6,6 +6,6 @@ namespace Morrow\Models;
 
 class Test extends \Morrow\Factory {
 	public function __construct() {
-		Debug::dump('Model "Test" found.');
+		\Morrow\Debug::dump('Model "Test" found.');
 	}
 }

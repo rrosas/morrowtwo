@@ -48,14 +48,11 @@ namespace Morrow;
  * // Do not allow to show this site in a frameset (prevents clickjacking)
  * $this->security->setFrameOptions('DENY');
  * ~~~
- * 
- * @todo Implement CORS (http://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
- * @todo How long is the hash crypt produces? (http://www.techrepublic.com/article/the-perils-of-using-php-crypt/1058691)
  */
 class Security {
 	public function __construct() {
-		$session	= Factory::load('session');
-		$view		= Factory::load('view');
+		$session	= Factory::load('Session');
+		$view		= Factory::load('View');
 
 		// hide PHP version
 		header_remove("X-Powered-By");
@@ -136,12 +133,14 @@ class Security {
 	}
 	
 	/**
-	 * Creates a secure hash.
+	 * Creates a 102 characters long hash by using the crypt function.
 	 * @param	string	$string	The input string (e.g. a password) to hash.
+	 * @param	string	$salt	The salt to use.
 	 * @return	string	The hash.
 	 */
-	public static function createHash($string) {
-		return crypt($string);
+	public static function createHash($string, $salt = null) {
+		if ($salt === null) return crypt($string);
+		return crypt($string, $salt);
 	}
 
 	/**

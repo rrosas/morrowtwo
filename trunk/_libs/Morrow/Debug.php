@@ -73,6 +73,12 @@ class Debug {
 	protected $x_debug_count = 0; 
 	
 	/**
+	 * Stores the closure function to execute after default exception handling
+	 * @var	function $_after_exception
+	 */
+	protected $_after_exception = null;
+
+	/**
 	 * Initializes the class. This is done internally.
 	 */
 	public function __construct($logfile) {
@@ -249,6 +255,14 @@ class Debug {
 	}
 	
 	/**
+	 * Set the method which is executed after the default exception handling
+	 * @param	function	$after_exception	A closure to execute.
+	 */
+	public function setAfterException($after_exception) {
+		$this->_after_exception = $after_exception;
+	}
+
+	/**
 	 * This method is called when an exception occurs
 	 * @param  object $exception The incoming Exception object
 	 * @return null
@@ -301,6 +315,12 @@ class Debug {
 		// log error in logfile
 		if ($this->config['output']['logfile'] == true) {
 			$this->_errorhandler_file($errstr, $backtrace, $errordescription);
+		}
+
+		// "execute after exception" function
+		if ($this->_after_exception !== null) {
+			$call = $this->_after_exception;
+			$call($exception);
 		}
 	}
 

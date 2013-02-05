@@ -160,29 +160,35 @@ class Factory {
 	 * @param	string	$instance_identifier
 	 * @return	object
 	 */
-	public static function load($instance_identifier) {
+	public static function load() {
+		$args = func_get_args();
+
+		$instance_identifier	= array_shift($args);
+		$factory_args			= $args;
+
 		// get factory config
 		$instance_identifier = explode(':', $instance_identifier);
 		
-		// if there was passed an relative path add the current namespace
+		// create a fully namespaced class path
 		$classname = $instance_identifier[0];
-		if ($instance_identifier[0]{0} != '\\') {
-			$classname = 'Morrow\\' . $classname;
+		if ($classname{0} != '\\') {
+			$classname = '\\Morrow\\' . $classname;
 		}
-		
+
+		//create the instancename we need to get possible parameters from prepare
 		$instancename = (isset($instance_identifier[1])) ? $instance_identifier[1] : substr(strrchr($classname, '\\'), 1);
+		if ($instancename == false) $instancename = $classname;
 		$instancename = strtolower($instancename);
-		
-		// all other args are arguments for the new class
-		$factory_args = func_get_args();
 
 		// if there were no constructor parameters passed look for prepared parameters
-		if (count($factory_args) <= 1) {
-			$factory_args = (isset(self::$_params[$instancename])) ? self::$_params[$instancename] : array(ucfirst($instancename));
+		if (count($factory_args) === 0) {
+			if (isset(self::$_params[$instancename])) {
+				$classname = self::$_params[$instancename]['classname'];
+				$factory_args = self::$_params[$instancename]['args'];
+			} else {
+				$factory_args = array();
+			}
 		}
-
-		if (count($factory_args) > 1)  $args = array_slice($factory_args, 1);
-		else $args = null;
 		
 		// if the instance was already instantiated return it, otherwise create it
 		$instance =& self::$_instances[$instancename];
@@ -196,19 +202,18 @@ class Factory {
 		}
 
 		// create object
-		if (is_null($args)) {
+		if (empty($factory_args)) {
 			$instance = new $classname;
 		} else {
 			// use reflection class to inject the args as single parameters
 			$ref = new \ReflectionClass($classname);
-			$instance = $ref->newInstanceArgs($args);
+			$instance = $ref->newInstanceArgs($factory_args);
 		}
 		return $instance;
 	}
 
 	/**
-	 * Handles the preparation of class instantiation by deposit the constructor parameters.
-	 * That allows the lazy loading functionality.
+	 * Handles the preparation of class instantiation by deposit the constructor parameters. That allows the lazy loading functionality.
 	 * 
 	 * @param	string	$instance_identifier
 	 * @param	mixed	$parameters Any number of constructor parameters
@@ -219,11 +224,23 @@ class Factory {
 		
 		// get instance name in params string
 		$params = explode(':', $args[0]);
-		$classname = strtolower($params[0]);
-		$instancename = (isset($params[1])) ? strtolower($params[1]) : $classname;
+		$classname = $params[0];
+		
+		// we always have to create a fully namespaced class path
+		if ($classname[0]{0} !== '\\') {
+			$classname = '\\Morrow\\' . $classname;
+		}
+
+		// use the instancename or the last part of the classname for saving the args
+		$instancename = (isset($params[1])) ? $params[1] : substr(strrchr($classname, '\\'), 1);
+		if ($instancename == false) $instancename = $classname;
+		$instancename = strtolower($instancename);
 		
 		// save params for later
-		self::$_params[$instancename] = $args;
+		self::$_params[$instancename] = array(
+			'classname'	=> $classname,
+			'args'		=> array_slice($args, 1),
+		);
 	}
 
 	/**
@@ -232,8 +249,7 @@ class Factory {
 	 * @return	object
 	 */
 	public function __get($instance_identifier) {
-		// init the new class and return it
-		$this->$instance_identifier = call_user_func(array(__NAMESPACE__ . '\\Factory','load'), ucfirst($instance_identifier));
+		$this->$instance_identifier = Factory::load(ucfirst($instance_identifier));
 		return $this->$instance_identifier;
 	}
 }
