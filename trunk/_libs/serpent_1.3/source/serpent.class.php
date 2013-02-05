@@ -250,6 +250,9 @@ class Serpent {
 
 	// used for the mapped function "escape"
 	protected function _escape($var, $charset = null) {
+		// remove XSS Tag
+		$var = $this->_raw($var);
+		
 		if (is_null($charset)) $charset = $this->_charset;
 
 		if (is_array($var)) {
