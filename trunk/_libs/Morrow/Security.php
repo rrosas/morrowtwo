@@ -63,21 +63,50 @@ class Security {
 
 	/**
 	 * Sets the value for the CSP header to prevent XSS attacks.
+	 * Should be written as the official specs says (<http://www.w3.org/TR/CSP/>).
 	 * For a detailed description take a look at:
-	 * <https://developer.mozilla.org/en-US/docs/Security/CSP/CSP_policy_directives>
+	 * <https://developer.mozilla.org/en-US/docs/Security/CSP/CSP_policy_directives>.
 	 *
 	 * @param	array	$options	The options as associative array. Use the rule name as key and the option as value.
 	 * @return  `null`
 	 */
 	public function setCsp($options) {
-		$csp = '';
-		foreach ($options as $key=>$value) {
-			$csp .= $key . ' ' . $value . '; ';
+		$csp_gecko	= '';
+		$csp		= '';
+
+		$options['options'] = '';
+
+		// handle some differences between the browsers
+		// Firefox need other syntax for unsafe-inline and unsafe-eval
+		if (isset($options['script-src']) && stripos($options['script-src'], "'unsafe-inline'")) {
+			$options['options'] .= 'inline-script ';
 		}
 
+		if (isset($options['script-src']) && stripos($options['script-src'], "'unsafe-eval'")) {
+			$options['options'] .= 'eval-script ';
+		}
+
+		foreach ($options as $key=>$value) {
+			if ($value == '') continue;
+			$key = strtolower($key);
+			// handle some differences between the browsers
+			// and create the csp string
+			$csp_gecko	.= $key . ' ' . $value . ';';
+
+			if ($key != 'options') {
+				$csp	.= $key . ' ' . $value . ';';
+			}
+		}
+
+		// skip syntax Firefox doesn't know
+		$csp_gecko = str_replace(array("'unsafe-inline'", "'unsafe-eval'"), '', $csp_gecko);
+
 		$view = Factory::load('view');
-		$view->setHeader('X-Content-Security-Policy', $csp); // for IE and Firefox
+
+		$view->setHeader('X-Content-Security-Policy', $csp_gecko); // for Firefox
 		$view->setHeader('X-WebKit-CSP', $csp); // for Chrome
+		$view->setHeader('Content-Security-Policy', $csp); // standard implementations
+		// IE doesn't support it
 	}
 	
 	/**
