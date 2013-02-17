@@ -227,7 +227,7 @@ class Factory {
 		$classname = $params[0];
 		
 		// we always have to create a fully namespaced class path
-		if ($classname[0]{0} !== '\\') {
+		if ($classname{0} !== '\\') {
 			$classname = '\\Morrow\\' . $classname;
 		}
 
