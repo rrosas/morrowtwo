@@ -58,7 +58,7 @@ class Form {
 		
 		// language content / locale
 		$language = Factory::load('Language');
-		$settings['locale'] = $language->getLocale();
+		$settings['locale'] = $language->getL10n();
 		
 		return $settings;
 	}
