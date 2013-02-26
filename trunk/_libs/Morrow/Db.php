@@ -77,7 +77,7 @@ namespace Morrow;
 */
 class Db extends \PDO {
 	/**
-	 * Are we already connected
+	 * The "connected" status
 	 * @var boolean $connected
 	 */
 	protected $connected = false;
