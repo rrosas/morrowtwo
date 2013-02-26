@@ -34,7 +34,7 @@ class Form {
 	public $_lcontent;
 	public $_locale;
 
-	protected $_validator = 'validator';
+	protected $_validator = 'Validator';
 
 	public function __construct($settings = null) {
 		if ($settings == null) $settings = $this->morrow_construct_vars();

@@ -82,7 +82,7 @@ class FormElementSet extends FormElement{
 		return $returner;
 	}
 	
-	public function validate($formname, $validator_class = 'validator') {
+	public function validate($formname, $validator_class = 'Validator') {
 		$options_to_check = $this->_getKeysRecursive($this->options);
 		
 		// remove values that have been set but are not in options
