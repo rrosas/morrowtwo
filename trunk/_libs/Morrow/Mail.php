@@ -22,9 +22,9 @@
 
 namespace Morrow;
 
-require(__DIR__ . "../PHPMailer_v5.0.2/class.phpmailer.php");
+require(dirname(__FILE__) . "/../PHPMailer_v5.0.2/class.phpmailer.php");
 
-class Mail extends PHPMailer {
+class Mail extends \PHPMailer {
 	public function __construct($config) {
 		// set settings from config class
 		if (isset($config) && is_array($config))
