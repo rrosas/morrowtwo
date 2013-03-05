@@ -66,7 +66,7 @@ namespace Morrow;
 * integer | `height` | `null` | The height of your thumbnail. The width (if not set) will be automatically calculated.
 * integer | `shortside` | `null` | Set the shortest side of the image if width, height and longside is not set.
 * integer | `longside` | `null` | Set the longest side of the image if width, height and shortside is not set.
-* boolean | `sharpen` | `true` | Set to false if you do not want to use the Unsharp Mask. Thumbnail creation will be faster, but quality reduced.
+* boolean | `sharpen` | `true` | Set to false if you do not want to sharpen the image.
 * boolean | `crop` | `true` | If set to true, image will be cropped in the center to destination width and height params, while keeping aspect ratio. Otherwise the image will get resized.
 * integer | `crop_position` | `2` | The cutout position if you use the crop function: Here are the positions:<br />&nbsp; 1<br />1 2 3<br />&nbsp; 3
 * boolean | `extrapolate` | `true` | Set to false if for example your source image is smaller than the calculated thumb and you do not want the image to get extraploated.
@@ -118,7 +118,8 @@ class Image {
 	 * @param resource $img_obj A GD image object.
 	 * @return resource The sharpened image object. 
 	 */
-	protected function _unsharpMask($img_obj) { 
+	protected function _sharpen($img_obj) { 
+		imagesavealpha($img_obj, true); // preserve full alpha transparency for png files
 		$matrix = array(array( -1, -1, -1 ), array( -1, 16, -1 ), array( -1, -1, -1 ));
 		$divisor = array_sum(array_map('array_sum', $matrix));
 		imageconvolution($img_obj, $matrix, $divisor, 0);
@@ -142,8 +143,7 @@ class Image {
 		$defaults['background']			= array('string', '#fff');
 		$defaults['transparent']		= array('boolean', false);
 		$defaults['trim']				= array('boolean', false);
-		
-		// used for _render, but unset if not set
+		$defaults['trim_tolerance']		= array('integer', 10);
 		$defaults['overlay']			= array('string', null);
 		$defaults['shortside']			= array('integer', null);
 		$defaults['longside']			= array('integer', null);
@@ -211,63 +211,98 @@ class Image {
 		return $img_obj;
 	}
 	
-	protected function _trim($im) {
-		$tolerance = 10; // tolerance per color channel
-
+	protected function _trim($im, $tolerance) {
 		// grab the colour from the top left corner and use that as default
 		$rgb = imagecolorat($im, 0, 0); // 2 pixels in to avoid messy edges
 		$ref = array(
 			'a' => ($rgb >> 24) & 0xFF,
 			'r' => ($rgb >> 16) & 0xFF,
 			'g' => ($rgb >> 8) & 0xFF,
-			'b' => $rgb,
+			'b' => $rgb & 0xFF,
 		);
-
-		$y_axis = array();
-		$x_axis = array();
 
 		$w = imagesx($im); // image width
 		$h = imagesy($im); // image height
 		
-		for($x = 0; $x < $w; $x++) {
-			for($y = 0; $y < $h; $y++) {
-				$rgb = imagecolorat($im, $x, $y);
-				$a = ($rgb >> 24) & 0xFF;
-				$r = ($rgb >> 16) & 0xFF;
-				$g = ($rgb >> 8) & 0xFF;
-				$b = $rgb & 0xFF;
+		// get top border
+		for($top = 0; $top < $h; ++$top) {
+			for($x = 0; $x < $w; ++$x) {
+					$rgb = imagecolorat($im, $x, $top);
+					$a = ($rgb >> 24) & 0xFF;
+					$r = ($rgb >> 16) & 0xFF;
+					$g = ($rgb >> 8) & 0xFF;
+					$b = $rgb & 0xFF;
+
 				if (
-					($r < $ref['r']-$tolerance || $r > $ref['r']+$tolerance) && // red not within tolerance of trim colour
-					($g < $ref['g']-$tolerance || $g > $ref['g']+$tolerance) && // green not within tolerance of trim colour
-					($b < $ref['b']-$tolerance || $b > $ref['b']+$tolerance) && // blue not within tolerance of trim colour
-					($a < $ref['a']-$tolerance || $a > $ref['a']+$tolerance)
+					$r < $ref['r']-$tolerance || $r > $ref['r']+$tolerance || // red not within tolerance of trim colour
+					$g < $ref['g']-$tolerance || $g > $ref['g']+$tolerance || // green not within tolerance of trim colour
+					$b < $ref['b']-$tolerance || $b > $ref['b']+$tolerance || // blue not within tolerance of trim colour
+					$a < $ref['a']-$tolerance || $a > $ref['a']+$tolerance // alpha not within tolerance of trim colour
 					) {
-						// using x and y as keys condenses all rows and all columns
-						// into just one X array and one Y array.
-						// however, the keys are treated as literal and therefore are not in
-						// numeric order, so we need to sort them in order to get the first
-						// and last X and Y occurances of wanted pixels.
-						// normal sorting will remove keys so we also use x and y as values,
-						// this way they are still available without preserving keys.
-						$y_axis[$y] = $y; 
-						$x_axis[$x] = $x;
-						// note: $y_axis[] = $y; and $x_axis[] = $x; works just as well
-						// but results in much much larger arrays than is necessary
-						// array_unique would reduce size again but this method is quicker
+						break 2;
 				}
 			}
 		}
 
-		// sort them so first and last occurances are at start and end
-		sort($y_axis);
-		sort($x_axis); 
+		// get bottom border
+		for($bottom = $h-1; $bottom >= 0; --$bottom) {
+			for($x = 0; $x < $w; ++$x) {
+					$rgb = imagecolorat($im, $x, $bottom);
+					$a = ($rgb >> 24) & 0xFF;
+					$r = ($rgb >> 16) & 0xFF;
+					$g = ($rgb >> 8) & 0xFF;
+					$b = $rgb & 0xFF;
 
-		$top	= array_shift($y_axis); // first wanted pixel on Y axis
-		$right	= array_pop($x_axis); // last wanted pixel on X axis
-		$bottom	= array_pop($y_axis); // last wanted pixel on Y axis
-		$left	= array_shift($x_axis); // first wanted pixel on X axis
+				if (
+					$r < $ref['r']-$tolerance || $r > $ref['r']+$tolerance ||
+					$g < $ref['g']-$tolerance || $g > $ref['g']+$tolerance ||
+					$b < $ref['b']-$tolerance || $b > $ref['b']+$tolerance ||
+					$a < $ref['a']-$tolerance || $a > $ref['a']+$tolerance
+					) {
+						break 2;
+				}
+			}
+		}
 
-		//Debug::dump($top, $right, $bottom, $left); die();
+		// get left border
+		for($left = 0; $left < $w; ++$left) {
+			for($y = $top; $y <= $bottom; ++$y) {
+					$rgb = imagecolorat($im, $left, $y);
+					$a = ($rgb >> 24) & 0xFF;
+					$r = ($rgb >> 16) & 0xFF;
+					$g = ($rgb >> 8) & 0xFF;
+					$b = $rgb & 0xFF;
+
+				if (
+					$r < $ref['r']-$tolerance || $r > $ref['r']+$tolerance ||
+					$g < $ref['g']-$tolerance || $g > $ref['g']+$tolerance ||
+					$b < $ref['b']-$tolerance || $b > $ref['b']+$tolerance ||
+					$a < $ref['a']-$tolerance || $a > $ref['a']+$tolerance
+					) {
+						break 2;
+				}
+			}
+		}
+
+		// get right border
+		for($right = $w-1; $right > 0; --$right) {
+			for($y = $top; $y <= $bottom; ++$y) {
+					$rgb = imagecolorat($im, $right, $y);
+					$a = ($rgb >> 24) & 0xFF;
+					$r = ($rgb >> 16) & 0xFF;
+					$g = ($rgb >> 8) & 0xFF;
+					$b = $rgb & 0xFF;
+
+				if (
+					$r < $ref['r']-$tolerance || $r > $ref['r']+$tolerance ||
+					$g < $ref['g']-$tolerance || $g > $ref['g']+$tolerance ||
+					$b < $ref['b']-$tolerance || $b > $ref['b']+$tolerance ||
+					$a < $ref['a']-$tolerance || $a > $ref['a']+$tolerance
+					) {
+						break 2;
+				}
+			}
+		}
 
 		$width	= $right-$left;
 		$height	= $bottom-$top;
@@ -277,8 +312,6 @@ class Image {
 		//Debug::dump($width, $height); die();
 		imagesavealpha($temp_image, true); // preserve full alpha transparency for png files
 		imagealphablending($temp_image, false);
-
-		// ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 		imagecopyresampled($temp_image, $im, 0, 0, $left, $top, $width, $height, $width, $height);
 		return $temp_image;
@@ -433,32 +466,34 @@ class Image {
 	/**
 	 * Creates the image for given params.
 	 * 
-	 * @param string $file_path The path to the original file.
+	 * @param string $file_path_or_img_obj The path to the original file or an GD image resource.
 	 * @param array $params The params the user passed in.
 	 * @param boolean $return_resource Set to `true` to receive a GD image resource instead of a file path.
 	 * @param string $filename Pass a filename to force the name of the cache file.
 	 * @return string The path to the created image file or a GD image resource if you have set `return_resource` to `true`.
 	 */
-	public function get($file_path, $params, $return_ressource = false, $filename = null) {
-		// get cache filename if not passed
-		if (is_null($filename)) {
-			$filename = $this->_getCacheFilename($file_path, $params);
+	public function get($file_path_or_img_obj, $params, $return_ressource = false, $filename = null) {
+		if (is_string($file_path_or_img_obj)) {
+			// get cache filename if not passed
+			if (is_null($filename)) {
+				$filename = $this->_getCacheFilename($file_path_or_img_obj, $params);
+			}
+			
+			// if there is a cache file return it
+			if (file_exists($filename)) {
+				if ($return_ressource) return $this->load($filename);
+				else return $filename;
+			}
+
+			// load ressource
+			$img_obj = $this->load($file_path_or_img_obj);
+		} else {
+			$img_obj = $file_path_or_img_obj;
 		}
-		
-		// if there is a cache file return it
-		/*
-		if (file_exists($filename)) {
-			if ($return_ressource) return $this->load($filename);
-			else return $filename;
-		}
-		*/
 		
 		// validate params
 		$params = $this->_validateParams($params);
 
-		// load ressource
-		$img_obj = $this->load($file_path);
-		
 		// render params
 		$img_obj = $this->_render($img_obj, $params);
 		
@@ -513,7 +548,7 @@ class Image {
 	 */
 	protected function _render($img_obj, $params) {
 		// trim the image
-		if ($params['trim'] === true) $img_obj			= $this->_trim($img_obj);
+		if ($params['trim'] === true) $img_obj = $this->_trim($img_obj, $params['trim_tolerance']);
 
 		// get info of img_obj
 		$_SRC['width']		= imagesx($img_obj);
@@ -605,9 +640,10 @@ class Image {
 		// create destination image
 		$_DST['image'] = imagecreatetruecolor($_DST['width'], $_DST['height']);
 
+		$background_color	= imagecolorallocatealpha($_DST['image'], $params['background'][0], $params['background'][1], $params['background'][2], 0);
+
 		if ($params['transparent'] === true && $params['type'] !== 'jpg') {
 			if ($params['type'] === 'gif') {
-				$background_color = imagecolorallocatealpha($_DST['image'], $params['background'][0], $params['background'][1], $params['background'][2], 0);
 				imagealphablending($_DST['image'], true);
 				imagecolortransparent($_DST['image'], $background_color);
 				imagefill($_DST['image'], 0, 0, $background_color);
@@ -623,10 +659,21 @@ class Image {
 			imagefill($_DST['image'], 0, 0, $background_color);	
 		}
 
-		imagecopyresampled($_DST['image'], $_SRC['image'], 0, 0, $_DST['offset_w'], $_DST['offset_h'], $_DST['width'], $_DST['height'], $_SRC['width'], $_SRC['height']);
+		imagecopyresampled(
+			$_DST['image'],
+			$_SRC['image'],
+			0,
+			0,
+			$_DST['offset_w'],
+			$_DST['offset_h'],
+			$_DST['width'],
+			$_DST['height'],
+			$_SRC['width'],
+			$_SRC['height']
+		);
 
 		// sharpen the image
-		if ($params['sharpen'] === true) $_DST['image'] = $this->_unsharpMask($_DST['image']);
+		if ($params['sharpen'] === true) $_DST['image'] = $this->_sharpen($_DST['image']);
 
 		// add an overlay image
 		if (!empty($params['overlay'])) $_DST['image'] = $this->_addOverlayImage($_DST['image'], $params['overlay'], $params['overlay_position']);
