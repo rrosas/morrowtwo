@@ -140,7 +140,7 @@ class General {
 		return $_return;
 	}
 
-	public static function array_dotSyntaxGet(array &$array, $identifier = '') {
+	public static function array_dotSyntaxGet(array &$array, $identifier = '', $fallback = null) {
 		if (empty($identifier)) return $array;
 
 		// create reference
@@ -159,7 +159,7 @@ class General {
 		}
 
 		if (isset($returner)) return $returner;
-		else return null;
+		else return $fallback;
 	}
 
 	public static function array_dotSyntaxSet(array &$array, $identifier, $value) {

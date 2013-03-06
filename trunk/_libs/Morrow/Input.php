@@ -37,8 +37,11 @@ namespace Morrow;
  * ~~~{.php}
  * // ... Controller code
  *  
- * // retrieve full framework configuration
+ * // retrieve all input that came from outside (like PHPs $_REQUEST)
  * Debug::dump($this->input->get());
+ * 
+ * // retrieve an ID passed via POST, and set a fallback value if ID was not passed.
+ * Debug::dump($this->input->getPost('id', 0));
  *  
  * // ... Controller code
  * ~~~
@@ -99,37 +102,41 @@ class Input {
 	/**
 	 * Access to all user input (comparable to $_REQUEST).
 	 * @param string $identifier Config data to be retrieved.
+	 * @param mixed $fallback The return value if the identifier was not found.
 	 * @return mixed
 	 */
-	public function get($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_data, $identifier);
+	public function get($identifier = null, $fallback = null) {
+		return Helpers\General::array_dotSyntaxGet($this->_data, $identifier, $fallback);
 	}
 
 	/**
 	 * Access to user input that came per POST (comparable to $_POST).
 	 * @param string $identifier Config data to be retrieved.
+	 * @param mixed $fallback The return value if the identifier was not found.
 	 * @return mixed
 	 */
-	public function getPost($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_post, $identifier);
+	public function getPost($identifier = null, $fallback = null) {
+		return Helpers\General::array_dotSyntaxGet($this->_post, $identifier, $fallback);
 	}
 
 	/**
 	 * Access to user input that came per GET (comparable to $_GET).
 	 * @param string $identifier Config data to be retrieved.
+	 * @param mixed $fallback The return value if the identifier was not found.
 	 * @return mixed
 	 */
-	public function getGet($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_get, $identifier);
+	public function getGet($identifier = null, $fallback = null) {
+		return Helpers\General::array_dotSyntaxGet($this->_get, $identifier, $fallback);
 	}
 
 	/**
 	 * Access to user input that came per file upload (comparable to $_FILES).
 	 * @param string $identifier Config data to be retrieved.
+	 * @param mixed $fallback The return value if the identifier was not found.
 	 * @return mixed
 	 */
-	public function getFiles($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_files, $identifier);
+	public function getFiles($identifier = null, $fallback = null) {
+		return Helpers\General::array_dotSyntaxGet($this->_files, $identifier, $fallback);
 	}
 
 	/**

@@ -41,18 +41,32 @@ namespace Morrow;
 * // get path for the thumbed image
 * $thumb = $this->image->get($filename, $params);
 * Debug::dump($thumb);
-* 
-* 
-* // get thumbed image object
-* $img_obj = $this->image->get($filename, $params, true);
 *  
-* ob_start();
-* imagejpeg($img_obj);
-* $img_data = ob_get_clean();
+* // ... Controller code
+* ~~~ 
+* 
+* ~~~{.php}
+* // ... Controller code
 *  
-* $this->view->setHandler('plain');
-* $this->view->setProperty('mimetype', 'image/jpg');
-* $this->view->setContent($img_data);
+* $params = array(
+*     'height' => 100,
+*     'width' => 100,
+*     'sharpen' => true,
+*     'type' => 'png',
+* );
+* $filename = 'very_big_image.jpg';
+*
+* // get path for the thumbed image
+* $thumb = $this->image->get($filename, $params);
+*
+* // get image object
+* $img_obj = imagecreatefrompng($thumb);
+*
+* // ... work with image object
+*
+* // pass path to temporary image to save the new created image with the same path
+* $thumb = $this->image->get($filename, $params, $thumb);
+* Debug::dump($thumb);
 *  
 * // ... Controller code
 * ~~~
@@ -61,7 +75,7 @@ namespace Morrow;
 * 
 * Type	|	Keyname	|	Default |	Description
 * ------|-----------|-----------|---------------
-* string  | `type` | `jpg` | The output file format. Possible values are `gif`, `jpg`, `png` and `png8`. `png8` only provides other results than `png` if `pngnq` or `pngnq` is installed.
+* string  | `type` | `jpg` | The output file format. Possible values are `gif`, `jpg`, `png` and `png8`. `png8` only provides other results than `png` if `pngquant` or `pngnq` is installed.
 * integer |	`width` | `100` | The width of your thumbnail. The height (if not set) will be automatically calculated.
 * integer | `height` | `null` | The height of your thumbnail. The width (if not set) will be automatically calculated.
 * integer | `shortside` | `null` | Set the shortest side of the image if width, height and longside is not set.
@@ -69,11 +83,12 @@ namespace Morrow;
 * boolean | `sharpen` | `true` | Set to false if you do not want to sharpen the image.
 * boolean | `crop` | `true` | If set to true, image will be cropped in the center to destination width and height params, while keeping aspect ratio. Otherwise the image will get resized.
 * integer | `crop_position` | `2` | The cutout position if you use the crop function: Here are the positions:<br />&nbsp; 1<br />1 2 3<br />&nbsp; 3
+* boolean | `trim` | `false` | If set to true, the image will get trimmed. The top left corner is used as whitespace reference.
+* integer | `trim_tolerance` | `10` | Defines how big the difference to the reference whitespace can be. Useful for JPGs with artefacts. Use 0 for high quality input or 20 and higher for heavily compressed input. 10 should work for most images with light artefacts. 
 * boolean | `extrapolate` | `true` | Set to false if for example your source image is smaller than the calculated thumb and you do not want the image to get extraploated.
 * string  | `overlay` | `null` | A PNG image which is used to create an overlay image. The position will be determined by "overlay_position". For performance reasons the overlay image will not be checked for modification.
 * integer | `overlay_position` | `9` | The position of the overlay image. Possible is an integer from 1 to 9. Here are the positions:<br />1 2 3<br />4 5 6<br />7 8 9
 *
-* @todo getFromHash() does not respect the dev flag
 */
 class Image {
 	/**
@@ -134,7 +149,6 @@ class Image {
 	 */
 	protected function _validateParams($params) {
 		// all params with type and default_value
-		// used for _render
 		$defaults['sharpen']			= array('boolean', true);
 		$defaults['extrapolate']		= array('boolean', true);
 		$defaults['crop']				= array('boolean', true);
@@ -180,9 +194,9 @@ class Image {
 	}
 	
 	/**
-	 * Adds an image at a specified position. Useful to watermark an image.
+	 * Adds an image at a specified position. Useful to watermark an image or to show a zoom image.
 	 * 
-	 * @param resource $img_obj A GD image object.
+	 * @param resource $img_obj A GD image resource.
 	 * @param resource $overlay_file The path to the image file that should be used as watermark image.
 	 * @param resource $overlay_position The position (1-9) of the watermark image.
 	 * @return resource The image object with the added watermark image. 
@@ -211,6 +225,13 @@ class Image {
 		return $img_obj;
 	}
 	
+	/**
+	 * Removes whitespace around an image with a given tolerance.
+	 * 
+	 * @param resource $im A GD image resource.
+	 * @param integer $tolerance The tolerance value a pixel can differ from the reference point (top left corner).
+	 * @return resource The trimmed image object. 
+	 */
 	protected function _trim($im, $tolerance) {
 		// grab the colour from the top left corner and use that as default
 		$rgb = imagecolorat($im, 0, 0); // 2 pixels in to avoid messy edges
@@ -324,7 +345,7 @@ class Image {
 	 * @param array $params The params the user passed in.
 	 * @return string The calculated file path.
 	 */
-	protected function _getCacheFilename($file_path, &$params) {
+	protected function _getCacheFilenameByPath($file_path, &$params) {
 		if (!is_readable($file_path)) throw new \Exception(__CLASS__.': file "'.$file_path.'" does not exist or is not readable');
 
 		$types = array('jpg', 'gif', 'png', 'png8');
@@ -464,32 +485,24 @@ class Image {
 	}
 
 	/**
-	 * Creates the image for given params.
+	 * Creates the image for given params and return the path to the new image.
 	 * 
-	 * @param string $file_path_or_img_obj The path to the original file or an GD image resource.
+	 * @param string $file_path The path to the source file.
 	 * @param array $params The params the user passed in.
-	 * @param boolean $return_resource Set to `true` to receive a GD image resource instead of a file path.
 	 * @param string $filename Pass a filename to force the name of the cache file.
 	 * @return string The path to the created image file or a GD image resource if you have set `return_resource` to `true`.
 	 */
-	public function get($file_path_or_img_obj, $params, $return_ressource = false, $filename = null) {
-		if (is_string($file_path_or_img_obj)) {
-			// get cache filename if not passed
-			if (is_null($filename)) {
-				$filename = $this->_getCacheFilename($file_path_or_img_obj, $params);
-			}
-			
-			// if there is a cache file return it
-			if (file_exists($filename)) {
-				if ($return_ressource) return $this->load($filename);
-				else return $filename;
-			}
-
-			// load ressource
-			$img_obj = $this->load($file_path_or_img_obj);
-		} else {
-			$img_obj = $file_path_or_img_obj;
+	public function get($file_path, $params, $filename = null) {
+		// get cache filename if not passed
+		if (is_null($filename)) {
+			$filename = $this->_getCacheFilenameByPath($file_path, $params);
 		}
+		
+		// if there is a cache file return it
+		if (file_exists($filename)) return $filename;
+
+		// load ressource
+		$img_obj = $this->load($file_path);
 		
 		// validate params
 		$params = $this->_validateParams($params);
@@ -497,9 +510,6 @@ class Image {
 		// render params
 		$img_obj = $this->_render($img_obj, $params);
 		
-		// so this line means: if you want the ressource returned the image will not be cached
-		if ($return_ressource) return $img_obj;
-
 		// save data to file
 		if ($params['type'] === 'jpg') imagejpeg($img_obj, $filename, 80);
 		elseif ($params['type'] === 'gif') imagegif($img_obj, $filename);
@@ -520,13 +530,16 @@ class Image {
 		return $filename;
 	}
 
+	/**
+	 * Converts a hex string to an array with the three color channels.
+	 * 
+	 * @param string $hex The hex string like `#ffffff` or `#fff`.
+	 * @return string The array with the three color channels R, G, and B.
+	 */
 	protected function _hex2RGB($hex) {
-		$hex = preg_replace("/[^0-9A-Fa-f]/", '', $hex);
+		$hex = preg_replace("/[^0-9a-f]/i", '', $hex);
 		
-		if (strlen($hex) == 3) {
-			$hex = $hex{0} . $hex{0}. $hex{1}. $hex{1}. $hex{2}. $hex{2};
-		}
-
+		if (strlen($hex) == 3) $hex = $hex{0} . $hex{0}. $hex{1}. $hex{1}. $hex{2}. $hex{2};
 		if (strlen($hex) !== 6) return false;
 
 		$dec = hexdec($hex);
@@ -673,10 +686,14 @@ class Image {
 		);
 
 		// sharpen the image
-		if ($params['sharpen'] === true) $_DST['image'] = $this->_sharpen($_DST['image']);
+		if ($params['sharpen'] === true) {
+			$_DST['image'] = $this->_sharpen($_DST['image']);
+		}
 
 		// add an overlay image
-		if (!empty($params['overlay'])) $_DST['image'] = $this->_addOverlayImage($_DST['image'], $params['overlay'], $params['overlay_position']);
+		if (!empty($params['overlay'])) {
+			$_DST['image'] = $this->_addOverlayImage($_DST['image'], $params['overlay'], $params['overlay_position']);
+		}
 
 		if ($params['type'] === 'gif') {
 			imagetruecolortopalette($_DST['image'], true, 255);

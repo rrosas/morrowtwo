@@ -24,17 +24,31 @@
 namespace Morrow;
 
 /**
- * This class helps you to debug your application.
- *
- * You are able to change the behaviour of these methods with the following parameters you should set in your configuration files:
- *
- * Type | Keyname | Default | Description
- * -----|---------|---------|------------
- * bool | `debug.output.screen` | `true` | Defines if errors should be displayed on screen
- * bool | `debug.output.logfile` | `true` | Defines if errors should be logged to the file system (`FW_PATH/_logs/`)
- * bool | `debug.output.headers` | `false` | Experimental use
- * string | `debug.password` | `password` | Experimental use
- */
+* This class helps you to debug your application.
+*
+* You are able to change the behaviour of these methods with the following parameters you should set in your configuration files:
+*
+* Type | Keyname | Default | Description
+* -----|---------|---------|------------
+* bool | `debug.output.screen` | `true` | Defines if errors should be displayed on screen
+* bool | `debug.output.logfile` | `true` | Defines if errors should be logged to the file system (`FW_PATH/_logs/`)
+* bool | `debug.output.headers` | `false` | Experimental use
+* string | `debug.password` | `password` | Experimental use
+*
+* Examples
+* ---------
+*
+* ~~~{.php}
+* // ... Controller code
+* 
+* // set at the beginning of the DefaultController 
+* $this->debug->setAfterException(function(){
+*     $this->url->redirect('error/');	
+* });
+*  
+* // ... Controller code
+* ~~~ 
+*/
 class Debug {
 	/**
 	 * The path to the log file
@@ -142,7 +156,7 @@ class Debug {
 		// output error
 		$error = '<div class="dp_container">';
 		$error .= '<div class="skyline">'.$errortype.'</div>';
-		$error .= '<h1 class="exception">'.$errstr.'</h1>';
+		$error .= '<h1 class="exception">'.htmlspecialchars($errstr, ENT_QUOTES, 'UTF-8').'</h1>';
 
 		$count = 0;
 		foreach ($backtrace as $key => $value) {

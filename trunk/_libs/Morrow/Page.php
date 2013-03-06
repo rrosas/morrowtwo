@@ -53,10 +53,11 @@ class Page {
 	 * Retrieves configuration parameters. If `$identifier` is not passed, it returns an array with the complete configuration. Otherwise only the parameters below `$identifier`. 
 	 * 
 	 * @param string $identifier Config data to be retrieved
+	 * @param mixed $fallback The return value if the identifier was not found.
 	 * @return mixed
 	 */
-	public function get($identifier = null) {
-		return \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier);
+	public function get($identifier = null, $fallback = null) {
+		return \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier, $fallback);
 	}
 
 	/**

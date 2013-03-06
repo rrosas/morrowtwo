@@ -33,7 +33,7 @@ namespace Morrow;
 * ~~~{.php}
 * // ... Controller code
 *  
-* $this->prepare('db', $this->config->get('db'));
+* $this->prepare('Db', $this->config->get('db'));
 *  
 * // Query with a prepared statement using named placeholder
 * $sql = $this->db->result('
