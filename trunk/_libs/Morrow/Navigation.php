@@ -22,6 +22,46 @@
 
 namespace Morrow;
 
+/**
+ * The class improves the handling with common navigational tasks. The navigation data has to follow a strict scheme but can be passed from different sources.
+ * The default way is to store the data in an array in `PROJECT_PATH . '/_i18n/LANGUAGE/tree.php'`.
+ * 
+ * Because aliases can exist in more than one navigation branch (f.e. meta and main) you have to specify the branch you want to work with. 
+ *
+ * Example
+ * -------
+ *
+ * tree.php
+ * ~~~{.php}
+ * return array(
+ * 	'main' => array(
+ * 		'home'	=> 'Homepage',
+ * 		'products'	=> 'Products',
+ * 	),
+ * 	'meta' => array(
+ * 		'imprint'	=> 'Imprint',
+ * 	),
+ * );
+ * ~~~
+ * 
+ * DefaultController
+ * ~~~{.php}
+ * // ... Controller code
+ *
+ * // the complete navigation tree
+ * $navi = $this->navigation->get();
+ * $this->view->setContent($navi, 'navi');
+ *
+ * // breadcrumb
+ * $breadcrumb = $this->navigation->getBreadcrumb('main');
+ * $this->view->setContent($breadcrumb, 'breadcrumb');
+ *
+ * // get previous and next page
+ * $pager = $this->navigation->getPager('main');
+ * $this->view->setContent($pager, 'pager');
+ * 
+ * // ... Controller code
+ */
 class Navigation {
 	protected $nodes, $tree = array();
 	protected $active_id = null;
