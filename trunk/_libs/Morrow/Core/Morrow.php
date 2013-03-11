@@ -327,6 +327,12 @@ class Morrow {
 		$url_nodes = explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
+		// nodes are only allowed to have a-z, 0-9, - and .
+		$nodes = $this->page->get('nodes');
+		foreach ($nodes as $node) {
+			if (preg_match('|[^0-9a-z.-]|i', $node)) throw new \Exception('URL node name are only allowed to consist of a-z, 0-9, "." and "-".');
+		}
+
 		/* set alias
 		********************************************************************************************/
 		$alias = implode('_', $url_nodes);
