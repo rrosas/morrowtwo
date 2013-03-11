@@ -330,7 +330,7 @@ class Morrow {
 		// nodes are only allowed to have a-z, 0-9, - and .
 		$nodes = $this->page->get('nodes');
 		foreach ($nodes as $node) {
-			if (preg_match('|[^0-9a-z.-]|i', $node)) throw new \Exception('URL node name are only allowed to consist of a-z, 0-9, "." and "-".');
+			if (preg_match('|[^0-9a-z.-]|i', $node)) throw new \Exception('URL node names are only allowed to consist of a-z, 0-9, "." and "-".');
 		}
 
 		/* set alias
