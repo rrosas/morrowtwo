@@ -146,11 +146,6 @@ class Morrow {
 		// register autoloader
 		spl_autoload_register(array($this, '_autoload'));
 
-		/* prepare some constructor variables
-		********************************************************************************************/
-		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
-		Factory::prepare('Debug', FW_PATH.'_logs/'.date("y-m-d").'.txt');
-
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('Config'); // config class for config vars
@@ -173,6 +168,11 @@ class Morrow {
 		if (!date_default_timezone_set($this->config->get('locale.timezone'))) {
 			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
+
+		/* prepare some constructor variables
+		********************************************************************************************/
+		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
+		Factory::prepare('Debug', FW_PATH.'_logs/'.date("y-m-d").'.txt');
 
 		/* load classes
 		********************************************************************************************/
@@ -337,6 +337,13 @@ class Morrow {
 		********************************************************************************************/
 		$alias = implode('_', $url_nodes);
 		$this->page->set('alias', $alias);
+
+		/* prepare some constructor variables
+		********************************************************************************************/
+		Factory::prepare('Navigation',
+			Factory::load('Language')->getTree(),
+			$alias
+		);
 
 		/* load controller and render page
 		********************************************************************************************/
