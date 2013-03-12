@@ -22,99 +22,67 @@
 
 namespace Morrow;
 
+/**
+ * A simple class to help you with typical paging issues in your database queries and your templates.
+ *
+ * Example
+ * -------
+ *
+ * ~~~{.php}
+ * // Controller code
+ *
+ * $total_results    = 41;
+ * $results_per_page = 5;
+ * $page             = $this->input->get('page');
+ * 
+ * $pager_data = $this->pager->get($total_results, $results_per_page, $page);
+ * Debug::dump($pager_data);
+ *
+ * // Controller code
+ * ~~~
+ * 
+ * ### Result for `$page = 2`
+ * ~~~
+ * Array
+ * (
+ *     [page_prev]          => 1
+ *     [page_current]       => 2
+ *     [page_next]          => 3
+ *     [pages_total]        => 9
+ *     [results_total]      => 41
+ *     [results_per_page]   => 5
+ *     [offset_start]       => 5
+ *     [offset_end]         => 9
+ *     [mysql_limit]        => 5,5
+ * )
+ * ~~~
+ */
 class Pager {
-	/* These are defaults */
-	public $TotalResults;
-	public $CurrentPage = 1;
-	public $PageVarName = "pager";
-	public $ResultsPerPage = 20;
-	public $LinksPerPage = 10;
+	/**
+	 * Returns environment variables which helps you to build your pager.
+	 *
+	 * @param	integer	$total_results The total number of your results.
+	 * @param	integer	$results_per_page The number of results you want to show per page.
+	 * @param	integer	$current_page The page you want the environment variables for.
+	 * @return	array	Returns an associative array with the pager environment variables.
+	 */
+	public function get($total_results, $results_per_page = 20, $current_page = 1) {
+		$total_pages	= intval(max(1, ceil($total_results / $results_per_page)));
+		$current_page	= intval(min(max(1, $current_page), $total_pages));
+		$offset_start	= $results_per_page * ($current_page - 1);
+		$offset_end		= min($offset_start + $results_per_page - 1, $total_results);
+		$mysql_limit	= $offset_start . ',' . $results_per_page;
 
-	protected $input;
-
-	public function __construct($input) {
-		$this->input = $input;
-		$this->CurrentPage = $this->getCurrentPage();
-	}
-
-	public function get() {
-		$this->TotalPages = $this->getTotalPages();
-		$this->ResultArray = array(
-			"page_prev" => $this->getPrevPage(),
-			"page_next" => $this->getNextPage(),
-			"page_current" => $this->CurrentPage,
-			"pages_total" => $this->TotalPages,
-			"results_total" => $this->TotalResults,
-			"mysql_limit" => $this->getLimit(),
-			"mysql_limit1" => $this->getStartOffset(),
-			"mysql_limit2" => $this->ResultsPerPage,
-			"offset_start" => $this->getStartOffset(),
-			"offset_end" => $this->getEndOffset(),
-			"results_per_page" => $this->ResultsPerPage,
-			"var" => $this->PageVarName,
+		return array(
+			'page_prev'			=> $current_page > 1 ? $current_page - 1 : false,
+			'page_current'		=> $current_page,
+			'page_next'			=> $current_page < $total_pages ? $current_page + 1 : false,
+			'pages_total'		=> $total_pages,
+			'results_total'		=> $total_results,
+			'results_per_page'	=> $results_per_page,
+			'offset_start'		=> $offset_start,
+			'offset_end'		=> $offset_end,
+			'mysql_limit'		=> $mysql_limit,
 		);
-		return $this->ResultArray;
-	}
-
-	/* Start information functions */
-	public function getTotalPages() {
-		/* Make sure we don't devide by zero */
-		$result = 1;
-		if ($this->TotalResults != 0 && $this->ResultsPerPage != 0) {
-			$result = ceil($this->TotalResults / $this->ResultsPerPage);
-		}
-		
-		/* If 0, make it 1 page */
-		if($result == 0) return 1;
-		else return $result;
-	}
-
-	public function getStartOffset() {
-		$offset = $this->ResultsPerPage * ($this->CurrentPage - 1);
-		return $offset;
-	}
-
-	public function getEndOffset() {
-		if ($this->getStartOffset() > ($this->TotalResults - $this->ResultsPerPage)) $offset = $this->TotalResults;
-		elseif ($this->getStartOffset() != 0) $offset = $this->getStartOffset() + $this->ResultsPerPage - 1;
-		else $offset = $this->ResultsPerPage;
-		
-		return $offset;
-	}
-
-	public function getCurrentPage() {
-		if (isset($this->input[$this->PageVarName])) {
-			$page = $this->input[$this->PageVarName];
-			if (is_numeric($page) and $page > 0) $this->CurrentPage = $page;
-		}
-		return $this->CurrentPage;
-	}
-
-	public function getPrevPage() {
-		if($this->CurrentPage > 1) return $this->CurrentPage - 1;
-		else return false;
-	}
-
-	public function getNextPage() {
-		if($this->CurrentPage < $this->TotalPages) return $this->CurrentPage + 1;
-		else return false;
-	}
-
-	public function getStartNumber() {
-		$links_per_page_half = $this->LinksPerPage / 2;
-		/* See if curpage is less than half links per page */
-		if($this->CurrentPage <= $links_per_page_half || $this->TotalPages <= $this->LinksPerPage) return 1;
-		/* See if curpage is greater than TotalPages minus Half links per page */
-		elseif($this->CurrentPage >= ($this->TotalPages - $links_per_page_half)) return $this->TotalPages - $this->LinksPerPage + 1;
-		else return $this->CurrentPage - $links_per_page_half;
-	}
-
-	public function getEndNumber() {
-		if($this->TotalPages < $this->LinksPerPage) return $this->TotalPages;
-		else return $this->getStartNumber() + $this->LinksPerPage - 1;
-	}
-
-	public function getLimit() {
-		return $this->getStartOffset() . ',' . $this->ResultsPerPage;
 	}
 }

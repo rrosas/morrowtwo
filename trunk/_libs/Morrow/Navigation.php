@@ -24,7 +24,7 @@ namespace Morrow;
 
 /**
  * The class improves the handling with common navigational tasks. The navigation data has to follow a strict scheme but can be passed from different sources.
- * The default way is to store the data in an array in `PROJECT_PATH . '/_i18n/LANGUAGE/tree.php'`.
+ * The default way is to store the data in an array in `PROJECT_PATH . "/_i18n/LANGUAGE/tree.php"`.
  * 
  * Because aliases can exist in more than one navigation branch (f.e. meta and main) you have to specify the branch you want to work with. 
  *
@@ -36,7 +36,9 @@ namespace Morrow;
  * return array(
  * 	'main' => array(
  * 		'home'	=> 'Homepage',
- * 		'products'	=> 'Products',
+ * 		'products' => array('title' => 'Products', 'foo' => 'bar'),
+ * 		'products_boxes' => 'Boxes',
+ * 		'products_things' => 'Things',
  * 	),
  * 	'meta' => array(
  * 		'imprint'	=> 'Imprint',
@@ -50,40 +52,65 @@ namespace Morrow;
  *
  * // the complete navigation tree
  * $navi = $this->navigation->get();
- * $this->view->setContent($navi, 'navi');
+ * Debug::dump($navi);
  *
- * // breadcrumb
- * $breadcrumb = $this->navigation->getBreadcrumb('main');
- * $this->view->setContent($breadcrumb, 'breadcrumb');
+ * // the breadcrumb
+ * $breadcrumb = $this->navigation->getBreadcrumb();
+ * Debug::dump($breadcrumb);
  *
- * // get previous and next page
- * $pager = $this->navigation->getPager('main');
- * $this->view->setContent($pager, 'pager');
- * 
+ * // the current page
+ * $active = $this->navigation->getActive();
+ * Debug::dump($active);
+ *
+ * // find a page by its title
+ * $homepage = $this->navigation->find('title', 'Homepage');
+ * Debug::dump($homepage);
+ *
  * // ... Controller code
+ * ~~~
  */
 class Navigation {
-	protected $nodes, $tree = array();
-	protected $active_id = null;
+	/**
+	 * Contains all references to the tree nodes in a flat associative array.
+	 * @var	array $_nodes
+	 */
+	protected $_nodes = array();
+
+	/**
+	 * Contains all references to the nodes in a tree array.
+	 * @var	array $_tree
+	 */
+	protected $_tree = array();
+
+	/**
+	 * Stores the currently active node.
+	 * @var	string $_active_id
+	 */
+	protected $_active_id = null;
 	
-	public function __construct($data = null) {
-		if (is_null($data)) {
-			// get simple tree from language class
-			$language = Factory::load('Language');
-			$data = $language->getTree();
-
-			// fills $nodes and $tree
-			$this->add($data);
-
-			// set active page
-			$page = Factory::load('Page');
-			$this->setActive($page->get('alias'));
-		} else {
-			// fills $nodes and $tree
-			$this->add($data);
+	/**
+	 * Creates the internal structure with the given data. Usually you don't have to call it yourself.
+	 *
+	 * @param	string	$data	An array as described in the examples above.
+	 * @param	string	$active	The node that should be flagged as active.
+	 */
+	public function __construct($data, $active = null) {
+		// fill $nodes and $tree
+		$this->add($data);
+		
+		// set the active node
+		if (isset($this->_nodes[$active])) {
+			$this->setActive($active);
 		}
 	}
 		
+	/**
+	 * Adds nodes to the current tree.
+	 *
+	 * @param	string	$data	An array as described in the examples above.
+	 * @param	string	$branch	The branch to add the new nodes to. If left out you have to specify the branch in your input data.
+	 * @return	null
+	 */
 	public function add($data, $branch = null) {
 		if (!is_null($branch)) $data = array($branch => $data);
 		
@@ -109,16 +136,16 @@ class Navigation {
 				$node['parent'] = implode('_', $parts);
 				
 				// add to nodes collection
-				$this->nodes[$node['alias']] = $node;
+				$this->_nodes[$node['alias']] = $node;
 
 				// add to nested tree
 				if (empty($node['parent'])) {
-					$this->tree[$branch][$id] =& $this->nodes[$id];
+					$this->_tree[$branch][$id] =& $this->_nodes[$id];
 				}
 			}
 		}
 
-		$nodes =& $this->nodes;
+		$nodes =& $this->_nodes;
 		
 		// now create the references in between
 		foreach ($nodes as $id => $node) {
@@ -129,76 +156,102 @@ class Navigation {
 		}
 	}
 
+	/**
+	 * Adds nodes to the current tree.
+	 *
+	 * @param	string	$id	The node to set active.
+	 * @return	array	The set node or throws an Exception if the `$id` is not known.
+	 */
 	public function setActive($id) {
-		if (!isset($this->nodes[$id])) {
+		if (!isset($this->_nodes[$id])) {
 			throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.');
 			return;
 		}
 		
 		// set active id to retrieve the breadcrumb
-		$this->active_id = $id;
+		$this->_active_id = $id;
 		
 		// set all nodes to inactive
-		foreach ($this->nodes as $key => $item) {
-			$this->nodes[$key]['active'] = false;
+		foreach ($this->_nodes as $key => $item) {
+			$this->_nodes[$key]['active'] = false;
 		}
 		
 		// set actual node to active
-		$actual =& $this->nodes[$id];
+		$actual =& $this->_nodes[$id];
 		$actual['active'] = true;
 		
 		// loop to the top and set to active
-		while (isset($this->nodes[$actual['parent']])) {
-			$actual =& $this->nodes[$actual['parent']];
+		while (isset($this->_nodes[$actual['parent']])) {
+			$actual =& $this->_nodes[$actual['parent']];
 			$actual['active'] = true;
 		}
 		
 		// return actual node
-		return $this->nodes[$id];
+		return $this->_nodes[$id];
 	}
 
+	/**
+	 * Gets the currently active node.
+	 *
+	 * @return	array	The currently active node.
+	 */
 	public function getActive() {
-		return $this->get($this->active_id);
+		return $this->get($this->_active_id);
 	}
 
-	// get full tree or specific id
+	/**
+	 * Gets the tree below the passed node id.
+	 *
+	 * @param	string	A node id.
+	 * @return	array The full tree or a subtree if `$id` was passed.
+	 */
 	public function get($id = null) {
 		// return full tree
-		if (is_null($id)) return $this->tree;
+		if (is_null($id)) return $this->_tree;
 
-		if (!isset($this->nodes[$id])) {
+		if (!isset($this->_nodes[$id])) {
 			throw new \Exception(__METHOD__.': id "'.$id.'" does not exist.');
 			return;
 		}
-		return $this->nodes[$id];
+		return $this->_nodes[$id];
 	}
 
-	// get full tree or the first found node by field
+	/**
+	 * Find a specific node.
+	 *
+	 * @param	string	The field to search for like "title", "path", "alias" and so on.
+	 * @param	string	The search string.
+	 * @return	array The subtree with the found node and its children.
+	 */
 	public function find($field, $id) {
 		// return node by user defined field
-		foreach ($this->nodes as $node) {
+		foreach ($this->_nodes as $node) {
 			if (isset($node[$field]) && $node[$field] == $id) return $node;
 		}
 		return null;
 	}
 
-	// get breadcrumb (tree up to actual page)
+	/**
+	 * Get the tree up from currently active page to the actual page or ... the breadcrumb.
+	 *
+	 * @return	array The active nodes.
+	 */
 	public function getBreadcrumb() {
 		$breadcrumb = array();
 		
 		// handle not set active node
-		if (!isset($this->nodes[$this->active_id])) {
+		if (!isset($this->_nodes[$this->_active_id])) {
 			throw new \Exception(__METHOD__.': you did not set an active node so you cannot retrieve a breadcrumb.');
 			return;
 		}
 		
 		// get actual node
-		$actual = $this->nodes[$this->active_id];
+		$actual = $this->_nodes[$this->_active_id];
 		array_unshift($breadcrumb, $actual);
 		
 		// loop to the top
-		while (isset($this->nodes[$actual['parent']])) {
-			$actual =& $this->nodes[$actual['parent']];
+		while (isset($this->_nodes[$actual['parent']])) {
+			$actual =& $this->_nodes[$actual['parent']];
 			array_unshift($breadcrumb, $actual);
 		}
 		
