@@ -132,7 +132,7 @@ class Morrow {
 		/* global settings
 		********************************************************************************************/
 		// compress the output
-		if(!ob_start("ob_gzhandler")) ob_start();
+		if (!ob_start("ob_gzhandler")) ob_start();
 
 		// include E_STRICT in error_reporting
 		error_reporting(E_ALL | E_STRICT);
@@ -140,9 +140,6 @@ class Morrow {
 		// define the global FW_PATH constant
 		define('FW_PATH', realpath(__DIR__ .'/../../..') . '/');
 
-		// load the factory
-		require(FW_PATH . '_libs/Morrow/Factory.php');
-		
 		// register autoloader
 		spl_autoload_register(array($this, '_autoload'));
 
@@ -177,7 +174,6 @@ class Morrow {
 		/* load classes
 		********************************************************************************************/
 		$this->page		= Factory::load('Page'); // config class for page vars
-		$this->url		= Factory::load('Url'); // url class
 		$this->input	= Factory::load('Input'); // input class for all user input
 
 		/* define project
@@ -209,11 +205,6 @@ class Morrow {
 		define('PROJECT_PATH', FW_PATH . $project_relpath . '/');
 		define('PROJECT_RELPATH', $project_relpath . '/');
 
-		/* prepare some constructor variables which need the PROJECT_PATH
-		********************************************************************************************/
-		Factory::prepare('Cache', PROJECT_PATH.'temp/_codecache/');
-		Factory::prepare('Image', PROJECT_PATH . 'temp/thumbs/');
-
 		/* register project config in the config class
 		********************************************************************************************/
 		// load vars
@@ -224,33 +215,23 @@ class Morrow {
 			$this->config->set($key, $array);
 		}
 
-		/* get domain
-		********************************************************************************************/
-		$domain = $this->url->getDomain();
-		$this->page->set('base_href', $domain);
-
-		/* define project paths
-		********************************************************************************************/
-		$this->page->set('project_path', $domain.$project_relpath.'/');
-		$this->page->set('project_relpath', PROJECT_RELPATH);
-
 		/* load session
 		********************************************************************************************/
 		$sessionHandler = $this->config->get('session.handler');
 		if (empty($sessionHandler)) $sessionHandler = 'Session';
-		$session = Factory::load($sessionHandler.':session', $this->input->get());
+		$session = Factory::load($sessionHandler.':session', $this->config->get('session'), $this->input->get());
 		
 		/* load languageClass and define alias
 		********************************************************************************************/
-		$lang_settings['possible'] = $this->config->get('languages');
-		$lang_settings['language_path'] = PROJECT_PATH . '_i18n/';
-		$lang_settings['i18n_paths'] = array(
+		$lang['possible'] = $this->config->get('languages');
+		$lang['language_path'] = PROJECT_PATH . '_i18n/';
+		$lang['i18n_paths'] = array(
 			FW_PATH			. '_libs/*.php',
 			PROJECT_PATH	. '_libs/*.php',
 			PROJECT_PATH	. '_templates/*',
 			PROJECT_PATH	. '*.php'
 		);
-		$this->language = Factory::load('Language', $lang_settings);
+		$this->language = Factory::load('Language', $lang);
 
 		// language via path
 		$nodes = $this->page->get('nodes');
@@ -260,13 +241,14 @@ class Morrow {
 		}
 		
 		// language via input
-		$input_lang = $this->input->get('language');
+		
+		$lang['actual'] = $this->input->get('language');
 
-		if ($input_lang === null && isset($input_lang_nodes)) {
-			$input_lang = $input_lang_nodes;
+		if ($lang['actual'] === null && isset($input_lang_nodes)) {
+			$lang['actual'] = $input_lang_nodes;
 		}
 
-		if ($input_lang !== null) $this->language->set($input_lang);
+		if ($lang['actual'] !== null) $this->language->set($lang['actual']);
 
 		/* url routing
 		********************************************************************************************/
@@ -324,8 +306,7 @@ class Morrow {
 		}
 
 		// set nodes in page class
-		$url_nodes = explode('/', $url);
-		$this->page->set('nodes', $url_nodes);
+		$this->page->set('nodes', explode('/', $url));
 
 		// nodes are only allowed to have a-z, 0-9, - and .
 		$nodes = $this->page->get('nodes');
@@ -333,39 +314,44 @@ class Morrow {
 			if (preg_match('|[^0-9a-z.-]|i', $node)) throw new \Exception('URL node names are only allowed to consist of a-z, 0-9, "." and "-".');
 		}
 
-		/* set alias
+		/* prepare some internal variables
 		********************************************************************************************/
-		$alias = implode('_', $url_nodes);
-		$this->page->set('alias', $alias);
+		$alias = $url;
+		$controller_path		= PROJECT_PATH.'_controllers/';
+		$global_controller_file	= $controller_path.'_default.php';
+		$page_controller_file	= $controller_path.$alias.'.php';
+		$path = implode('/', $nodes).'/';
+		$query = $this->input->getGet();
+		unset($query['morrow_content']);
+		$fullpath = $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
 
 		/* prepare some constructor variables
 		********************************************************************************************/
-		Factory::prepare('Navigation',
-			Factory::load('Language')->getTree(),
-			$alias
-		);
+		Factory::prepare('Cache', PROJECT_PATH.'temp/_codecache/');
+		Factory::prepare('Image', PROJECT_PATH . 'temp/thumbs/');
+		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
+		Factory::prepare('Pagesession', 'page.' . $alias);
+		Factory::prepare('Url', $this->config->get('projects'), $this->language->get(), $lang['possible'], $fullpath);
+
+		/* define project paths
+		********************************************************************************************/
+		$domain = Factory::load('Url')->getBaseHref();
+
+		$this->page->set('base_href', $domain);
+		$this->page->set('alias', $alias);
+		$this->page->set('controller', $page_controller_file);
+		$this->page->set('path', $path);
+		$this->page->set('project_relpath', PROJECT_RELPATH);
+		$this->page->set('project_path', $domain . $project_relpath . '/');
+		$this->page->set('fullpath', $fullpath);
+
 
 		/* load controller and render page
 		********************************************************************************************/
 		$this->view = Factory::load('View');
-				
-		// declare the controller to be loaded
-		$controller_path		= PROJECT_PATH.'_controllers/';
-		$global_controller_file	= $controller_path.'_default.php';
-		$page_controller_file	= $controller_path.$alias.'.php';
 
-		$this->page->set('controller', $page_controller_file);
-		$this->page->set('path', implode('/', $nodes).'/');
-		
-		$query = $this->input->getGet();
-		unset($query['morrow_content']);
-
-		if (count($query) === 0) $fullpath = $this->page->get('path');
-		else $fullpath = $this->page->get('path').'?'.http_build_query($query, '', '&');
-		$this->page->set('fullpath', $fullpath);
-
-		// make sure to get language content for page alias
-		$this->language->getContent($this->page->get('alias'));
+		// make sure to get language content for page alias (??????????)
+		//$this->language->getContent($this->page->get('alias'));
 
 		// include global controller class
 		include($global_controller_file);

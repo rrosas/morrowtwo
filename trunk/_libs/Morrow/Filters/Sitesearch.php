@@ -80,7 +80,7 @@ class Sitesearch extends AbstractFilter {
 		if (rand(1, $this->gc_divisor) === 1) $this->_deleteOldEntries($this->db_tablename);
 				
 		// create url for current page
-		$url = $this->url->makeUrl('');
+		$url = $this->url->create('');
 
 		//$this->_check($url);
 		

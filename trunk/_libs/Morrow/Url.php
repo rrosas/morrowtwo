@@ -22,196 +22,257 @@
 
 namespace Morrow;
 
+/**
+* This class provides some useful methods for dealing with URLs. Especially create() and redirect() are important, since they provide correct handling of Morrow paths in the context of "projects" (see topic Multiple Sites) and language handling.
+* 
+* A Morrow URL has this structure:
+* `projectname`/`language`/`node 1`/`node 2`
+* 
+* `projectname` and `language` are optional.
+* So if you want to link to the default project with the default language or you want to keep the current project and the current language you can omit both parameters.
+* 
+* Examples
+* ---------
+*
+* ~~~{.php}
+* // extend an absolute URL with an additional GET parameter
+* $url = $this->url->create('http://chuck:norris@example.com:80/home?foo=bar#42', array('foo2' => 'bar2'));
+* Debug::dump($url);
+* 
+* // URLs without a scheme also work
+* $url = $this->url->create('//example.com/home', array('foo' => 'bar'));
+* Debug::dump($url);
+*
+* // create an URL to a different project in a non standard language
+* $url = $this->url->create('project2/de/home/');
+* Debug::dump($url);
+*
+* // create an URL to the actual page
+* $url = $this->url->create();
+* Debug::dump($url);
+* ~~~
+*
+* ### Change the language
+*
+* If you just want to change the language in the current project just use the `language` query parameter which is handled different to other query parameters.
+*
+* ~~~{.php}
+* // create an absolute URL to the homepage and change the language
+*
+* $url = $this->url->create('home', array('language' => 'de'), true);
+* // is the same as
+* $url = $this->url->create('de/home', array(), true);
+*
+* Debug::dump($url);
+* ~~~
+*
+* ### Redirect
+* 
+* ~~~{.php}
+* // redirect to the not-found page
+* $this->url->redirect('not-found/', array(), 404);
+* ~~~
+*/
 class Url {
+	/**
+	 * Contains all valid projects keys.
+	 * @var	array $_projects
+	 */
+	protected $_projects;
 
-	public function __construct() {
-		ini_set('arg_separator.output', '&amp;');
-		$this->page = Factory::load('Page');
+	/**
+	 * Contains the currently active language.
+	 * @var	array $_language_actual
+	 */
+	protected $_language_actual;
+
+	/**
+	 * Contains all valid language keys.
+	 * @var	array $_language_possible
+	 */
+	protected $_language_possible;
+
+	/**
+	 * Contains the full path of the current page.
+	 * @var	array $_fullpath
+	 */
+	protected $_fullpath;
+
+	/**
+	 * All parameters passed are used for create(). You don't have to do this yourself in Morrow.
+	 *
+	 * @param	array	$projects	The URL to parse.
+	 * @param	array	$language_actual	The URL to parse.
+	 * @param	array	$language_possible	The URL to parse.
+	 * @param	array	$fullpath	The URL to parse.
+	 */
+	public function __construct($projects, $language_actual, $language_possible, $fullpath) {
+		$this->_projects			= $projects;
+		$this->_language_actual		= $language_actual;
+		$this->_language_possible	= $language_possible;
+		$this->_fullpath			= $fullpath;
 	}
 
-	// wie parse_url, gibt jedoch immer den kompletten Satz an Schlüsseln zurück
+	/**
+	 * Like PHP's parse_url() but returns an array with all of the keys even if they are empty.
+	 * It also adds some keys which are necessary to build a fully qualified URL.
+	 * So it is possible to rebuild the parsed URL with an implode() on the result.
+	 *
+	 * @param	string	$url	The URL to parse.
+	 * @return	array	An array with all the keys.
+	 */
 	public function parse($url) {
-		// Diese Schlüssel können alle vorkommen
-		$template = array('scheme'=>'','host'=>'','port'=>'','user'=>'','pass'=>'','path'=>'','query'=>'','fragment'=>'');
+		$template = array(
+			'scheme'			=> '',
+			'scheme_divider'	=> '',
+			'user'				=> '',
+			'pass_divider'		=> '',
+			'pass'				=> '',
+			'auth_divider'		=> '',
+			'host'				=> '',
+			'port_divider'		=> '',
+			'port'				=> '',
+			'path'				=> '',
+			'query_divider'		=> '',
+			'query'				=> '',
+			'fragment_divider'	=> '',
+			'fragment'			=> '',
+		);
+		$parts = array_merge($template, parse_url($url));
 
-		// URL zerschneiden
-		$parts = parse_url($url);
+		if ($parts['scheme']	!== '') $parts['scheme_divider'] = '://';
+		if ($parts['pass']		!== '') $parts['pass_divider'] = ':';
+		if ($parts['user']		!== '') $parts['auth_divider'] = '@';
+		if ($parts['port']		!== '') $parts['port_divider'] = ':';
+		if ($parts['query']		!== '') $parts['query_divider'] = '?';
+		if ($parts['fragment']	!== '') $parts['fragment_divider'] = '#';
 
-		// Es sollen alle Schlüssel vorkommen, auch wenn sie leer sind
-		$parts = array_merge($template, $parts);
+		// parse_url does not work with missing schemes until PHP 5.4.7
+		if (isset($parts['path']{1}) && $parts['path']{1} === '/') {
+			$parts['path']				= ltrim($parts['path'], '/');
+			$parts['host']				= strstr($parts['path'], '/', true);
+			$parts['path']				= strstr($parts['path'], '/');
+			$parts['scheme_divider']	= '//';
+		}
 
 		return $parts;
 	}
 
-	// Ersetzt Fragmente der URL durch neue und gibt die umgebaute URL zurück
-	public function rewrite($url, $replacements) {
-		// URL zerschneiden
-		$parts = $this->parse($url);
-
-		// Zusammenfügen
-		$parts = array_merge($parts, $replacements);
-
-		// URL zusammenbauen
-		$url = '';
-		if (!empty($parts['scheme'])) $url .= $parts['scheme'].'://';
-		$url .= $parts['user'];
-		if (!empty($parts['pass'])) $url .= ':'.$parts['pass'];
-		if (!empty($parts['user']) OR !empty($parts['pass'])) $url .= '@';
-		$url .= $parts['host'];
-		if (!empty($parts['port'])) $url .= ':'.$parts['port'];
-		$url .= $parts['path'];
-		if (!empty($parts['query'])) $url .= '?'.$parts['query'];
-		if (!empty($parts['fragment']))	$url .= '#'.$parts['fragment'];
-
-		return $url;
-	}
-
-	// Führt ein sauberes HTTP-Redirect aus
-	public function redirect($path, $query = array(), $replacements = array(), $http_response_code = 302) {
-		$url = $this->makeUrl($path, $query, $replacements, true, '&');
+	/**
+	 * Does a clean redirect.
+	 *
+	 * @param	string	$path	The URL or the Morrow path to redirect to.
+	 * @param	array	$query	Query parameters to adapt the URL.
+	 * @param	integer	$http_response_code	The HTTP code which should be submitted to the client.
+	 */
+	public function redirect($path, $query = array(), $http_response_code = 302) {
+		$url = $this->create($path, $query, true, '&');
 		header('Location: '.$url, true, $http_response_code);
 		die('');
 	}
 
 
-	public function makeUrl($path = '', $query = array(), $replacements = array(), $rel2abs = false, $sep = null) {
-		if ($sep !== null) {
-			ini_set('arg_separator.output', $sep);
-		}
-		
-		// remember whether a slash was at the beginning
-		$absolute = false;
-		if (isset($path[0]) && $path[0] == '/') $absolute = true;
+	/**
+	 * Creates a URL for use with Morrow. It handles automatically project names and languages in the URL. 
+	 *
+	 * @param	string	$path	The URL or the Morrow path to work with. Leave empty if you want to use the current page.
+	 * @param	array	$query	Query parameters to adapt the URL.
+	 * @param	boolean	$absolute	If set to true the URL will be a fully qualified URL.
+	 * @param	boolean	$separator	The string that is used to divide the query parameters.
+	 * @return	string	The created URL.
+	 */
+	public function create($path = '', $query = array(), $absolute = false, $separator = '&amp;') {
+		// if the passed path is empty use the path of the current page
+		if (empty($path)) $path = $this->_fullpath;
 
-		// take path apart
-		$parts		= $this->parse($path);
-		$scheme		= ( !empty($parts['scheme']) ) ? $parts['scheme'] . '://':'';
-		$host		= $parts['host'];
-		$port		= ( !empty($parts['port']) ) ? ':'.$parts['port'] : '';
-		$auth		= ( !empty($parts['user']) ) ? $parts['user'].':'.$parts['pass'].'@' : '';
-		$path		= $parts['path'];
-		$querystring= $parts['query'];
-		$fragment	= ( !empty($parts['fragment']) ) ? '#' . $parts['fragment'] :'';
+		// parse input url
+		$parts = $this->parse($path);
 		
-		// combine query in path with query-array
-		if (!empty($querystring)) {
-			parse_str($querystring, $query_array);
-			$query = array_merge($query_array, $query);
+		// combine query parameters
+		parse_str($parts['query'], $parts['query']);
+		$parts['query'] = array_merge($parts['query'], $query);
+		if (count($parts['query']) > 0) {
+			$parts['query_divider'] = '?';
 		}
 
-		// only for internal:
-		if (empty($scheme)) {
-			// load only once
-			if (!isset($this->config)) {
-				$this->config = Factory::load('Config');
-				$this->config_all = $this->config->get();
+		// only for URLs without a scheme
+		if (empty($parts['scheme_divider'])) {
+
+			$nodes				= explode('/', trim($parts['path'], '/'));
+
+			// ********************** project handling
+			$project_current	= trim(PROJECT_RELPATH, '/');
+			$project			= $project_current;
+
+			// remove the project from the path
+			if (in_array($nodes[0], $this->_projects)) {
+				$project = array_shift($nodes);
 			}
-			$config =& $this->config;
+			// **********************
+
+
+			// **********************  language handling
+			$lang = $this->_language_actual;
+
+			// remove the language from the path
+			if (in_array($nodes[0], $this->_language_possible)) {
+				$lang = array_shift($nodes);
+			}
+
+			// lang as GET param has precedence
+			if (isset($query['language']) && in_array($query['language'], $this->_language_possible)) {
+				$lang = $query['language'];
+				unset($parts['query']['language']);
+				if (count($parts['query']) === 0) {
+					$parts['query_divider'] = '';
+				}
+			}
+			// **********************
 			
-			if (!isset($this->page_get)) {
-				$this->page_get = $this->page->get();
+
+			// ********************** now we have to add the language and the project in some cases
+			// add the lang to the path if it is not the current language and not the default language
+			if ($lang !== $this->_language_actual || $this->_language_possible[0] !== $this->_language_actual) {
+				array_unshift($nodes, $lang);
 			}
 
-			if (!isset($this->language)) {
-				$this->language = Factory::load('Language');
-				$this->language_possible = $this->language->getPossible();
-				$this->language_default = $this->language->getDefault();
+			// add the project to the path if it is not the current project and  not the default project
+			if ($project !== $project_current || $this->_projects[0] !== $project_current) {
+				array_unshift($nodes, $project);
 			}
-			
-			if (empty($path)) {
-				// path empty?
-				$path = $this->page->get('fullpath');
-				$parts	= $this->parse($path);
-				$path = $parts['path'];
-				parse_str($parts['query'], $fullpathquery);
-				$query = array_merge($fullpathquery, $query);
-			}
+			// **********************
 
-			// path: trim slashes
-			if ($path != '') $path = trim($path, '/');
-
-			// project  && lang handling
-			$pathparts = explode('/', $path);
-			$lang = '';
-			$project = "";
-			// for use with files
-			$project_folder = $this->config_all['projects'][0] . '/';
-
-			// project from context
-			if (!$absolute) {
-				$project = $this->page_get['project_relpath']; 
-				$project_folder = $project;
-				// remove it if it is the default folder
-			} elseif (isset($pathparts[0]) && (in_array($pathparts[0], $this->config_all['projects'])) || $pathparts[0] == $this->config_all['projects'][0]) {
-				// project explicitly named - so switch
-				$project = array_shift($pathparts) . "/";
-				$project_folder = $project;
-			}
-			if ($project == $this->config_all['projects'][0] . '/') $project = '';
-
-			// language in path?
-			if (isset($pathparts[0]) && in_array($pathparts[0], $this->language_possible)) {
-				$lang = array_shift($pathparts);
-			}
 
 			// put it back together
-			$path = implode('/', $pathparts);
-
-			// if lang as get-param, it has precedence
-			// load language
-			if (!isset($this->language_get)) $this->language_get = $this->language->get();
-			
-			if (isset($query['language'])) {
-				$lang = $query['language'];
-				unset($query['language']);
-			} elseif ($this->language_get != $this->language_default) {
-				$lang = $this->language_get;
-			}
-
-			if (!empty($lang)) $lang .= '/';
-
-			// check if it is a file
-			if (is_file(FW_PATH . $project_folder . $path)) {
-				// add project_folder
-				$path = $project_folder . $path;
-			} else {
-				// otherwise add lang and project path and slash
-				if (!empty($path)) $path .= '/';
-				$path = $project . $lang . $path;
-			}
+			$parts['path'] = implode('/', $nodes);
 
 			// create complete url with domain
-			if ($rel2abs) {
-				$domain_parts = $this->parse($this->page_get['base_href']);
-				$domain_parts['path'] = trim($domain_parts['path'], '/');
-				$host = $domain_parts['host'] . '/';
-				if (!empty($domain_parts['path'])) $host .= $domain_parts['path'] . '/';
-				if (empty($scheme)) $scheme = $domain_parts['scheme'].'://';
+			if ($absolute) {
+				$base			= $this->parse($this->getBaseHref());
+				$base['path']	= $base['path'] . $parts['path'];
+				$base['query']	= $parts['query'];
+				$parts			= $base;
 			}
 		}
 
-		$qstring = '';
-		if (count($query) > 0) {
-			$qstring = '?' . http_build_query($query);
-		}
+		// create query string
+		$parts['query'] = http_build_query($parts['query'], '', $separator);
 
-		$url =  $scheme . $auth . $host . $port . $path . $qstring . $fragment;
-		
-		if (count($replacements) > 0) {
-			$url = $this->rewrite($url, $replacements);
-		}
-		
-		return $url;
+		return implode('', $parts);
 	}
 
-	// get actual request
-	public function getDomain() {
+	/**
+	 * To get the base href for the actual Morrow installation.
+	 *
+	 * @return	string	The base href.
+	 */
+	public function getBasehref() {
 		$path = dirname($_SERVER['SCRIPT_NAME']).'/';
 		
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';
 		
-		$host = isset($_SERVER['HTTPS']) || (isset($_SERVER['SSL_PROTOCOL']) && !empty($_SERVER['SSL_PROTOCOL'])) ? 'https://' : 'http://';
-		return $host.$_SERVER['HTTP_HOST'].$path;
+		$scheme = isset($_SERVER['HTTPS']) || (isset($_SERVER['SSL_PROTOCOL']) && !empty($_SERVER['SSL_PROTOCOL'])) ? 'https://' : 'http://';
+		return $scheme . $_SERVER['HTTP_HOST'] . $path;
 	}
 }

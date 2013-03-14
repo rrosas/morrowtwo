@@ -137,14 +137,14 @@ class Security {
 	}
 	
 	/**
-	 * Creates an URL like URL::makeURL but adds the CSRF token as GET parameter.
+	 * Creates an URL like URL::create() but adds the CSRF token as GET parameter.
 	 * You have to check the token yourself via verifyCSRFToken().
 	 *
-	 * For the parameters see: Url::makeUrl()
+	 * For the parameters see: Url::create()
 	 */
-	public function makeCSRFUrl($path, $query = array(), $replacements = array(), $rel2abs = false, $sep = null) {
+	public function createCSRFUrl($path, $query = array(), $rel2abs = false, $sep = '&amp;') {
 		$query['csrf_token'] = Factory::load('session')->get('csrf_token');
-		return Factory::load('url')->makeurl($path, $query, $replacements, $rel2abs, $sep);
+		return Factory::load('url')->create($path, $query, $rel2abs, $sep);
 	}
 
 	/**

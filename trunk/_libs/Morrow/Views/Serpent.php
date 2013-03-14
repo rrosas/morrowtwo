@@ -68,8 +68,8 @@ class Serpent extends AbstractView {
 		// handle mappings
 		$mappings = array(
 			'dump'			=> '\\Morrow\\Debug::dump',
-			'url'			=> '\\Morrow\\Factory::load("Url")->makeurl',
-			'securl'		=> '\\Morrow\\Factory::load("Security")->makeCSRFUrl',
+			'url'			=> '\\Morrow\\Factory::load("Url")->create',
+			'securl'		=> '\\Morrow\\Factory::load("Security")->createCSRFUrl',
 			'file'			=> 'PROJECT_RELPATH.',
 			'cycle'			=> '\\Morrow\\Helpers\\View::cycle',
 			'mailto'		=> '\\Morrow\\Helpers\\View::mailto',

@@ -51,7 +51,7 @@ namespace Morrow;
 */
 class Debug {
 	/**
-	 * The path to the log file
+	 * The path to the log file.
 	 * @var string $_logfile
 	 */
 	protected $_logfile;

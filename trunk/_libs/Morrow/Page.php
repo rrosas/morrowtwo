@@ -41,6 +41,25 @@ namespace Morrow;
 * 
 * // ... Controller code
 * ~~~
+* 
+* ### Result
+* ~~~
+* Array
+* (
+*     [nodes] => Array
+*         (
+*             [0] => home
+*         )
+* 
+*     [base_href]       => http://example.com/
+*     [project_path]    => http://example.com/main/
+*     [project_relpath] => main/
+*     [alias]           => home
+*     [controller]      => /var/www/project/main/_controllers/home.php
+*     [path]            => home/
+*     [fullpath]        => home/?foo=bar
+* )
+* ~~~
 */
 class Page {
 	/**
