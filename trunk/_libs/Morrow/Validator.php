@@ -129,12 +129,13 @@ class Validator {
 		$return   = false;
 		
 		if (self::checkDate($birthday, $error) === true) {
-			$age = floor((date("Ymd") - Time::create($birthday)->date('Ymd')) / 10000);
+			$age = floor((date("Ymd") - date('Ymd', strtotime($birthday))) / 10000);
 			
 			if ($age >= 18) return true;
 		}
 		
-		return Factory::load('Language')->_('You must be at least 18 years old.');
+		$error = Factory::load('Language')->_('You must be at least 18 years old.');
+		return $return;
 	}
 	
 	public static function checkGermanZip($value, &$error) {
