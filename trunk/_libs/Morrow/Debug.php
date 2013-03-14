@@ -95,12 +95,9 @@ class Debug {
 	/**
 	 * Initializes the class. This is done internally.
 	 */
-	public function __construct($logfile) {
-		$this->_logfile = $logfile;
-
-		// read config from config class
-		$config = Factory::load('Config');
-		$this->config = $config->get('debug');
+	public function __construct($config, $logfile) {
+		$this->_logfile	= $logfile;
+		$this->config	= $config;
 
 		// error types
 		$this->errortypes[1]		= 'E_ERROR';
@@ -378,9 +375,8 @@ class Debug {
 	 * @return null
 	 */
 	public static function dump() {
-		$debug = Factory::load('Debug');
 		$args = func_get_args();
-		echo $debug->_dump($args);
+		echo Factory::load('Debug')->_dump($args);
 	}
 		
 	/**

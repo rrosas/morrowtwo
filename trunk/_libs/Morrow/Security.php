@@ -50,9 +50,11 @@ namespace Morrow;
  * ~~~
  */
 class Security {
-	public function __construct() {
-		$session	= Factory::load('Session');
-		$view		= Factory::load('View');
+	public function __construct($session, $view, $input, $url) {
+		$this->session	= $session;
+		$this->view		= $view;
+		$this->input	= $input;
+		$this->url		= $url;
 
 		// hide PHP version
 		header_remove("X-Powered-By");
@@ -101,11 +103,9 @@ class Security {
 		// skip syntax Firefox doesn't know
 		$csp_gecko = str_replace(array("'unsafe-inline'", "'unsafe-eval'"), '', $csp_gecko);
 
-		$view = Factory::load('view');
-
-		$view->setHeader('X-Content-Security-Policy', $csp_gecko); // for Firefox
-		$view->setHeader('X-WebKit-CSP', $csp); // for Chrome
-		$view->setHeader('Content-Security-Policy', $csp); // standard implementations
+		$this->view->setHeader('X-Content-Security-Policy', $csp_gecko); // for Firefox
+		$this->view->setHeader('X-WebKit-CSP', $csp); // for Chrome
+		$this->view->setHeader('Content-Security-Policy', $csp); // standard implementations
 		// IE doesn't support it
 	}
 	
@@ -124,7 +124,7 @@ class Security {
 	 * @param	string	$option	The option as described
 	 */
 	public function setFrameOptions($option) {
-		Factory::load('view')->setHeader('X-Frame-Options', $option);
+		$this->view->setHeader('X-Frame-Options', $option);
 	}
 
 	/**
@@ -132,8 +132,7 @@ class Security {
 	 * @return	`string`
 	 */
 	public function getCSRFToken() {
-		$session = Factory::load('session');
-		return $session->get('csrf_token');
+		return $this->session->get('csrf_token');
 	}
 	
 	/**
@@ -143,8 +142,8 @@ class Security {
 	 * For the parameters see: Url::create()
 	 */
 	public function createCSRFUrl($path, $query = array(), $rel2abs = false, $sep = '&amp;') {
-		$query['csrf_token'] = Factory::load('session')->get('csrf_token');
-		return Factory::load('url')->create($path, $query, $rel2abs, $sep);
+		$query['csrf_token'] = $this->session->get('csrf_token');
+		return $this->url->create($path, $query, $rel2abs, $sep);
 	}
 
 	/**
@@ -152,10 +151,7 @@ class Security {
 	 * @return	boolean	Returns `true` if a valid token was sent otherwise `false`.
 	 */
 	public function checkCSRFToken() {
-		$input = Factory::load('input');
-		$session = Factory::load('session');
-
-		if ($input->get('csrf_token') != $session->get('csrf_token')) {
+		if ($this->input->get('csrf_token') != $this->session->get('csrf_token')) {
 			return false;
 		}
 		return true;

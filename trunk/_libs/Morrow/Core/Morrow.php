@@ -169,7 +169,7 @@ class Morrow {
 		/* prepare some constructor variables
 		********************************************************************************************/
 		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
-		Factory::prepare('Debug', FW_PATH.'_logs/'.date("y-m-d").'.txt');
+		Factory::prepare('Debug', $this->config->get('debug'), FW_PATH.'_logs/'.date("y-m-d").'.txt');
 
 		/* load classes
 		********************************************************************************************/
@@ -219,7 +219,7 @@ class Morrow {
 		********************************************************************************************/
 		$sessionHandler = $this->config->get('session.handler');
 		if (empty($sessionHandler)) $sessionHandler = 'Session';
-		$session = Factory::load($sessionHandler.':session', $this->config->get('session'), $this->input->get());
+		$this->session = Factory::load($sessionHandler.':session', $this->config->get('session'), $this->input->get());
 		
 		/* load languageClass and define alias
 		********************************************************************************************/
@@ -324,6 +324,7 @@ class Morrow {
 		$query = $this->input->getGet();
 		unset($query['morrow_content']);
 		$fullpath = $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
+		$this->view = Factory::load('View');
 
 		/* prepare some constructor variables
 		********************************************************************************************/
@@ -332,6 +333,7 @@ class Morrow {
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
 		Factory::prepare('Url', $this->config->get('projects'), $this->language->get(), $lang['possible'], $fullpath);
+		Factory::prepare('Security', $this->session, $this->view, $this->input, Factory::load('Url'));
 
 		/* define project paths
 		********************************************************************************************/
@@ -348,8 +350,6 @@ class Morrow {
 
 		/* load controller and render page
 		********************************************************************************************/
-		$this->view = Factory::load('View');
-
 		// make sure to get language content for page alias (??????????)
 		//$this->language->getContent($this->page->get('alias'));
 
