@@ -23,7 +23,7 @@
 
 namespace Morrow;
 
-class FormElementSet extends FormElement{
+class FormElementSet extends Formelement{
 	public $type = "set";
 	public $options = array();
 	public $multiple = false;
