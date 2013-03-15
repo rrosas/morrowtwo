@@ -87,7 +87,7 @@ class Form {
 				if (!isset($el['type'])) $el['type'] = "simple";
 				switch ($el['type']) {
 					case 'set':
-						$new_element = new FormElementSet($this, $key, $required, $checktype);
+						$new_element = new Formelementset($this, $key, $required, $checktype);
 						// options
 						$options = isset($el['options'])?$el['options']:array();
 						$new_element->setOptions($options);
