@@ -24,6 +24,7 @@
 namespace Morrow\Core;
 
 use Morrow\Factory;
+use Morrow\Factoryproxy;
 
 /**
  * The main class which defines the cycle of a request.
@@ -168,7 +169,6 @@ class Morrow {
 
 		/* prepare some constructor variables
 		********************************************************************************************/
-		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
 		Factory::prepare('Debug', $this->config->get('debug'), FW_PATH.'_logs/'.date("y-m-d").'.txt');
 
 		/* load classes
@@ -215,12 +215,6 @@ class Morrow {
 			$this->config->set($key, $array);
 		}
 
-		/* load session
-		********************************************************************************************/
-		$sessionHandler = $this->config->get('session.handler');
-		if (empty($sessionHandler)) $sessionHandler = 'Session';
-		$this->session = Factory::load($sessionHandler.':session', $this->config->get('session'), $this->input->get());
-		
 		/* load languageClass and define alias
 		********************************************************************************************/
 		$lang['possible'] = $this->config->get('languages');
@@ -241,7 +235,6 @@ class Morrow {
 		}
 		
 		// language via input
-		
 		$lang['actual'] = $this->input->get('language');
 
 		if ($lang['actual'] === null && isset($input_lang_nodes)) {
@@ -324,20 +317,32 @@ class Morrow {
 		$query = $this->input->getGet();
 		unset($query['morrow_content']);
 		$fullpath = $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
-		$this->view = Factory::load('View');
 
-		/* prepare some constructor variables
+		/* load classes we need anyway
+		********************************************************************************************/
+		$this->view = Factory::load('View');
+		$this->url = Factory::load('Url', $this->config->get('projects'), $this->language->get(), $lang['possible'], $fullpath);
+		
+		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
+		// but maybe the Security class is not used 
+		$this->session = new Factoryproxy(
+			$this->config->get('session.handler').':session',
+			$this->config->get('session'),
+			$this->input->get()
+		);
+
+		/* prepare classes so the user has less to pass
 		********************************************************************************************/
 		Factory::prepare('Cache', PROJECT_PATH.'temp/_codecache/');
 		Factory::prepare('Image', PROJECT_PATH . 'temp/thumbs/');
+		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
-		Factory::prepare('Url', $this->config->get('projects'), $this->language->get(), $lang['possible'], $fullpath);
-		Factory::prepare('Security', $this->session, $this->view, $this->input, Factory::load('Url'));
+		Factory::prepare('Security', $this->session, $this->view, $this->input, $this->url);
 
 		/* define project paths
 		********************************************************************************************/
-		$domain = Factory::load('Url')->getBaseHref();
+		$domain = $this->url->getBaseHref();
 
 		$this->page->set('base_href', $domain);
 		$this->page->set('alias', $alias);
@@ -351,7 +356,7 @@ class Morrow {
 		/* load controller and render page
 		********************************************************************************************/
 		// make sure to get language content for page alias (??????????)
-		//$this->language->getContent($this->page->get('alias'));
+		// $this->language->getContent($this->page->get('alias'));
 
 		// include global controller class
 		include($global_controller_file);
@@ -369,7 +374,7 @@ class Morrow {
 			if (method_exists($controller, 'teardown')) $controller->teardown();
 		}
 
-		// Inhalte zuweisen
+		// assign the content to the view
 		$this->view->setContent($this->page->get(), 'page');
 
 		$view = $this->view->get();
