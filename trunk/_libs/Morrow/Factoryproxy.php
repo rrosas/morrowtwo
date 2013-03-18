@@ -29,7 +29,7 @@ namespace Morrow;
  * The generated proxy object is really lightweight and this way you can save memory and initialization time.
  *
  * Keep in mind that the access to the proxified class will be a little bit slower. So do not use if your original class is already lightweight.
- *
+ * 
  * Example
  * ------------
  * We have a class A which depends on Class B
@@ -63,17 +63,15 @@ namespace Morrow;
 class Factoryproxy {
 	protected $_instance;
 	protected $_class;
-	protected $_constructor_parameters = array();
 
-	public function __construct($class, $constructor_parameters = array()) {
+	public function __construct($class) {
 		$this->_class = $class;
-		$this->_constructor_parameters = array_slice(func_get_args(), 1);
+		call_user_func_array('\Morrow\Factory::prepare', func_get_args());
 	}
 
 	protected function getInstance() {
 		if ($this->_instance === null) {
-			array_unshift($this->_constructor_parameters, $this->_class);
-			$this->_instance = call_user_func_array('\Morrow\Factory::load', $this->_constructor_parameters);
+			$this->_instance = call_user_func_array('\Morrow\Factory::load', $this->_class);
 		}
 		return $this->_instance;
 	}
