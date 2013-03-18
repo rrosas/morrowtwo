@@ -325,11 +325,13 @@ class Morrow {
 		
 		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
 		// but maybe the Security class is not used 
-		$this->session = new Factoryproxy(
+		// But we should prepare the Session because if the access in not done via the proxy object, the constructor parameters would have been lost.
+		Factory::prepare(
 			$this->config->get('session.handler').':session',
 			$this->config->get('session'),
 			$this->input->get()
 		);
+		$this->session = new Factoryproxy($this->config->get('session.handler').':session');
 
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
