@@ -71,7 +71,7 @@ class Factoryproxy {
 
 	protected function getInstance() {
 		if ($this->_instance === null) {
-			$this->_instance = call_user_func_array('\Morrow\Factory::load', $this->_class);
+			$this->_instance = call_user_func_array('\Morrow\Factory::load', array($this->_class));
 		}
 		return $this->_instance;
 	}
