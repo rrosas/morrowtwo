@@ -15,7 +15,7 @@ return array(
 	'locale.timezone'			=> 'Europe/Berlin',
 
 // session
-	'session.handler'			=> '',
+	'session.handler'			=> 'Session', // The class name that should be used to handle the session
 	'session.lifetime'			=> 0, // Lifetime of the session cookie, defined in seconds.
 	'session.path'				=> str_replace('//', '/', dirname($_SERVER['SCRIPT_NAME']).'/'), // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
 	'session.domain'			=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
