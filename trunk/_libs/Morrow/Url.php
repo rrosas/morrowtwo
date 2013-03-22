@@ -271,8 +271,7 @@ class Url {
 		
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';
-		
-		$scheme = isset($_SERVER['HTTPS']) || (isset($_SERVER['SSL_PROTOCOL']) && !empty($_SERVER['SSL_PROTOCOL'])) ? 'https://' : 'http://';
+		$scheme = isset($_SERVER['HTTPS']) || isset($_SERVER['HTTP_X_SSL_ACTIVE']) || (isset($_SERVER['SSL_PROTOCOL']) && !empty($_SERVER['SSL_PROTOCOL'])) ? 'https://' : 'http://';
 		return $scheme . $_SERVER['HTTP_HOST'] . $path;
 	}
 }
