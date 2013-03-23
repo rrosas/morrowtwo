@@ -205,6 +205,12 @@ class Factory {
 		if (empty($factory_args)) {
 			$instance = new $classname;
 		} else {
+			// check the parameters for instances of class Factoryproxy
+			$factory_args = array_map(function($param){
+				if (!is_object($param) || get_class($param) !== 'Morrow\\Factoryproxy') return $param;
+				return call_user_func_array('\\Morrow\\Factory::load', $param->get());
+			}, $factory_args);
+
 			// use reflection class to inject the args as single parameters
 			$ref = new \ReflectionClass($classname);
 			$instance = $ref->newInstanceArgs($factory_args);

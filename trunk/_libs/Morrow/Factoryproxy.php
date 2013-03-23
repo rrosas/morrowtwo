@@ -28,8 +28,6 @@ namespace Morrow;
  * Use this class if you want to prepare a class A which depends on another class B, but you are not sure if you will use the class A.
  * The generated proxy object is really lightweight and this way you can save memory and initialization time.
  *
- * Keep in mind that the access to the proxified class will be a little bit slower. So do not use if your original class is already lightweight.
- * 
  * Example
  * ------------
  * We have a class A which depends on Class B
@@ -61,41 +59,13 @@ namespace Morrow;
  * ~~~
  */
 class Factoryproxy {
-	protected $_instance;
-	protected $_class;
+	protected $_parameters;
 
-	public function __construct($class) {
-		$this->_class = $class;
-		call_user_func_array('\Morrow\Factory::prepare', func_get_args());
+	public function __construct() {
+		$this->_parameters = func_get_args();
 	}
 
-	protected function getInstance() {
-		if ($this->_instance === null) {
-			$this->_instance = call_user_func_array('\Morrow\Factory::load', array($this->_class));
-		}
-		return $this->_instance;
-	}
-
-	public function __call($name, $arguments) {
-		return call_user_func_array(
-			array($this->getInstance(), $name),
-			$arguments
-		);
-	}
-
-	public function __get($name) {
-		return $this->getInstance()->$name;
-	}
-
-	public function __set($name, $value) {
-		$this->getInstance()->$name = $value;
-	}
-
-	public function __isset($name) {
-		return isset($this->getInstance()->$name);
-	}
-
-	public function __unset($name) {
-		unset($this->getInstance()->$name);
+	public function get() {
+		return $this->_parameters;
 	}
 }
