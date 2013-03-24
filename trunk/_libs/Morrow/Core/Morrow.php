@@ -156,6 +156,8 @@ class Morrow {
 			$this->config->set($key, $array);
 		}
 			
+		$config = $this->config->get();
+
 		/* declare errorhandler (needs config class)
 		********************************************************************************************/
 		set_error_handler(array($this, 'errorHandler'));
@@ -163,13 +165,13 @@ class Morrow {
 
 		/* set timezone 
 		********************************************************************************************/
-		if (!date_default_timezone_set($this->config->get('locale.timezone'))) {
+		if (!date_default_timezone_set($config['locale']['timezone'])) {
 			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
 
 		/* prepare some constructor variables
 		********************************************************************************************/
-		Factory::prepare('Debug', $this->config->get('debug'), FW_PATH.'_logs/'.date("y-m-d").'.txt');
+		Factory::prepare('Debug', $config['debug'], FW_PATH.'_logs/'.date("y-m-d").'.txt');
 
 		/* load classes
 		********************************************************************************************/
@@ -182,7 +184,7 @@ class Morrow {
 		$url_nodes		= explode('/', $url);
 		$this->page->set('nodes', $url_nodes);
 
-		$inpath			= $this->config->get('projects');
+		$inpath			= $config['projects'];
 		$project_folder	= array_shift($inpath);
 		$this->config->set('default_project', $project_folder);
 
@@ -215,9 +217,11 @@ class Morrow {
 			$this->config->set($key, $array);
 		}
 
+		$config = $this->config->get();
+
 		/* load languageClass and define alias
 		********************************************************************************************/
-		$lang['possible'] = $this->config->get('languages');
+		$lang['possible'] = $config['languages'];
 		$lang['language_path'] = PROJECT_PATH . '_i18n/';
 		$lang['i18n_paths'] = array(
 			FW_PATH			. '_libs/*.php',
@@ -245,7 +249,7 @@ class Morrow {
 
 		/* url routing
 		********************************************************************************************/
-		$routes	= $this->config->get('routing');
+		$routes	= $config['routing'];
 		$url	= implode('/', $this->page->get('nodes'));
 
 		// iterate all rules
@@ -299,10 +303,10 @@ class Morrow {
 		}
 
 		// set nodes in page class
-		$this->page->set('nodes', explode('/', $url));
+		$nodes = explode('/', $url);
+		$this->page->set('nodes', $nodes);
 
 		// nodes are only allowed to have a-z, 0-9, - and .
-		$nodes = $this->page->get('nodes');
 		foreach ($nodes as $node) {
 			if (preg_match('|[^0-9a-z.-]|i', $node)) throw new \Exception('URL node names are only allowed to consist of a-z, 0-9, "." and "-".');
 		}
@@ -321,13 +325,13 @@ class Morrow {
 		/* load classes we need anyway
 		********************************************************************************************/
 		$this->view = Factory::load('View');
-		$this->url = Factory::load('Url', $this->config->get('projects'), $this->language->get(), $lang['possible'], $fullpath);
+		$this->url = Factory::load('Url', $config['projects'], $this->language->get(), $lang['possible'], $fullpath);
 		
 		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
 		// but maybe the Security class is not used 
 		$this->session = new Factoryproxy(
-			$this->config->get('session.handler').':session',
-			$this->config->get('session'),
+			$config['session']['handler'].':session',
+			$config['session'],
 			$this->input->get()
 		);
 
@@ -351,7 +355,6 @@ class Morrow {
 		$this->page->set('project_relpath', PROJECT_RELPATH);
 		$this->page->set('project_path', $domain . $project_relpath . '/');
 		$this->page->set('fullpath', $fullpath);
-
 
 		/* load controller and render page
 		********************************************************************************************/

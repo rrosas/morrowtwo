@@ -164,23 +164,16 @@ class General {
 
 	public static function array_dotSyntaxSet(array &$array, $identifier, $value) {
 		// create reference
-		$parts = explode('.', $identifier);
 		$returner =& $array;
 		
-		foreach ($parts as $part) {
-			if (strlen($part) === 0) {
-				throw new \Exception(__CLASS__.': a key must not be empty.');
-			}
+		foreach (explode('.', $identifier) as $part) {
 			if (!isset($returner[$part])) {
 				$returner[$part] = '';
 			}
 			$returner =& $returner[$part];
 		}
-
-		if (is_array($value)) {
-			$returner = self::array_dotSyntaxExplode($value);
-		}
-		else $returner = $value;
+		
+		$returner = $value;
 	}
 
 	public static function array_dotSyntaxDelete(array &$array, $identifier) {
