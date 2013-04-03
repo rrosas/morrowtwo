@@ -6,6 +6,7 @@ class DefaultController extends Factory {
 	public function setup() {
 		$this->view->setHandler('serpent');
 
+		/*
 		// add CSP security rules
 		$this->security->setCsp(array(
 			'default-src'	=> "'self'",
@@ -20,5 +21,6 @@ class DefaultController extends Factory {
 
 		// Do not allow to show this site in a frameset (prevents clickjacking)
 		$this->security->setFrameOptions('DENY');
+		*/
 	}
 }
