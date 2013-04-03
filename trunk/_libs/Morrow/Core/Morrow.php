@@ -358,9 +358,6 @@ class Morrow {
 
 		/* load controller and render page
 		********************************************************************************************/
-		// make sure to get language content for page alias (??????????)
-		// $this->language->getContent($this->page->get('alias'));
-
 		// include global controller class
 		include($global_controller_file);
 

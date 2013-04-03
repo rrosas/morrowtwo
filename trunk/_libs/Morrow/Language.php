@@ -26,9 +26,9 @@ namespace Morrow;
  * The Language class provides an interface to the the data that is stored in arrays in the `_i18n` folder.
  * The Language class is instanced by Morrow and relies on the following configuration variable:
  *
- * Type | Keyname | Default | Description
- * -----|---------|---------|------------
- * array | `languages` | `array("en")` as defined in `_configs/_default.php` | An array of possible language keys (the first array entry is automatically the default language)
+ * Type  | Keyname     | Default                                             | Description                                                                                      
+ * ----- | ---------   | ---------                                           | ------------                                                                                     
+ * array | `languages` | `array("en")` as defined in `_configs/_default.php` | An array of possible language keys (the first array entry is automatically the default language) 
  *
  * Example
  * -------
@@ -331,6 +331,9 @@ class Language {
 		if ($this->_language == $this->_possible[0]) return $string;
 
 		// search in language file
+		if ($this->_content == null) {
+			$this->getContent();
+		}
 		if (isset($this->_content[$string]) && !empty($this->_content[$string])) {
 			return $this->_content[$string];
 		}
