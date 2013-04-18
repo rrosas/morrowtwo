@@ -73,7 +73,7 @@ class Formhtml {
 
 		$classname = '\\Morrow\\Formhtmlelement' . $display_type;
 		if (class_exists($classname)) {
-			$display_obj = Factory::load('\\' . $classname);
+			$display_obj = Factory::load($classname);
 			$content = $display_obj->getLabel($el_label, $id, $params);
 		} else $content = "<label for=\"" . $id . "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'label') . ">$el_label</label>";
 
