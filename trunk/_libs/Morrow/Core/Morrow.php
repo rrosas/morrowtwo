@@ -119,10 +119,12 @@ class Morrow {
 
 		// overwrite with server specific config
 		$file1 = $directory.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
-		// Apache has "SERVER_ADDR", IIS "LOCAL_ADDR"
-		$file2 = $directory.'_configs/'.(array_key_exists('SERVER_ADDR',$_SERVER) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR']).'.php';
 		if (is_file($file1)) $config = array_merge($config, include($file1));
-		elseif (is_file($file2)) $config = array_merge($config, include($file2));
+
+		if (isset($_SERVER['SERVER_ADDR'])) {
+			$file2 = $directory.'_configs/'. $_SERVER['SERVER_ADDR'] .'.php';
+			if (is_file($file2)) $config = array_merge($config, include($file2));
+		}
 
 		return $config;
 	}
