@@ -119,12 +119,9 @@ class Morrow {
 
 		// overwrite with server specific config
 		$file1 = $directory.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
+		$file2 = $directory.'_configs/'.$_SERVER['SERVER_ADDR'].'.php';
 		if (is_file($file1)) $config = array_merge($config, include($file1));
-
-		if (isset($_SERVER['SERVER_ADDR'])) {
-			$file2 = $directory.'_configs/'. $_SERVER['SERVER_ADDR'] .'.php';
-			if (is_file($file2)) $config = array_merge($config, include($file2));
-		}
+		elseif (is_file($file2)) $config = array_merge($config, include($file2));
 
 		return $config;
 	}
@@ -332,11 +329,17 @@ class Morrow {
 		
 		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
 		// but maybe the Security class is not used 
+		/*
 		$this->session = new Factoryproxy(
 			$config['session']['handler'].':session',
 			$config['session'],
 			$this->input->get()
 		);
+		*/
+
+		// just for the FORM class we have to initialize it here
+		// remove this line and comment the in the code above when the form class was rebuild
+		$this->session = Factory::load('Session', $config['session']['handler'].':session', $config['session'], $this->input->get());
 
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
