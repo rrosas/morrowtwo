@@ -126,7 +126,7 @@ class FormElement {
 						if (!empty($v)) $empty = false;
 					}
 					if ($empty) $value = '';
-					elseif (class_exists('formfilter') && method_exists('formfilter', $filtermethod)) {
+					elseif (class_exists('\\Morrow\\Formfilter') && method_exists('\\Morrow\\Formfilter', $filtermethod)) {
 						$value = formfilter::$filtermethod($value);
 					}
 				}
