@@ -339,7 +339,7 @@ class Morrow {
 
 		// just for the FORM class we have to initialize it here
 		// remove this line and comment the in the code above when the form class was rebuild
-		$this->session = Factory::load('Session', $config['session']['handler'].':session', $config['session'], $this->input->get());
+		$this->session = Factory::load($config['session']['handler'].':session', $config['session'], $this->input->get());
 
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
