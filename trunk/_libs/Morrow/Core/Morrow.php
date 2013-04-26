@@ -169,10 +169,6 @@ class Morrow {
 			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
 
-		/* prepare some constructor variables
-		********************************************************************************************/
-		Factory::prepare('Debug', $config['debug'], FW_PATH.'_logs/'.date("y-m-d").'.txt');
-
 		/* load classes
 		********************************************************************************************/
 		$this->page		= Factory::load('Page'); // config class for page vars
@@ -218,6 +214,10 @@ class Morrow {
 		}
 
 		$config = $this->config->get();
+
+		/* prepare some constructor variables
+		********************************************************************************************/
+		Factory::prepare('Debug', $config['debug'], FW_PATH.'_logs/'.date("y-m-d").'.txt');
 
 		/* load languageClass and define alias
 		********************************************************************************************/
