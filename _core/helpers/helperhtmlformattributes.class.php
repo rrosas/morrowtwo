@@ -28,7 +28,7 @@ class HelperHtmlFormAttributes{
 	static private $global_attributes = array('id', 'class', 'style', 'title', 'dir', 'lang', 'onclick', 'ondblclick', 'onmousedown', 'onmouseup', 'onmouseover', 'onmousemove', 'onmouseout', 'onkeypress', 'onkeydown', 'onkeyup', 'autofocus');
 	static private $attributes = array(
 			"input" => array('accept', 'accesskey', 'align', 'alt', 'checked', 'disabled', 'ismap', 'maxlength', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'size', 'src', 'tabindex', 'type', 'usemap', 'value'),
-			"textarea" => array('accesskey', 'cols', 'disabled', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'rows','tabindex'),
+			"textarea" => array('accesskey', 'cols', 'disabled', 'name', 'onblur', 'onchange', 'onfocus', 'onselect', 'readonly', 'rows','tabindex', 'maxlength'),
 			"select" => array('disabled', 'multiple', 'name', 'onblur', 'onchange', 'onfocus', 'size', 'tabindex'),
 			"option" => array('disabled', 'label', 'selected', 'value'),
 			"label" => array('accesskey', 'for', 'onblur', 'onfocus'),
