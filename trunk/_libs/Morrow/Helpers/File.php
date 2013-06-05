@@ -205,7 +205,12 @@ class File {
 		rmdir($path);
 	}
 	
-	public static function copy_recurse($src, $dst, $file_permissions, $dir_permissions) {
+	public static function copy_recurse($src, $dst, $file_permissions, $dir_permissions, $excludes = array()) {
+		// clean the excludes
+		foreach ($excludes as $key=>$value) {
+			$excludes[$key] = trim($value, '/');
+		}
+
 		if (is_string($file_permissions)) $file_permissions = octdec($file_permissions);
 		if (is_string($dir_permissions)) $dir_permissions = octdec($dir_permissions);
 		
@@ -227,7 +232,10 @@ class File {
 				$target = realpath($target);
 				symlink( $target, $dst . $file );
 			} elseif (is_dir($src . $file)) {
-				self::copy_recurse($src . $file, $dst . $file, $file_permissions, $dir_permissions);
+				foreach ($excludes as $e) {
+					if ($file == $e) continue;
+					self::copy_recurse($src . $file, $dst . $file, $file_permissions, $dir_permissions, $excludes);
+				}
 			} else {
 				copy($src . $file, $dst . $file);
 				chmod($dst . $file, $file_permissions);
