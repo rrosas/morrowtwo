@@ -102,9 +102,11 @@ class Morrow {
 			}
 		}	
 		
+		/*
 		if (!$found) {
 			throw new \Exception("Could not autoload $namespace trying the following paths:<br /><br />".implode('<br />', $try));
 		}
+		*/
 	}
 	
 	/**
@@ -143,6 +145,9 @@ class Morrow {
 
 		// register autoloader
 		spl_autoload_register(array($this, '_autoload'));
+
+		// register the Composer autoloader
+		require '_libs/autoload.php';
 
 		/* register main config in the config class
 		********************************************************************************************/
