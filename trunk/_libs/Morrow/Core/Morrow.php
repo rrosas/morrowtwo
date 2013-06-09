@@ -67,46 +67,21 @@ class Morrow {
 	}
 	
 	/**
-	 * A PSR-0 compatible autoloader which maps a namespace to a file structure.
+	 * A PSR-0 compatible autoloader which tries to loads project specific models.
 	 * @param	string	$namespace	A fully defined class name incl. namespace path
 	 * @return	null
 	 */
 	protected function _autoload($namespace) {
+		if (!defined('PROJECT_PATH')) return;
+
 		// explode namespace to single nodes
 		$namespace_nodes = explode('\\', $namespace);
+		if (!isset($namespace_nodes[1]) || $namespace_nodes[1] != 'Models') return;
 		
 		// Each _ character in the CLASS NAME is converted to a DIRECTORY_SEPARATOR. The _ character has no special meaning in the namespace.
 		$classname = DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, array_pop($namespace_nodes)) . '.php';
 
-		// generate relative class path
-		$classpath = '_libs/' . implode(DIRECTORY_SEPARATOR, $namespace_nodes) . $classname;
-		
-		// First we try the external libs. That way the user can replace all core libs if he wants to
-		if (defined('PROJECT_PATH')) {
-			$try[] = PROJECT_PATH . $classpath;
-			
-			if (isset($namespace_nodes[1]) && $namespace_nodes[1] == 'Models') {
-				$try[] = PROJECT_PATH . '_models' . $classname;
-			}
-		}
-		
-		// first try to find the user replaced or added class
-		$try[] = FW_PATH . $classpath;
-		
-		$found = false;
-		foreach ($try as $path) {
-			if (is_file($path)) {
-				$found = true;
-				include ($path);
-				break;
-			}
-		}	
-		
-		/*
-		if (!$found) {
-			throw new \Exception("Could not autoload $namespace trying the following paths:<br /><br />".implode('<br />', $try));
-		}
-		*/
+		include (PROJECT_PATH . '_models' . $classname);
 	}
 	
 	/**
@@ -143,7 +118,7 @@ class Morrow {
 		// define the global FW_PATH constant
 		define('FW_PATH', realpath(__DIR__ .'/../../..') . '/');
 
-		// register autoloader
+		// register autoloader for project specific models
 		spl_autoload_register(array($this, '_autoload'));
 
 		// register the Composer autoloader

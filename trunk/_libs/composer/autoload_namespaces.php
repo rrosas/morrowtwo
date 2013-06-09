@@ -6,4 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Morrow\\' => array($baseDir . '/main/_libs', $baseDir . '/main/_models', $vendorDir . false),
 );

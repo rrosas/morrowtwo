@@ -1,6 +1,14 @@
 {
+	"name": "morrow/project",
+	"type": "project",
 	"config": { "vendor-dir": "_libs/" },
 	"require": {
+		"php": ">=5.3",
 		"phpmailer/phpmailer": "5.2.*"
+	},
+	 "autoload": {
+		"psr-0": {
+			"Morrow\\": ["_libs_user/", "_libs/"]
+		}
 	}
 }
