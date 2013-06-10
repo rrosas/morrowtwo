@@ -73,21 +73,21 @@ namespace Morrow;
 *
 * Possible parameters:
 * 
-* Type	|	Keyname	|	Default |	Description
-* ------|-----------|-----------|---------------
-* string  | `type` | `jpg` | The output file format. Possible values are `gif`, `jpg`, `png` and `png8`. `png8` only provides other results than `png` if `pngquant` or `pngnq` is installed.
-* integer |	`width` | `100` | The width of your thumbnail. The height (if not set) will be automatically calculated.
-* integer | `height` | `null` | The height of your thumbnail. The width (if not set) will be automatically calculated.
-* integer | `shortside` | `null` | Set the shortest side of the image if width, height and longside is not set.
-* integer | `longside` | `null` | Set the longest side of the image if width, height and shortside is not set.
-* boolean | `sharpen` | `true` | Set to false if you do not want to sharpen the image.
-* boolean | `crop` | `true` | If set to true, image will be cropped in the center to destination width and height params, while keeping aspect ratio. Otherwise the image will get resized.
-* integer | `crop_position` | `2` | The cutout position if you use the crop function: Here are the positions:<br />&nbsp; 1<br />1 2 3<br />&nbsp; 3
-* boolean | `trim` | `false` | If set to true, the image will get trimmed. The top left corner is used as whitespace reference.
-* integer | `trim_tolerance` | `10` | Defines how big the difference to the reference whitespace can be. Useful for JPGs with artefacts. Use 0 for high quality input or 20 and higher for heavily compressed input. 10 should work for most images with light artefacts. 
-* boolean | `extrapolate` | `true` | Set to false if for example your source image is smaller than the calculated thumb and you do not want the image to get extraploated.
-* string  | `overlay` | `null` | A PNG image which is used to create an overlay image. The position will be determined by "overlay_position". For performance reasons the overlay image will not be checked for modification.
-* integer | `overlay_position` | `9` | The position of the overlay image. Possible is an integer from 1 to 9. Here are the positions:<br />1 2 3<br />4 5 6<br />7 8 9
+* Type    | Keyname            | Default     | Description                                                                                                                                                                                                                         
+* ------  | -----------        | ----------- | ---------------                                                                                                                                                                                                                     
+* string  | `type`             | `jpg`       | The output file format. Possible values are `gif`, `jpg`, `png` and `png8`. `png8` only provides other results than `png` if `pngquant` or `pngnq` is installed.                                                                    
+* integer | `width`            | `100`       | The width of your thumbnail. The height (if not set) will be automatically calculated.                                                                                                                                              
+* integer | `height`           | `null`      | The height of your thumbnail. The width (if not set) will be automatically calculated.                                                                                                                                              
+* integer | `shortside`        | `null`      | Set the shortest side of the image if width, height and longside is not set.                                                                                                                                                        
+* integer | `longside`         | `null`      | Set the longest side of the image if width, height and shortside is not set.                                                                                                                                                        
+* boolean | `sharpen`          | `true`      | Set to false if you do not want to sharpen the image.                                                                                                                                                                               
+* boolean | `crop`             | `true`      | If set to true, image will be cropped in the center to destination width and height params, while keeping aspect ratio. Otherwise the image will get resized.                                                                       
+* integer | `crop_position`    | `2`         | The cutout position if you use the crop function: Here are the positions:<br />&nbsp; 1<br />1 2 3<br />&nbsp; 3                                                                                                                    
+* boolean | `trim`             | `false`     | If set to true, the image will get trimmed. The top left corner is used as whitespace reference.                                                                                                                                    
+* integer | `trim_tolerance`   | `10`        | Defines how big the difference to the reference whitespace can be. Useful for JPGs with artefacts. Use 0 for high quality input or 20 and higher for heavily compressed input. 10 should work for most images with light artefacts. 
+* boolean | `extrapolate`      | `true`      | Set to false if for example your source image is smaller than the calculated thumb and you do not want the image to get extraploated.                                                                                               
+* string  | `overlay`          | `null`      | A PNG image which is used to create an overlay image. The position will be determined by "overlay_position". For performance reasons the overlay image will not be checked for modification.                                        
+* integer | `overlay_position` | `9`         | The position of the overlay image. Possible is an integer from 1 to 9. Here are the positions:<br />1 2 3<br />4 5 6<br />7 8 9                                                                                                     
 *
 */
 class Image {
