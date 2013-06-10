@@ -79,34 +79,18 @@ class Security {
 		$options['options'] = '';
 
 		// handle some differences between the browsers
-		// Firefox need other syntax for unsafe-inline and unsafe-eval
-		if (isset($options['script-src']) && stripos($options['script-src'], "'unsafe-inline'")) {
-			$options['options'] .= 'inline-script ';
-		}
-
-		if (isset($options['script-src']) && stripos($options['script-src'], "'unsafe-eval'")) {
-			$options['options'] .= 'eval-script ';
-		}
-
 		foreach ($options as $key=>$value) {
 			if ($value == '') continue;
 			$key = strtolower($key);
 			// handle some differences between the browsers
 			// and create the csp string
-			$csp_gecko	.= $key . ' ' . $value . ';';
-
 			if ($key != 'options') {
 				$csp	.= $key . ' ' . $value . ';';
 			}
 		}
 
-		// skip syntax Firefox doesn't know
-		$csp_gecko = str_replace(array("'unsafe-inline'", "'unsafe-eval'"), '', $csp_gecko);
-
-		$this->view->setHeader('X-Content-Security-Policy', $csp_gecko); // for Firefox
-		$this->view->setHeader('X-WebKit-CSP', $csp); // for Chrome
-		$this->view->setHeader('Content-Security-Policy', $csp); // standard implementations
-		// IE doesn't support it
+		$this->view->setHeader('X-Content-Security-Policy', $csp); // Used by Firefox and Internet Explorer,
+		$this->view->setHeader('Content-Security-Policy', $csp); // Defined by W3C Specs as standard header, used by Chrome starting with version 25
 	}
 	
 	/**
