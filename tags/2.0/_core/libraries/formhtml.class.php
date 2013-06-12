@@ -61,7 +61,7 @@ class FormHtml{
 		if(isset($params['value'])) $el_label = $params['value'];
 
 		// required wrapper
-		if($_elobj->required && (!isset($params['readonly']) || $params['readonly'] != "true")){
+		if (!(isset($params['hide_required']) && $params['hide_required'] == true) && $_elobj->required && (!isset($params['readonly']) || $params['readonly'] != "true")){
 			$el_label = $el_label . ' *';
 		}
 
