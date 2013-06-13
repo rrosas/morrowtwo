@@ -293,7 +293,7 @@ class Morrow {
 
 		/* prepare some internal variables
 		********************************************************************************************/
-		$alias = $url;
+		$alias = implode('_', $nodes);
 		$controller_path		= PROJECT_PATH.'_controllers/';
 		$global_controller_file	= $controller_path.'_default.php';
 		$page_controller_file	= $controller_path.$alias.'.php';
