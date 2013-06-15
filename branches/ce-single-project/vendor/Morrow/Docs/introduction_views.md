@@ -56,8 +56,6 @@ Array
         )
  
     [base_href] => http://www.domain.com/
-    [project_path] => http://www.domain.com/docs/
-    [project_relpath] => docs/
     [alias] => docs
     [controller] => .../_controller/manual_general-topics_view.class.php
     [path] => docs/

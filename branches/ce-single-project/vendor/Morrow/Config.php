@@ -25,7 +25,7 @@ namespace Morrow;
 /**
 * This class handles the access to the configuration of the framework.
 * 
-* It automatically loads the config files in the configuration folders `FW_PATH/_config` and for the project `PROJECT_PATH/_config`. A file named `_default.php` will always be loaded. But you can override the default config with files which include either the IP address or the hostname of the server in their filename. Use for example a file `localhost.php` or `127.0.0.1.php` to override parameters for your local development server.
+* It automatically loads the config files in the configuration folder `APP_PATH/configs`. A file named `_default.php` will always be loaded. But you can override the default config with files which include either the IP address or the hostname of the server in their filename. Use for example a file `localhost.php` or `127.0.0.1.php` to override parameters for your local development server.
 *
 * Dot Syntax
 * ----------

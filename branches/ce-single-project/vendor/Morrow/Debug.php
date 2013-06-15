@@ -31,7 +31,7 @@ namespace Morrow;
 * Type   | Keyname                | Default    | Description                                                              
 * -----  | ---------              | ---------  | ------------                                                             
 * bool   | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
-* bool   | `debug.output.logfile` | `true`     | Defines if errors should be logged to the file system (`FW_PATH/_logs/`) 
+* bool   | `debug.output.logfile` | `true`     | Defines if errors should be logged to the file system (`APP_PATH/logs/`) 
 * bool   | `debug.output.headers` | `false`    | Experimental use                                                         
 * string | `debug.password`       | `password` | Experimental use                                                         
 *

@@ -52,8 +52,6 @@ namespace Morrow;
 *         )
 * 
 *     [base_href]       => http://example.com/
-*     [project_path]    => http://example.com/main/
-*     [project_relpath] => main/
 *     [alias]           => home
 *     [controller]      => /var/www/project/main/_controllers/home.php
 *     [path]            => home/

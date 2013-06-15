@@ -24,7 +24,7 @@ namespace Morrow;
 
 /**
  * The class improves the handling with common navigational tasks. The navigation data has to follow a strict scheme but can be passed from different sources.
- * The default way is to store the data in an array in `PROJECT_PATH . "/_i18n/LANGUAGE/tree.php"`.
+ * The default way is to store the data in an array in `APP_PATH . "/i18n/LANGUAGE/tree.php"`.
  * 
  * Because aliases can exist in more than one navigation branch (f.e. meta and main) you have to specify the branch you want to work with. 
  *

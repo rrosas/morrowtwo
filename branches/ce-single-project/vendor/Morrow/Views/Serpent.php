@@ -56,7 +56,7 @@ class Serpent extends AbstractView {
 		$content['page']['template'] = $this->template;
 
 		$_engine = new \Serpent();
-		$_engine->compile_dir	= PROJECT_PATH.'temp/_serpent_templates_compiled/';
+		$_engine->compile_dir	= APP_PATH .'temp/_serpent_templates_compiled/';
 		$_engine->force_compile	= $this->force_compile;
 		$_engine->default_resource = $this->default_resource;
 		$_engine->default_compiler = $this->default_compiler;
@@ -70,7 +70,6 @@ class Serpent extends AbstractView {
 			'dump'			=> '\\Morrow\\Debug::dump',
 			'url'			=> '\\Morrow\\Factory::load("Url")->create',
 			'securl'		=> '\\Morrow\\Factory::load("Security")->createCSRFUrl',
-			'file'			=> 'PROJECT_RELPATH.',
 			'cycle'			=> '\\Morrow\\Helpers\\View::cycle',
 			'mailto'		=> '\\Morrow\\Helpers\\View::mailto',
 			'hidelink'		=> '\\Morrow\\Helpers\\View::hidelink',
@@ -94,7 +93,7 @@ class Serpent extends AbstractView {
 		$_engine->addPluginConfig('compiler', 'serpent', array('mappings' => $mappings));
 		
 		// set resource config
-		$_engine->addPluginConfig('resource', 'file', array('template_dir' => PROJECT_PATH.'_templates/', 'suffix' => $this->template_suffix, 'language' => $this->language->get()));
+		$_engine->addPluginConfig('resource', 'file', array('template_dir' => APP_PATH .'templates/', 'suffix' => $this->template_suffix, 'language' => $this->language->get()));
 		
 		// set additional config
 		$conf =& $this->plugin_config;

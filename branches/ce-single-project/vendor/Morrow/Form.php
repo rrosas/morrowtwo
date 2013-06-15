@@ -48,14 +48,6 @@ class Form {
 		$page = Factory::load('Page');
 		$alias = $page->get('alias');
 			
-		// elements definition
-		$elements = array();
-		$g_deffile = PROJECT_PATH . "_forms/_global.php";
-		$deffile = PROJECT_PATH . "_forms/" . $alias  . ".php";
-		if (is_file($g_deffile)) include($g_deffile);
-		if (is_file($deffile)) include($deffile);
-		$settings['elements'] = $elements;
-		
 		// language content / locale
 		$language = Factory::load('Language');
 		$settings['locale'] = $language->getL10n();

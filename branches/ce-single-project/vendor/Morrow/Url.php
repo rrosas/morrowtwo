@@ -23,13 +23,13 @@
 namespace Morrow;
 
 /**
-* This class provides some useful methods for dealing with URLs. Especially create() and redirect() are important, since they provide correct handling of Morrow paths in the context of "projects" (see topic Multiple Sites) and language handling.
+* This class provides some useful methods for dealing with URLs. Especially create() and redirect() are important, since they provide correct handling of Morrow paths in the context of language handling.
 * 
 * A Morrow URL has this structure:
-* `projectname`/`language`/`node 1`/`node 2`
+* `language`/`node 1`/`node 2`
 * 
-* `projectname` and `language` are optional.
-* So if you want to link to the default project with the default language or you want to keep the current project and the current language you can omit both parameters.
+* `language` is optional.
+* So if you want to link to a page with the default language you can omit the language parameter.
 * 
 * Examples
 * ---------
@@ -43,10 +43,6 @@ namespace Morrow;
 * $url = $this->url->create('//example.com/home', array('foo' => 'bar'));
 * Debug::dump($url);
 *
-* // create an URL to a different project in a non standard language
-* $url = $this->url->create('project2/de/home/');
-* Debug::dump($url);
-*
 * // create an URL to the actual page
 * $url = $this->url->create();
 * Debug::dump($url);
@@ -54,7 +50,7 @@ namespace Morrow;
 *
 * ### Change the language
 *
-* If you just want to change the language in the current project just use the `language` query parameter which is handled different to other query parameters.
+* If you just want to change the language just use the `language` query parameter which is handled different to other query parameters.
 *
 * ~~~{.php}
 * // create an absolute URL to the homepage and change the language
@@ -74,12 +70,6 @@ namespace Morrow;
 * ~~~
 */
 class Url {
-	/**
-	 * Contains all valid projects keys.
-	 * @var	array $_projects
-	 */
-	protected $_projects;
-
 	/**
 	 * Contains the currently active language.
 	 * @var	array $_language_actual
@@ -101,13 +91,11 @@ class Url {
 	/**
 	 * All parameters passed are used for create(). You don't have to do this yourself in Morrow.
 	 *
-	 * @param	array	$projects	The URL to parse.
-	 * @param	array	$language_actual	The URL to parse.
-	 * @param	array	$language_possible	The URL to parse.
-	 * @param	array	$fullpath	The URL to parse.
+	 * @param	array	$language_actual	Contains the currently active language.
+	 * @param	array	$language_possible	Contains all valid language keys.
+	 * @param	array	$_fullpath	Contains the full path of the current page.
 	 */
-	public function __construct($projects, $language_actual, $language_possible, $fullpath) {
-		$this->_projects			= $projects;
+	public function __construct($language_actual, $language_possible, $fullpath) {
 		$this->_language_actual		= $language_actual;
 		$this->_language_possible	= $language_possible;
 		$this->_fullpath			= $fullpath;
@@ -173,7 +161,7 @@ class Url {
 
 
 	/**
-	 * Creates a URL for use with Morrow. It handles automatically project names and languages in the URL. 
+	 * Creates a URL for use with Morrow. It handles automatically languages in the URL. 
 	 *
 	 * @param	string	$path	The URL or the Morrow path to work with. Leave empty if you want to use the current page.
 	 * @param	array	$query	Query parameters to adapt the URL.
@@ -200,17 +188,6 @@ class Url {
 
 			$nodes				= explode('/', trim($parts['path'], '/'));
 
-			// ********************** project handling
-			$project_current	= trim(PROJECT_RELPATH, '/');
-			$project			= $project_current;
-
-			// remove the project from the path
-			if (in_array($nodes[0], $this->_projects)) {
-				$project = array_shift($nodes);
-			}
-			// **********************
-
-
 			// **********************  language handling
 			$lang = $this->_language_actual;
 
@@ -227,21 +204,13 @@ class Url {
 					$parts['query_divider'] = '';
 				}
 			}
-			// **********************
-			
 
-			// ********************** now we have to add the language and the project in some cases
+			// now we have to add the language in some cases
 			// add the lang to the path if it is not the current language and not the default language
 			if ($lang !== $this->_language_actual || $this->_language_possible[0] !== $this->_language_actual) {
 				array_unshift($nodes, $lang);
 			}
-
-			// add the project to the path if it is not the current project and  not the default project
-			if ($project !== $project_current || $this->_projects[0] !== $project_current) {
-				array_unshift($nodes, $project);
-			}
 			// **********************
-
 
 			// put it back together
 			$parts['path'] = implode('/', $nodes);
@@ -268,6 +237,7 @@ class Url {
 	 */
 	public function getBasehref() {
 		$path = dirname($_SERVER['SCRIPT_NAME']).'/';
+		$path = preg_replace('|app/public/$|', '', $path);
 		
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';

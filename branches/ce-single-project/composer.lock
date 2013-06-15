@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "2e6a6e922cfbd421a92aa7cd481edd66",
+    "hash": "3c34742e91922f79a6876aa799fd1490",
     "packages": [
         {
             "name": "phpmailer/phpmailer",

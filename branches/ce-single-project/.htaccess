@@ -1,41 +1,33 @@
 # Enable PHP5
 # AddType application/x-httpd-php5 .php
 
-# Enable PHP5 at "1&1"
-# AddType x-mapp-php5 .php
-
 # Do not support dirty coding
 # CheckSpelling Off 
 
 # Switch directory listing
 Options -Indexes
 
-# Set default index file
-DirectoryIndex index.php
-
-
 <IfModule mod_rewrite.c>
 	RewriteEngine on
 	# RewriteBase /
 
+	# Rewrite "www.domain.com -> domain.com
+	# RewriteCond %{HTTPS} !=on
+	# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+	# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
 	# force SSL for all files
-	#RewriteCond %{SERVER_PORT}     !^443$
-	#RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
+	# RewriteCond %{SERVER_PORT}     !^443$
+	# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
-	# protect directories and files with a leading underscore
-	RewriteRule ((^|\/)_.*) ./ [F,L]
+	# Map all requests to the public subfolder
+	RewriteCond %{REQUEST_URI} !/app/public/
+	RewriteRule ^(.*)$ app/public/$1
 
-	# reduce request to one GET parameter
+	# Reduce request to one GET parameter if the file was not found
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^(.*)$ index.php?morrow_content=$1 [QSA]
 </IfModule>
-
-# Rewrite "www.domain.com -> domain.com
-#<IfModule mod_rewrite.c>
-#	RewriteCond %{HTTPS} !=on
-#	RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-#	RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
-#</IfModule>
 
 <Ifmodule mod_deflate.c>
 	AddOutputFilterByType DEFLATE text/css text/javascript application/x-javascript

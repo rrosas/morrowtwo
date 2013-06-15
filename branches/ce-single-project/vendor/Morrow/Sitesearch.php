@@ -29,7 +29,7 @@ class Sitesearch {
 	public function __construct($config = array()) {
 		$this->db_config = array(
 			'driver' => 'sqlite',
-			'file' => PROJECT_PATH.'temp/_sitesearch.sqlite',
+			'file' => APP_PATH .'temp/sitesearch.sqlite',
 			'host' => 'localhost',
 			'db' => 'sitesearch_searchengine',
 			'user' => 'root',

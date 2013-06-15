@@ -92,11 +92,11 @@ class View {
 	public static function thumb($filepath, $params = array()) {
 		try {
 			$path = Factory::load('Image')->get($filepath, $params);
-			$path = str_replace(FW_PATH, '', $path);
+			$path = str_replace(PUBLIC_PATH, '', $path);
 		} catch (\Exception $e) {
 			if (isset($params['fallback'])) {
 				$path = Factory::load('Image')->get($params['fallback'], $params);
-				$path = str_replace(FW_PATH, '', $path);
+				$path = str_replace(PUBLIC_PATH, '', $path);
 			} else {
 				if (!isset($params['width'])) $params['width'] = 100;
 				if (!isset($params['height'])) $params['height'] = $params['width'];
@@ -110,9 +110,9 @@ class View {
 	
 	public static function image($filepath, $calls = array()) {
 		$id         = md5(serialize(array($filepath, $calls)));
-		$cache      = new Cache(PROJECT_PATH . 'temp/image/');
+		$cache      = new Cache('temp/image/');
 		$comparator = filemtime($filepath);
-		$path       = PROJECT_PATH . 'temp/image/' . $id . '.png';
+		$path       = 'temp/image/' . $id . '.png';
 		
 		if (!$cache->load($id, $comparator)) {
 			$image = new ImageObject($filepath);
@@ -127,7 +127,7 @@ class View {
 			file_put_contents($path, $image);
 		}
 		
-		return str_replace(FW_PATH, '', $path);
+		return str_replace(PUBLIC_PATH, '', $path);
 	}
 }
 

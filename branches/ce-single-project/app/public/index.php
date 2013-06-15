@@ -21,11 +21,24 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-//$time_start = microtime(true);
+$time_start = microtime(true);
+
+// define the app path
+define('FW_PATH', realpath('../..') . '/');
+
+// define the app path
+define('APP_PATH', realpath('..') . '/');
+
+// define the path to vendor dir
+// change this if you have to projects which should use the same vendor folder
+define('VENDOR_PATH', realpath('../../vendor') . '/');
+define('VENDOR_USER_PATH', realpath('../../vendor_user') . '/');
+
+// register the Composer autoloader
+require VENDOR_PATH . 'autoload.php';
 
 /* load framework
 ********************************************************************************************/
-require('_libs/Morrow/Core/Morrow.php');
 new Morrow\Core\Morrow();
 
-//Morrow\Factory::load('Log')->set(round((microtime(true) - $time_start)*1000, 2).' ms');
+Morrow\Factory::load('Log')->set(round((microtime(true) - $time_start)*1000, 2).' ms');

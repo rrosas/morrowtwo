@@ -3,8 +3,8 @@ Extending MorrowTwo {#extending}
 
 Sometimes you will reach a point where you need more power. No problem. You can integrate own user classes and also your own view handlers to extend Morrows power. When you load a class the factory also looks for class files in
 
-1. **FW_PATH**/_libs/**class**.name.php
-2. **PROJECT_PATH**/_libs/**class**.name.php 
+1. vendor/
+2. vendor_user/ 
 
 Place your class in path 1 if you need it in more than one project. Place it in path 2 if you need it in just one project.
 

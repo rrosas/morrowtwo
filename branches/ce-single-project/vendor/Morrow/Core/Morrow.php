@@ -71,6 +71,7 @@ class Morrow {
 	 * @param	string	$namespace	A fully defined class name incl. namespace path
 	 * @return	null
 	 */
+	/*
 	protected function _autoload($namespace) {
 		if (!defined('PROJECT_PATH')) return;
 
@@ -83,7 +84,8 @@ class Morrow {
 
 		include (PROJECT_PATH . '_models' . $classname);
 	}
-	
+	*/
+
 	/**
 	 * Loads config files in an array.
 	 * First it searches for a file _default.php then it tries to load the config for the current HOST and then for the Server IP address.
@@ -92,11 +94,11 @@ class Morrow {
 	 */
 	protected function _loadConfigVars($directory) {
 		// load main config
-		$config = include ($directory.'_configs/_default.php');
+		$config = include ($directory.'_default.php');
 
 		// overwrite with server specific config
-		$file1 = $directory.'_configs/'.$_SERVER['HTTP_HOST'].'.php';
-		$file2 = $directory.'_configs/'.$_SERVER['SERVER_ADDR'].'.php';
+		$file1 = $directory.$_SERVER['HTTP_HOST'].'.php';
+		$file2 = $directory.$_SERVER['SERVER_ADDR'].'.php';
 		if (is_file($file1)) $config = array_merge($config, include($file1));
 		elseif (is_file($file2)) $config = array_merge($config, include($file2));
 
@@ -115,21 +117,15 @@ class Morrow {
 		// include E_STRICT in error_reporting
 		error_reporting(E_ALL | E_STRICT);
 
-		// define the global FW_PATH constant
-		define('FW_PATH', realpath(__DIR__ .'/../../..') . '/');
-
 		// register autoloader for project specific models
-		spl_autoload_register(array($this, '_autoload'));
-
-		// register the Composer autoloader
-		require '_libs/autoload.php';
+		//spl_autoload_register(array($this, '_autoload'));
 
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('Config'); // config class for config vars
 
 		// load vars
-		$config = $this->_loadConfigVars(FW_PATH);
+		$config = $this->_loadConfigVars(APP_PATH . 'configs/');
 
 		// register config in class
 		foreach ($config as $key => $array) {
@@ -156,63 +152,28 @@ class Morrow {
 
 		/* define project
 		********************************************************************************************/
-		$url			= trim($this->input->get('morrow_content'), '/');
-		$url_nodes		= explode('/', $url);
-		$this->page->set('nodes', $url_nodes);
-
-		$inpath			= $config['projects'];
-		$project_folder	= array_shift($inpath);
-		$this->config->set('default_project', $project_folder);
-
-		$possible_project_path = $url_nodes[0];
-
-		// set standard
-		$project_relpath = $project_folder;
-
-		// search for projects in splitted request
-		foreach ($inpath as $project_url) {
-			if ($project_url == $possible_project_path) {
-				$project_relpath = $project_url;
-				// reset splitted nodes in config
-				array_shift($url_nodes);
-				$this->page->set('nodes', $url_nodes);
-			}
-		}
-
-		// define project constants
-		define('PROJECT_PATH', FW_PATH . $project_relpath . '/');
-		define('PROJECT_RELPATH', $project_relpath . '/');
-
-		/* register project config in the config class
-		********************************************************************************************/
-		// load vars
-		$config = $this->_loadConfigVars(PROJECT_PATH);
-		
-		// register project config in config class
-		foreach ($config as $key => $array) {
-			$this->config->set($key, $array);
-		}
-
-		$config = $this->config->get();
+		$url	= trim($this->input->get('morrow_content'), '/');
+		$nodes	= explode('/', $url);
+		$nodes	= array_slice($nodes, 2); // the first two nodes are "app" and "public"
+		$this->page->set('nodes', $nodes);
 
 		/* prepare some constructor variables
 		********************************************************************************************/
-		Factory::prepare('Debug', $config['debug'], FW_PATH.'_logs/'.date("y-m-d").'.txt');
+		Factory::prepare('Debug', $config['debug'], APP_PATH .'logs/'. date("y-m-d") .'.txt');
 
 		/* load languageClass and define alias
 		********************************************************************************************/
 		$lang['possible'] = $config['languages'];
-		$lang['language_path'] = PROJECT_PATH . '_i18n/';
+		$lang['language_path'] = APP_PATH .'i18n/';
 		$lang['i18n_paths'] = array(
-			FW_PATH			. '_libs/*.php',
-			PROJECT_PATH	. '_libs/*.php',
-			PROJECT_PATH	. '_templates/*',
-			PROJECT_PATH	. '*.php'
+			VENDOR_PATH			.'Morrow/*.php',
+			VENDOR_USER_PATH	.'*.php',
+			APP_PATH			.'templates/*',
+			APP_PATH			.'*.php'
 		);
 		$this->language = Factory::load('Language', $lang);
 
 		// language via path
-		$nodes = $this->page->get('nodes');
 		if (isset($nodes[0]) && $this->language->isValid($nodes[0])) {
 			$input_lang_nodes = array_shift($nodes);
 			$this->page->set('nodes', $nodes);
@@ -294,9 +255,8 @@ class Morrow {
 		/* prepare some internal variables
 		********************************************************************************************/
 		$alias = implode('_', $nodes);
-		$controller_path		= PROJECT_PATH.'_controllers/';
-		$global_controller_file	= $controller_path.'_default.php';
-		$page_controller_file	= $controller_path.$alias.'.php';
+		$global_controller_file	= APP_PATH .'_default.php';
+		$page_controller_file	= APP_PATH . $alias .'.php';
 		$path = implode('/', $nodes).'/';
 		$query = $this->input->getGet();
 		unset($query['morrow_content']);
@@ -305,7 +265,7 @@ class Morrow {
 		/* load classes we need anyway
 		********************************************************************************************/
 		$this->view = Factory::load('View');
-		$this->url = Factory::load('Url', $config['projects'], $this->language->get(), $lang['possible'], $fullpath);
+		$this->url = Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath);
 		
 		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
 		// but maybe the Security class is not used 
@@ -323,14 +283,14 @@ class Morrow {
 
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
-		Factory::prepare('Cache', PROJECT_PATH.'temp/_codecache/');
-		Factory::prepare('Image', PROJECT_PATH . 'temp/thumbs/');
-		Factory::prepare('Log', FW_PATH.'_logs/log_'.date("y-m-d").'.txt');
+		Factory::prepare('Cache', APP_PATH .'temp/codecache/');
+		Factory::prepare('Image', 'temp/thumbs/');
+		Factory::prepare('Log', APP_PATH .'logs/log_'.date("y-m-d").'.txt');
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
 		Factory::prepare('Security', $this->session, $this->view, $this->input, $this->url);
 
-		/* define project paths
+		/* define page params
 		********************************************************************************************/
 		$domain = $this->url->getBaseHref();
 
@@ -338,8 +298,6 @@ class Morrow {
 		$this->page->set('alias', $alias);
 		$this->page->set('controller', $page_controller_file);
 		$this->page->set('path', $path);
-		$this->page->set('project_relpath', PROJECT_RELPATH);
-		$this->page->set('project_path', $domain . $project_relpath . '/');
 		$this->page->set('fullpath', $fullpath);
 
 		/* load controller and render page
