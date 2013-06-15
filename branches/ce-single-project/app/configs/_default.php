@@ -1,13 +1,6 @@
 <?php
 
-/*
- * all config vars in this file are neccessary for the framework to run
- */
-
 return array(
-// the first project will be the default project. The others reachable through the url
-	'projects'					=> array('main'),
-
 // languages
 	'languages'    				=> array('en'),
 
@@ -32,4 +25,25 @@ return array(
 	'routing' => array(
 		'/' => 'home/',
 	),
+
+// OPTIONAL: the following config vars are NOT neccessary for the framework to run
+// mailer
+	'mail.Mailer'			=> 'mail',
+	'mail.From'				=> 'test@morrowtest.com',
+	'mail.FromName'			=> 'MorrowTwo',
+	'mail.WordWrap'			=> 0,
+	'mail.Encoding'			=> 'quoted-printable',
+	'mail.CharSet'			=> 'utf-8',
+	'mail.SMTPAuth'			=> false,
+	'mail.Username'			=> '',
+	'mail.password'			=> '',
+	'mail.Host'				=> '',
+
+// db
+	'db.driver'  			=> 'mysql',
+	'db.host'  				=> 'localhost',
+	'db.db'  				=> 'database',
+	'db.user'  				=> 'user',
+	'db.pass'  				=> 'pass',
+	'db.encoding'  			=> 'utf8',
 );
