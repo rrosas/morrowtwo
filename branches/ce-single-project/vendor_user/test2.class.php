@@ -1,6 +1,6 @@
 <?php
 
-class Test {
+class Test2 {
 	public function get() {
 		return 'Class "Test" initialized.';
 	}

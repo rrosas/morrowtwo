@@ -1,6 +1,6 @@
 <?php
 
-namespace Morrow;
+namespace Test;
 
 include_once(__DIR__ . '/../test2.class.php');
 
@@ -12,6 +12,6 @@ class Test extends \Test {
 	}
 	
 	public function get() {
-		return 'Adapter "Test" initialized: ' . $this->value;
+		return '\Test-Adapter "Test" initialized: ' . $this->value;
 	}
 }

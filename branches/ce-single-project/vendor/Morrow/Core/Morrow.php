@@ -153,8 +153,8 @@ class Morrow {
 		/* define project
 		********************************************************************************************/
 		$url	= trim($this->input->get('morrow_content'), '/');
+		$url	= str_replace('app/public/', '', $url);
 		$nodes	= explode('/', $url);
-		$nodes	= array_slice($nodes, 2); // the first two nodes are "app" and "public"
 		$this->page->set('nodes', $nodes);
 
 		/* prepare some constructor variables

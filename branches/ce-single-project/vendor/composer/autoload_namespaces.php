@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'Morrow\\' => array($vendorDir . '_user', $vendorDir . false),
     'App\\' => array($baseDir . '/app'),
+    '' => array($vendorDir . '_user'),
 );

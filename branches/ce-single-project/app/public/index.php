@@ -21,8 +21,6 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-$time_start = microtime(true);
-
 // define the app path
 define('FW_PATH', realpath('../..') . '/');
 
@@ -37,8 +35,5 @@ define('VENDOR_USER_PATH', realpath('../../vendor_user') . '/');
 // register the Composer autoloader
 require VENDOR_PATH . 'autoload.php';
 
-/* load framework
-********************************************************************************************/
+// execute Morrow framework
 new Morrow\Core\Morrow();
-
-Morrow\Factory::load('Log')->set(round((microtime(true) - $time_start)*1000, 2).' ms');

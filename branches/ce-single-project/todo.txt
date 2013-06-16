@@ -1,0 +1,39 @@
+vendor/
+vendor_user/
+app/
+	home.php				\App\PageController
+	configs/
+	logs/
+	models/					
+		User.php			von Controller > Models\User.php
+	templates/
+	i18n/
+	modules/
+		facebook/
+			Controller1.php	\App\Modules\Facebook\Controller1
+			Controller2.php	\App\Modules\Facebook\Controller2
+			models/
+				User.php	von Controller > Models\User.php
+			templates/
+	public/
+		index.php
+		images/
+		javascript/
+		css/
+	temp/
+
+
+✓ Benötigt mod_rewrite oder das Ändern des Document-Roots, um auf die index.php gehen zu können
+✓ Code nicht mehr Multi-Project-fähig ... macht alles einfacher (nur ein Config-Ordner, nur ein Projekt zu handlen)
+Könnte man das einfach durch Umleitungen in der htaccess regeln? (z.B. beim CMS)
+Pfad zu vendor und vendor_user könnte man einstellbar machen. Dann könnten sich verschiedene Framework den Core teilen, wenn man denn will. 
+✓ Autoloading in vendor_user läuft mit allen Namespaces
+✓ config/apps/ wird gerade bei den Nodes immer weggeschnitten. Die gibts ja aber gar nicht, wenn public als documentroot gesetzt wird
+✓ base-href müsste richtig sein 
+
+
+Problem:
+PSR-0-Kompatibilität für mehrere Projekte nur durch Anpassen der composer.json :(
+Evtl. funktioniert sogar der Autoloader, wenn man die Projekte in Unterordner packt.
+
+Das Laden von Namespace "\App" und "\Morrow" unterscheiden. Wie mit Factory und load umgehen
