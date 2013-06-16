@@ -1,8 +1,6 @@
 <?php
 
-namespace App;
-use Morrow\Debug;
-use Morrow\Factory;
+namespace Morrow;
 
 class PageController extends DefaultController {
 	public function run() {

@@ -308,12 +308,12 @@ class Morrow {
 		// include page controller class
 		if (is_file($page_controller_file)) {
 			include($page_controller_file);
-			$controller = new \App\PageController();
+			$controller = new \Morrow\PageController();
 			if (method_exists($controller, 'setup')) $controller->setup();
 			$controller->run();
 			if (method_exists($controller, 'teardown')) $controller->teardown();
 		} else {
-			$controller = new \App\DefaultController();
+			$controller = new \Morrow\DefaultController();
 			if (method_exists($controller, 'setup')) $controller->setup();
 			if (method_exists($controller, 'teardown')) $controller->teardown();
 		}
