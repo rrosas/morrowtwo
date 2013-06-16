@@ -1,6 +1,8 @@
 <?php
 
-namespace Morrow;
+namespace App;
+use Morrow\Debug;
+use Morrow\Factory;
 
 class DefaultController extends Factory {
 	public function setup() {

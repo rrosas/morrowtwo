@@ -20,6 +20,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
+namespace Morrow;
 
 // define the app path
 define('FW_PATH', realpath('../..') . '/');
@@ -36,4 +37,4 @@ define('VENDOR_USER_PATH', realpath('../../vendor_user') . '/');
 require VENDOR_PATH . 'autoload.php';
 
 // execute Morrow framework
-new Morrow\Core\Morrow();
+new Core\Morrow();

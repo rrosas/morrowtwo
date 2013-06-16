@@ -1,6 +1,8 @@
 <?php
 
-namespace Morrow;
+namespace App;
+use Morrow\Debug;
+use Morrow\Factory;
 
 class PageController extends DefaultController {
 	public function run() {
@@ -14,5 +16,8 @@ class PageController extends DefaultController {
 		$test = new \Test\Test('3');
 		Debug::dump($test->get());
 		*/
+
+		include(APP_PATH . 'models/Test.php');
+		$test = new models\Test();
 	}
 }
