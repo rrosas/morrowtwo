@@ -1,11 +1,22 @@
 <?php
 
 return array(
+// debug
+	'debug.output.screen'		=> true,
+	'debug.output.headers'		=> false,
+	'debug.output.logfile'		=> false,
+	'debug.password'			=> 'password',
+
 // languages
 	'languages'    				=> array('en'),
 
 // locale/timezone
 	'locale.timezone'			=> 'Europe/Berlin',
+
+// routing rules
+	'routing' => array(
+		'/' => 'home/',
+	),
 
 // session
 	'session.handler'			=> 'Session', // The class name that should be used to handle the session
@@ -14,17 +25,6 @@ return array(
 	'session.domain'			=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
 	'session.secure'			=> false, // If TRUE cookie will only be sent over secure connections.
 	'session.httponly'			=> false, // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
-
-// debug
-	'debug.output.screen'		=> true,
-	'debug.output.headers'		=> false,
-	'debug.output.logfile'		=> false,
-	'debug.password'			=> 'password',
-
-// routing rules
-	'routing' => array(
-		'/' => 'home/',
-	),
 
 // OPTIONAL: the following config vars are NOT neccessary for the framework to run
 // mailer
