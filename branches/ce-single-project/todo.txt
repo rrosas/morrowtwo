@@ -1,39 +1,68 @@
-vendor/
-vendor_user/
-app/
-	home.php				\App\PageController
-	configs/
-	logs/
-	models/					
-		User.php			von Controller > Models\User.php
-	templates/
-	i18n/
-	modules/
-		facebook/
-			Controller1.php	\App\Modules\Facebook\Controller1
-			Controller2.php	\App\Modules\Facebook\Controller2
-			models/
-				User.php	von Controller > Models\User.php
-			templates/
-	public/
-		index.php
-		images/
-		javascript/
-		css/
-	temp/
-
+.htaccess
+frontend/
+	.htaccess
+	vendor/
+	vendor_user/
+	app/
+		home.php				\App\PageController
+		configs/
+		logs/
+		models/					
+			User.php			von Controller > Models\User.php
+		templates/
+		i18n/
+		modules/
+			facebook/
+				Controller1.php	\App\Modules\Facebook\Controller1
+				Controller2.php	\App\Modules\Facebook\Controller2
+				models/
+					User.php	von Controller > Models\User.php
+				templates/
+		public/
+			index.php
+			images/
+			javascript/
+			css/
+		temp/
+cms/
+	...
 
 ✓ Benötigt mod_rewrite oder das Ändern des Document-Roots, um auf die index.php gehen zu können
 ✓ Code nicht mehr Multi-Project-fähig ... macht alles einfacher (nur ein Config-Ordner, nur ein Projekt zu handlen)
-Könnte man das einfach durch Umleitungen in der htaccess regeln? (z.B. beim CMS)
-Pfad zu vendor und vendor_user könnte man einstellbar machen. Dann könnten sich verschiedene Framework den Core teilen, wenn man denn will. 
 ✓ Autoloading in vendor_user läuft mit allen Namespaces
 ✓ config/apps/ wird gerade bei den Nodes immer weggeschnitten. Die gibts ja aber gar nicht, wenn public als documentroot gesetzt wird
 ✓ base-href müsste richtig sein 
+Projekt auf Namespace "App" umbauen. 
 
 
-Problem:
-PSR-0-Kompatibilität für mehrere Projekte nur durch Anpassen der composer.json :(
-Evtl. funktioniert sogar der Autoloader, wenn man die Projekte in Unterordner packt.
+Mehrere Projekte:
 
-Das Laden von Namespace "\App" und "\Morrow" unterscheiden. Wie mit Factory und load umgehen
+Möglichkeit 1
+--------------
+Neben "app" gibts noch "app2"
+Eine simple htaccess bestimmt, welche index.php der beiden App-Ordner aufgerufen wird
+
+Vorteile
+	- Wenn man von einem Projekt auf zwei wechselt, muss man nicht alle Ordner kopieren
+	- Vendors-Ordner muss nur einmal gepflegt werden
+
+Nachteile
+	- Beide nehmen automatisch denselben vendors-Ordner, was die Projekte schlecht trennen lässt, weil man nicht mehr weiß, was wozu ist.
+	- Es muss aufgepasst werden, dass die bootstrap-Datei ihren eigenen Projekt-Ordner ermittelt
+
+
+Möglichkeit 2
+--------------
+Der komplette Projekt-Ordner wird dupliziert.
+Eine simple htaccess auf oberster Ebene bestimmt, welche index.php der beiden App-Ordner aufgerufen wird
+
+Vorteile
+	- Vendors-Ordner können komplett getrennt gepflegt werden
+	- Im Morrow selbst müssen nicht mehrere Projekte beachtet werden
+Nachteile
+	- Tiefere Veschachtelung
+	- Wenn man von einem Projekt auf zwei wechselt, muss man alle Ordner kopieren.
+	  Es sei denn, man legt die tiefere Verschachtelung immer an
+
+
+Ist es möglich, beides zu ermöglichen?

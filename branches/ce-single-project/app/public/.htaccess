@@ -1,3 +1,7 @@
+# This htaccess is the configuration for this installation
+# Main target is to map SEO friendly URLs to the bootstrap file 
+
+
 # Enable PHP5
 # AddType application/x-httpd-php5 .php
 
@@ -22,10 +26,19 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?morrow_content=$1 [QSA]
 
 
-<Ifmodule mod_deflate.c>
-	AddOutputFilterByType DEFLATE text/css text/javascript application/x-javascript
+# prevent dirty coding
+<IfModule mod_speling.c>
+	CheckSpelling Off
 </IfModule>
 
+# deflate static ressources
+<Ifmodule mod_deflate.c>
+	AddOutputFilterByType DEFLATE text/html text/plain text/css application/json
+	AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript 
+	AddOutputFilterByType DEFLATE text/xml application/xml text/x-component
+</IfModule>
+
+# Trigger IEs best render mode
 <IfModule mod_headers.c>
 	Header set X-UA-Compatible "IE=edge"
 </IfModule>
