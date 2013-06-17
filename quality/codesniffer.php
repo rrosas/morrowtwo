@@ -27,8 +27,11 @@ if (isset($_GET['file'])) {
 
 header('Content-Type: text/html; charset=utf-8');
 
-$output = `./PHP_CodeSniffer-1.4.3/scripts/phpcs --standard=Ministry --ignore=_libs/PHPMailer_v5.0.2,_libs/serpent_1.3 --extensions=php ../trunk/`;
-preg_match_all("|FILE: (.+?)\n.+?\n\n|is", $output, $matches, PREG_SET_ORDER);
+$root = realpath(__DIR__ . '/../trunk');
+$command = "cd $root; ../quality/PHP_CodeSniffer-1.4.3/scripts/phpcs --standard=Ministry --ignore=_libs/PHPMailer_v5.0.2,_libs/Zend,_libs/serpent_1.3,main/_libs --extensions=php .";
+//print_r($command);
+//die();
+preg_match_all("|FILE: (.+?)\n.+?\n\n|is", `$command`, $matches, PREG_SET_ORDER);
 
 foreach ($matches as $block) {
 	$file = $block[1];
