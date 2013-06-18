@@ -32,37 +32,18 @@ cms/
 ✓ Autoloading in vendor_user läuft mit allen Namespaces
 ✓ config/apps/ wird gerade bei den Nodes immer weggeschnitten. Die gibts ja aber gar nicht, wenn public als documentroot gesetzt wird
 ✓ base-href müsste richtig sein 
-Projekt auf Namespace "App" umbauen. 
 
 
 Mehrere Projekte:
 
-Möglichkeit 1
---------------
-Neben "app" gibts noch "app2"
-Eine simple htaccess bestimmt, welche index.php der beiden App-Ordner aufgerufen wird
-
-Vorteile
-	- Wenn man von einem Projekt auf zwei wechselt, muss man nicht alle Ordner kopieren
-	- Vendors-Ordner muss nur einmal gepflegt werden
-
-Nachteile
-	- Beide nehmen automatisch denselben vendors-Ordner, was die Projekte schlecht trennen lässt, weil man nicht mehr weiß, was wozu ist.
-	- Es muss aufgepasst werden, dass die bootstrap-Datei ihren eigenen Projekt-Ordner ermittelt
-
-
-Möglichkeit 2
---------------
 Der komplette Projekt-Ordner wird dupliziert.
 Eine simple htaccess auf oberster Ebene bestimmt, welche index.php der beiden App-Ordner aufgerufen wird
 
 Vorteile
 	- Vendors-Ordner können komplett getrennt gepflegt werden
 	- Im Morrow selbst müssen nicht mehrere Projekte beachtet werden
-Nachteile
-	- Tiefere Veschachtelung
-	- Wenn man von einem Projekt auf zwei wechselt, muss man alle Ordner kopieren.
-	  Es sei denn, man legt die tiefere Verschachtelung immer an
+	- Man kann verschiedene Versionen und Frameworks nutzen oder externe Projekte auf einem Ordner laufen lassen
 
-
-Ist es möglich, beides zu ermöglichen?
+ToDo:
+	- cms kann gerade nicht als node für das Hauptprojekt verwendet werden (wegen htaccess auf oberster Ebene)
+	- Projekt auf Namespace "App" umbauen. 
