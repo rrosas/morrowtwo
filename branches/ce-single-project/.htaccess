@@ -1,11 +1,12 @@
-# This htaccess is for redirecting to the public folder
+# This htaccess is for dividing several projects (not only Morrow projects)
 # It is not used if the document-root is set directly to the public folder
-# You should not need to do any changes here
 
 
 RewriteEngine on
 # RewriteBase /
 
-# Map all requests to the public subfolder
-RewriteCond %{REQUEST_URI} !^app/public/
-RewriteRule ^(.*)$ app/public/$1
+# Add a line for every additional subfolder project
+RewriteCond %{REQUEST_URI} !/cms/
+
+# Map all other requests to the frontend subfolder
+RewriteRule ^(.*)$ frontend/$1?%{REQUEST_FILENAME}

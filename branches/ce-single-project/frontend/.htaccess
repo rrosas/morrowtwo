@@ -1,0 +1,11 @@
+# This htaccess is for redirecting to the public folder
+# It is not used if the document-root is set directly to the public folder
+# You should not need to do any changes here
+
+
+RewriteEngine on
+# RewriteBase /
+
+# Map all requests to the public subfolder
+RewriteCond %{REQUEST_URI} !^app/public/
+RewriteRule ^(.*)$ app/public/$1
