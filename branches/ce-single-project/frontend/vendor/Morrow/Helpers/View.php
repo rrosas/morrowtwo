@@ -53,9 +53,9 @@ class View {
 		$link = strrev($link);
 		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
 		$returner .= '<script>';
-		$returner .= 'var el = document.getElementById("'.$id.'");';
-		$returner .= 'var content = el.textContent ? el.textContent : el.innerText;'; // innerText = IE
-		$returner .= 'el.innerHTML = content.split("").reverse().join("").replace(/--/g, "@");';
+		$returner .= 'var el_'.$id.' = document.getElementById("'.$id.'");';
+		$returner .= 'var content_'.$id.' = el_'.$id.'.textContent ? el_'.$id.'.textContent : el_'.$id.'.innerText;'; // innerText = IE
+		$returner .= 'el_'.$id.'.innerHTML = content_'.$id.'.split("").reverse().join("").replace(/--/g, "@");';
 		$returner .= '</script>';
 		return $returner;
 	}
@@ -67,9 +67,9 @@ class View {
 		$link = strrev($link);
 		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
 		$returner .= '<script>';
-		$returner .= 'var el = document.getElementById("'.$id.'");';
-		$returner .= 'var content = el.textContent ? el.textContent : el.innerText;'; // innerText = IE
-		$returner .= 'el.innerHTML = content.split("").reverse().join("");';
+		$returner .= 'var el_'.$id.' = document.getElementById("'.$id.'");';
+		$returner .= 'var content_'.$id.' = el_'.$id.'.textContent ? el_'.$id.'.textContent : el_'.$id.'.innerText;'; // innerText = IE
+		$returner .= 'el_'.$id.'.innerHTML = content_'.$id.'.split("").reverse().join("");';
 		$returner .= '</script>';
 		return $returner;
 	}
