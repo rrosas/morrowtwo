@@ -237,7 +237,6 @@ class Url {
 	 */
 	public function getBasehref() {
 		$path = dirname($_SERVER['SCRIPT_NAME']).'/';
-		$path = preg_replace('|app/public/$|', '', $path);
 		
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';

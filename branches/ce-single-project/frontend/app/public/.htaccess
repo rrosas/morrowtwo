@@ -1,30 +1,41 @@
+RewriteEngine on
+
 # This htaccess is the configuration for this installation
 # Main target is to map SEO friendly URLs to the bootstrap file 
 
 
-# Enable PHP5
-# AddType application/x-httpd-php5 .php
-
-# Switch directory listing
-Options -Indexes
-
-
-RewriteEngine on
-# RewriteBase /
+# force SSL for all files
+# -----------------------
+# RewriteCond %{SERVER_PORT}     !^443$
+# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
 # Rewrite "www.domain.com -> domain.com
+# -------------------------------------
 # RewriteCond %{HTTPS} !=on
 # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 # RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
-# force SSL for all files
-# RewriteCond %{SERVER_PORT}     !^443$
-# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
+# Emulate RewriteBase
+# -------------------
+# You just need to set this here if you need a RewriteBase and the public folder is set as document root
+# If the pulic folder is not document root but you need a rewrite base you have to set it in the project distributor .htaccess 
+# -------------------
+# Enable rewrite base for a TLD
+# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
+# RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
 
-# Reduce request to one GET parameter if the file was not found
+# Disable rewrite base for development URLs
+# RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
+# RewriteRule . - [E=REWRITEBASE:]
+
+# Map request to index.php if the file was not found and there is no dot in the path
+# ---------------------------------------------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$ index.php?morrow_content=$1 [QSA]
+RewriteRule ^([a-z0-9-/]*)$ %{ENV:REWRITEBASE}index.php/$1 [NC]
 
+
+# Switch directory listing
+Options -Indexes
 
 # prevent dirty coding
 <IfModule mod_speling.c>

@@ -74,10 +74,10 @@ class Input {
 	/**
 	 * Imports, unifies and cleans user input from PHP Superglobals.
 	 */
-	public function __construct() {
-		$this->_get   = $this->tidy($_GET);
-		$this->_post  = $this->tidy($_POST);
-		$this->_files = $this->_getFileData($this->tidy($_FILES));
+	public function __construct($get, $post, $files) {
+		$this->_get   = $this->tidy($get);
+		$this->_post  = $this->tidy($post);
+		$this->_files = $this->_getFileData($this->tidy($files));
 		$this->_data  = $this->_array_merge_recursive_distinct($this->_get, $this->_post, $this->_files);
 	}
 

@@ -61,8 +61,10 @@ class Morrow {
 			$debug = Factory::load('Debug');
 			$debug->errorhandler($exception);
 		} catch (\Exception $e) {
+			echo "<pre>$exception</pre>\n\n";
+
 			// useful if the \Exception handler itself contains errors
-			echo "<pre>$e</pre>";
+			echo "<pre>The Debug class threw an exception:\n$e</pre>";
 		}
 	}
 	
@@ -120,6 +122,11 @@ class Morrow {
 		// register autoloader for project specific models
 		//spl_autoload_register(array($this, '_autoload'));
 
+		/* declare errorhandler (needs config class)
+		********************************************************************************************/
+		set_error_handler(array($this, 'errorHandler'));
+		set_exception_handler(array($this, 'exceptionHandler'));
+
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('Config'); // config class for config vars
@@ -134,32 +141,23 @@ class Morrow {
 			
 		$config = $this->config->get();
 
-		/* declare errorhandler (needs config class)
-		********************************************************************************************/
-		set_error_handler(array($this, 'errorHandler'));
-		set_exception_handler(array($this, 'exceptionHandler'));
-
 		/* set timezone 
 		********************************************************************************************/
 		if (!date_default_timezone_set($config['locale']['timezone'])) {
 			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
 
-		/* load classes
+		/* load input class
 		********************************************************************************************/
-		$this->page		= Factory::load('Page'); // config class for page vars
-		$this->input	= Factory::load('Input'); // input class for all user input
+		$this->input	= Factory::load('Input', $_GET ,$_POST, $_FILES); // input class for all user input
 
-		/* define project
+		/* load page class and set nodes
 		********************************************************************************************/
-		$url	= trim($this->input->get('morrow_content'), '/');
-		$url	= str_replace('app/public/', '', $url);
-		$nodes	= explode('/', $url);
+		if (!isset($_SERVER['PATH_INFO'])) $_SERVER['PATH_INFO'] = '';
+		$url		= trim($_SERVER['PATH_INFO'], '/');
+		$nodes		= explode('/', $url);
+		$this->page	= Factory::load('Page'); // config class for page vars
 		$this->page->set('nodes', $nodes);
-
-		/* prepare some constructor variables
-		********************************************************************************************/
-		Factory::prepare('Debug', $config['debug'], APP_PATH .'logs/'. date("y-m-d") .'.txt');
 
 		/* load languageClass and define alias
 		********************************************************************************************/
@@ -245,27 +243,22 @@ class Morrow {
 
 		// set nodes in page class
 		$nodes = explode('/', $url);
+		$nodes = array_map('strtolower', $nodes);
 		$this->page->set('nodes', $nodes);
-
-		// nodes are only allowed to have a-z, 0-9, - and .
-		foreach ($nodes as $node) {
-			if (preg_match('|[^0-9a-z.-]|i', $node)) throw new \Exception('URL node names are only allowed to consist of a-z, 0-9, "." and "-".');
-		}
 
 		/* prepare some internal variables
 		********************************************************************************************/
-		$alias = implode('_', $nodes);
+		$alias					= implode('_', $nodes);
 		$global_controller_file	= APP_PATH .'_default.php';
 		$page_controller_file	= APP_PATH . $alias .'.php';
-		$path = implode('/', $nodes).'/';
-		$query = $this->input->getGet();
-		unset($query['morrow_content']);
-		$fullpath = $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
-
+		$path					= implode('/', $nodes).'/';
+		$query					= $this->input->getGet();
+		$fullpath				= $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
+		
 		/* load classes we need anyway
 		********************************************************************************************/
-		$this->view = Factory::load('View');
-		$this->url = Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath);
+		$this->view	= Factory::load('View');
+		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath);
 		
 		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
 		// but maybe the Security class is not used 
@@ -283,6 +276,7 @@ class Morrow {
 
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
+		Factory::prepare('Debug', $config['debug'], APP_PATH .'logs/'. date("y-m-d") .'.txt');
 		Factory::prepare('Cache', APP_PATH .'temp/codecache/');
 		Factory::prepare('Image', 'temp/thumbs/');
 		Factory::prepare('Log', APP_PATH .'logs/log_'.date("y-m-d").'.txt');
@@ -292,9 +286,12 @@ class Morrow {
 
 		/* define page params
 		********************************************************************************************/
-		$domain = $this->url->getBaseHref();
+		// We have to strip x nodes from the end of the base href
+		// Depends on the htaccess entry point
+		$basehref_depth = (int)$this->input->get('morrow_basehref_depth');
+		$base_href = preg_replace('|([^/]+/){'. $basehref_depth .'}$|', '', $this->url->getBaseHref());
 
-		$this->page->set('base_href', $domain);
+		$this->page->set('base_href', $base_href);
 		$this->page->set('alias', $alias);
 		$this->page->set('controller', $page_controller_file);
 		$this->page->set('path', $path);

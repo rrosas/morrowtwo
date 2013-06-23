@@ -7,7 +7,7 @@
 	},
 	 "autoload": {
 		"psr-0": {
-			"Morrow\\": ["vendor/"],
+			"Morrow\\": ["vendor_user/", "vendor/"],
 			"": ["vendor_user/"]
 		}
 	}
