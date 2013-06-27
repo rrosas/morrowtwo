@@ -236,7 +236,9 @@ class Url {
 	 * @return	string	The base href.
 	 */
 	public function getBasehref() {
-		$path = dirname($_SERVER['SCRIPT_NAME']).'/';
+		$script_name = dirname($_SERVER['SCRIPT_NAME']);
+		$script_name = str_replace('\\', '/', $script_name); // for Windows paths
+		$path = '/'. trim($script_name, '/') .'/';
 		
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';
