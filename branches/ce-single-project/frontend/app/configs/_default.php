@@ -3,9 +3,7 @@
 return array(
 // debug
 	'debug.output.screen'		=> true,
-	'debug.output.headers'		=> false,
-	'debug.output.logfile'		=> false,
-	'debug.password'			=> 'password',
+	'debug.output.file'			=> true,
 
 // languages
 	'languages'    				=> array('en'),

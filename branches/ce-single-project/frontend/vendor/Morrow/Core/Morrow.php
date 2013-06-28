@@ -276,10 +276,9 @@ class Morrow {
 
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
-		Factory::prepare('Debug', $config['debug'], APP_PATH .'logs/'. date("y-m-d") .'.txt');
+		Factory::prepare('Debug', $config['debug'], APP_PATH .'logs/error.txt');
 		Factory::prepare('Cache', APP_PATH .'temp/codecache/');
 		Factory::prepare('Image', 'temp/thumbs/');
-		Factory::prepare('Log', APP_PATH .'logs/log_'.date("y-m-d").'.txt');
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
 		Factory::prepare('Security', $this->session, $this->view, $this->input, $this->url);

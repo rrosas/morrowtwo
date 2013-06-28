@@ -6,6 +6,8 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Morrow\\' => array($vendorDir . '_user', $vendorDir . false),
+    'Monolog' => array($vendorDir . '/monolog/monolog/src'),
     '' => array($vendorDir . '_user'),
 );

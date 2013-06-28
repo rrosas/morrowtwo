@@ -32,8 +32,6 @@ namespace Morrow;
 * -----  | ---------              | ---------  | ------------                                                             
 * bool   | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
 * bool   | `debug.output.logfile` | `true`     | Defines if errors should be logged to the file system (`APP_PATH/logs/`) 
-* bool   | `debug.output.headers` | `false`    | Experimental use                                                         
-* string | `debug.password`       | `password` | Experimental use                                                         
 *
 * Examples
 * ---------
@@ -115,6 +113,15 @@ class Debug {
 		$this->errortypes[4096]		= 'E_RECOVERABLE_ERROR';
 		$this->errortypes[8192]		= 'E_DEPRECATED';
 		$this->errortypes[16384]	= 'E_USER_DEPRECATED';
+
+		// init Monolog with default parameters
+		$this->monolog = new \Monolog\Logger('Morrowtwo');
+		if ($config['output']['file'] == true) {
+			$this->monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler($logfile, 28, \Monolog\Logger::INFO));
+		}
+		if ($config['output']['screen'] == true) {
+			$this->monolog->pushHandler(new \Monolog\Handler\StreamHandler('php://memory', \Monolog\Logger::DEBUG));
+		}
 	}
 
 	/**
@@ -125,6 +132,11 @@ class Debug {
 	 * @param	string	$errortype	The errortype that occured
 	 */
 	protected function _errorhandler_file($errstr, $backtrace, $errortype) {
+		
+
+
+
+		/*
 		$body  = '############################## '.$errortype."\n";
 		$body .= 'Datum:      '.date("d.m.Y - H:i:s")."\n";
 		$body .= 'URL:        '.$_SERVER['REQUEST_URI']."\n";
@@ -140,6 +152,7 @@ class Debug {
 		$body .= "\n";
 
 		file_put_contents($this->_logfile, $body, FILE_APPEND);
+		*/
 	}
 	
 	/**
@@ -243,29 +256,6 @@ class Debug {
 	}
 	
 	/**
-	 * Outputs errors via http headers
-	 * 
-	 * @param  string $content The error produced by _errorhandler_output
-	 * @return null
-	 */
-	protected function _output_http_headers($content) {
-		// we need this client header to proceed
-		if (!isset($_SERVER['HTTP_X_DEBUG_REQUEST']) || $_SERVER['HTTP_X_DEBUG_REQUEST'] != $this->config['password']) {
-			header('X-Debug-Indicator: MorrowTwo');
-			return;
-		}
-		
-		$content = str_split($content, 5000);
-		foreach ($content as $i => $c) {
-			$c = base64_encode($c);
-			header('X-Debug-'.($this->x_debug_count+$i).': '.$c);
-		}
-
-		$this->x_debug_count += count($content);
-		header('X-Debug-Count: '.$this->x_debug_count);
-	}
-	
-	/**
 	 * Set the method which is executed after the default exception handling
 	 * @param	function	$after_exception	A closure to execute.
 	 */
@@ -311,22 +301,7 @@ class Debug {
 		elseif ($errcode == 0) $errordescription = 'EXCEPTION';
 		else $errordescription = 'EXCEPTION (Code '.$errcode.')';
 
-		// show error in firefox panel
-		if ($this->config['output']['headers'] == true) {
-			$error = $this->_errorhandler_output($errstr, $backtrace, $errordescription);
-			$this->_output_http_headers($error);
-		}
-
-		// show error on screen
-		if ($this->config['output']['screen'] == true) {
-			$error = $this->_errorhandler_output($errstr, $backtrace, $errordescription);
-			echo $error;
-		}
-
-		// log error in logfile
-		if ($this->config['output']['logfile'] == true) {
-			$this->_errorhandler_file($errstr, $backtrace, $errordescription);
-		}
+		$this->monolog->addError($errstr);
 
 		// "execute after exception" function
 		if ($this->_after_exception !== null) {
@@ -376,7 +351,12 @@ class Debug {
 	 */
 	public static function dump() {
 		$args = func_get_args();
-		echo Factory::load('Debug')->_dump($args);
+		
+		$debug = Factory::load('Debug');
+		$debug->monolog->addDebug($debug->_dump($args));
+		echo stream_get_contents('php://memory');
+
+		//if ($debug->config['output']['screen'] == true) echo $debug->_dump($args);
 	}
 		
 	/**
@@ -416,15 +396,7 @@ class Debug {
 			$output .= $this->_debug_styles();
 		}
 		
-		// output to debug console
-		if ($this->config['output']['headers'] == true) {
-			$this->_output_http_headers($output);
-		}		
-
-		// output to screen		
-		if ($this->config['output']['screen'] == false) return '';
-
-		echo $output;
+		return $output;
 	}
 
 

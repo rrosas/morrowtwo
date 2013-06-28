@@ -34,6 +34,7 @@ cms/
 ✓ Nodes werden in lowercase umgewandelt. Parameter über Routing Rules kommen aber richtig an.
 ✓ Kein Controller-Ordner mehr, um die Verschachtelung klein zu halten
 ✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden
+✓ Maintenance Mode in htaccess erlauben
 
 
 ✓ Projekte werden komplett getrennt behandelt
@@ -47,3 +48,4 @@ cms/
 ToDo:
 - Projekt auf Namespace "App" umbauen.
 - modules durchdenken
+- https://github.com/jbroadway/analog/ einbauen?
