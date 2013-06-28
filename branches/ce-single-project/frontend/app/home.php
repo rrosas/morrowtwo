@@ -7,7 +7,7 @@ class PageController extends DefaultController {
 		
 		//echo $test;
 		//echo $test3;
-		Debug::dump($_SERVER);
+		//Debug::dump($_SERVER);
 
 	}
 }
