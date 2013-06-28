@@ -100,7 +100,7 @@ class Morrow {
 
 		// overwrite with server specific config
 		$file1 = $directory.$_SERVER['HTTP_HOST'].'.php';
-		$file2 = $directory.$_SERVER['SERVER_ADDR'].'.php';
+		$file2 = $directory.(isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR']).'.php'; // On Windows IIS 7 you must use $_SERVER['LOCAL_ADDR'] rather than $_SERVER['SERVER_ADDR'] to get the server's IP address.
 		if (is_file($file1)) $config = array_merge($config, include($file1));
 		elseif (is_file($file2)) $config = array_merge($config, include($file2));
 
