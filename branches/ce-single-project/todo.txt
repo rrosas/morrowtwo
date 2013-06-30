@@ -28,15 +28,15 @@ cms/
 ✓ Kein Controller-Ordner mehr, um die Verschachtelung klein zu halten
 ✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden
 ✓ Maintenance Mode in htaccess erlauben
+✓ Projekt auf Namespace "App" umbauen.
+✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
 
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
-  - Fremdprojekte können integriert werden
+  - Fremdprojekte können einfach integriert werden
   - Morrow-Code muss nicht mehrere Projekte handlen können 
   - Es gibt nur noch einen config-Ordner
-  - kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
-
+  
 
 ToDo:
-- Projekt auf Namespace "App" umbauen.
