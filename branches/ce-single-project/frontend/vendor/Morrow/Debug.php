@@ -31,7 +31,7 @@ namespace Morrow;
 * Type   | Keyname                | Default    | Description                                                              
 * -----  | ---------              | ---------  | ------------                                                             
 * bool   | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
-* bool   | `debug.output.logfile` | `true`     | Defines if errors should be logged to the file system (`APP_PATH/logs/`) 
+* bool   | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system (`APP_PATH/logs/`) 
 *
 * Examples
 * ---------
@@ -113,15 +113,6 @@ class Debug {
 		$this->errortypes[4096]		= 'E_RECOVERABLE_ERROR';
 		$this->errortypes[8192]		= 'E_DEPRECATED';
 		$this->errortypes[16384]	= 'E_USER_DEPRECATED';
-
-		// init Monolog with default parameters
-		$this->monolog = new \Monolog\Logger('Morrowtwo');
-		if ($config['output']['file'] == true) {
-			$this->monolog->pushHandler(new \Monolog\Handler\RotatingFileHandler($logfile, 28, \Monolog\Logger::INFO));
-		}
-		if ($config['output']['screen'] == true) {
-			$this->monolog->pushHandler(new \Monolog\Handler\StreamHandler('php://memory', \Monolog\Logger::DEBUG));
-		}
 	}
 
 	/**
@@ -132,11 +123,6 @@ class Debug {
 	 * @param	string	$errortype	The errortype that occured
 	 */
 	protected function _errorhandler_file($errstr, $backtrace, $errortype) {
-		
-
-
-
-		/*
 		$body  = '############################## '.$errortype."\n";
 		$body .= 'Datum:      '.date("d.m.Y - H:i:s")."\n";
 		$body .= 'URL:        '.$_SERVER['REQUEST_URI']."\n";
@@ -152,7 +138,6 @@ class Debug {
 		$body .= "\n";
 
 		file_put_contents($this->_logfile, $body, FILE_APPEND);
-		*/
 	}
 	
 	/**
@@ -271,9 +256,9 @@ class Debug {
 	public function errorhandler($exception) {
 		header("HTTP/1.1 500 Internal Server Error");
 
-		$errstr = $exception->getMessage();
-		$errcode = $exception->getCode();
-		$backtrace = $exception->getTrace();
+		$errstr		= $exception->getMessage();
+		$errcode	= $exception->getCode();
+		$backtrace	= $exception->getTrace();
 		
 		// the same should not be outputted more than once
 		if ($errstr == $this->lasterror) return;
@@ -301,7 +286,16 @@ class Debug {
 		elseif ($errcode == 0) $errordescription = 'EXCEPTION';
 		else $errordescription = 'EXCEPTION (Code '.$errcode.')';
 
-		$this->monolog->addError($errstr);
+		// show error on screen
+		if ($this->config['output']['screen'] == true) {
+			$error = $this->_errorhandler_output($errstr, $backtrace, $errordescription);
+			echo $error;
+		}
+
+		// log error in logfile
+		if ($this->config['output']['file'] == true) {
+			$this->_errorhandler_file($errstr, $backtrace, $errordescription);
+		}
 
 		// "execute after exception" function
 		if ($this->_after_exception !== null) {
@@ -351,12 +345,7 @@ class Debug {
 	 */
 	public static function dump() {
 		$args = func_get_args();
-		
-		$debug = Factory::load('Debug');
-		$debug->monolog->addDebug($debug->_dump($args));
-		echo stream_get_contents('php://memory');
-
-		//if ($debug->config['output']['screen'] == true) echo $debug->_dump($args);
+		echo Factory::load('Debug')->_dump($args);
 	}
 		
 	/**
@@ -396,7 +385,10 @@ class Debug {
 			$output .= $this->_debug_styles();
 		}
 		
-		return $output;
+		// output to screen		
+		if ($this->config['output']['screen'] == false) return '';
+
+		echo $output;
 	}
 
 

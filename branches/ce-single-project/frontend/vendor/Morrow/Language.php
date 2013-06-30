@@ -94,9 +94,9 @@ class Language {
 	
 	/**
 	 * The paths to look for new to translated strings.
-	 * @var array $_i18n_paths
+	 * @var array $_search_paths
 	 */
-	protected $_i18n_paths		= array();
+	protected $_search_paths		= array();
 
 	/**
 	 * Initializes the class and takes an array with four keys as configuration.
@@ -105,14 +105,14 @@ class Language {
 	 * -----|---------|---------|------------
 	 * array	| `possible`		| `null`	| Required. An array with valid language keys.
 	 * string	| `language_path`	| `""`		| Required. The path to all language files
-	 * array	| `i18n_paths`		| `null`	| Required. An array of paths the class should use for strings to translate
+	 * array	| `search_paths`	| `null`	| Required. An array of paths the class should use for strings to translate
 	 * string	| `language`		| possible[0] |	The actual language.
 	 *  
 	 * @param	array	$settings	An array that configures the language class
 	 */
 	public function __construct($settings) {
 		// check for required setting keys
-		$required = array('possible', 'language_path', 'i18n_paths');
+		$required = array('possible', 'language_path', 'search_paths');
 		if (count(array_diff($required, array_keys($settings))) > 0) {
 			throw new \Exception("Missing key(s). Required params are : " . implode(", ", $required));
 		}
@@ -121,7 +121,7 @@ class Language {
 		$this->_possible		= $settings['possible'];
 		$this->_default			= $settings['possible'][0];
 		$this->_language_path	= Helpers\General::cleanPath($settings['language_path']);
-		$this->_i18n_paths		= $settings['i18n_paths'];
+		$this->_search_paths		= $settings['search_paths'];
 
 		// set language
 		// default language was provided
@@ -347,7 +347,7 @@ class Language {
 	}
 
 	/**
-	 * Checks all paths given at class initialization via `i18n_paths` for translation calls with _(...) and creates the i18n.php files for all not default languages.
+	 * Checks all paths given at class initialization via `search_paths` for translation calls with _(...) and creates the i18n.php files for all not default languages.
 	 * Is automatically called if a language string in the function `_()` was not found.
 	 * @return	`null`
 	 */
@@ -356,7 +356,7 @@ class Language {
 
 		// search for all translation patterns
 		$files = array();
-		foreach ($this->_i18n_paths as $path) {
+		foreach ($this->_search_paths as $path) {
 			$files = array_merge($files, $this->_globRecursive($path));
 		}
 		

@@ -4,26 +4,19 @@ frontend/
 	vendor/
 	vendor_user/
 	app/
-		home.php				\App\PageController
 		configs/
+		languages/
 		logs/
 		models/					
 			User.php			von Controller > Models\User.php
-		templates/
-		i18n/
-		modules/
-			facebook/
-				Controller1.php	\App\Modules\Facebook\Controller1
-				Controller2.php	\App\Modules\Facebook\Controller2
-				models/
-					User.php	von Controller > Models\User.php
-				templates/
 		public/
 			index.php
 			images/
 			javascript/
 			css/
 		temp/
+		templates/
+		home.php				\App\PageController
 cms/
 	...
 
@@ -47,5 +40,3 @@ cms/
 
 ToDo:
 - Projekt auf Namespace "App" umbauen.
-- modules durchdenken
-- https://github.com/jbroadway/analog/ einbauen?

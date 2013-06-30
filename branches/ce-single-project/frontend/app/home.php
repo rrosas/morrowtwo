@@ -1,13 +1,10 @@
 <?php
 
-namespace Morrow;
+namespace App;
 
 class PageController extends DefaultController {
 	public function run() {
 		
-		//echo $test;
-		//echo $test3;
-		//Debug::dump($_SERVER);
-
+		$test = new Models\Test;
 	}
 }

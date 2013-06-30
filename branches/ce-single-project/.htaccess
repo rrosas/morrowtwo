@@ -10,8 +10,8 @@ RewriteEngine on
 # --------
 #
 # RewriteRule ^(.*)$ ...
-# RewriteRule ^(?!wordpress/?)(.*)$ ...
-# RewriteRule ^(?!wordpress/?|typo3/?)(.*)$ ...
+# RewriteRule ^(?!wordpress/)(.*)$ ...
+# RewriteRule ^(?!wordpress/|typo3/)(.*)$ ...
 
 
 # Maintenance mode
@@ -32,4 +32,4 @@ RewriteEngine on
 
 # Distribute requests to subfolders
 # ---------------------------------
-RewriteRule ^(?!cms/?|test/?)(.*)$ %{ENV:REWRITEBASE}frontend/$1?morrow_basehref_depth=3 [QSA]
+RewriteRule ^(?!cms/|test/)(.*)$ %{ENV:REWRITEBASE}frontend/$1?morrow_basehref_depth=3 [QSA]

@@ -3,12 +3,12 @@
 	"type": "project",
 	"require": {
 		"php": ">=5.3",
-		"phpmailer/phpmailer": "5.2.*",
-		"monolog/monolog": "1.5.*"
+		"phpmailer/phpmailer": "5.2.*"
 	},
 	 "autoload": {
 		"psr-0": {
 			"Morrow\\": ["vendor_user/", "vendor/"],
+			"App\\": ["app/"],
 			"": ["vendor_user/"]
 		}
 	}
