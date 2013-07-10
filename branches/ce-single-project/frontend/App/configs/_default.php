@@ -1,5 +1,13 @@
 <?php
 
+// the session should always be valid only for the current project
+$session_path = str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])).'/');
+// we have to take care of the basehref depth
+// if the projects public folder is not the document root
+if (isset($_GET['morrow_basehref_depth'])) {
+	$session_path = preg_replace('|([^/]+/){'.intval($_GET['morrow_basehref_depth']).'}$|', '', $session_path); // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
+}
+
 return array(
 // debug
 	'debug.output.screen'		=> true,
@@ -18,11 +26,12 @@ return array(
 
 // session
 	'session.handler'			=> 'Session', // The class name that should be used to handle the session
-	'session.lifetime'			=> 0, // Lifetime of the session cookie, defined in seconds.
-	'session.path'				=> str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])).'/'); // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
-	'session.domain'			=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
-	'session.secure'			=> false, // If TRUE cookie will only be sent over secure connections.
-	'session.httponly'			=> false, // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
+	'session.save_path'			=> APP_PATH . 'temp/sessions/', // The path where all sessions are stored
+	'session.cookie.lifetime'	=> 0, // Lifetime of the session cookie, defined in seconds.
+	'session.cookie.path'		=> $session_path, // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
+	'session.cookie.domain'		=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
+	'session.cookie.secure'		=> false, // If TRUE cookie will only be sent over secure connections.
+	'session.cookie.httponly'	=> true, // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
 
 // OPTIONAL: the following config vars are NOT neccessary for the framework to run
 // mailer

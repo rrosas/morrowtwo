@@ -75,19 +75,18 @@ class Session {
 			
 			// set cookie params
 			session_set_cookie_params(
-				$config['lifetime'],
-				$config['path'],
-				$config['domain'],
-				$config['secure'],
-				$config['httponly']
+				$config['cookie']['lifetime'],
+				$config['cookie']['path'],
+				$config['cookie']['domain'],
+				$config['cookie']['secure'],
+				$config['cookie']['httponly']
 			);
 			
-			// _GET has been removed, if session id comes from input, get it now
-			$session_id = isset($input_get[session_name()]) ? $input_get[session_name()] : null;
-			if (!is_null($session_id) && !empty($session_id)) {
-				session_id($session_id);
-			}
-			
+			// set save path
+			if (!is_dir($config['save_path'])) mkdir($config['save_path']);
+			session_save_path(rtrim($config['save_path'], '/'));
+			ini_set('session.gc_probability', 1); // in debian this is disabled by default...
+
 			// start session
 			session_start();
 		}

@@ -30,6 +30,7 @@ cms/
 ✓ Maintenance Mode in htaccess erlauben
 ✓ Projekt auf Namespace "App" umbauen.
 ✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
+✓ session save path in der config setzen und auf den temp-Ordner umstellen
 
 
 ✓ Projekte werden komplett getrennt behandelt
@@ -40,3 +41,6 @@ cms/
   
 
 ToDo:
+- Is it possible to set the stream for sessions to a database wrapper?
+- cms:// stream wrapper for cms
+- Morrow to FrontController
