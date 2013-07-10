@@ -15,34 +15,39 @@ RewriteEngine on
 # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 # RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
-# Emulate RewriteBase
+# Maintenance mode
 # -------------------
-# You just need to set this here if you need a RewriteBase and the public folder is set as document root
-# If the pulic folder is not document root but you need a rewrite base you have to set it in the project distributor .htaccess 
-# -------------------
-# Enable rewrite base for a TLD
-# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
-# RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
+# RewriteCond %{REMOTE_ADDR} !x.x.x.x
+# RewriteRule !(index\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
 
-# Disable rewrite base for development URLs
-# RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
-# RewriteRule . - [E=REWRITEBASE:]
+
+	# Emulate RewriteBase
+	# -------------------
+	# You just need to set this here if you need a RewriteBase and the public folder is set as document root
+	# If the pulic folder is not document root but you need a rewrite base you have to set it in the project distributor .htaccess 
+	# -------------------
+	# Enable rewrite base for a TLD
+	# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
+	# RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
+
+	# Disable rewrite base for development URLs
+	# RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
+	# RewriteRule . - [E=REWRITEBASE:]
 
 # Map request to index.php if the file was not found and there is no dot in the path
 # ---------------------------------------------------------------------------------------------
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([a-z0-9-/]*)$ %{ENV:REWRITEBASE}index.php/$1 [NC]
 
+			RewriteCond %{REQUEST_FILENAME} !-f
+			RewriteRule [^a-z0-9-/] 404/ [R=404]
 
-# Switch directory listing
+# Prevent directory listing
+# ---------------------------------------------------------------------------------------------
 Options -Indexes
 
-# prevent dirty coding
-<IfModule mod_speling.c>
-	CheckSpelling Off
-</IfModule>
-
-# deflate static ressources
+# Deflate static ressources
+# ---------------------------------------------------------------------------------------------
 <Ifmodule mod_deflate.c>
 	AddOutputFilterByType DEFLATE text/html text/plain text/css application/json
 	AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript 
@@ -50,6 +55,7 @@ Options -Indexes
 </IfModule>
 
 # Trigger IEs best render mode
+# ---------------------------------------------------------------------------------------------
 <IfModule mod_headers.c>
 	Header set X-UA-Compatible "IE=edge"
 </IfModule>

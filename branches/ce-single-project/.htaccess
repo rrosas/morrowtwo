@@ -14,19 +14,13 @@ RewriteEngine on
 # RewriteRule ^(?!wordpress/|typo3/)(.*)$ ...
 
 
-# Maintenance mode
-# -------------------
-# RewriteCond %{REMOTE_ADDR} !x.x.x.x
-# RewriteRule !(index\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
-
-
 # Emulate RewriteBase
 # -------------------
 # Enable rewrite base for a TLD
-# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
+# RewriteCond %{HTTP_HOST} \.[a-z]$
 # RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
 
-# Disable rewrite base for development URLs
+# Disable rewrite base for development URLs (simple host names and IPs)
 # RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
 # RewriteRule . - [E=REWRITEBASE:]
 

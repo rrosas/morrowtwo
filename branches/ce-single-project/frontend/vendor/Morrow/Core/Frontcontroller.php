@@ -29,7 +29,7 @@ use Morrow\Factoryproxy;
 /**
  * The main class which defines the cycle of a request.
  */
-class Morrow {
+class Frontcontroller {
 	/**
 	 * Will be set by the run() method as default error handler.
 	 * It throws an exception to normalize the handling of errors and exceptions.

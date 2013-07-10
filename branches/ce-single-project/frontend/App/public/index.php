@@ -16,4 +16,4 @@ define('VENDOR_USER_PATH', realpath(__DIR__ . '/../../vendor_user') . '/');
 require VENDOR_PATH . 'autoload.php';
 
 // execute Morrow framework
-new Core\Morrow();
+new Core\Frontcontroller();

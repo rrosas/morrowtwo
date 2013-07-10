@@ -3,11 +3,11 @@ frontend/
 	.htaccess
 	vendor/
 	vendor_user/
-	app/
+	App/
 		configs/
 		languages/
 		logs/
-		models/					
+		Models/					
 			User.php			von Controller > Models\User.php
 		public/
 			index.php
@@ -23,14 +23,15 @@ cms/
 ✓ Entweder man verwendet die htaccess files oder setzt den Document-Root direkt auf den Public-Ordner
 ✓ Man kann von allen drei htaccess-Ebenen einsteigen
 ✓ Autoloading in vendor_user läuft mit allen Namespaces (in vendor nur mit Composer-Namespaces)
-✓ Kein Punkt mehr in Morrow nodes erlaubt, um sauber 404-Fehler beim Resourcen zu handlen
+✓ Kein Punkt mehr in Morrow nodes erlaubt, um sauber 404-Fehler beim Resourcen zu handlen (nur noch [a-z0-9-])
 ✓ Nodes werden in lowercase umgewandelt. Parameter über Routing Rules kommen aber richtig an.
 ✓ Kein Controller-Ordner mehr, um die Verschachtelung klein zu halten
-✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden
+✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden (somit müsste lokale htaccess entfallen)
 ✓ Maintenance Mode in htaccess erlauben
 ✓ Projekt auf Namespace "App" umbauen.
 ✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
 ✓ session save path in der config setzen und auf den temp-Ordner umstellen
+✓ Morrow zu FrontController umbenannt
 
 
 ✓ Projekte werden komplett getrennt behandelt
@@ -41,6 +42,8 @@ cms/
   
 
 ToDo:
+- 404-Fehler auf 404/ umleiten
 - Is it possible to set the stream for sessions to a database wrapper?
 - cms:// stream wrapper for cms
-- Morrow to FrontController
+
+

@@ -25,7 +25,7 @@ return array(
 	),
 
 // session
-	'session.handler'			=> 'Session', // The class name that should be used to handle the session
+	'session.handler'			=> 'Session', // The class name that should be used to handle the session (e.g. "Session", "Sessiondb")
 	'session.save_path'			=> APP_PATH . 'temp/sessions/', // The path where all sessions are stored
 	'session.cookie.lifetime'	=> 0, // Lifetime of the session cookie, defined in seconds.
 	'session.cookie.path'		=> $session_path, // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
