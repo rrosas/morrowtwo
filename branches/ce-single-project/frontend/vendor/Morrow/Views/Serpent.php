@@ -56,7 +56,7 @@ class Serpent extends AbstractView {
 		$content['page']['template'] = $this->template;
 
 		$_engine = new \Serpent();
-		$_engine->compile_dir	= APP_PATH .'temp/_serpent_templates_compiled/';
+		$_engine->compile_dir	= APP_PATH .'temp/serpent_templates_compiled/';
 		$_engine->force_compile	= $this->force_compile;
 		$_engine->default_resource = $this->default_resource;
 		$_engine->default_compiler = $this->default_compiler;
