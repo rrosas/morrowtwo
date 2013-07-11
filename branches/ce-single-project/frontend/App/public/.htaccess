@@ -39,9 +39,6 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^([a-z0-9-/]*)$ %{ENV:REWRITEBASE}index.php/$1 [NC]
 
-			RewriteCond %{REQUEST_FILENAME} !-f
-			RewriteRule [^a-z0-9-/] 404/ [R=404]
-
 # Prevent directory listing
 # ---------------------------------------------------------------------------------------------
 Options -Indexes
