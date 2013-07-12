@@ -1,0 +1,29 @@
+RewriteEngine on
+
+# This htaccess is for separating projects (subfolders).
+# It is not used if the document roots are pointing to the projects "public" folders.
+#
+# One folder (in the examples "frontend") is the main project and reachable without specifying a subfolder.
+# The other projects are reachable as there would not be this htaccess, but you have to specify them in the RewriteRule.
+#
+# Examples
+# --------
+#
+# RewriteRule ^(.*)$ ...
+# RewriteRule ^(?!wordpress/)(.*)$ ...
+# RewriteRule ^(?!wordpress/|typo3/)(.*)$ ...
+
+
+# Emulate RewriteBase
+# -------------------
+# Enable rewrite base for a TLD
+# RewriteCond %{HTTP_HOST} \.[a-z]$
+# RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
+
+# Disable rewrite base for development URLs (simple host names and IPs)
+# RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
+# RewriteRule . - [E=REWRITEBASE:]
+
+# Distribute requests to subfolders
+# ---------------------------------
+RewriteRule ^(?!cms/|test/)(.*)$ %{ENV:REWRITEBASE}frontend/$1?morrow_basehref_depth=3 [QSA]
