@@ -42,7 +42,6 @@ cms/
   
 
 ToDo:
-- 404-Fehler auf 404/ umleiten
 - Is it possible to set the stream for sessions to a database wrapper?
 - cms:// stream wrapper for cms
 

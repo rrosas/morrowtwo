@@ -10,8 +10,8 @@ class PageController extends DefaultController {
 		// $test = new Models\Test;
 		// $test = Factory::load('\App\Models\Test');
 
-		$counter = $this->session->get('counter');
-		Debug::dump(++$counter);
-		$this->session->set('counter', $counter);
+		// 	$counter = $this->session->get('counter');
+		// 	Debug::dump(++$counter);
+		// 	$this->session->set('counter', $counter);
 	}
 }
