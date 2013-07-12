@@ -1,0 +1,468 @@
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:31:28
+URL:        /morrowtwo/branches/ce-single-project/test
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/test.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:31:32
+URL:        /morrowtwo/branches/ce-single-project/Test
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/test.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:46:25
+URL:        /morrowtwo/branches/ce-single-project/gdfghdf
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/gdfghdf.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:46:27
+URL:        /morrowtwo/branches/ce-single-project/gdfghdf/
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/gdfghdf.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:46:30
+URL:        /morrowtwo/branches/ce-single-project/gdfghdf/
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/gdfghdf.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:46:32
+URL:        /morrowtwo/branches/ce-single-project/gdfghdf/gsd
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/gdfghdf_gsd.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:47:05
+URL:        /morrowtwo/branches/ce-single-project/gdfghdf/gsd
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/gdfghdf_gsd.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      10.07.2013 - 17:55:15
+URL:        /morrowtwo/branches/ce-single-project/404/
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/404.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      11.07.2013 - 09:56:21
+URL:        /morrowtwo/branches/ce-single-project/gfdg
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/gfdg.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      12.07.2013 - 11:32:14
+URL:        /morrowtwo/branches/ce-single-project/test
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/test.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      12.07.2013 - 11:32:26
+URL:        /morrowtwo/branches/ce-single-project/tester
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/tester.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      12.07.2013 - 11:32:32
+URL:        /morrowtwo/branches/ce-single-project/cms-test
+IP:         172.20.1.147
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.71 Safari/537.36
+Meldung:    file_get_contents(/var/www/morrowtwo/branches/ce-single-project/frontend/app/templates/cms-test.htm): failed to open stream: No such file or directory
+Backtrace:  
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: ()
+
+       File:  (Line )
+   Function: Morrow\Core\Frontcontroller->errorHandler()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/plugins/resource.file.php (Line 35)
+   Function: file_get_contents()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 181)
+   Function: SerpentResourceFile->getTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 164)
+   Function: Serpent->_compileTemplate()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/serpent_1.3/source/serpent.class.php (Line 77)
+   Function: Serpent->_render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Views/Serpent.php (Line 105)
+   Function: Serpent->render()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/View.php (Line 167)
+   Function: Morrow\Views\Serpent->getOutput()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 320)
+   Function: Morrow\View->get()
+
+       File: /var/www/morrowtwo/branches/ce-single-project/frontend/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
