@@ -21,10 +21,11 @@
 
 /*
 CREATE TABLE IF NOT EXISTS `files` (
-  `id` char(255) NOT NULL,
+  `id` char(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `type` enum('file','dir') CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `data` longblob NOT NULL,
   `ctime` datetime NOT NULL,
-  `mtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  `mtime` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Used for Db stream wrapper';
 */
