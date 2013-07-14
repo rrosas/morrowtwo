@@ -32,7 +32,7 @@ cms/
 ✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
 ✓ session save path in der config setzen und auf den temp-Ordner umstellen
 ✓ Morrow zu FrontController umbenannt
-
+✓ log und error Pfad in config änderbar und somit auf den DB stream wrapper mappable
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
@@ -44,5 +44,3 @@ cms/
 ToDo:
 - Is it possible to set the stream for sessions to a database wrapper?
 - cms:// stream wrapper for cms
-
-

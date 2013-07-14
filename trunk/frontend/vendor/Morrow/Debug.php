@@ -92,9 +92,10 @@ class Debug {
 
 	/**
 	 * Initializes the class. This is done internally.
+	 * @param	array	$config	All config parameters.
 	 */
-	public function __construct($config, $logfile) {
-		$this->_logfile	= $logfile;
+	public function __construct($config) {
+		$this->_logfile	= $config['file']['path'];
 		$this->config	= $config;
 
 		// error types

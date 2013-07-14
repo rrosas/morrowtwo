@@ -54,10 +54,10 @@ class Log {
 
 	/**
 	 * Initializes the log class.
-	 * @param	string	$logfile	The path to the logfile.
+	 * @param	array	$config	All config parameters.
 	 */
-	public function __construct($logfile) {
-		$this->_logfile = $logfile;
+	public function __construct($config) {
+		$this->_logfile = $config['file']['path'];
 	}
 
 	/**
@@ -90,8 +90,7 @@ class Log {
 			// get dump
 			ob_start();
 			var_dump($arg);
-			$dump = ob_get_contents();
-			ob_end_clean();
+			$dump = ob_get_clean();
 			
 			$output .= $dump;
 		}
