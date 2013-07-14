@@ -19,49 +19,56 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
+/*
+CREATE TABLE IF NOT EXISTS `files` (
+  `id` char(255) NOT NULL,
+  `data` longblob NOT NULL,
+  `ctime` datetime NOT NULL,
+  `mtime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Used for Db stream wrapper';
+*/
 
 namespace Morrow\Streams;
 
 class Db {
-	public static $_pdo = array();
+	public static $config = array();
 	
 	protected $scheme;
 	protected $table;
 	protected $id;
-	protected $pdo;
+	protected $db;
 
-	public function __construct($scheme = null, \PDO $pdo = null) {
+	public function __construct($scheme = null, $table = null, \Morrow\Db $db = null) {
 		if(!$scheme) return;
 		
-		self::$_pdo[$scheme] = $pdo;
+		self::$config[$scheme] = array(
+			'db'	=> $db,
+			'table'	=> $table,
+		);
 		stream_register_wrapper($scheme, __CLASS__);
 	}
 
 	function stream_open($path, $mode, $options, &$opath) {
 		$path_array		= parse_url($path);
 		$this->scheme	= $path_array['scheme'];
-		$this->table	= $path_array['host'];
 		$this->id		= ltrim($path_array['path'], '/');
-		$this->pdo		= self::$_pdo[$this->scheme];
+		$this->db		= self::$config[$this->scheme]['db'];
+		$this->table	= self::$config[$this->scheme]['table'];
 		
-		var_dump($this);
+		//var_dump($this);
+		//die();
 
-		//$this->config = Factory::load('Config');
-		//$this->_db = Factory::load('Db', $this->config->get($dbName));
+		// handle the different modes
+		$sql = $this->db->result("SELECT * FROM ". $this->table ." WHERE id = ? LIMIT 1", $this->id);
+		if ($sql['NUM_ROWS'] === 0) return false;
+		return true;
+	}
 
-		/*try{
-			$this->_pdo = new PDO("mysql:host={$url['host']};dbname={$url['path']}", $url['user'], isset($url['pass'])? $url['pass'] : '', array());
-		} catch(PDOException $e){ return false; }
-		/*switch ($mode){
-			case 'w' :
-				$this->_ps = $this->_pdo->prepare('INSERT INTO data VALUES(null, ?, NOW())');
-				break;
-			case 'r' :
-				$this->_ps = $this->_pdo->prepare('SELECT id, data FROM data WHERE id > ? LIMIT 1');
-				break;
-			default  : return false;
-		}*/
-		return $this;
+	function stream_stat() {
+		// implement atime (dont do that, not performant)
+		// implement ctime
+		// implement mtime
 	}
 
 	function stream_read()
