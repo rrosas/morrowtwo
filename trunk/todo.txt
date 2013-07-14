@@ -44,5 +44,3 @@ cms/
 ToDo:
 - Is it possible to set the stream for sessions to a database wrapper?
 - cms:// stream wrapper for cms
-- Die Factory lässt gerade nicht Db und Streams\Db initialisieren, weil sie ja nur das letzte Stück als ID nimmt
-  kann man strtolower(getClass($obj)) als identifier verwenden? Gibt das Probleme?
