@@ -6,7 +6,13 @@ use Morrow\Debug;
 
 class PageController extends DefaultController {
 	public function run() {
+		// You have to do this before working with the session
 		$this->prepare('Db', $this->config->get('db'));
+		Factory::load('Streams\Db:streamdb_files', 'db', 'files', new \Morrow\Factoryproxy('Db'));
+		
+		$this->session->set('fdfsdfsd', 'fd');
+		//echo $this->session->get('fdfsdfsd');
+
 
 		// $test = new Models\Test;
 		// $test = Factory::load('\App\Models\Test');
@@ -15,12 +21,11 @@ class PageController extends DefaultController {
 		// 	Debug::dump(++$counter);
 		// 	$this->session->set('counter', $counter);
 
-		Factory::load('Streams\Db:streamdb_files', 'db', 'files', $this->db);
 		#Factory::load('Streams\Db:streamdb_sessions', 'sessions', 'sessions', $this->db);
 		
 		clearstatcache();
 
-		//file_put_contents('db://images/test.jpg', 'ulf');
+		//file_put_contents('db://images/test.jpg', 'ulf2');
 		//unlink('db://images/test2.jpg');
 		//file_put_contents('db://images/test2.jpg', '123');
 
@@ -33,7 +38,7 @@ class PageController extends DefaultController {
 		// var_dump(is_writable('db://images/test.jpg'));
 		// var_dump(is_executable('db://images/test.jpg'));
 		// var_dump(filemtime('db://images/test.jpg'));
-		//var_dump(touch('db://images/test.jpg'));
+		// var_dump(touch('db://images/test.jpg'));
 
 		//print_r( file_get_contents('db://images/test.jpg') );
 	}
