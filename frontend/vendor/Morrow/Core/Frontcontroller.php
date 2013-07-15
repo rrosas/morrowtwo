@@ -260,20 +260,6 @@ class Frontcontroller {
 		$this->view	= Factory::load('View');
 		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath);
 		
-		// for the session class we use the factoryproxy because we have to pass the dependency into the Security class
-		// but maybe the Security class is not used 
-		/*
-		$this->session = new Factoryproxy(
-			$config['session']['handler'].':session',
-			$config['session'],
-			$this->input->get()
-		);
-		*/
-
-		// just for the FORM class we have to initialize it here
-		// remove this line and comment the in the code above when the form class was rebuild
-		$this->session = Factory::load($config['session']['handler'].':session', $config['session'], $this->input->get());
-
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
 		Factory::prepare('Cache', APP_PATH .'temp/codecache/');
@@ -282,7 +268,8 @@ class Frontcontroller {
 		Factory::prepare('Log', $config['log']);
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
-		Factory::prepare('Security', $this->session, $this->view, $this->input, $this->url);
+		Factory::prepare('Session', $config['session'], $this->input->get());
+		Factory::prepare('Security', new Factoryproxy('Session'), $this->view, $this->input, $this->url);
 
 		/* define page params
 		********************************************************************************************/
