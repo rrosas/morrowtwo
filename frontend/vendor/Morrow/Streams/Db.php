@@ -36,9 +36,13 @@ class Db {
 	public static $config = array();
 	
 	protected $scheme;
+	protected $db;
+
 	protected $table;
 	protected $id;
-	protected $db;
+	protected $entry;
+	protected $pos = 0;
+	protected $mode;
 
 	public function __construct($scheme = null, $table = null, \Morrow\Db $db = null) {
 		if(!$scheme) return;
@@ -50,54 +54,164 @@ class Db {
 		stream_register_wrapper($scheme, __CLASS__);
 	}
 
-	function stream_open($path, $mode, $options, &$opath) {
-		$path_array		= parse_url($path);
-		$this->scheme	= $path_array['scheme'];
-		$this->id		= ltrim($path_array['path'], '/');
-		$this->db		= self::$config[$this->scheme]['db'];
-		$this->table	= self::$config[$this->scheme]['table'];
-		
-		//var_dump($this);
-		//die();
+	public function stream_cast() {
+		// Should return the underlying stream resource used by the wrapper, or FALSE.
+		return false;
+	}
 
-		// handle the different modes
-		$sql = $this->db->result("SELECT * FROM ". $this->table ." WHERE id = ? LIMIT 1", $this->id);
-		if ($sql['NUM_ROWS'] === 0) return false;
+	public function stream_close() {
+		// All resources that were locked, or allocated, by the wrapper should be released.
+		return;
+	}
+
+	public function stream_eof() {
+		return ($this->pos === strlen($this->entry['data']) - 1);
+	}
+
+	public function stream_flush() {
+		// Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
+		// because er have stored the data in stream_write() there is no possibility to return false.
 		return true;
 	}
 
-	function stream_stat() {
-		// implement atime (dont do that, not performant)
-		// implement ctime
-		// implement mtime
+	public function stream_lock($operation) {
+		return false;
 	}
 
-	function stream_read()
-	{
-		$this->_ps->execute(array($this->_rowId));
-		if($this->_ps->rowCount() == 0) return false;
-		$this->_ps->bindcolumn(1, $this->_rowId);
-		$this->_ps->bindcolumn(2, $ret);
-		$this->_ps->fetch();
-		return $ret;
+	public function stream_metadata($path, $option, $value) {
+		return false;
 	}
 
-	function stream_write($data)
-	{
-		$this->_ps->execute(array($data));
+	public function stream_open($path, $mode, $options, &$opath) {
+		$parts = explode('://', $path, 2);
+
+		$this->scheme	= $parts[0];
+		$this->id		= $parts[1];
+		$this->db		= self::$config[$this->scheme]['db'];
+		$this->table	= self::$config[$this->scheme]['table'];
+		$this->mode		= $mode;
+		$this->exists	= false;
+		
+		$this->entry = array(
+			'id'	=> $this->id,
+			'type'	=> 'file',
+			'data'	=> '',
+			'ctime'	=> time(),
+			'mtime'	=> time(),
+		);
+
+		// handle the different modes
+		$sql = $this->db->result("
+			SELECT
+				id,
+				type,
+				data,
+				UNIX_TIMESTAMP(ctime) AS ctime,
+				UNIX_TIMESTAMP(mtime) AS mtime
+			FROM ". $this->table ."
+			WHERE id = ?
+			LIMIT 1
+		", $this->id);
+
+		// if file already exists: false
+		if (in_array($this->mode, array('x', 'x+')) && $sql['NUM_ROWS'] === 0) return false;
+
+		if (isset($sql['RESULT'][0])) {
+			$this->entry = array_merge($this->entry, $sql['RESULT'][0]);
+			$this->exists	= true;
+		}
+
+		// truncate file
+		if (in_array($this->mode, array('w', 'x+'))) {
+			$this->entry['data'] = '';
+		}
+
+		// set cursor position if different to 0
+		if (in_array($this->mode, array('a', 'a+'))) {
+			$this->pos = strlen($this->entry['data']) - 1;
+		}
+
+		return true;
+	}
+
+	public function stream_read($count) {
+		$returner = substr($this->entry['data'], $this->pos, $count);
+		// update position
+		$this->pos = min($this->pos + $count, strlen($this->entry['data']));
+		return $returner;
+	}
+
+	public function stream_seek($offset, $whence = SEEK_SET) {
+		if ($whence == SEEK_SET) $this->pos = $offset;
+		elseif ($whence == SEEK_CUR) $this->pos += $offset;
+		elseif ($whence == SEEK_END) $this->pos = strlen($this->entry['data']) - 1 + $offset;
+		else { return false; }
+		return true;
+	}
+
+	public function stream_set_option() {
+		return false;
+	}
+
+	public function stream_stat() {
+		// do not return anything if file not exists
+		if (!$this->exists) return false;
+
+		return array(
+			'dev'		=> 0,
+			'ino'		=> 0,
+			'mode'		=> 33279,
+			'nlink'		=> 0,
+			'uid'		=> 0,
+			'gid'		=> 0,
+			'rdev'		=> 0,
+			'size'		=> strlen($this->entry['data']),
+			'atime'		=> 0,
+			'mtime'		=> $this->entry['mtime'],
+			'ctime'		=> $this->entry['ctime'],
+			'blksize'	=> 0,
+			'blocks'	=> 0,
+		);
+	}
+
+	public function stream_tell() {
+		return $this->pos;
+	}
+
+	public function stream_truncate($new_size) {
+		$this->entry['data'] = '';
+		$this->pos = 0;
+		return true;
+	}
+
+	public function stream_write($data) {
+		// try to add entry if it does not exist
+		if (in_array($this->mode, array('w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+'))) {
+			
+		}
+
+		$this->entry['data']	= $data;
+		$this->entry['ctime']	= date('Y-m-d H:i:s', $this->entry['ctime']);
+		$this->entry['mtime']	= date('Y-m-d H:i:s', time());
+		$this->db->replace($this->table, $this->entry);
+
 		return strlen($data);
 	}
 
-	function stream_tell()
-	{
-		return $this->_rowId;
+	public function unlink($path) {
+		$this->stream_open($path, 'r', array(), $opath);
+		$sql = $this->db->delete($this->table, 'WHERE id=?', false, $this->id);
+		if ($sql['SUCCESS']) return true;
+		return false;
 	}
 
-	function stream_eof()
-	{
-		$this->_ps->execute(array($this->_rowId));
-		return (bool) $this->_ps->rowCount();
-	}
+	public function url_stat($filename) {
+		$this->stream_open($filename, 'r', array(), $opath);
+		
+		// do not return anything if file not exists
+		if (!$this->exists) return false;
 
-	function stream_seek($offset, $step) {}
+		return $this->stream_stat();
+
+	}
 }
