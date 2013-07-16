@@ -146,7 +146,6 @@ class Db {
 
 	public function stream_open($path, $mode, $options, &$opath) {
 		var_dump('stream_open');
-		var_dump($path);
 		
 		$parts = explode('://', $path, 2);
 
@@ -222,6 +221,8 @@ class Db {
 	}
 
 	public function stream_stat() {
+		var_dump('Exists: ');
+		var_dump($this->exists);
 		var_dump('stream_stat');
 		// do not return anything if file not exists
 		if (!$this->exists) return false;
