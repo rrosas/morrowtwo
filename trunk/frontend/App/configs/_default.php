@@ -33,13 +33,12 @@ return array(
 	'log.file.path'				=> APP_PATH .'logs/log_'. date('Y-m-d') .'.txt',
 	
 // session
-	'session.handler'			=> 'Session', // The class name that should be used to handle the session (e.g. "Session", "Sessiondb")
-	'session.save_path'			=> APP_PATH . 'temp/sessions/', // The path where all sessions are stored
-	'session.cookie.lifetime'	=> 0, // Lifetime of the session cookie, defined in seconds.
-	'session.cookie.path'		=> $session_path, // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
-	'session.cookie.domain'		=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
-	'session.cookie.secure'		=> false, // If TRUE cookie will only be sent over secure connections.
-	'session.cookie.httponly'	=> true, // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
+	'session.save_path'			=> 'file://' . APP_PATH . 'temp/sessions/', // The path where all sessions are stored (it is also possible to use stream wrappers)
+	'session.cookie_lifetime'	=> 0, // Lifetime of the session cookie, defined in seconds.
+	'session.cookie_path'		=> $session_path, // Path on the domain where the cookie will work. Use a single slash ('/') for all paths on the domain.
+	'session.cookie_domain'		=> '', // Cookie domain, for example 'www.php.net'. To make cookies visible on all subdomains then the domain must be prefixed with a dot like '.php.net'.
+	'session.cookie_secure'		=> false, // If TRUE cookie will only be sent over secure connections.
+	'session.cookie_httponly'	=> true, // If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie.
 	
 // OPTIONAL: the following config vars are NOT neccessary for the framework to run
 // mailer

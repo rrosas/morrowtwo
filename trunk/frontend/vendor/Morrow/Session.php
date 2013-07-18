@@ -65,27 +65,42 @@ class Session {
 	protected $section = "main";
 
 	/**
+	 * Defines the save path where the sessions are stored
+	 * @var string $save_path
+	 */
+	protected $save_path = "";
+
+	/**
 	 * Initializes the class. Usually you don't have to initialize this class yourself.
 	 * 
 	 * @param array $config	Config parameters as an associative array that are passed to session_set_cookie_params(). Use the keys `lifetime`, `path`, `domain`, `secure` and `httponly` that are described in the documentation to session_set_cookie_params().
-	 * @param array $input_get	Pass the input data eg. which could contain the session id, eg. $_GET. That is used to allow a session id to be passed via GET.
 	 */
-	public function __construct($config, $input_get) {
+	public function __construct($config) {
 		if (ini_get('session.auto_start') != true) {
 			
 			// set cookie params
 			session_set_cookie_params(
-				$config['cookie']['lifetime'],
-				$config['cookie']['path'],
-				$config['cookie']['domain'],
-				$config['cookie']['secure'],
-				$config['cookie']['httponly']
+				$config['cookie_lifetime'],
+				$config['cookie_path'],
+				$config['cookie_domain'],
+				$config['cookie_secure'],
+				$config['cookie_httponly']
 			);
 			
+			// we start an own session handler which supports stream wrappers
+			session_set_save_handler(
+				array($this, "on_session_start"),
+				array($this, "on_session_end"),
+				array($this, "on_session_read"),
+				array($this, "on_session_write"),
+				array($this, "on_session_destroy"),
+				array($this, "on_session_gc")
+			);
+
 			// set save path
 			if (!is_dir($config['save_path'])) mkdir($config['save_path']);
-			session_save_path(rtrim($config['save_path'], '/'));
 			ini_set('session.gc_probability', 1); // in debian this is disabled by default...
+			$this->save_path = $config['save_path'];
 
 			// start session
 			session_start();
@@ -152,5 +167,49 @@ class Session {
 			session_unset();
 			$_SESSION['SERVER_GENERATED_SID'] = md5($_SERVER['HTTP_USER_AGENT']);
 		}
+	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
+	public function on_session_start($save_path, $session_name) {
+		return true;
+	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
+	public function on_session_end() {
+		return true;
+	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
+	public function on_session_read($key) {
+		$path = $this->save_path . $key;
+		if (is_file($path)) return file_get_contents($path);
+		return '';
+	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
+	public function on_session_write($key, $val) {
+		file_put_contents($this->save_path . $key, $val);
+	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
+	public function on_session_destroy($key) {
+		unlink($this->save_path . $key);
+	}
+
+	/**
+	 * passed to session_set_save_handler()
+	 */
+	public function on_session_gc($max_lifetime) {
+		//$this->db->delete($this->config['db.table'], "where mtime < ?", false, date('Y-m-d H:i:s'));
 	}
 }

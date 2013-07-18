@@ -8,24 +8,21 @@ class PageController extends DefaultController {
 	public function run() {
 		// You have to do this before working with the session
 		$this->prepare('Db', $this->config->get('db'));
-		Factory::load('Streams\Db:streamdb_files', 'db', 'files', new \Morrow\Factoryproxy('Db'));
 		
-		$this->session->set('fdfsdfsd', 'fd');
-		//echo $this->session->get('fdfsdfsd');
 
-
-		// $test = new Models\Test;
-		// $test = Factory::load('\App\Models\Test');
-
-		// 	$counter = $this->session->get('counter');
-		// 	Debug::dump(++$counter);
-		// 	$this->session->set('counter', $counter);
-
-		#Factory::load('Streams\Db:streamdb_sessions', 'sessions', 'sessions', $this->db);
-		
 		clearstatcache();
 
+		Factory::load('Streams\Db:streamdb_sessions', 'db', $this->db, 'sessions');
+		//unlink('db://images/test.jpg');
+		//$this->session->set('test', 'sb');
+		echo $this->session->get('test');
+		//print_r(scandir('sessions://'));
+
+
+
+		Factory::load('Streams\Db:streamdb_files', 'files', $this->db, 'files');
 		//file_put_contents('db://images/test.jpg', 'ulf2');
+		//file_get_contents('db://images/test.jpg');
 		//unlink('db://images/test2.jpg');
 		//file_put_contents('db://images/test2.jpg', '123');
 
@@ -41,5 +38,16 @@ class PageController extends DefaultController {
 		// var_dump(touch('db://images/test.jpg'));
 
 		//print_r( file_get_contents('db://images/test.jpg') );
+
+
+
+
+
+		// $test = new Models\Test;
+		// $test = Factory::load('\App\Models\Test');
+
+		// 	$counter = $this->session->get('counter');
+		// 	Debug::dump(++$counter);
+		// 	$this->session->set('counter', $counter);
 	}
 }
