@@ -268,7 +268,7 @@ class Frontcontroller {
 		Factory::prepare('Log', $config['log']);
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
-		Factory::prepare('Session', $config['session'], $this->input->get());
+		Factory::prepare('Session', $config['session']);
 		Factory::prepare('Security', new Factoryproxy('Session'), $this->view, $this->input, $this->url);
 
 		/* define page params

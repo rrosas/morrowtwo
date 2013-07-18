@@ -37,14 +37,18 @@ class Db {
 	
 	protected $scheme;
 	protected $db;
-
 	protected $table;
+	
+	// dir parameters
+	protected $dir;
+
+	// file parameters
 	protected $id;
 	protected $entry;
 	protected $pos = 0;
 	protected $mode;
 
-	public function __construct($scheme = null, $table = null, \Morrow\Db $db = null) {
+	public function __construct($scheme = null, \Morrow\Db $db = null, $table = null) {
 		if(!$scheme) return;
 		
 		self::$config[$scheme] = array(
@@ -54,28 +58,19 @@ class Db {
 		stream_register_wrapper($scheme, __CLASS__);
 	}
 
-
-
-
 	public function dir_closedir() {
 		// Any resources which were locked, or allocated, during opening and use of the directory stream should be released.
 		return true;
 	}
 
 	public function dir_opendir($path, $options) {
-		var_dump($path);
-		die();
 		return true;
 	}
 
 	public function dir_readdir($path, $options) {
-		var_dump('dir_readdir');
-		die();
 	}
 
 	public function dir_rewinddir($path, $options) {
-		var_dump('dir_rewinddir');
-		die();
 	}
 
 	public function mkdir($path, $mode, $options) {
@@ -99,17 +94,10 @@ class Db {
 	}
 
 	public function rename($path, $options) {
-		var_dump('rename');
-		die();
 	}
 
 	public function rmdir($path, $options) {
-		var_dump('rmdir');
-		die();
 	}
-
-
-
 
 	public function stream_cast() {
 		// Should return the underlying stream resource used by the wrapper, or FALSE.
@@ -117,36 +105,29 @@ class Db {
 	}
 
 	public function stream_close() {
-		var_dump('stream_close');
 		// All resources that were locked, or allocated, by the wrapper should be released.
 		return;
 	}
 
 	public function stream_eof() {
-		var_dump('stream_eof');
 		return ($this->pos === strlen($this->entry['data']) - 1);
 	}
 
 	public function stream_flush() {
-		var_dump('stream_flush');
 		// Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
 		// because er have stored the data in stream_write() there is no possibility to return false.
 		return true;
 	}
 
 	public function stream_lock($operation) {
-		var_dump('stream_lock');
 		return false;
 	}
 
 	public function stream_metadata($path, $option, $value) {
-		var_dump('stream_metadata');
 		return false;
 	}
 
 	public function stream_open($path, $mode, $options, &$opath) {
-		var_dump('stream_open');
-		
 		$parts = explode('://', $path, 2);
 
 		$this->scheme	= $parts[0];
@@ -199,7 +180,6 @@ class Db {
 	}
 
 	public function stream_read($count) {
-		var_dump('stream_read');
 		$returner = substr($this->entry['data'], $this->pos, $count);
 		// update position
 		$this->pos = min($this->pos + $count, strlen($this->entry['data']));
@@ -207,7 +187,6 @@ class Db {
 	}
 
 	public function stream_seek($offset, $whence = SEEK_SET) {
-		var_dump('stream_seek');
 		if ($whence == SEEK_SET) $this->pos = $offset;
 		elseif ($whence == SEEK_CUR) $this->pos += $offset;
 		elseif ($whence == SEEK_END) $this->pos = strlen($this->entry['data']) - 1 + $offset;
@@ -216,21 +195,17 @@ class Db {
 	}
 
 	public function stream_set_option() {
-		var_dump('stream_set_option');
 		return false;
 	}
 
 	public function stream_stat() {
-		var_dump('Exists: ');
-		var_dump($this->exists);
-		var_dump('stream_stat');
 		// do not return anything if file not exists
 		if (!$this->exists) return false;
 
 		return array(
 			'dev'		=> 0,
 			'ino'		=> 0,
-			'mode'		=> ($this->entry['type'] === 'dir' ? 16895 : 33279),
+			'mode'		=> ($this->entry['type'] === 'dir' ? 17407 : 33216),
 			'nlink'		=> 0,
 			'uid'		=> 0,
 			'gid'		=> 0,
@@ -245,19 +220,16 @@ class Db {
 	}
 
 	public function stream_tell() {
-		var_dump('stream_tell');
 		return $this->pos;
 	}
 
 	public function stream_truncate($new_size) {
-		var_dump('stream_truncate');
 		$this->entry['data'] = '';
 		$this->pos = 0;
 		return true;
 	}
 
 	public function stream_write($data) {
-		var_dump('stream_write');
 		// try to add entry if it does not exist
 		if (in_array($this->mode, array('w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+'))) {
 			
@@ -272,15 +244,13 @@ class Db {
 	}
 
 	public function unlink($path) {
-		var_dump('unlink');
 		$this->stream_open($path, 'r', array(), $opath);
-		$sql = $this->db->delete($this->table, 'WHERE id=?', false, $this->id);
-		if ($sql['SUCCESS']) return true;
+		$sql = $this->db->delete($this->table, 'WHERE id=?', true, $this->id);
+		if ($sql['SUCCESS'] && $sql['AFFECTED_ROWS'] !== 0) return true;
 		return false;
 	}
 
 	public function url_stat($filename) {
-		var_dump('url_stat');
 		$this->stream_open($filename, 'r', array(), $opath);
 		
 		// do not return anything if file not exists

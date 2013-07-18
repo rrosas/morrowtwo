@@ -27,12 +27,11 @@ cms/
 ✓ Nodes werden in lowercase umgewandelt. Parameter über Routing Rules kommen aber richtig an.
 ✓ Kein Controller-Ordner mehr, um die Verschachtelung klein zu halten
 ✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden (somit müsste lokale htaccess entfallen)
-✓ Maintenance Mode in htaccess erlauben
 ✓ Projekt auf Namespace "App" umbauen.
 ✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
 ✓ session save path in der config setzen und auf den temp-Ordner umstellen
 ✓ Morrow zu FrontController umbenannt
-✓ log und error Pfad in config änderbar und somit auf den DB stream wrapper mappable
+
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
@@ -42,5 +41,12 @@ cms/
   
 
 ToDo:
-- Is it possible to set the stream for sessions to a database wrapper?
-- cms:// stream wrapper for cms
+- view->setContent();
+  so einstellen, dass man auch Schlüssel, Wert hat
+  Dann muss man halt bei allen anderen view-Handlern content angeben
+
+- on_session_gc() ist noch nicht gebaut
+
+
+- streamwrapper auf reines PDO umstellen
+  braucht gar kein PDO, wenn der streamwrapper auch die dir-Funktionen handlet
