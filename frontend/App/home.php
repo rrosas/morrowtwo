@@ -9,21 +9,18 @@ class PageController extends DefaultController {
 		// You have to do this before working with the session
 		$this->prepare('Db', $this->config->get('db'));
 		
-
-		clearstatcache();
-
-		Factory::load('Streams\Db:streamdb_sessions', 'db', $this->db, 'sessions');
+		Factory::load('Streams\Db:streamdb_sessions', 'dbs', $this->db, 'sessions');
 		//unlink('db://images/test.jpg');
-		//$this->session->set('test', 'sb');
-		echo $this->session->get('test');
+		//$this->session->set('debug', 'test');
+		echo $this->session->get('debug');
 		//print_r(scandir('sessions://'));
 
 
 
-		Factory::load('Streams\Db:streamdb_files', 'files', $this->db, 'files');
-		//file_put_contents('db://images/test.jpg', 'ulf2');
+		//Factory::load('Streams\Db:streamdb_files', 'db', $this->db, 'files');
+		//file_put_contents('db://images/test.jpg', 'ulfggdfgfdgdfgdf2');
 		//file_get_contents('db://images/test.jpg');
-		//unlink('db://images/test2.jpg');
+		//unlink('db://images/test.jpg');
 		//file_put_contents('db://images/test2.jpg', '123');
 
 		//$bla = fopen('db://images/test.jpg', 'w');

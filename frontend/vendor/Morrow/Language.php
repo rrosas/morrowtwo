@@ -40,11 +40,11 @@ namespace Morrow;
  *  
  * // passing language content to the template
  * $language_content = $this->language->getContent($alias);
- * $this->view->setContent($language_content);
+ * $this->view->setContent('language_content', $language_content);
  *  
  * // passing the list of available translations to the template
  * $translations = $this->language->getTranslations($alias);
- * $this->view->setContent($translations, 'translations');
+ * $this->view->setContent('translations', $translations);
  *  
  * // ... Controller code
  * ~~~

@@ -303,7 +303,7 @@ class Frontcontroller {
 		}
 
 		// assign the content to the view
-		$this->view->setContent($this->page->get(), 'page');
+		$this->view->setContent('page', $this->page->get());
 
 		$view = $this->view->get();
 		$headers = $view['headers'];

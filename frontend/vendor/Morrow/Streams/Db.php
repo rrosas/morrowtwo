@@ -41,6 +41,8 @@ class Db {
 	
 	// dir parameters
 	protected $dir;
+	protected $entries;
+	protected $entries_pos = 0;
 
 	// file parameters
 	protected $id;
@@ -64,13 +66,40 @@ class Db {
 	}
 
 	public function dir_opendir($path, $options) {
+		$parts = explode('://', $path, 2);
+
+		$this->scheme	= $parts[0];
+		$this->dir		= rtrim($parts[1] ,'/') . '/';
+		$this->db		= self::$config[$this->scheme]['db'];
+		$this->table	= self::$config[$this->scheme]['table'];
+
+		if ($this->dir === '/') $this->dir = '';
+
+		// handle the different modes
+		$sql = $this->db->result("
+			SELECT
+				id,
+				type,
+				data,
+				UNIX_TIMESTAMP(ctime) AS ctime,
+				UNIX_TIMESTAMP(mtime) AS mtime
+			FROM ". $this->table ."
+			WHERE id RLIKE ?
+		", $this->dir . '[^/]+$');
+		
+		$this->entries = $sql['RESULT'];
 		return true;
 	}
 
-	public function dir_readdir($path, $options) {
+	public function dir_readdir() {
+		if (isset($this->entries[$this->entries_pos])) {
+			return $this->entries[$this->entries_pos++]['id'];
+		}
+		return false;
 	}
 
-	public function dir_rewinddir($path, $options) {
+	public function dir_rewinddir() {
+		$this->entries_pos = 0;
 	}
 
 	public function mkdir($path, $mode, $options) {

@@ -32,7 +32,7 @@ namespace Morrow;
 * // ... Controller-Code
 *  
 * $this->view->setHandler('XML');
-* $this->view->setContent($data);
+* $this->view->setContent('content', $data);
 * $this->view->setProperty('charset', 'iso-8859-1');
 *  
 * // ... Controller-Code
@@ -90,7 +90,7 @@ class View {
 	 * @param	boolean	$overwrite	Set to true if you want to overwrite an existing value. Otherwise you will get an Exception.
 	 * @return	null
 	 */
-	public function setContent($value, $key = 'content', $overwrite = false) {
+	public function setContent($key, $value, $overwrite = false) {
 		// validation
 		if (!is_string($key) || empty($key)) {
 			throw new \Exception(__CLASS__.': the key has to be of type "string" and not empty.');
