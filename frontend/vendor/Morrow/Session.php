@@ -23,12 +23,8 @@
 namespace Morrow;
 
 /**
-* The class for accessing the user session with methods for getting, setting and deleting content and is always initialized by Morrow.
+* A class for accessing the user session with methods for getting, setting and deleting content and is always initialized by Morrow.
 *
-* The class is not interested in the way sessioning is handled by PHP and uses whatever is the default setting (usually PHP saves to the file system).
-* It can be extended to take care of different session handling methods. Morrow provides a class for saving sessions in the database: Dbsession.
-* This can also be used as an example for defining one's own session handling.
-* 
 * Dot Syntax
 * ----------
 * 
@@ -46,6 +42,23 @@ namespace Morrow;
 * if ($visits === null) $visits = 0;
 *  
 * $this->session->set('visits', ++$visits);
+* 
+* // ... Controller code
+* ~~~
+*
+* The class registers itself as the default session handler but does just the same as PHP's default session handler (saves sessions to the file system).
+* This was necessary to allow stream wrappers to be used. This way you can redirect the session storing to a database or something else.
+* Just register the stream wrapper in your controller and set the session path in your config to `'session.save_path' => 'dbs://',`.
+* For the parameters of the stream wrapper take a look at the documentation.
+* 
+* ~~~{.php}
+* // ... Controller code
+*  
+* // You have to init the stream wrapper before working with the session
+* $this->prepare('Db', $this->config->get('db'));
+* Factory::load('Streams\Db:streamdb_sessions', 'dbs', $this->db, 'sessions');
+* 
+* // ... now work with the session
 * 
 * // ... Controller code
 * ~~~
