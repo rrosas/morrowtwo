@@ -76,35 +76,44 @@ class Session {
 	 * @param array $config	Config parameters as an associative array that are passed to session_set_cookie_params(). Use the keys `lifetime`, `path`, `domain`, `secure` and `httponly` that are described in the documentation to session_set_cookie_params().
 	 */
 	public function __construct($config) {
-		if (ini_get('session.auto_start') != true) {
-			
-			// set cookie params
-			session_set_cookie_params(
-				$config['cookie_lifetime'],
-				$config['cookie_path'],
-				$config['cookie_domain'],
-				$config['cookie_secure'],
-				$config['cookie_httponly']
-			);
-			
-			// we start an own session handler which supports stream wrappers
-			session_set_save_handler(
-				array($this, "on_session_start"),
-				array($this, "on_session_end"),
-				array($this, "on_session_read"),
-				array($this, "on_session_write"),
-				array($this, "on_session_destroy"),
-				array($this, "on_session_gc")
-			);
-
-			// set save path
-			if (!is_dir($config['save_path'])) mkdir($config['save_path']);
-			ini_set('session.gc_probability', 1); // in debian this is disabled by default...
-			$this->save_path = $config['save_path'];
-
-			// start session
-			session_start();
+		if (ini_get('session.auto_start') == true) {
+			session_destroy();
 		}
+			
+		// set cookie params
+		session_set_cookie_params(
+			$config['cookie_lifetime'],
+			$config['cookie_path'],
+			$config['cookie_domain'],
+			$config['cookie_secure'],
+			$config['cookie_httponly']
+		);
+		
+		// we start an own session handler which supports stream wrappers
+		session_set_save_handler(
+			array($this, "sessionhandler_open"),
+			array($this, "sessionhandler_close"),
+			array($this, "sessionhandler_read"),
+			array($this, "sessionhandler_write"),
+			array($this, "sessionhandler_destroy"),
+			array($this, "sessionhandler_gc")
+		);
+
+
+		
+		// set save path
+		if (!is_dir($config['save_path'])) mkdir($config['save_path']);
+		$this->save_path = $config['save_path'];
+
+		ini_set('session.gc_probability', $config['gc_probability']);
+		ini_set('session.gc_divisor', $config['gc_divisor']);
+
+		// set max lifetime 
+		ini_set('session.gc_maxlifetime', $config['gc_maxlifetime']);
+
+
+		// start session
+		session_start();
 		
 		// it should not be possible to inject a session
 		$this->_preventSessionFixation();
@@ -172,21 +181,21 @@ class Session {
 	/**
 	 * passed to session_set_save_handler()
 	 */
-	public function on_session_start($save_path, $session_name) {
+	public function sessionhandler_open($save_path, $session_name) {
 		return true;
 	}
 
 	/**
 	 * passed to session_set_save_handler()
 	 */
-	public function on_session_end() {
+	public function sessionhandler_close() {
 		return true;
 	}
 
 	/**
 	 * passed to session_set_save_handler()
 	 */
-	public function on_session_read($key) {
+	public function sessionhandler_read($key) {
 		$path = $this->save_path . $key;
 		if (is_file($path)) return file_get_contents($path);
 		return '';
@@ -195,21 +204,29 @@ class Session {
 	/**
 	 * passed to session_set_save_handler()
 	 */
-	public function on_session_write($key, $val) {
+	public function sessionhandler_write($key, $val) {
 		file_put_contents($this->save_path . $key, $val);
 	}
 
 	/**
 	 * passed to session_set_save_handler()
 	 */
-	public function on_session_destroy($key) {
+	public function sessionhandler_destroy($key) {
 		unlink($this->save_path . $key);
 	}
 
 	/**
 	 * passed to session_set_save_handler()
 	 */
-	public function on_session_gc($max_lifetime) {
-		//$this->db->delete($this->config['db.table'], "where mtime < ?", false, date('Y-m-d H:i:s'));
+	public function sessionhandler_gc($max_lifetime) {
+		$files = scandir($this->save_path);
+		foreach ($files as $file) {
+			if ($file{0} === '.') continue;
+
+			if (filemtime($this->save_path . $file) < time() - $max_lifetime) {
+				unlink($this->save_path . $file);
+			}
+		}
+		return true;
 	}
 }

@@ -31,7 +31,7 @@ cms/
 ✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
 ✓ session save path in der config setzen und auf den temp-Ordner umstellen
 ✓ Morrow zu FrontController umbenannt
-
+✓ view->setContent(key, value) statt view->setContent(value, key)
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
@@ -41,12 +41,6 @@ cms/
   
 
 ToDo:
-- view->setContent();
-  so einstellen, dass man auch Schlüssel, Wert hat
-  Dann muss man halt bei allen anderen view-Handlern content angeben
 
-- on_session_gc() ist noch nicht gebaut
+- Neue Session-Funktionen und Stream Wrapper dokumentieren
 
-
-- streamwrapper auf reines PDO umstellen
-  braucht gar kein PDO, wenn der streamwrapper auch die dir-Funktionen handlet
