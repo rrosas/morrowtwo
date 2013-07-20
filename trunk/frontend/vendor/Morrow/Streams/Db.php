@@ -218,7 +218,7 @@ class Db {
 	public function stream_seek($offset, $whence = SEEK_SET) {
 		if ($whence == SEEK_SET) $this->pos = $offset;
 		elseif ($whence == SEEK_CUR) $this->pos += $offset;
-		elseif ($whence == SEEK_END) $this->pos = strlen($this->entry['data']) - 1 + $offset;
+		elseif ($whence == SEEK_END) $this->pos = strlen($this->entry['data']) - $offset;
 		else { return false; }
 		return true;
 	}
@@ -281,10 +281,6 @@ class Db {
 
 	public function url_stat($filename) {
 		$this->stream_open($filename, 'r', array(), $opath);
-		
-		// do not return anything if file not exists
-		if (!$this->exists) return false;
-
 		return $this->stream_stat();
 
 	}

@@ -23,7 +23,7 @@ cms/
 ✓ Entweder man verwendet die htaccess files oder setzt den Document-Root direkt auf den Public-Ordner
 ✓ Man kann von allen drei htaccess-Ebenen einsteigen
 ✓ Autoloading in vendor_user läuft mit allen Namespaces (in vendor nur mit Composer-Namespaces)
-✓ Kein Punkt mehr in Morrow nodes erlaubt, um sauber 404-Fehler beim Resourcen zu handlen (nur noch [a-z0-9-])
+✓ Kein Punkt mehr in Morrow nodes erlaubt, um sauber 404-Fehler bei Ressourcen zu handlen (nur noch [a-z0-9-])
 ✓ Nodes werden in lowercase umgewandelt. Parameter über Routing Rules kommen aber richtig an.
 ✓ Kein Controller-Ordner mehr, um die Verschachtelung klein zu halten
 ✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden (somit müsste lokale htaccess entfallen)
@@ -42,5 +42,6 @@ cms/
 
 ToDo:
 
+- Stream-Wrapper für Files bauen
 - Neue Session-Funktionen und Stream Wrapper dokumentieren
 

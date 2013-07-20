@@ -15,6 +15,9 @@ class PageController extends DefaultController {
 		echo $this->session->get('debug');
 		//print_r(scandir('sessions://'));
 
+		Factory::load('Streams\File:streamfile_assets', 'public', PUBLIC_PATH);
+		#file_put_contents('public://test.jpg', 'ulfggdfgfdgdfgdf2');
+		#unlink('public://test.jpg');
 
 
 		//Factory::load('Streams\Db:streamdb_files', 'db', $this->db, 'files');
