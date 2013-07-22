@@ -224,14 +224,20 @@ class Db extends \PDO {
 	 * 
 	 * @param	string	$table  The table name the query refers to.
 	 * @param  array $array The data to insert into the table
-	 * @param  boolean $insertid Set to true to return the entry ID of the new created database row
-	 * @return array An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created database row) 
+	 * @param  array $on_duplicate_key_update The data which is used for an UPDATE if a PRIMARY or UNIQUE key already exists (*MySQL only*).
+	 * @return array An result array with the key `SUCCESS` (boolean Was the query successful).
 	 */
-	public function insert($table, $array, $insertid = false) {
+	public function insert($table, $array, $on_duplicate_key_update = array()) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
 		$query = "INSERT INTO $table ($keys) VALUES ($values)";
+
+		if (count($on_duplicate_key_update) > 0) {
+			$array = $this->_createUpdateValues($on_duplicate_key_update);
+			$query .= ' ON DUPLICATE KEY UPDATE '.$array['tokens'];
+			$binds = array_merge($binds, $array['values']);
+		}
 
 		$this->connect();
 		$sth = $this->prepare($query);
@@ -246,9 +252,10 @@ class Db extends \PDO {
 	 *
 	 * This method is slower than insert(), because all field names of the target table has to be figured out with a second query. 
 	 */
-	public function insertSafe($table, $array, $insertid = false) {
-		$array = $this->_safe($table, $array);
-		return $this -> Insert($table, $array, $insertid);
+	public function insertSafe($table, $array, $on_duplicate_key_update = array()) {
+		$array						= $this->_safe($table, $array);
+		$on_duplicate_key_update	= $this->_safe($table, $on_duplicate_key_update);
+		return $this -> Insert($table, $array, $insertid, $on_duplicate_key_update);
 	}
 	
 	/**
@@ -271,11 +278,11 @@ class Db extends \PDO {
 	 * @param	string	$table  The table name the query refers to.
 	 * @param	array	$array	The data to insert into the table
 	 * @param	string	$where   The where condition in the update query
-	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
 	 * @param	mixed	$where_tokens	An array (or a scalar) for use as a Prepared Statement in the where clause. Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
+	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
 	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `AFFECTED_ROWS` (int The count of the affected rows) 
 	 */
-	public function update($table, $array, $where = '', $affected_rows = false, $where_tokens = array()) {
+	public function update($table, $array, $where = '', $where_tokens = array(), $affected_rows = false) {
 		$array = $this->_createUpdateValues($array);
 		extract($array);
 		
@@ -300,9 +307,9 @@ class Db extends \PDO {
 	 *
 	 * This method is slower than update(), because all field names of the target table has to be figured out with a second query. 
 	 */
-	public function updateSafe($table, $array, $where = '', $affected_rows = false, $where_tokens = array()) {
+	public function updateSafe($table, $array, $where = '', $where_tokens = array(), $affected_rows = false) {
 		$array = $this->_safe($table, $array);
-		return $this -> Update($table, $array, $where, $affected_rows, $where_tokens);
+		return $this -> Update($table, $array, $where, $where_tokens, $affected_rows);
 	}
 	
 	/**
@@ -324,10 +331,9 @@ class Db extends \PDO {
 	 * 
 	 * @param	string	$table  The table name the query refers to.
 	 * @param	array	$array	The data to replace
-	 * @param	boolean	$insertid Set to true to return the entry ID of the new created or changed database row
 	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created or changed database row) 
 	 */
-	public function replace($table, $array, $insertid = false) {
+	public function replace($table, $array) {
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
@@ -337,7 +343,6 @@ class Db extends \PDO {
 		$sth = $this->prepare($query);
 
 		$returner['SUCCESS'] = $sth->execute($binds);
-		if ($insertid == true) $returner['INSERT_ID'] = $this->lastInsertId();
 		return $returner;
 	}
 
@@ -347,9 +352,9 @@ class Db extends \PDO {
 	 *
 	 * This method is slower than replace(), because all field names of the target table has to be figured out with a second query. 
 	 */
-	public function replaceSafe($table, $array, $insertid = false) {
+	public function replaceSafe($table, $array) {
 		$array = $this->_safe($table, $array);
-		return $this -> Replace($table, $array, $insertid);
+		return $this -> Replace($table, $array);
 	}
 		
 	/**
@@ -357,11 +362,11 @@ class Db extends \PDO {
 	 *
 	 * @param	string	$table	The table name the query refers to.
 	 * @param	string	$where	The where condition in the update query
-	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
 	 * @param	mixed	$where_tokens	An array (or a scalar) for use as a Prepared Statement in the where clause. Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
+	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
 	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `AFFECTED_ROWS` (int The count of the affected rows) 
 	 */
-	public function delete($table, $where, $affected_rows = false, $where_tokens = array()) {
+	public function delete($table, $where, $where_tokens = array(), $affected_rows = false) {
 		// add tokens of where clause
 		$values = array();
 		if (is_scalar($where_tokens)) $where_tokens = array($where_tokens);

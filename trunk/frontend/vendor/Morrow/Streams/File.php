@@ -142,9 +142,9 @@ class File {
 	}
 
 	public function unlink($path) {
-		$this->stream_open($path, 'r', array(), $opath);
-		$this->stream_close();
-		return unlink($this->path . $this->id);
+		$parts	= explode('://', $path, 2);
+		$id		= $parts[1];
+		return unlink($this->path . $id);
 	}
 
 	public function url_stat($filename) {
