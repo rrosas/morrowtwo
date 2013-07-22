@@ -16,6 +16,9 @@ class PageController extends DefaultController {
 		//print_r(scandir('sessions://'));
 
 		Factory::load('Streams\File:streamfile_assets', 'public', PUBLIC_PATH);
+
+
+
 		#file_put_contents('public://test.jpg', 'ulfggdfgfdgdfgdf2');
 		#unlink('public://test.jpg');
 
