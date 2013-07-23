@@ -1,22 +1,22 @@
 <?php
 /*////////////////////////////////////////////////////////////////////////////////
-    MorrowTwo - a PHP-Framework for efficient Web-Development
-    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+	MorrowTwo - a PHP-Framework for efficient Web-Development
+	Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
-    This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
+	This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 
-    MorrowTwo is free software:  you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	MorrowTwo is free software:  you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
@@ -159,6 +159,29 @@ class Url {
 		die('');
 	}
 
+
+	/**
+	 * Creates a slug (the part of a URL which identifies a page using human-readable keywords).
+	 *
+	 * @param	string	$text	The text to convert.
+	 * @return	string	The created slug.
+	 */
+	public function slug($text) {
+		$table = array(
+			'Š'=>'S', 'š'=>'s', 'Đ'=>'Dj', 'đ'=>'dj', 'Ž'=>'Z', 'ž'=>'z', 'Č'=>'C', 'č'=>'c', 'Ć'=>'C', 'ć'=>'c',
+			'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'AE', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+			'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O',
+			'Õ'=>'O', 'Ö'=>'OE', 'Ø'=>'O', 'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'UE', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'ss',
+			'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e',
+			'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o',
+			'ô'=>'o', 'õ'=>'o', 'ö'=>'oe', 'ø'=>'o', 'ü'=>'ue', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b',
+			'ÿ'=>'y', 'Ŕ'=>'R', 'ŕ'=>'r',
+		);
+
+		$slug = strtr($text, $table);
+		$slug = trim(preg_replace("|\W+|", '-', $slug), '-');
+		return $slug;
+	}
 
 	/**
 	 * Creates a URL for use with Morrow. It handles automatically languages in the URL. 

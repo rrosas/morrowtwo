@@ -26,4 +26,4 @@ RewriteEngine on
 
 # Distribute requests to subfolders
 # ---------------------------------
-RewriteRule ^(?!cms/|test/)(.*)$ %{ENV:REWRITEBASE}frontend/$1?morrow_basehref_depth=3 [QSA]
+RewriteRule ^(?!docs/)(.*)$ %{ENV:REWRITEBASE}frontend/$1?morrow_basehref_depth=3 [QSA]
