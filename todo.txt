@@ -1,5 +1,5 @@
 .htaccess
-frontend/
+frontend/						Projekt Nr.1
 	.htaccess
 	vendor/
 	vendor_user/
@@ -17,7 +17,7 @@ frontend/
 		temp/
 		templates/
 		home.php				\App\PageController
-cms/
+cms/							Projekt Nr.2
 	...
 
 ✓ Entweder man verwendet die htaccess files oder setzt den Document-Root direkt auf den Public-Ordner
@@ -34,6 +34,7 @@ cms/
 ✓ view->setContent(key, value) statt view->setContent(value, key)
 ✓ DB-Klasse: lastinsertid() kann man auch selbst aufrufen (ist also raus)
 ✓ DB-Klasse: affectedRows bei update ist jetzt letzter Parameter
+✓ url->slug();
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
@@ -46,7 +47,6 @@ ToDo:
 
 - File-Stream-Wrapper zuende bauen
 - Neue Session-Funktionen und Stream Wrapper dokumentieren
-- url->slug();
 - de-de statt de in language class umsetzen
 - Form-Handler überarbeiten
-
+- Eine bessere Doku bauen

@@ -17,8 +17,6 @@ class PageController extends DefaultController {
 
 		Factory::load('Streams\File:streamfile_assets', 'public', PUBLIC_PATH);
 
-
-
 		#file_put_contents('public://test.jpg', 'ulfggdfgfdgdfgdf2');
 		#unlink('public://test.jpg');
 
