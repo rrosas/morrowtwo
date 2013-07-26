@@ -121,7 +121,6 @@ class Dummy {
 	
 	/**
 	 * Returns a lastname depending on the gender.
-	 * @param	string	$gender Configures the gender of your dummy person. Must be `male` or  `female`.
 	 * @return	string
 	 */
 	public function getLastname() {

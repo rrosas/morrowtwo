@@ -23,7 +23,9 @@
 namespace Morrow;
 
 /**
- * The class improves the handling with common navigational tasks. The navigation data has to follow a strict scheme but can be passed from different sources.
+ * Improves the handling with common navigational tasks.
+ * 
+ * The navigation data has to follow a strict scheme but can be passed from different sources.
  * The default way is to store the data in an array in `APP_PATH . "/languages/LANGUAGE/tree.php"`.
  * 
  * Because aliases can exist in more than one navigation branch (f.e. meta and main) you have to specify the branch you want to work with. 
@@ -202,7 +204,7 @@ class Navigation {
 	/**
 	 * Gets the tree below the passed node id.
 	 *
-	 * @param	string	A node id.
+	 * @param	string	$id  A node id.
 	 * @return	array The full tree or a subtree if `$id` was passed.
 	 */
 	public function get($id = null) {
@@ -219,8 +221,8 @@ class Navigation {
 	/**
 	 * Find a specific node.
 	 *
-	 * @param	string	The field to search for like "title", "path", "alias" and so on.
-	 * @param	string	The search string.
+	 * @param	string	$field The field to search for like "title", "path", "alias" and so on.
+	 * @param	string	$id The search string.
 	 * @return	array The subtree with the found node and its children.
 	 */
 	public function find($field, $id) {

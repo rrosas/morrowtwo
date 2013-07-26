@@ -309,7 +309,7 @@ class Debug {
 	 * Retrieves a code excerpt from a file.
 	 * 
 	 * @param	string	$errfile_or_string	The path to the file or the content directly.
-	 * @param	int		$errline	In which line did the error occur.
+	 * @param	int		$errline In which line did the error occur.
 	 * @param	string	$file_or_string	If the input a file path or a string.
 	 * @return	string	Returns a HTML string with the highlighted line.
 	 */
@@ -344,7 +344,7 @@ class Debug {
 	 * @param mixed $variable Pass a variable number of arguments to this method
 	 * @return null
 	 */
-	public static function dump() {
+	public static function dump($variable) {
 		$args = func_get_args();
 		echo Factory::load('Debug')->_dump($args);
 	}

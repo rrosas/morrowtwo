@@ -1,8 +1,10 @@
 <?php
 
 namespace App;
+use Morrow\Factory;
+use Morrow\Debug;
 
-class DefaultController extends \Morrow\Factory {
+class DefaultController extends Factory {
 	public function setup() {
 		$this->view->setHandler('serpent');
 

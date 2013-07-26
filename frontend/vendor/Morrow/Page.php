@@ -23,7 +23,9 @@
 namespace Morrow;
 
 /**
-* The Page class gives you access to several parameters of the environment useful for the current page. It is filled by the framework.
+* Gives access to several parameters of the environment useful for the current page.
+* 
+* It is filled by the framework.
 * 
 * Dot Syntax
 * ----------

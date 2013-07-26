@@ -157,10 +157,10 @@ class Factory {
 	
 	/**
 	 * Initializes a class with optionally prepared constructor parameters and returns the instance.
-	 * @param	string	$instance_identifier
+	 * @param	string	$instance_identifier The instance identifier
 	 * @return	object
 	 */
-	public static function load() {
+	public static function load($instance_identifier) {
 		$args = func_get_args();
 
 		$instance_identifier	= array_shift($args);
@@ -221,11 +221,11 @@ class Factory {
 	/**
 	 * Handles the preparation of class instantiation by deposit the constructor parameters. That allows the lazy loading functionality.
 	 * 
-	 * @param	string	$instance_identifier
+	 * @param	string	$instance_identifier The instance identifier
 	 * @param	mixed	$parameters Any number of constructor parameters
 	 * @return	null
 	 */
-	public static function prepare() {
+	public static function prepare($instance_identifier, $parameters = null) {
 		$args = func_get_args();
 		
 		// get instance name in params string

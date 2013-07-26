@@ -23,7 +23,7 @@
 namespace Morrow;
 
 /**
- * The Language class provides an interface to the the data that is stored in arrays in the `_i18n` folder.
+ * The Language class provides an interface to the the data that is stored in arrays in the _i18n folder.
  * The Language class is instanced by Morrow and relies on the following configuration variable:
  *
  * Type  | Keyname     | Default                                             | Description                                                                                      

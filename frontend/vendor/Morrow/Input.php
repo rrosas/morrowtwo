@@ -23,13 +23,13 @@
 namespace Morrow;
 
 /**
- * This class handles the access to input that comes from the outside of the framework: $_GET, $_POST and $_FILES. 
+ * Handles the access to input that came by $_GET, $_POST and $_FILES. 
  * It cleans the input vars and reformats the $_FILES array for a uniform access to it.
  *
  * Dot Syntax
  * -----------
  * 
- * This class works with the extended dot syntax. So if you have keys like input_example.host and input_example.smtp in your input, you can call $this->input->get('input_example') to receive an array with the keys host and smtp.
+ * This class works with the extended dot syntax. So if you have keys like `input_example.host` and `input_example.smtp` in your input, you can call `$this->input->get('input_example')` to receive an array with the keys host and smtp.
  * 
  * Example
  * -------
@@ -73,6 +73,9 @@ class Input {
 	
 	/**
 	 * Imports, unifies and cleans user input from PHP Superglobals.
+	 * @param	array	$get	Parameters which came by $_GET.
+	 * @param	array	$post	Parameters which came by $_POST.
+	 * @param	array	$files	Parameters which came by $_FILES.
 	 */
 	public function __construct($get, $post, $files) {
 		$this->_get   = $this->tidy($get);
@@ -141,7 +144,8 @@ class Input {
 
 	/**
 	 * Sets an input value. Used for parameters coming from URL routing rules.
-	 * @param string $identifier Config data to be retrieved
+	 * @param string $identifier The identifier to save the data with.
+	 * @param mixed $value The data to be set.
 	 * @return mixed
 	 */
 	public function set($identifier, $value) {
@@ -155,7 +159,7 @@ class Input {
 	 * @param	array	$array	Any number of arrays.
 	 * @return	array
 	 */
-	protected function _array_merge_recursive_distinct () {
+	protected function _array_merge_recursive_distinct ($array) {
 		$arrays = func_get_args();
 		$base = array_shift($arrays);
 		if (!is_array($base)) $base = empty($base) ? array() : array($base);

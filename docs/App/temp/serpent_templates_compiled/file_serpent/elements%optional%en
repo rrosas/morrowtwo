@@ -1,0 +1,15 @@
+<?php ob_start();
+var_dump($this->_raw($default));
+$optional = trim(ob_get_clean());
+
+$replacements = array(
+	'|array\(0\) \{\s+\}|' => 'array()',
+	'|string\(\d+\)|' => '',
+	'|int\((\d+)\)|' => '$1',
+	'|bool\(([a-z]+)\)|' => '$1',
+);
+
+$optional = preg_replace(array_keys($replacements), $replacements, $optional);
+
+echo ' = ' . $optional;
+ ?>

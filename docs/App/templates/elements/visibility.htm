@@ -1,0 +1,9 @@
+<?php
+$labels = array(
+	'public' => 'label-success',
+	'protected' => 'label-warning',
+	'private' => 'label-error',
+);
+?>
+
+<span class="label ~~$labels[:raw($visibility)]~">~~:escape($visibility)~</span>
