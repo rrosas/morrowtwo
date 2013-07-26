@@ -1,0 +1,9 @@
+body { padding: 20px 0 0 0; }
+code { background: 0; border: 0; font-size: 100%; }
+h2 { margin: 40px 0 0 0; }
+.function-wrapper { cursor: pointer; }
+.function-wrapper h4 code { font-size: 80%; vertical-align: middle; font-weight: normal; }
+.function-wrapper h4 .label { vertical-align: middle; }
+.function-wrapper h4:hover { color: #005580; }
+.function-wrapper .type { color: #000; font-size: 80%;}
+pre { line-height: 16px; }

@@ -23,7 +23,7 @@
 namespace Morrow;
 
 /**
- * A simple class to help you with typical paging issues in your database queries and your templates.
+ * Helps with typical paging issues in your database queries and your templates.
  *
  * Example
  * -------

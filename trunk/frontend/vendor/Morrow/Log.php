@@ -64,7 +64,7 @@ class Log {
 	 * Logs data to the log file.
 	 * @param  mixed $args	 You can pass as many variables of any type as you want.
 	 */
-	public function set() {
+	public function set($args) {
 		$data['args']				= func_get_args();
 		$caller						= debug_backtrace();
 		$data['caller']				= $caller[0];

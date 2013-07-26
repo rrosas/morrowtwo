@@ -168,7 +168,7 @@ class Cache {
 	 * **Take care of objects:** The class uses serialize() to store variables. When serializing objects, PHP will attempt to call the member function sleep() prior to serialization. This is to allow the object to do any last minute clean-up, etc. prior to being serialized. Likewise, when the object is restored using unserialize() the wakeup() member function is called. 
 	 * 
 	 * @param string $cache_id The cache descriptor id.
-	 * @param mixed $data The data to cache.
+	 * @param mixed $object The data to cache.
 	 * @param mixed $cachetime A lifetime in a format strtotime() supports.
 	 * @param mixed $comparator If the comparator changes the cache gets instantly stale.
 	 * @param mixed $user_droppable If set to true, the cache is dropped if the client sends the HTTP header HTTP_CACHE_CONTROL. E.g. if the user reloads the page while the same page is already open.

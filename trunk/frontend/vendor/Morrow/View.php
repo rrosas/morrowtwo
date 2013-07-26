@@ -23,7 +23,9 @@
 namespace Morrow;
 
 /**
-* The view class controls the output of the framework. The assigned content, the output format like (X)HTML, XML, Json and so on. Also the caching of the output is controlled by this class. For a detailed explanation of output caching, take a look at the topic Output Caching.
+* Controls the output of the framework.
+*
+* The assigned content, the output format like (X)HTML, XML, Json and so on. Also the caching of the output is controlled by this class. For a detailed explanation of output caching, take a look at the topic Output Caching.
 * 
 * Examples
 * ---------
@@ -255,7 +257,7 @@ class View {
 	/**
 	 * Returns an instance of a view handler for a given view name.
 	 *
-	 * @param	string	$hander_name	The name of the view handler to instantiate.
+	 * @param	string	$handler_name	The name of the view handler to instantiate.
 	 * @return	object	The view handler.
 	 */
 	protected function _getDisplayHandler($handler_name) {
@@ -325,7 +327,7 @@ class View {
 	 * Sets handler specific properties. The properties mimetype, charset and downloadable are defined for every view handler.
 	 * If you have not chosen a handler the default handler will be used. For example if you want globally define your settings for all handlers.  
 	 *
-	 * @param	string	$name	The name of the property to set.
+	 * @param	string	$key	The name of the property to set.
 	 * @param	array	$value	The value of the property.
 	 * @param	string	$handler_name	Restricts the passed property to a view handler.
 	 * @return	null

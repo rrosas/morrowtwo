@@ -23,7 +23,7 @@
 namespace Morrow;
 
 /**
-* For access to databases we use the PHP own PDO (PHP Data Objects). But we extended it a little bit to simplify your everyday life.
+* For access to databases we extended the PHP own PDO.
 * 
 * You have access to all methods as described in the documentation for PDO. Furthermore we added or rewrote the following methods.
 * 
@@ -57,8 +57,8 @@ namespace Morrow;
 * // ... Controller code
 * ~~~
 *
-* If you prefix a field name in your query with an ">", then this column value will be used as key for the result set instead of a numerically indexed array. This way you will get an array which can be easily accessed via an unique key. 
-* You must only use fields with the ">" operator whose values are unique. Otherwise all rows with the same field value will become one row. 
+* If you prefix a field name in your query with an `>`, then this column value will be used as key for the result set instead of a numerically indexed array. This way you will get an array which can be easily accessed via an unique key. 
+* You must only use fields with the `>` operator whose values are unique. Otherwise all rows with the same field value will become one row. 
 *
 * ~~~{.php}
 * // ... Controller code
@@ -95,9 +95,9 @@ class Db extends \PDO {
 	protected $cache = array();
 	
 	/**
-	 * This method overwrites the standard method. The constructor accepts an array with parameters for specifying the database driver (`mysql`, `sqlite`, etc.), the database host, the database name and for the username and password. Usually you define it in the config files of the framework.
-	 * 
-	 * The keys for the parameters are `driver`, `host`, `db`, `user` and `pass`. 
+	 * This method overwrites the standard method and expects the DB connection parameters.
+	 *
+	 * The keys for the parameters are `driver`, `host`, `db`, `user`, `pass` and `encoding`. 
 	 *
 	 * @param array $config database connection parameters
 	 * @return null
@@ -178,7 +178,7 @@ class Db extends \PDO {
 	}
 
 	/**
-	 * The same as result(), but with the difference that an additional key `FOUND_ROWS` contains the count of rows if you had left out the LIMIT in your query. 
+	 * The same as result(), but an additional key `FOUND_ROWS` contains the count of rows if you had left out the LIMIT in your query. 
 	 *
 	 * *For MySQL only*
 	 *
@@ -186,15 +186,15 @@ class Db extends \PDO {
 	 * @param  array $token An array with the prepared statement parameters (indexed or associative array, depends on the use of the prepared statement syntax)
 	 * @return array Returns an array with the keys `SUCCESS` (true if the query could successfully sent to the db, otherwise false), `RESULT` (array The complete result set of the request), `NUM_ROWS` (integer The count of returned results) and `FOUND_ROWS` (integer The count of results without the LIMIT). 
 	 */
-	public function result_calc_found_rows($query, $params = null) {
-		if (is_scalar($params)) $params = array($params);
+	public function result_calc_found_rows($query, $token = null) {
+		if (is_scalar($token)) $token = array($token);
 
 		// because of two queries we should use transactions if available
 		$this->beginTransaction();
 		
 		// rewrite query
 		$query = preg_replace('=SELECT=is', 'SELECT SQL_CALC_FOUND_ROWS', $query, 1);
-		$returner = $this->result($query, $params);
+		$returner = $this->result($query, $token);
 
 		// get found rows
 		$sql = $this->query('SELECT FOUND_ROWS() AS FOUND_ROWS')->fetch(\PDO::FETCH_ASSOC);
@@ -248,9 +248,14 @@ class Db extends \PDO {
 	}
 
 	/**
-	 * The same as insert(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted. So it is made sure that there is always sent a valid query.
+	 * The same as insert(), but keys, that do not have a corresponding fields in the database table, will be deleted.
 	 *
 	 * This method is slower than insert(), because all field names of the target table has to be figured out with a second query. 
+	 * 
+	 * @param	string	$table  The table name the query refers to.
+	 * @param  array $array The data to insert into the table
+	 * @param  array $on_duplicate_key_update The data which is used for an UPDATE if a PRIMARY or UNIQUE key already exists (*MySQL only*).
+	 * @return array An result array with the key `SUCCESS` (boolean Was the query successful).
 	 */
 	public function insertSafe($table, $array, $on_duplicate_key_update = array()) {
 		$array						= $this->_safe($table, $array);
@@ -259,7 +264,7 @@ class Db extends \PDO {
 	}
 	
 	/**
-	 * Updates a row. Every key in the array `$data` represents a field in the table.
+	 * Updates a row. Every key in the array `$array` represents a field in the table.
 	 *
 	 * It is also possible to pass an array with the key `FUNC` as value. In that case it will not been sent as string but as expression.
 	 *
@@ -303,9 +308,16 @@ class Db extends \PDO {
 	}
 
 	/**
-	 * The same as update(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted. So it is made sure that there is always sent a valid query.
+	 * The same as update(), but keys, that do not have a corresponding fields in the database table, will be deleted.
 	 *
 	 * This method is slower than update(), because all field names of the target table has to be figured out with a second query. 
+	 * 
+ 	 * @param	string	$table  The table name the query refers to.
+	 * @param	array	$array	The data to insert into the table
+	 * @param	string	$where   The where condition in the update query
+	 * @param	mixed	$where_tokens	An array (or a scalar) for use as a Prepared Statement in the where clause. Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
+	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `AFFECTED_ROWS` (int The count of the affected rows) 
 	 */
 	public function updateSafe($table, $array, $where = '', $where_tokens = array(), $affected_rows = false) {
 		$array = $this->_safe($table, $array);
@@ -347,10 +359,13 @@ class Db extends \PDO {
 	}
 
 	/**
-	 * The same as replace(), but with the difference that keys, that do not have a corresponding fields in the database table, will be deleted.
-	 * So it is made sure that there is always sent a valid query.
+	 * The same as replace(), but keys, that do not have a corresponding fields in the database table, will be deleted.
 	 *
 	 * This method is slower than replace(), because all field names of the target table has to be figured out with a second query. 
+	 * 
+	 * @param	string	$table  The table name the query refers to.
+	 * @param	array	$array	The data to replace
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created or changed database row) 
 	 */
 	public function replaceSafe($table, $array) {
 		$array = $this->_safe($table, $array);

@@ -1,0 +1,118 @@
+<?php $this->_add_parent_template($this->_render('_index')) ?>
+
+<?php if ($this->_block("body")):  ?>
+	<h1>
+		<small><?php echo $this->_escape($class['namespace']) ?>\</small> <?php echo $this->_escape($class['name']) ?>
+		<?php if ($class['parent'] !== null): ?>
+			<small>(extends <?php echo $this->_escape($class['parent']) ?>)</small>
+		<?php endif ?>
+	</h1>
+
+	<p class="lead">
+		<?php echo $this->_escape($class['doc']['content']['0']) ?>
+	</p>
+		
+	<?php echo \App\DefaultController::markdown($this->_raw($class['doc']['content']['1'])) ?>
+		
+	<h2>Members</h2>
+
+	<table class="table table-striped table-condensed">
+	<colgroup>
+		<col width="1">
+		<col width="1">
+		<col width="1">
+		<col width="*">
+	</colgroup>
+	<tbody>
+		<?php foreach ($class['members'] as $member): ?>
+		<tr>
+			<td><?php echo $this->render('elements/visibility', null, null, array('visibility' => $member['visibility'])) ?></td>
+			<td><span class="type"><?php echo $this->_escape($member['tags']['var']['0']['type']) ?></span></td>
+			<td><code><?php echo $this->_escape($member['name']) ?></code></td>
+			<td><?php echo $this->_escape($member['content']['title']) ?></td>
+		</tr>
+		<?php endforeach ?>
+	</tbody>
+	</table>
+
+	<h2>Functions</h2>
+
+	<?php foreach ($class['methods'] as $method): ?>
+		<div class="function-wrapper">
+			<h4>
+				<?php echo $this->render('elements/visibility', null, null, array('visibility' => $method['visibility'])) ?>
+				
+				<?php echo $this->_escape($method['name']) ?>(
+				
+				<code>
+					<?php foreach ($method['parameters'] as $p): ?>
+						<?php 						echo $this->render('elements/type', null, null, array('type' => $p['type'])) . ' ';
+
+						echo '$'.$this->_escape($p['name']);
+
+						if ($p['optional']) {
+							echo $this->render('elements/optional', null, null, array('default' => $p['default']));
+						}
+
+						if ($p !== end($method['parameters'])) {
+							echo ','; 
+						}
+						 ?>
+					<?php endforeach ?>
+				</code>)
+			</h4>
+			
+			<?php echo \App\DefaultController::markdown($this->_raw($method['content']['title'])) ?>
+
+			<div class="well">
+				<?php if (isset($method['content']['description'])): ?>
+					<?php echo \App\DefaultController::markdown($this->_raw($method['content']['description'])) ?>
+				<?php endif ?>
+
+				<?php if (count($method['parameters']) !== 0): ?>
+					<h5>Parameters</h5>
+				
+					<table class="table table-condensed">
+					<colgroup>
+						<col width="1">
+						<col width="1">
+						<col width="*">
+					</colgroup>
+					<tbody>
+						<?php foreach ($method['parameters'] as $p): ?>
+							<tr>
+								<td><?php echo $this->render('elements/type', null, null, array('type' => $p['type'])) ?></td>
+								<td><code>$<?php echo $this->_escape($p['name']) ?></code></td>
+								<td><?php echo \App\DefaultController::markdown($this->_raw($p['description'])) ?></td>
+							</tr>
+						<?php endforeach ?>
+					</tbody>
+					</table>
+				<?php endif ?>
+
+
+				<?php if (isset($method['tags']['return'])): ?>
+					<h5>Returns</h5>
+
+					<table class="table table-condensed">
+					<colgroup>
+						<col width="1">
+						<col width="*">
+					</colgroup>
+					<tbody>
+						<tr>
+							<td><?php echo $this->render('elements/type', null, null, array('type' => $method['tags']['return']['0']['type'])) ?></td>
+							<td>
+								<?php if (isset($method['tags']['return']['0']['description'])): ?>
+									<?php echo \App\DefaultController::markdown($this->_raw($method['tags']['return']['0']['description'])) ?>
+								<?php endif ?>
+							</td>
+						</tr>
+					</tbody>
+					</table>
+				<?php endif ?>
+			</div>
+		</div>
+	<?php endforeach ?>
+
+<?php endif; echo $this->_endblock("body")  ?>

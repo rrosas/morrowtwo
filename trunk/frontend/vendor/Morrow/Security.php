@@ -50,6 +50,14 @@ namespace Morrow;
  * ~~~
  */
 class Security {
+	/**
+	 * Adds a little bit of security to your app or webpage.
+	 *
+	 * @param	object	$session	An instance of the session class.
+	 * @param	object	$view	An instance of the session class.
+	 * @param	object	$input	An instance of the input class.
+	 * @param	object	$url	An instance of the url class.
+	 */
 	public function __construct($session, $view, $input, $url) {
 		$this->session	= $session;
 		$this->view		= $view;
@@ -123,11 +131,17 @@ class Security {
 	 * Creates an URL like URL::create() but adds the CSRF token as GET parameter.
 	 * You have to check the token yourself via verifyCSRFToken().
 	 *
-	 * For the parameters see: Url::create()
+	 * For the parameters see: Url::create().
+	 * 
+	 * @param	string	$path	The URL or the Morrow path to work with. Leave empty if you want to use the current page.
+	 * @param	array	$query	Query parameters to adapt the URL.
+	 * @param	boolean	$absolute	If set to true the URL will be a fully qualified URL.
+	 * @param	boolean	$separator	The string that is used to divide the query parameters.
+	 * @return	string	The created URL.
 	 */
-	public function createCSRFUrl($path, $query = array(), $rel2abs = false, $sep = '&amp;') {
+	public function createCSRFUrl($path = '', $query = array(), $absolute = false, $separator = '&amp;') {
 		$query['csrf_token'] = $this->session->get('csrf_token');
-		return $this->url->create($path, $query, $rel2abs, $sep);
+		return $this->url->create($path, $query, $absolute, $separator);
 	}
 
 	/**

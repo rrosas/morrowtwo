@@ -1,0 +1,11 @@
+<?php
+$replacements = array(
+	'|int$|' => 'integer',
+	'|bool$|' => 'boolean',
+);
+
+$type = strtolower($type);
+$type = preg_replace(array_keys($replacements), $replacements, $type);
+
+?>
+<span class="type">~~:escape($type)~</span>

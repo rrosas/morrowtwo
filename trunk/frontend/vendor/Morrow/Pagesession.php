@@ -23,7 +23,7 @@
 namespace Morrow;
 
 /**
-* The Pagesession class is identical to the Session class except that the information stored is only accessible from the current page (based on `$page->alias`).
+* Identical to the Session class but stored information is only accessible from the current page.
 * 
 * The Pagesession is useful for storing user information that is only relevant for the current page, e.g. table sorting information on database output, or like the example below, counting user visits per page. 
 * 

@@ -23,7 +23,9 @@
 namespace Morrow;
 
 /**
-* This class provides some useful methods for dealing with URLs. Especially create() and redirect() are important, since they provide correct handling of Morrow paths in the context of language handling.
+* Provides some useful methods for dealing with URLs.
+*
+* Especially create() and redirect() are important, since they provide correct handling of Morrow paths in the context of language handling.
 * 
 * A Morrow URL has this structure:
 * `language`/`node 1`/`node 2`
@@ -93,7 +95,7 @@ class Url {
 	 *
 	 * @param	array	$language_actual	Contains the currently active language.
 	 * @param	array	$language_possible	Contains all valid language keys.
-	 * @param	array	$_fullpath	Contains the full path of the current page.
+	 * @param	array	$fullpath	Contains the full path of the current page.
 	 */
 	public function __construct($language_actual, $language_possible, $fullpath) {
 		$this->_language_actual		= $language_actual;

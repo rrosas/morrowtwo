@@ -22,7 +22,9 @@
 namespace Morrow;
 
 /**
-* A class to manipulate images with the GDlib, usually used to create thumbnails. For performance reasons there is a caching mechanism integrated. 
+* Allows to manipulate images with the GDlib.
+*
+* It is usually used to create thumbnails. For performance reasons there is a caching mechanism integrated. 
 * 
 * Examples
 * ---------
@@ -362,11 +364,10 @@ class Image {
 	}
 
 	/**
-	 * Creates the path of the cache file for the passed parameters.
+	 * Returns the saved parameters for the given cache filename.
 	 * 
-	 * @param string $file_path The path to the original file.
-	 * @param array $params The params the user passed in.
-	 * @return string The calculated file path.
+	 * @param string $cache_filename The path to the cached file you want to retrieve parameters for.
+	 * @return array The parameters for the given filename.
 	 */
 	protected function _getParamsFromHash($cache_filename) {
 		$cache_params_filename = $this->_cache_dir . $cache_filename . '_params';
@@ -414,7 +415,7 @@ class Image {
 	/**
 	 * Returns an image GD resource for a passed file path or throws an exception on error.
 	 * 
-	 * @param string $file The path to the original file.
+	 * @param string $file_path The path to the original file.
 	 * @return resource The GD image resource.
 	 */
 	public function load($file_path) {
