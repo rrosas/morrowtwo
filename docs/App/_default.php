@@ -14,15 +14,30 @@ class DefaultController extends Factory {
 		));
 
 		// toggle enduser view and developer view
-		$show_protected_and_private = $this->session->get('show_protected_and_private');
-		if (is_null($show_protected_and_private)) $show_protected_and_private = false;
+		$spap = $this->input->get('show_protected_and_private');
+		if (isset($spap)) {
+			$this->session->set('show_protected_and_private', $spap);
+		}
 
-		//if (!isset)
+		if ($this->session->get('show_protected_and_private') == null) {
+			$this->session->set('show_protected_and_private', '');
+		}
+
+		$this->view->setContent('show_protected_and_private', $this->session->get('show_protected_and_private'));
 
 		// get all classes
-		$classes_root = realpath(FW_PATH . '../frontend/vendor/Morrow/') . '/';
-		$classes = $this->_scandir_recursive($classes_root);
-		Debug::dump($classes);
+		$classes_root = realpath(FW_PATH . '../frontend/vendor') . '/';
+		$classes = $this->_scandir_recursive($classes_root . 'Morrow/');
+
+		// strip non php files and create relative paths
+		foreach ($classes as $i=>$class) {
+			if (!preg_match('|\.php$|', $class)) unset($classes[$i]);
+			else {
+				$classes[$i] = str_replace($classes_root, '', $classes[$i]);
+				$classes[$i] = preg_replace('|\.php$|', '', $classes[$i]);
+			}
+		}
+		$this->view->setContent('classes', $classes);
 	}
 
 	// edit rendered markdown blocks
@@ -38,17 +53,25 @@ class DefaultController extends Factory {
 		return $content;
 	}
 
+	/* get all files recursive and sort folders to the end */
 	protected function _scandir_recursive($path) {
-		$returner = array();
+		$returner	= array();
+		$folders	= array();
+		
 		foreach (scandir($path) as $file) {
 			if ($file{0} === '.') continue;
 			$full = $path . $file;
 			if (is_file($full)) {
 				$returner[] = $full;
 			} else if (is_dir($full)) {
-				$returner = array_merge($returner, $this->_scandir_recursive($full . '/'));
+				$folders[] = $full . '/';
 			}
 		}
+
+		foreach ($folders as $folder) {
+			$returner = array_merge($returner, $this->_scandir_recursive($folder));
+		}
+
 		return $returner;
 	}
 }
