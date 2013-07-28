@@ -34,8 +34,9 @@
 					<a class="brand" href="#">MorrowTwo 3 Documentation</a>
 					
 					<ul class="nav">
-						<li class="active"><a href="#">Enduser view</a></li>
-						<li><a href="#">Developer view</a></li>
+						<li class="active"><a href="~~:url('', array('show_protected_and_private' => ''))~">Enduser view</a></li>
+						<li><a href="~~:url('', array('show_protected_and_private' => '1'))~">Developer view</a></li>
+						<li>~~:escape($show_protected_and_private)~</li>
 					</ul>
 
 					<ul class="nav pull-right">
@@ -52,27 +53,49 @@
 	<div class="row-fluid">
 		<div class="span3">
 
-			<ul class="nav nav-list">
-				<li class="nav-header">Docs</li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li class="nav-header">Classes</li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">Morrow\Streams\File</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
-				<li><a href="">ffdsf</a></li>
+			<ul class="nav">
+				<li>
+					<h3>Docs</h3>
+					<ul class="nav">
+						<li><a href="">ffdsf</a></li>
+						<li><a href="">ffdsf</a></li>
+					</ul>
+				</li>
+				<li>
+					<h3>Classes</h3>
+					<ul class="nav">
+						~foreach ($classes as $class):~
+							<?
+							if (!isset($last_dirname)) $last_dirname = 'Morrow';
+							$dirname	= str_replace('Morrow/', '', dirname(:raw($class)));
+							$basename	= basename(:raw($class));
+
+							if ($dirname !== $last_dirname) {
+								if ($last_dirname != 'Morrow') echo '</li></ul>'; 
+								echo '<li>';
+								echo $dirname;
+								echo '<ul class="nav">'; 
+							}
+
+							echo '<li>';
+							echo '<a href="' . :url('class/' . :escape($class)) . '">' . $basename . '</a>';
+							echo '</li>';
+
+							$last_dirname = $dirname;
+
+
+							?>
+						~endforeach~
+						</ul>
+				</li>
 			</ul>
 
 		</div>
 		<div class="span9">
+
+			- :url beim Link für Enduser ist noch drin und morrow_basehref_depth auch 
+			- bei der Factory im zweiten Beispiel ist die Query fehlerhaft
+			- bei der Factory ist die prepare-Funktion fehlerhaft
 
 			~[body]~
 			~[/body]~
