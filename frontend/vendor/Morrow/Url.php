@@ -91,16 +91,24 @@ class Url {
 	protected $_fullpath;
 
 	/**
+	 * Because of the htaccess rewriting rules the base href can be different from what we expect and want
+	 * So we have to strip x levels from the basehref. The count of levels we have to strip is defined here.
+	 * @var	int $_fullpath
+	 */
+	protected $_basehref_depth = 0;
+
+	/**
 	 * All parameters passed are used for create(). You don't have to do this yourself in Morrow.
 	 *
 	 * @param	array	$language_actual	Contains the currently active language.
 	 * @param	array	$language_possible	Contains all valid language keys.
 	 * @param	array	$fullpath	Contains the full path of the current page.
 	 */
-	public function __construct($language_actual, $language_possible, $fullpath) {
+	public function __construct($language_actual, $language_possible, $fullpath, $basehref_depth) {
 		$this->_language_actual		= $language_actual;
 		$this->_language_possible	= $language_possible;
 		$this->_fullpath			= $fullpath;
+		$this->_basehref_depth		= $basehref_depth;
 	}
 
 	/**
@@ -268,6 +276,11 @@ class Url {
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';
 		$scheme = isset($_SERVER['HTTPS']) || isset($_SERVER['HTTP_X_SSL_ACTIVE']) || (isset($_SERVER['SSL_PROTOCOL']) && !empty($_SERVER['SSL_PROTOCOL'])) ? 'https://' : 'http://';
-		return $scheme . $_SERVER['HTTP_HOST'] . $path;
+		$base_href = $scheme . $_SERVER['HTTP_HOST'] . $path;
+
+		// We have to strip x nodes from the end of the base href
+		// Depends on the htaccess entry point
+		$base_href = preg_replace('|([^/]+/){'. $this->_basehref_depth .'}$|', '', $base_href);
+		return $base_href;
 	}
 }
