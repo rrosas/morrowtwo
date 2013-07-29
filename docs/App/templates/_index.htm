@@ -33,16 +33,10 @@
 				<div class="navbar-inner">
 					<a class="brand" href="#">MorrowTwo 3 Documentation</a>
 					
-					<ul class="nav">
+					<ul class="nav pull-right">
 						<li class="active"><a href="~~:url('', array('show_protected_and_private' => ''))~">Enduser view</a></li>
 						<li><a href="~~:url('', array('show_protected_and_private' => '1'))~">Developer view</a></li>
 						<li>~~:escape($show_protected_and_private)~</li>
-					</ul>
-
-					<ul class="nav pull-right">
-						<li>
-							<div><a href="#" class="btn btn-small">Rebuild</a></div>
-						</li>
 					</ul>
 				</div>
 			</div>
@@ -56,9 +50,11 @@
 			<ul class="nav">
 				<li>
 					<h3>Docs</h3>
+
 					<ul class="nav">
-						<li><a href="">ffdsf</a></li>
-						<li><a href="">ffdsf</a></li>
+						~foreach($pages as $page):~
+							<li><a href="~~:url('page/' . :escape($page.id))~">~~:escape($page.title)~</a></li>
+						~endforeach~
 					</ul>
 				</li>
 				<li>

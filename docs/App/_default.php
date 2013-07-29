@@ -25,8 +25,14 @@ class DefaultController extends Factory {
 
 		$this->view->setContent('show_protected_and_private', $this->session->get('show_protected_and_private'));
 
-		// get all classes
 		$classes_root = realpath(FW_PATH . '../frontend/vendor') . '/';
+		
+		// get all pages
+		$pages = file_get_contents($classes_root . 'Morrow/Docs/index.nav');
+		preg_match_all('|(?P<id>\w+)\s+(?P<title>.+)|', $pages, $pages, PREG_SET_ORDER);
+		$this->view->setContent('pages', $pages);
+
+		// get all classes
 		$classes = $this->_scandir_recursive($classes_root . 'Morrow/');
 
 		// strip non php files and create relative paths
@@ -38,6 +44,11 @@ class DefaultController extends Factory {
 			}
 		}
 		$this->view->setContent('classes', $classes);
+
+		// redirect to the first page
+		if (!in_array($this->page->get('alias'), array('page', 'class'))) {
+			//$this->url->redirect('page/' . $pages[0]['id']);
+		}
 	}
 
 	// edit rendered markdown blocks

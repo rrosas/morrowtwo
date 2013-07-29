@@ -28,6 +28,7 @@ return array(
 	'routing'					=> array(
 		'/'						=> 'home/',
 		'class/*path'			=> 'class/',
+		'page/:id'				=> 'page/',
 	),
 	
 // log
