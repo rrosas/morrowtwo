@@ -110,17 +110,16 @@ class Docblock {
 	}
 
 	public function parseDocComment($string) {
+
 		// unify linebreaks
 		$string = preg_replace("-(\r\n|\r|\n)-", "\n", $string);
 
 		// remove asterisks
-		$string = trim(preg_replace('|^/\*\*\s+\*\s*(.+)\*/$|s', '$1', $string));
-
+		$string = preg_replace('|^/\*\*\n(.+)\*/$|s', '$1', $string);
 
 		// find asterisk depth to content
-		preg_match('|\n(\s*)\*([ \t]+)|', $string, $match);
-		$string = trim(preg_replace('|\n*\s*'.preg_quote($match[1] . '*' . $match[2]).'|', "\n", $string));
-		$string = trim(preg_replace('|\n*\s*'.preg_quote($match[1]) . '\*\s*\n|', "\n\n", $string));
+		preg_match('|^(\s*)\*(\s+)|', $string, $match);
+		$string = trim(preg_replace('~(\n|^)\s*'.preg_quote($match[1]) . '\*(' . preg_quote($match[2]).')?~', "\n", $string));
 
 		// strip empty asterisk lines
 		$string = preg_replace("-\n\*(\s+|$)-", "\n", $string);

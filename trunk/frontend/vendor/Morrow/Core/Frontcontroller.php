@@ -149,6 +149,8 @@ class Frontcontroller {
 
 		/* load input class
 		********************************************************************************************/
+		$basehref_depth = (int)$_GET['morrow_basehref_depth'];
+		unset($_GET['morrow_basehref_depth']);
 		$this->input	= Factory::load('Input', $_GET ,$_POST, $_FILES); // input class for all user input
 
 		/* load page class and set nodes
@@ -244,14 +246,14 @@ class Frontcontroller {
 		// set nodes in page class
 		$nodes = explode('/', $url);
 		$nodes = array_map('strtolower', $nodes);
-		$this->page->set('nodes', $nodes);
+		$this->page->set('nodes_redirected', $nodes);
 
 		/* prepare some internal variables
 		********************************************************************************************/
 		$alias					= implode('_', $nodes);
 		$global_controller_file	= APP_PATH .'_default.php';
 		$page_controller_file	= APP_PATH . $alias .'.php';
-		$path					= implode('/', $nodes).'/';
+		$path					= implode('/', $this->page->get('nodes')).'/';
 		$query					= $this->input->getGet();
 		$fullpath				= $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
 		
@@ -275,7 +277,6 @@ class Frontcontroller {
 		********************************************************************************************/
 		// We have to strip x nodes from the end of the base href
 		// Depends on the htaccess entry point
-		$basehref_depth = (int)$this->input->get('morrow_basehref_depth');
 		$base_href = preg_replace('|([^/]+/){'. $basehref_depth .'}$|', '', $this->url->getBaseHref());
 
 		$this->page->set('base_href', $base_href);
