@@ -1,8 +1,0 @@
-<?php $labels = array(
-	'public' => 'label-success',
-	'protected' => 'label-warning',
-	'private' => 'label-error',
-);
- ?>
-
-<span class="label <?php echo $labels[$this->_raw($visibility)] ?>"><?php echo $this->_escape($visibility) ?></span>
