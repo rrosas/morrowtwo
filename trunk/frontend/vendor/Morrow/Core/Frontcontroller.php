@@ -260,7 +260,7 @@ class Frontcontroller {
 		/* load classes we need anyway
 		********************************************************************************************/
 		$this->view	= Factory::load('View');
-		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath);
+		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath, $basehref_depth);
 		
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
@@ -275,11 +275,7 @@ class Frontcontroller {
 
 		/* define page params
 		********************************************************************************************/
-		// We have to strip x nodes from the end of the base href
-		// Depends on the htaccess entry point
-		$base_href = preg_replace('|([^/]+/){'. $basehref_depth .'}$|', '', $this->url->getBaseHref());
-
-		$this->page->set('base_href', $base_href);
+		$this->page->set('base_href', $this->url->getBaseHref());
 		$this->page->set('alias', $alias);
 		$this->page->set('controller', $page_controller_file);
 		$this->page->set('path', $path);
