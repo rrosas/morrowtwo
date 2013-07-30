@@ -8,7 +8,7 @@ Debug::Dump
 
 The most interesting tool is Morrow's system wide replacement for print_r() and var_dump(). It returns a nice layout with a lot more of information than other tools. For example where you did the call. Never forget anymore where you have placed your debugging call. Just try out.
 
-~~~{.php
+~~~{.php}
 // ... controller code
  
 Debug::dump($_SERVER);
@@ -18,13 +18,13 @@ Debug::dump($_SERVER);
 
 If you are in an other namespace (e.g. if you are working in a Model class) than `Morrow` you have to call the fully namespaced class path:
 
-~~~{.php
+~~~{.php}
 \Morrow\Debug::dump($_SERVER);
 ~~~
 
 Or use the `use` function to import the Debug class in your current namespace.
 
-~~~{.php
+~~~{.php}
 use Morrow\Debug
 ~~~
 
@@ -34,7 +34,7 @@ Errors & Exceptions
 
 Morrow's preferred way is to work with exceptions. For that reason errors throw an exception, so you can catch them as you would do with normal exceptions. Furthermore we integrated a state-of-the-art-top-level-exception-handler.
 
-~~~{.php
+~~~{.php}
 // ... controller code
  
 try {
@@ -61,7 +61,7 @@ $this->debug->setAfterException(function($exception) {
 Configuration
 --------------
 
-~~~{.php
+~~~{.php}
 return array(
 
 // debug

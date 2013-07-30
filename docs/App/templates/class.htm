@@ -12,7 +12,9 @@
 		~~:escape($class.doc.content.0)~
 	</p>
 		
-	~~:markdown(:raw($class.doc.content.1))~
+	~if (isset($class.doc.content.1)):~
+		~~:markdown(:raw($class.doc.content.1))~
+	~endif~
 		
 	/* Only show members if there are public ones */
 	<?
