@@ -99,6 +99,11 @@ class Docblock {
 			if (isset($doc['tags']['param']))
 			foreach ($doc['tags']['param'] as $d) {
 				$name = substr($d['variable'], 1);
+
+				if (!isset($method['parameters'][$name])) {
+					throw new \Exception('Found parameter "'.$name.'" for method "'.$m->class.'::'.$m->getName().'" in DocBlock, but there is no parameter with that name.');
+				}
+
 				$method['parameters'][$name]['type']		= $d['type'];
 				$method['parameters'][$name]['description']	= $d['description'];
 			}

@@ -18,7 +18,7 @@ RewriteEngine on
 # Maintenance mode
 # -------------------
 # RewriteCond %{REMOTE_ADDR} !x.x.x.x
-# RewriteRule !(index\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
+# RewriteRule !(maintenance\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
 
 
 	# Emulate RewriteBase

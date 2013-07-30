@@ -31,10 +31,12 @@ use Morrow\Factoryproxy;
  */
 class Frontcontroller {
 	/**
-	 * Will be set by the run() method as default error handler.
-	 * It throws an exception to normalize the handling of errors and exceptions.
+	 * Will be set by the Constructor as default error handler, and throws an exception to normalize the handling of errors and exceptions.
 	 *
-	 * @param	Parameters are as defined by set_error_handler() in PHP.
+	 * @param	int $errno Contains the level of the error raised, as an integer.
+	 * @param	string $errstr Contains the error message, as a string.
+	 * @param	string $errfile The third parameter is optional, errfile, which contains the filename that the error was raised in, as a string.
+	 * @param	string $errline The fourth parameter is optional, errline, which contains the line number the error was raised at, as an integer.
 	 * @return	null
 	 */
 	public function errorHandler($errno, $errstr, $errfile, $errline) {
@@ -51,7 +53,7 @@ class Frontcontroller {
 	}
 
 	/**
-	 * Will be set by the run() method as global exception handler.
+	 * Will be set by the Constructor as global exception handler.
 	 * @param	object	$exception	The thrown exception.
 	 * @return null
 	 */
@@ -68,26 +70,6 @@ class Frontcontroller {
 		}
 	}
 	
-	/**
-	 * A PSR-0 compatible autoloader which tries to loads project specific models.
-	 * @param	string	$namespace	A fully defined class name incl. namespace path
-	 * @return	null
-	 */
-	/*
-	protected function _autoload($namespace) {
-		if (!defined('PROJECT_PATH')) return;
-
-		// explode namespace to single nodes
-		$namespace_nodes = explode('\\', $namespace);
-		if (!isset($namespace_nodes[1]) || $namespace_nodes[1] != 'Models') return;
-		
-		// Each _ character in the CLASS NAME is converted to a DIRECTORY_SEPARATOR. The _ character has no special meaning in the namespace.
-		$classname = DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, array_pop($namespace_nodes)) . '.php';
-
-		include (PROJECT_PATH . '_models' . $classname);
-	}
-	*/
-
 	/**
 	 * Loads config files in an array.
 	 * First it searches for a file _default.php then it tries to load the config for the current HOST and then for the Server IP address.
@@ -108,7 +90,7 @@ class Frontcontroller {
 	}
 
 	/**
-	 * This function contains the main application flow
+	 * This function contains the main application flow.
 	 */
 	public function __construct() {
 		/* global settings
@@ -149,7 +131,7 @@ class Frontcontroller {
 
 		/* load input class
 		********************************************************************************************/
-		$basehref_depth = (int)$_GET['morrow_basehref_depth'];
+		$basehref_depth = isset($_GET['morrow_basehref_depth']) ? (int)$_GET['morrow_basehref_depth'] : 0;
 		unset($_GET['morrow_basehref_depth']);
 		$this->input	= Factory::load('Input', $_GET ,$_POST, $_FILES); // input class for all user input
 
