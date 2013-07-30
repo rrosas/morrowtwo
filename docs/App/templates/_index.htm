@@ -34,9 +34,8 @@
 					<a class="brand" href="#">MorrowTwo 3 Documentation</a>
 					
 					<ul class="nav pull-right">
-						<li class="active"><a href="~~:url('', array('show_protected_and_private' => ''))~">Enduser view</a></li>
-						<li><a href="~~:url('', array('show_protected_and_private' => '1'))~">Developer view</a></li>
-						<li>~~:escape($show_protected_and_private)~</li>
+						<li ~if (!:raw($show_protected_and_private)):~class="active"~endif~><a href="~~:url('', array('show_protected_and_private' => ''))~" title="Shows only public members and methods">Enduser view</a></li>
+						<li ~if (:raw($show_protected_and_private)):~class="active"~endif~><a href="~~:url('', array('show_protected_and_private' => '1'))~" title="Shows all members and methods">Developer view</a></li>
 					</ul>
 				</div>
 			</div>
