@@ -61,6 +61,14 @@ class DefaultController extends Factory {
 		// add syntax highlighter
 		$content = preg_replace('|<pre><code class="([a-z]+?)">|s', '<pre><code class="language-$1">', $content);
 
+		// auto link classes
+		$content = preg_replace_callback('|(\\\\[A-Z][\\\\A-Za-z0-9]+)|s', function($match){
+			$url = Factory::load('Url')->create('class/');
+			$url .= str_replace('\\', '/', $match[0]);
+
+			return '<a href="'.$url.'">'.$match[0].'</a>';
+		}, $content);		
+
 		return $content;
 	}
 

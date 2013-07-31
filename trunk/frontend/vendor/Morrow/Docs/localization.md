@@ -1,4 +1,4 @@
-Localization {#localization}
+Localization
 =============================
 
 Handling content for different languages can be a very complex topic. Morrow simplifies the process as much as possible, but a certain amount of complexity remains, because there are so many different aspects to multilingual sites, not just words, but also use of currency and date formats, for example.

@@ -1,17 +1,56 @@
-Extending MorrowTwo {#extending}
-=============================
+Extending MorrowTwo
+====================
 
-Sometimes you will reach a point where you need more power. No problem. You can integrate own user classes and also your own view handlers to extend Morrows power. When you load a class the factory also looks for class files in
+Sometimes you will reach a point where you need more power. No problem.
+You can integrate your own classes, replace any file of the MorrowTwo framework or integrate other libraries via [Composer](http://getcomposer.org/).
+If you don't have experience in using Composer, take a look at [Composer - Getting started](http://getcomposer.org/doc/00-intro.md).
 
-1. vendor/
-2. vendor_user/ 
+Beside your `App` folder you will find those two folders:
 
-Place your class in path 1 if you need it in more than one project. Place it in path 2 if you need it in just one project.
+* `vendor/` Maintained by Composer. Don't change anything here manually.
+	* `composer.json` The Composer control file.
+* `vendor_user/` The folder to replace Morrows core components or load Not-Composer-Libraries.
 
-Integrating user classes
-------------------------
 
-This example integrates the PEAR Text_Diff into Morrow. It shows how to integrate a PEAR class in a system where the PEAR installer is not available. The PEAR files in this example are located in PROJECT_PATH/_libs/pear/.
+
+Working with Composer libraries
+-------------------------------
+We assume that you know what Composer and Packagist is and how to work with it.
+
+If you have added `"michelf/php-markdown": "1.3.*"` to your composer.json file and have updated Composer, you can use it instantly like this:
+
+~~~{.php}
+<?php
+
+
+namespace App;
+use Morrow\Factory;
+use Morrow\Debug;
+
+class PageController extends DefaultController {
+	public function run() {
+		
+		// use it directly
+		$content = ...;
+		$content = \Michelf\MarkdownExtra::defaultTransform($content);
+
+		// or use the Factory to create an instance
+		$content = ...;
+		$content = Factory::load('\Michelf\MarkdownExtra')->defaultTransform($content);
+	}
+}
+?>
+~~~
+
+
+Working with Not-Composer-Libraries
+------------------------------------
+Morrows Autoloader is PSR-0 compatible and first checks the `vendor_user` folder for the requested library and then the `vendor` folder.
+
+
+
+This example integrates the PEAR Text_Diff into Morrow.
+It shows how to integrate a PEAR class in a system where the PEAR installer is not available. The PEAR files in this example are located in `vendor_user/`.
 
 We create a new file textdiff.class.php that corresponds to the naming and folder conventions of Morrow and extend the original class in that file.
 
@@ -26,9 +65,9 @@ set_include_path(PROJECT_PATH.'_libs/pear' . PATH_SEPARATOR . get_include_path()
 require_once 'Text/Diff.php';
  
 class textdiff extends Text_Diff {
-    public function __construct($engine, $array1, $array2 ) {
-        parent::Text_Diff($engine, array($array1, $array2));
-    }
+	public function __construct($engine, $array1, $array2 ) {
+		parent::Text_Diff($engine, array($array1, $array2));
+	}
 }
 ~~~
 
@@ -36,11 +75,11 @@ class textdiff extends Text_Diff {
 
 ~~~{.php}
 class PageController extends GlobalController {
-    public function run() {
-        $this->load('textdiff','auto', $array1, $array2);
-        // now do with your class what you want to
-        ...
-    }
+	public function run() {
+		$this->load('textdiff','auto', $array1, $array2);
+		// now do with your class what you want to
+		...
+	}
 }
 ~~~
 
@@ -55,15 +94,15 @@ Let us take a look at the viewPlain handler which has the smallest code base. At
 
 ~~~{.php}
 class Viewplain extends ViewAbstract {
-    public $mimetype        = 'text/plain';
-    public $charset         = 'iso-8859-1';
+	public $mimetype        = 'text/plain';
+	public $charset         = 'iso-8859-1';
  
-    public function getOutput($content) {
-        if (!is_scalar($content['content'])) {
-            trigger_error(__class__.': The content variable for this handler has to be scalar.', e_user_error); return false;
-        }
-        return $content['content'];
-    }
+	public function getOutput($content) {
+		if (!is_scalar($content['content'])) {
+			trigger_error(__class__.': The content variable for this handler has to be scalar.', e_user_error); return false;
+		}
+		return $content['content'];
+	}
 }
 ~~~
 
@@ -87,18 +126,18 @@ The following construct is the base for all new filters.
 
 ~~~{.php} 
 class FilterYourname extends FilterAbstract {
-    protected $params = array();    
+	protected $params = array();    
 
-    public function __contruct($params) {
-        $this->params = $params:
-    }
-    
-    public function get($content) {
-        
-        // change the content here
+	public function __contruct($params) {
+		$this->params = $params:
+	}
+	
+	public function get($content) {
+		
+		// change the content here
 
-        return $content;
-    }
+		return $content;
+	}
 }
 ~~~
 
