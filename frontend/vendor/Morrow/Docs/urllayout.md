@@ -1,35 +1,60 @@
-URL Layout {#urllayout}
+URL Layout
 ==========
 
-The often used layout by other frameworks is usually:
+The URL layout often used by other frameworks is usually:
 
-~~~
-http://domain.com/controller/action/param/param/
-~~~
+**URL:** `http://domain.com/controller/action/param/param/`
 
-From the object oriented view of a developer this might be right, but we think the URL is an important hierarchical navigation element for the user of a website. It is like a breadcrumb (also for search engines like Google) and that we decided to design our URL layout.
-Decide yourself. What is more pleasing?
+From the object oriented view of a developer this might be right, but we think the URL is an important hierarchical navigation element for the user of a website.
+It is like a breadcrumb (also for search engines like Google) and that we decided to design our URL layout.
 
-Most other frameworks:
+Framework | URL layout
+----------|------------
+Others | `products/show/cool_funky_product/`
+MorrowTwo | `products/hard-stuff/funky-stuff/cool-funky-product/`
 
-~~~
-products/show/cool_funky_product/
-~~~
+MorrowTwo takes the given URL and creates an internal identifier (`alias`).
+It is the same as the URL path but with underscores instead of slashes. So the URL above will get the following identifier:
 
-MorrowTwo framework:
+**Alias:** `products_hard-stuff_funky-stuff_cool-funky-product`
 
-~~~
-products/hard-stuff/funky-stuff/cool-funky-product/
-~~~
+The framework will now try to execute the controller
 
-You see, MorrowTwos URL layout is able to map a complete hierarchical structure.
+**File:** `App/products_hard-stuff_funky-stuff_cool-funky-product.php`
+
+and to use the template (if you have set Serpent as your default view handler)
+
+**File:** `App/templates/products_hard-stuff_funky-stuff_cool-funky-product.htm`
+
 
 For advanced users
 ------------------
 
-It is also possible to use the other layout if you are used to it. Just use URL Routing and call the action in your global controller by hand. If you are writing an application rather than creating a website, it makes more sense to have a controller with different methods that are called according to the path.
+If you are writing an application rather than creating a presentational website, it can make more sense to use the Controller-Action URL layout.
+Just use URL Routing and call the action in your default controller by hand.
 
-URL » MorrowTwo
--------------
+**_App/configs/default.php**
+~~~{.php}
+	'routing' = array(
+		':controller/:action/*params' => ':controller/',
+	),
+);
+~~~
 
-MorrowTwo takes the given URL and creates an internal identifier (Alias). It is the same as the URL but with underscores instead of slashes. So the URL above will get the following identifier: products_hard-stuff_funky-stuff_cool-funky-product This is also the name of the called controller. 
+**App/_default.php**
+~~~{.php}
+// init "application url design"
+$controller	= $this->input->get('controller');
+$action		= $this->input->get('action');
+$params		= $this->input->get('params');
+
+if (!is_null($action)) {
+	if (!method_exists($this, $action)) {
+		$this->url->redirect( $this->page->get('base_href') );
+	}
+	call_user_func_array( array($this, $action), $params);
+
+	// set default template
+	$this->view->setProperty('template', $controller . '_' . $action, 'serpent');
+}
+~~~

@@ -1,5 +1,5 @@
-Form Handling {#formhandling}
-=============================
+Form Handling
+=============
 
 The form class simplifies the handling and validation of user input. It can also make creating HTML forms simpler by taking care of correct naming, refilling field values and showing errors. It also includes a work-around, so that uploaded files are not lost when an user fills out incorrectly a field.
 

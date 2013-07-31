@@ -16,77 +16,72 @@
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 	
 	<title>MorrowTwo 3 Documentation</title>
-	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.min.css" />
+	<link rel="stylesheet" href="bootstrap3RC1/css/bootstrap.min.css" />
 
 	<link rel="stylesheet" href="css/prism.css" />
 	<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-<div class="container-fluid">
+<div class="container">
 	
-	<div class="row-fluid">
-		<div class="span12">
+	<div class="row">
+		<div class="col-lg-12">
 
 			<div class="navbar">
-				<div class="navbar-inner">
-					<a class="brand" href="#">MorrowTwo 3 Documentation</a>
-					
-					<ul class="nav pull-right">
-						<li ~if (!:raw($show_protected_and_private)):~class="active"~endif~><a href="~~:url('', array('show_protected_and_private' => ''))~" title="Shows only public members and methods">Enduser view</a></li>
-						<li ~if (:raw($show_protected_and_private)):~class="active"~endif~><a href="~~:url('', array('show_protected_and_private' => '1'))~" title="Shows all members and methods">Developer view</a></li>
-					</ul>
-				</div>
+				<a class="navbar-brand" href="#">MorrowTwo 3 Documentation</a>
+				
+				<ul class="nav navbar-nav pull-right">
+					<li ~if (!:raw($show_protected_and_private)):~class="active"~endif~><a href="~~:url('', array('show_protected_and_private' => ''))~" title="Shows only public members and methods">Enduser view</a></li>
+					<li ~if (:raw($show_protected_and_private)):~class="active"~endif~><a href="~~:url('', array('show_protected_and_private' => '1'))~" title="Shows all members and methods">Developer view</a></li>
+				</ul>
 			</div>
 
 		</div>
 	</div>
 
-	<div class="row-fluid">
-		<div class="span3">
+	<div class="row">
+		<div class="col-lg-3">
 
-			<ul class="nav">
-				<li>
-					<h3>Docs</h3>
+			<div class="panel">
+			<div class="panel-heading">Manual</div>
+				<ul class="nav">
+					~foreach($pages as $page):~
+						<li><a href="~~:url('page/' . :escape($page.id))~">~~:raw($page.title)~</a></li>
+					~endforeach~
+				</ul>
+			</div>
 
-					<ul class="nav">
-						~foreach($pages as $page):~
-							<li><a href="~~:url('page/' . :escape($page.id))~">~~:escape($page.title)~</a></li>
-						~endforeach~
-					</ul>
-				</li>
-				<li>
-					<h3>Classes</h3>
-					<ul class="nav">
-						~foreach ($classes as $class):~
-							<?
-							if (!isset($last_dirname)) $last_dirname = 'Morrow';
-							$dirname	= str_replace('Morrow/', '', dirname(:raw($class)));
-							$basename	= basename(:raw($class));
+			<div class="panel">
+				<div class="panel-heading">Classes</div>
+				<ul class="nav">
+					~foreach ($classes as $class):~
+						<?
+						if (!isset($last_dirname)) $last_dirname = 'Morrow';
+						$dirname	= str_replace('Morrow/', '', dirname(:raw($class)));
+						$basename	= basename(:raw($class));
 
-							if ($dirname !== $last_dirname) {
-								if ($last_dirname != 'Morrow') echo '</li></ul>'; 
-								echo '<li>';
-								echo $dirname;
-								echo '<ul class="nav">'; 
-							}
-
+						if ($dirname !== $last_dirname) {
+							if ($last_dirname != 'Morrow') echo '</li></ul>'; 
 							echo '<li>';
-							echo '<a href="' . :url('class/' . :escape($class)) . '">' . $basename . '</a>';
-							echo '</li>';
+							echo $dirname;
+							echo '<ul class="nav">'; 
+						}
 
-							$last_dirname = $dirname;
+						echo '<li>';
+						echo '<a href="' . :url('class/' . :escape($class)) . '">' . $basename . '</a>';
+						echo '</li>';
+
+						$last_dirname = $dirname;
 
 
-							?>
-						~endforeach~
-						</ul>
-				</li>
-			</ul>
+						?>
+					~endforeach~
+				</ul>
+			</div>
 
 		</div>
-		<div class="span9">
+		<div class="col-lg-9">
 
 			~[body]~
 			~[/body]~

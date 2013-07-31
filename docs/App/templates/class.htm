@@ -1,12 +1,14 @@
 ~:extend('_index')~
 
 ~[body]~
-	<h1>
-		<small>~~:escape($class.namespace)~\</small> ~~:escape($class.name)~
-		~if ($class.parent !== null):~
-			<small>(extends ~~:escape($class.parent)~)</small>
-		~endif~
-	</h1>
+	<div class="page-header">
+		<h1>
+			<small>~~:escape($class.namespace)~\</small> ~~:escape($class.name)~
+			~if ($class.parent !== null):~
+				<small>(extends ~~:escape($class.parent)~)</small>
+			~endif~
+		</h1>
+	</div>
 
 	<p class="lead">
 		~~:escape($class.doc.content.0)~
@@ -41,7 +43,7 @@
 				<tr>
 					<td>~:render('elements/visibility', null, null, array('visibility' => $member.visibility))~</td>
 					<td><span class="type">~~:escape($member.tags.var.0.type)~</span></td>
-					<td><code>~~:escape($member.name)~</code></td>
+					<td><code>$~~:escape($member.name)~</code></td>
 					<td>~~:escape($member.content.title)~</td>
 				</tr>
 			~endforeach~

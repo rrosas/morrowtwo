@@ -1,4 +1,4 @@
-Multiple Sites {#multiplesites}
+Multiple Sites
 =============================
 
 One Morrow installation can be used for several sites at the same time. Sites in Morrow are called "projects" and are always contained in folders underneath the main installation folder.

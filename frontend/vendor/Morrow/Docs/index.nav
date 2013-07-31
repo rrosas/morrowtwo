@@ -3,11 +3,12 @@ installation	Installation
 urllayout		URL Layout
 controllers		Controllers
 views			Views
+environment		Environment information
 debugging		Debugging
 urlrouting		URL routing
-outputcaching	Output caching
-extending		Extending
-localization	Localization
-formhandling	Form handling
-multiplesites	Multiple Sites
-security		Security
+caching			Caching
+extending		Extending <div class="label label-warning">?</div>
+localization	Localization <div class="label label-warning">?</div>
+formhandling	Form handling <div class="label label-warning">?</div>
+multiplesites	Multiple Sites <div class="label label-warning">?</div>
+security		Security <div class="label label-warning">?</div>

@@ -1,4 +1,4 @@
-Security {#security}
+Security
 =============================
 
 session_regenerate_id() bei Privilegienwechsel.

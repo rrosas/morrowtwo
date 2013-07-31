@@ -1,6 +1,10 @@
 ~:extend('_index')~
 
 ~[body]~
-	~~:markdown(:raw($page_content))~
+	~:capture('content')~
+		~~:markdown(:raw($page_content))~
+	~:endcapture()~
+
+	~~preg_replace('|<h1>.+?</h1>|', '<div class="page-header">$0</div>', $content, 1)~
 ~[/body]~
 

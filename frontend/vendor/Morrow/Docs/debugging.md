@@ -1,38 +1,39 @@
-Debugging {#debugging}
+Debugging
 =============================
 
 Debugging is of course one of the most interesting topics while developing. Morrow gives you a simple and clean way to debug your applications.
 
-Debug::Dump
------------
+Dumping variables
+-----------------
 
 The most interesting tool is Morrow's system wide replacement for print_r() and var_dump(). It returns a nice layout with a lot more of information than other tools. For example where you did the call. Never forget anymore where you have placed your debugging call. Just try out.
 
 ~~~{.php}
-// ... controller code
- 
-Debug::dump($_SERVER);
- 
-// ... controller code
+<?php
+namespace App;
+use Morrow\Factory;
+use Morrow\Debug;
+
+class PageController extends DefaultController {
+	public function run() {
+		Debug::dump($_SERVER);
+	}
+}
+?>
 ~~~
 
-If you are in an other namespace (e.g. if you are working in a Model class) than `Morrow` you have to call the fully namespaced class path:
+That is the reason why `use \Morrow\Debug;` was inserted at the top of the file.
+Otherwise you would have to call
 
 ~~~{.php}
 \Morrow\Debug::dump($_SERVER);
-~~~
-
-Or use the `use` function to import the Debug class in your current namespace.
-
-~~~{.php}
-use Morrow\Debug
 ~~~
 
 
 Errors & Exceptions
 -------------------
 
-Morrow's preferred way is to work with exceptions. For that reason errors throw an exception, so you can catch them as you would do with normal exceptions. Furthermore we integrated a state-of-the-art-top-level-exception-handler.
+Morrow's preferred way is to work with exceptions. For that reason errors throw an exception, so you can catch them as you would do with normal exceptions. Furthermore we integrated a state-of-the-art-top-level-exception-handler&trade;.
 
 ~~~{.php}
 // ... controller code
@@ -58,18 +59,17 @@ $this->debug->setAfterException(function($exception) {
 ~~~
 
 
-Configuration
+Configuration defaults
 --------------
 
+**App/configs/_default.php**
 ~~~{.php}
-return array(
-
+...
 // debug
-	'debug.screen'			=> true,
-	'debug.flatfile'		=> false,
-	'debug.die_on_error'	=> true,
-
-);
+	'debug.output.screen'		=> true,
+	'debug.output.file'			=> true,
+	'debug.file.path'			=> APP_PATH .'logs/error_'. date('Y-m-d') .'.txt',
+...
 ~~~
 
 Time Handling
@@ -79,16 +79,28 @@ Sometimes it is useful to check several time phases of a project, e.g. for a raf
 It is helpful to instantiate a DateTime object in the DefaultController so you can imitate every date in your project.
 
 ~~~{.php}
-Factory::prepare('\DateTime', '2012-03-15');
+<?php
+namespace App;
+use Morrow\Factory;
+use Morrow\Debug;
 
-// Output the current fake date formatted
-$now_formatted = Factory::load('datetime')->format('Y-m-d H:i:s');
-Debug::dump($now_formatted);
+class PageController extends DefaultController {
+	public function run() {
+		Factory::prepare('\DateTime', '2012-03-15');
 
-// add a day to the fake date
-Factory::load('datetime')->modify('+1 day');
+		// Output the current fake date formatted
+		$now_formatted = Factory::load('datetime')->format('Y-m-d H:i:s');
+		Debug::dump($now_formatted);
 
-// get the timestamp for the fake date +1 day
-$tomorrow_timestamp = Factory::load('datetime')->getTimestamp();
-Debug::dump($tomorrow_timestamp);
+		// add a day to the fake date
+		Factory::load('datetime')->modify('+1 day');
+
+		// get the timestamp for the fake date +1 day
+		$tomorrow_timestamp = Factory::load('datetime')->getTimestamp();
+		Debug::dump($tomorrow_timestamp);
+	}
+}
+?>
 ~~~
+
+Because in the example you are in the controller you could have also used `this->prepare()` instead of `Factory::prepare()` and `$this->datetime` instead of `Factory::load('datetime')`.
