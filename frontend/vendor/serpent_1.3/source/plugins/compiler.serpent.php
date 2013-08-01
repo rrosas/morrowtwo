@@ -14,17 +14,17 @@ class SerpentCompilerSerpent extends SerpentCompilerAbstract {
 		
 	public function __construct() {
 		$this->mappings = array(
-			'render' => 'echo $this->render',
-			'include' => 'include $this->_render',
-			'eval' => 'eval( "?>" . $this->compile',
-			'extend' => '$this->_add_parent_template($this->_render',
-			'capture' => 'ob_start(); $this->_capture_stack[] = ',
-			'endcapture' => '${array_pop($this->_capture_stack)} = ob_get_clean',
-			'repeat' => 'ob_start(); $this->_repeat_stack[] = ',
-			'endrepeat' => 'echo str_repeat(ob_get_clean(), array_pop($this->_repeat_stack)); time',
-			'raw' => '$this->_raw',
-			'escape' => '$this->_escape',
-			'unescape' => '$this->_unescape',
+			'render'		=> 'echo $this->render',
+			'include'		=> 'include $this->_render',
+			'eval'			=> 'eval( "?>" . $this->compile',
+			'extend'		=> '$this->_add_parent_template($this->_render',
+			'capture'		=> 'ob_start(); $this->_capture_stack[] = ',
+			'endcapture'	=> '${array_pop($this->_capture_stack)} = ob_get_clean',
+			'repeat'		=> 'ob_start(); $this->_repeat_stack[] = ',
+			'endrepeat'		=> 'echo str_repeat(ob_get_clean(), array_pop($this->_repeat_stack)); time',
+			'raw'			=> '$this->_raw',
+			'escape'		=> '$this->_escape',
+			'unescape'		=> '$this->_unescape',
 		);
 	}
 		
