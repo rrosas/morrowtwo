@@ -23,7 +23,7 @@
 namespace Morrow;
 
 /**
-* With this class it is possible to store variables of any type (except ressources) in an internal cache for performance reasons.
+* Helps to store variables of any type (except ressources) in a file cache for performance reasons.
 * This is very useful for operations or calculations which take much time to execute.
 *
 * Imagine a very complex and time consuming database query which results only have to determined once an hour. Or an RSS Reader, whose external rss sources should only be retrieved once a day.

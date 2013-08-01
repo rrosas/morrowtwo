@@ -30,8 +30,8 @@ Permissions
 
 The following folders have to be readable & writable by the web server user:
  
- * `frontend/App/temp`
- * `frontend/App/logs`
+ * `frontend/App/temp/`
+ * `frontend/App/logs/`
 
-If you have more than one Morrow project (beside `frontend/`) you have to repeat this step for each of them.
+If you have more than one MorrowTwo project (beside `frontend/`) you have to repeat this step for each of them.
 
