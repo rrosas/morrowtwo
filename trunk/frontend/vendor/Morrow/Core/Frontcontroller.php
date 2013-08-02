@@ -235,7 +235,7 @@ class Frontcontroller {
 		$alias					= implode('_', $nodes);
 		$global_controller_file	= APP_PATH .'_default.php';
 		$page_controller_file	= APP_PATH . $alias .'.php';
-		$path					= implode('/', $this->page->get('nodes')).'/';
+		$path					= implode('/', $this->page->get('nodes'));
 		$query					= $this->input->getGet();
 		$fullpath				= $path . (count($query) > 0 ? '?' . http_build_query($query, '', '&') : '');
 		

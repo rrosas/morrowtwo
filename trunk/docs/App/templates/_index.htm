@@ -46,8 +46,10 @@
 			<div class="panel">
 			<div class="panel-heading">Manual</div>
 				<ul class="nav">
-					~foreach($pages as $page):~
-						<li><a href="~~:url('page/' . :escape($page.id))~">~~:raw($page.title)~</a></li>
+					~foreach($pages as $node):~
+						<li ~~:raw($page.path) === 'page/' . :escape($node.id) ? 'class="active"' : ''~>
+							<a href="~~:url('page/' . :escape($node.id))~">~~:raw($node.title)~</a>
+						</li>
 					~endforeach~
 				</ul>
 			</div>
@@ -68,7 +70,9 @@
 							echo '<ul class="nav">'; 
 						}
 
-						echo '<li>';
+						echo '<li';
+						if (:raw($page.path) === 'class/' . :escape($class)) echo ' class="active"';
+						echo '>';
 						echo '<a href="' . :url('class/' . :escape($class)) . '">' . $basename . '</a>';
 						echo '</li>';
 
