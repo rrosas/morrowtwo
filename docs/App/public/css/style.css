@@ -1,6 +1,7 @@
 body { padding: 20px 0 0 0; }
 h2 { margin: 40px 0 10px 0; }
 .navbar-brand { white-space: nowrap; }
+
 .function-wrapper { cursor: pointer; }
 .function-wrapper h4 code { font-size: 80%; vertical-align: middle; font-weight: normal; }
 .function-wrapper h4 .label { vertical-align: middle; }
@@ -10,3 +11,4 @@ pre { line-height: 16px; }
 
 ul.nav ul.nav { margin: 0 0 0 20px; }
 .panel ul.nav>li>a { padding: 0; }
+.panel ul.nav li.active>a { background-color: #eee; font-weight: bold; }
