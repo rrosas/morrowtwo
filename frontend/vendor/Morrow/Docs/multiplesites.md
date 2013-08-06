@@ -1,6 +1,12 @@
 Multiple Sites
 =============================
 
+> How to handle two domains with one installation
+  Have to be handled with htaccess
+
+> 3 entry points
+
+
 One Morrow installation can be used for several sites at the same time. Sites in Morrow are called "projects" and are always contained in folders underneath the main installation folder.
 
 You can name the folders however you like, but these names must be communicated to Morrow in the main configuration for the whole framework (FW_PATH/_config/).

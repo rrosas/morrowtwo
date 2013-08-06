@@ -1,24 +1,24 @@
 RewriteEngine on
 
-# This htaccess is the configuration for this installation
-# Main target is to map SEO friendly URLs to the bootstrap file 
+	# This htaccess is the configuration for this installation
+	# Main target is to map SEO friendly URLs to the bootstrap file 
 
 
-# force SSL for all files
-# -----------------------
-# RewriteCond %{SERVER_PORT}     !^443$
-# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
+	# force SSL for all files
+	# -----------------------
+	# RewriteCond %{SERVER_PORT}     !^443$
+	# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
-# Rewrite "www.domain.com -> domain.com
-# -------------------------------------
-# RewriteCond %{HTTPS} !=on
-# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+	# Rewrite "www.domain.com -> domain.com
+	# -------------------------------------
+	# RewriteCond %{HTTPS} !=on
+	# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+	# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
-# Maintenance mode
-# -------------------
-# RewriteCond %{REMOTE_ADDR} !x.x.x.x
-# RewriteRule !(index\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
+	# Maintenance mode
+	# -------------------
+	# RewriteCond %{REMOTE_ADDR} !x.x.x.x
+	# RewriteRule !(index\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
 
 
 	# Emulate RewriteBase

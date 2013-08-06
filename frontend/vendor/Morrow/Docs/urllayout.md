@@ -26,6 +26,12 @@ and to use the template (if you have set Serpent as your default view handler)
 
 **File:** `App/templates/products_hard-stuff_funky-stuff_cool-funky-product.htm`
 
+### URL nodes are case insensitive
+
+To create the MorrowTwo alias they get lowered.
+`products/cool-funky-product/` loads the same controller as `Products/Cool-Funky-Product/`.
+So you have to take care of using the same notation website wide because search engines respect different notations and could find duplicate content. 
+
 
 For advanced users
 ------------------
