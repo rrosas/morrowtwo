@@ -102,7 +102,7 @@ class Security {
 	}
 	
 	/**
-	 * Sets whether or not a browser should be allowed to render the page in a <frame> or <iframe>.
+	 * Sets whether or not a browser should be allowed to render the page in a frame or iframe.
 	 * This can be used to avoid clickjacking attacks, by ensuring that their content is not embedded into other sites.
 	 *
 	 * The following options are possible:
@@ -136,7 +136,7 @@ class Security {
 	 * @param	string	$path	The URL or the Morrow path to work with. Leave empty if you want to use the current page.
 	 * @param	array	$query	Query parameters to adapt the URL.
 	 * @param	boolean	$absolute	If set to true the URL will be a fully qualified URL.
-	 * @param	boolean	$separator	The string that is used to divide the query parameters.
+	 * @param	string	$separator	The string that is used to divide the query parameters.
 	 * @return	string	The created URL.
 	 */
 	public function createCSRFUrl($path = '', $query = array(), $absolute = false, $separator = '&amp;') {

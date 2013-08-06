@@ -199,7 +199,7 @@ class Url {
 	 * @param	string	$path	The URL or the Morrow path to work with. Leave empty if you want to use the current page.
 	 * @param	array	$query	Query parameters to adapt the URL.
 	 * @param	boolean	$absolute	If set to true the URL will be a fully qualified URL.
-	 * @param	boolean	$separator	The string that is used to divide the query parameters.
+	 * @param	string	$separator	The string that is used to divide the query parameters.
 	 * @return	string	The created URL.
 	 */
 	public function create($path = '', $query = array(), $absolute = false, $separator = '&amp;') {
