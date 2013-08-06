@@ -40,7 +40,6 @@ class Form {
 		if ($settings == null) $settings = $this->morrow_construct_vars();
 		
 		$this->_locale = $settings['locale'];
-		$this->_parseDef($settings['elements']);
 	}
 
 	/* for use only in MorrowTwo context! */
