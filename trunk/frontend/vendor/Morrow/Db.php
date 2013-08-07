@@ -243,7 +243,6 @@ class Db extends \PDO {
 		$sth = $this->prepare($query);
 
 		$returner['SUCCESS'] = $sth->execute($binds);
-		if ($insertid == true) $returner['INSERT_ID'] = $this->lastInsertId();
 		return $returner;
 	}
 
@@ -343,7 +342,7 @@ class Db extends \PDO {
 	 * 
 	 * @param	string	$table  The table name the query refers to.
 	 * @param	array	$array	The data to replace
-	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created or changed database row) 
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful)
 	 */
 	public function replace($table, $array) {
 		$array = $this->_createInsertAndReplaceValues($array);
@@ -365,7 +364,7 @@ class Db extends \PDO {
 	 * 
 	 * @param	string	$table  The table name the query refers to.
 	 * @param	array	$array	The data to replace
-	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `INSERT_ID` (int The entry ID of the new created or changed database row) 
+	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful)
 	 */
 	public function replaceSafe($table, $array) {
 		$array = $this->_safe($table, $array);
