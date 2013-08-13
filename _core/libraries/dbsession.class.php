@@ -62,15 +62,15 @@ class DBSession extends Session{
 
 
 
-	protected function on_session_start($save_path, $session_name) {
+	public function on_session_start($save_path, $session_name) {
 	}
 
-	protected function on_session_end() {
+	public function on_session_end() {
 		// Nothing needs to be done in this function
 		// since we used persistent connection.
 	}
 
-	protected function on_session_read($key) {
+	public function on_session_read($key) {
 		$stmt = "select session_data from " . $this->config->get('session.db.table');
 		$stmt .= " where session_id = ? ";
 		$stmt .= "and session_expiration > ?";
@@ -86,7 +86,7 @@ class DBSession extends Session{
 			return '';
 		}
 	}
-	protected function on_session_write($key, $val) {
+	public function on_session_write($key, $val) {
 		$expires = '+' . ini_get('session.cache_expire') . ' Minutes';
 
 		$data = array(
@@ -100,13 +100,13 @@ class DBSession extends Session{
 		
 	}
 
-	protected function on_session_destroy($key) {
+	public function on_session_destroy($key) {
 
 		$this->db->delete($this->config->get('session.db.table'), "where session_id = ?", false, $key);
 
 	}
 
-	protected function on_session_gc($max_lifetime) 
+	public function on_session_gc($max_lifetime) 
 	{
 		
 		$this->db->delete($this->config->get('session.db.table'), "where session_expiration < ?", false, strftime($this->format));
