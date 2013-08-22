@@ -12,12 +12,12 @@ So the attacker have to know the User Agent of his victim.
 
 But nevertheless you should always use PHPs `session_regenerate_id()` after any privilege level change, e.g. at every login.
 
-> More on <https://www.owasp.org/index.php/Session_Management_Cheat_Sheet>.
+*More on <https://www.owasp.org/index.php/Session_Management_Cheat_Sheet>.*
 
 By default Morrows session cookie is set to `httponly`.
 That prevents Javascript to access the session cookie and makes XSS attacks on the session cookie useless.
 
-> More on <https://www.owasp.org/index.php/HttpOnly>
+*More on <https://www.owasp.org/index.php/HttpOnly>*
 
 If you have an application or a page which only relies on HTTPS you should add the `secure` flag to the session cookie parameters so the cookie will only be sent over secure connections.
 To do this, you just have to set the corresponding parameter in
@@ -53,7 +53,7 @@ You have to wrap the variable in one of two template functions which will remove
 
 That way you cannot forget to think about XSS when you build applications.
 
-> More on <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>
+*More on <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>*
 
 
 Clickjacking
@@ -69,7 +69,7 @@ The followings prevents your page from ever been iframed:
 $this->security->setFrameOptions('DENY');
 ~~~
 
-> More on <https://www.owasp.org/index.php/Clickjacking>
+*More on <https://www.owasp.org/index.php/Clickjacking>*
 
 
 CSP (Content Security Policy)
@@ -93,7 +93,7 @@ $this->security->setCsp(array(
 ));
 ~~~
 
-> More on <https://www.owasp.org/index.php/Content_Security_Policy>
+*More on <https://www.owasp.org/index.php/Content_Security_Policy>*
 
 
 CSRF
@@ -129,4 +129,4 @@ $valid = $this->security->checkCSRFToken();
 In a template just use the mapping `:securl()` instead of `:url()` to create secure URLs.
 But do not forget to check the validity of the token in your controller.
 
-> More on <https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)>
+*More on <https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)>*
