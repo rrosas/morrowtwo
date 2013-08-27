@@ -156,14 +156,13 @@ class Security {
 	}
 	
 	/**
-	 * Creates a 102 characters long hash by using the crypt function.
+	 * Creates a 60 characters long hash by using the crypt function with the Blowfish algorithm.
 	 * @param	string	$string	The input string (e.g. a password) to hash.
-	 * @param	string	$salt	The salt to use.
 	 * @return	string	The hash.
 	 */
-	public static function createHash($string, $salt = null) {
-		if ($salt === null) return crypt($string);
-		return crypt($string, $salt);
+	public static function createHash($string) {
+		$salt = substr(str_replace('+', '.', base64_encode(pack('N4', mt_rand(), mt_rand(), mt_rand(), mt_rand()))), 0, 22);
+		return crypt($string, '$2a$10$' . $salt . '$'); // we use Blowfish with a cost of 10
 	}
 
 	/**
