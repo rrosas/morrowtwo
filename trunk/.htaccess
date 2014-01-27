@@ -1,3 +1,4 @@
+Options -FollowSymLinks
 RewriteEngine on
 
 	# This htaccess is for separating projects (subfolders).
@@ -17,8 +18,8 @@ RewriteEngine on
 	# Emulate RewriteBase
 	# -------------------
 	# Enable rewrite base for a TLD
-	# RewriteCond %{HTTP_HOST} \.[a-z]$
-	# RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
+	# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
+	# RewriteRule . - [E=REWRITEBASE:/]
 
 	# Disable rewrite base for development URLs (simple host names and IPs)
 	# RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
