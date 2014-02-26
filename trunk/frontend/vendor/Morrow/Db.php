@@ -259,7 +259,7 @@ class Db extends \PDO {
 	public function insertSafe($table, $array, $on_duplicate_key_update = array()) {
 		$array						= $this->_safe($table, $array);
 		$on_duplicate_key_update	= $this->_safe($table, $on_duplicate_key_update);
-		return $this -> Insert($table, $array, $insertid, $on_duplicate_key_update);
+		return $this -> Insert($table, $array, $on_duplicate_key_update);
 	}
 	
 	/**
