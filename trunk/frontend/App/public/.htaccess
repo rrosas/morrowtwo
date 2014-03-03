@@ -4,16 +4,22 @@ RewriteEngine on
 # Main target is to map SEO friendly URLs to the bootstrap file 
 
 
-# force SSL for all files
-# -----------------------
-# RewriteCond %{SERVER_PORT}     !^443$
-# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
+# Rewrite "domain.com -> www.domain.com
+# -------------------------------------
+# RewriteCond %{HTTPS} !=on
+# RewriteCond %{HTTP_HOST} !^(www\..+)$ [NC]
+# RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 
 # Rewrite "www.domain.com -> domain.com
 # -------------------------------------
 # RewriteCond %{HTTPS} !=on
 # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 # RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+# force SSL for all files
+# -----------------------
+# RewriteCond %{SERVER_PORT}     !^443$
+# RewriteRule (.*)  https://%{SERVER_NAME}%{REQUEST_URI} [L]
 
 # Maintenance mode
 # -------------------
