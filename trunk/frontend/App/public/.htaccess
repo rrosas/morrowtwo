@@ -20,24 +20,17 @@ RewriteEngine on
 # RewriteCond %{REMOTE_ADDR} !x.x.x.x
 # RewriteRule !(maintenance\.htm|.+\.(gif|jpg|css)) /maintenance.htm [R]
 
-
-	# Emulate RewriteBase
-	# -------------------
-	# You just need to set this here if you need a RewriteBase and the public folder is set as document root
-	# If the pulic folder is not document root but you need a rewrite base you have to set it in the project distributor .htaccess 
-	# -------------------
-	# Enable rewrite base for a TLD
-	# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
-	# RewriteRule . - [E=REWRITEBASE:/morrowtwo/branches/ce-single-project/]
-
-	# Disable rewrite base for development URLs
-	# RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
-	# RewriteRule . - [E=REWRITEBASE:]
-
-# Map request to index.php if the file was not found and there is no dot in the path
+# Map request to index.php if the file was not found
 # ---------------------------------------------------------------------------------------------
+# set rewrite base for a TLD
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([a-z0-9-/]*)$ %{ENV:REWRITEBASE}index.php/$1 [NC]
+RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
+RewriteRule ^([a-z0-9-/]*)$ /index.php?morrow_path_info=$1 [NC]
+
+# set rewrite base for development URLs (simple host names and IPs)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
+RewriteRule ^([a-z0-9-/]*)$ index.php?morrow_path_info=$1 [NC]
 
 # Prevent directory listing
 # ---------------------------------------------------------------------------------------------

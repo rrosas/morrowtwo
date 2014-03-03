@@ -1,0 +1,48 @@
+############################## EXCEPTION
+Datum:      27.11.2013 - 15:31:25
+URL:        /morrowtwo/trunk/docs/class/Morrow/Factoryproxy
+IP:         172.20.1.145
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36
+Meldung:    Found parameter "instance_identifier_and_parameters" for method "Morrow\Factoryproxy::get" in DocBlock, but there is no parameter with that name.
+Backtrace:  
+
+       File: /var/www/morrowtwo/trunk/docs/vendor_user/Morrow/Docblock.php (Line 104)
+   Function: ()
+
+       File: /var/www/morrowtwo/trunk/docs/vendor_user/Morrow/Docblock.php (Line 26)
+   Function: Morrow\Docblock->getMethods()
+
+       File: /var/www/morrowtwo/trunk/docs/app/class.php (Line 12)
+   Function: Morrow\Docblock->get()
+
+       File: /var/www/morrowtwo/trunk/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 276)
+   Function: App\PageController->run()
+
+       File: /var/www/morrowtwo/trunk/docs/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
+############################## EXCEPTION
+Datum:      27.11.2013 - 15:31:28
+URL:        /morrowtwo/trunk/docs/class/Morrow/Factoryproxy
+IP:         172.20.1.145
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36
+Meldung:    Found parameter "instance_identifier_and_parameters" for method "Morrow\Factoryproxy::get" in DocBlock, but there is no parameter with that name.
+Backtrace:  
+
+       File: /var/www/morrowtwo/trunk/docs/vendor_user/Morrow/Docblock.php (Line 104)
+   Function: ()
+
+       File: /var/www/morrowtwo/trunk/docs/vendor_user/Morrow/Docblock.php (Line 26)
+   Function: Morrow\Docblock->getMethods()
+
+       File: /var/www/morrowtwo/trunk/docs/app/class.php (Line 12)
+   Function: Morrow\Docblock->get()
+
+       File: /var/www/morrowtwo/trunk/frontend/vendor/Morrow/Core/Frontcontroller.php (Line 276)
+   Function: App\PageController->run()
+
+       File: /var/www/morrowtwo/trunk/docs/app/public/index.php (Line 19)
+   Function: Morrow\Core\Frontcontroller->__construct()
+
+
