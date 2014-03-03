@@ -7,12 +7,14 @@ RewriteEngine on
 # Rewrite "domain.com -> www.domain.com
 # -------------------------------------
 # RewriteCond %{HTTPS} !=on
+# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
 # RewriteCond %{HTTP_HOST} !^(www\..+)$ [NC]
 # RewriteRule ^(.*)$ http://www.%{HTTP_HOST}/$1 [R=301,L]
 
 # Rewrite "www.domain.com -> domain.com
 # -------------------------------------
 # RewriteCond %{HTTPS} !=on
+# RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
 # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 # RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
