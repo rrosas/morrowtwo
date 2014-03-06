@@ -81,10 +81,15 @@ class Frontcontroller {
 		$config = include ($directory.'_default.php');
 
 		// overwrite with server specific config
-		$file1 = $directory.$_SERVER['HTTP_HOST'].'.php';
-		$file2 = $directory.(isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR']).'.php'; // On Windows IIS 7 you must use $_SERVER['LOCAL_ADDR'] rather than $_SERVER['SERVER_ADDR'] to get the server's IP address.
-		if (is_file($file1)) $config = array_merge($config, include($file1));
-		elseif (is_file($file2)) $config = array_merge($config, include($file2));
+		if (php_sapi_name() === 'cli') {
+			$file1 = $directory.gethostname().'.php';
+			if (is_file($file1)) $config = array_merge($config, include($file1));
+		} else {
+			$file1 = $directory.$_SERVER['HTTP_HOST'].'.php';
+			$file2 = $directory.(isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR']).'.php'; // On Windows IIS 7 you must use $_SERVER['LOCAL_ADDR'] rather than $_SERVER['SERVER_ADDR'] to get the server's IP address.
+			if (is_file($file1)) $config = array_merge($config, include($file1));
+			elseif (is_file($file2)) $config = array_merge($config, include($file2));
+		}
 
 		return $config;
 	}
@@ -129,19 +134,31 @@ class Frontcontroller {
 			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
 
-		/* load input class
+		/* map cli parameters to $_GET
+		********************************************************************************************/
+		if (php_sapi_name() === 'cli') {
+			global $argc, $argv;
+			if (isset($argv[2])) parse_str($argv[2], $_GET);
+			$_GET['morrow_path_info'] = isset($argv[1]) ? $argv[1] : '';
+		}
+
+		/* set basehref depth
 		********************************************************************************************/
 		$basehref_depth = isset($_GET['morrow_basehref_depth']) ? (int)$_GET['morrow_basehref_depth'] : 0;
 		unset($_GET['morrow_basehref_depth']);
-		$this->input	= Factory::load('Input', $_GET ,$_POST, $_FILES); // input class for all user input
 
 		/* load page class and set nodes
 		********************************************************************************************/
-		if (!isset($_SERVER['PATH_INFO'])) $_SERVER['PATH_INFO'] = '';
-		$url		= trim($_SERVER['PATH_INFO'], '/');
+		$url		= (preg_match('~[a-z0-9-/]~i', $_GET['morrow_path_info'])) ? $_GET['morrow_path_info'] : '';
+		unset($_GET['morrow_path_info']);
+		$url		= trim($url, '/');
 		$nodes		= explode('/', $url);
 		$this->page	= Factory::load('Page'); // config class for page vars
 		$this->page->set('nodes', $nodes);
+
+		/* load input class
+		********************************************************************************************/
+		$this->input	= Factory::load('Input', $_GET ,$_POST, $_FILES); // input class for all user input
 
 		/* load languageClass and define alias
 		********************************************************************************************/

@@ -26,7 +26,7 @@ cms/							Projekt Nr.2
 ✓ Kein Punkt mehr in Morrow nodes erlaubt, um sauber 404-Fehler bei Ressourcen zu handlen (nur noch [a-z0-9-])
 ✓ Nodes werden in lowercase umgewandelt. Parameter über Routing Rules kommen aber richtig an.
 ✓ Kein Controller-Ordner mehr, um die Verschachtelung klein zu halten
-✓ RewriteBase kann durch die neue Umschreibung eingecheckt werden (somit müsste lokale htaccess entfallen)
+✓ RewriteBase wird durch RewriteConditions ersetzt
 ✓ Projekt auf Namespace "App" umbauen.
 ✓ kein :file oder :url mehr für Resourcen, weil alles aus Sicht des public-Ordners ist
 ✓ session save path in der config setzen und auf den temp-Ordner umstellen
@@ -35,6 +35,7 @@ cms/							Projekt Nr.2
 ✓ DB-Klasse: lastinsertid() kann man auch selbst aufrufen (ist also raus)
 ✓ DB-Klasse: affectedRows bei update ist jetzt letzter Parameter
 ✓ url->slug();
+✓ CLI-fähig machen
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)

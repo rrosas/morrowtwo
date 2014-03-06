@@ -153,6 +153,15 @@ class Input {
 	}
 
 	/**
+	 * Deletes an input value.
+	 * @param string $identifier The identifier to delete.
+	 * @return null
+	 */
+	public function delete($identifier, $value) {
+		Helpers\General::array_dotSyntaxDelete($this->_data, $identifier);
+	}
+
+	/**
 	 * Merges any number of arrays.
 	 *
 	 * array_merge_recursive() does indeed merge arrays, but it converts values with duplicate keys to arrays rather than overwriting the value in the first array with the duplicate value in the second array, as array_merge does.
