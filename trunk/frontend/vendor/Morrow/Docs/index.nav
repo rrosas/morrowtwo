@@ -12,3 +12,4 @@ localization	Localization <div class="label label-warning">?</div>
 formhandling	Form handling <div class="label label-warning">?</div>
 multiplesites	Multiple Sites <div class="label label-warning">?</div>
 security		Security
+cli				CLI usage

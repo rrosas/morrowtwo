@@ -276,7 +276,9 @@ class Url {
 		// If it is the root the return value of dirname is slash
 		if ($path == '//') $path = '/';
 		$scheme = isset($_SERVER['HTTPS']) || isset($_SERVER['HTTP_X_SSL_ACTIVE']) || (isset($_SERVER['SSL_PROTOCOL']) && !empty($_SERVER['SSL_PROTOCOL'])) ? 'https://' : 'http://';
-		$base_href = $scheme . $_SERVER['HTTP_HOST'] . $path;
+		
+		$host = php_sapi_name() === 'cli' ? gethostname() : $_SERVER['HTTP_HOST']; // Exception for cli
+		$base_href = $scheme . $host . $path;
 
 		// We have to strip x nodes from the end of the base href
 		// Depends on the htaccess entry point

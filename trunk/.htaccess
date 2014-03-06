@@ -8,15 +8,19 @@ RewriteEngine on
 	#
 	# Examples
 	# --------
-	#
 	# RewriteRule ^(.*)$ ...
 	# RewriteRule ^(?!wordpress/)(.*)$ ...
 	# RewriteRule ^(?!wordpress/|typo3/)(.*)$ ...
+	#
+	# Sometimes you need different rules from dev to prod or staging server (e.g. if you need a RewriteBase).
+	# You have to adapt the rules below to simulate the RewriteBase.
 
-# set rewrite base for a TLD
+
+# Set rewrite base for a TLD
+# The slash before frontend simulates a "RewriteBase /"
 RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
 RewriteRule ^(?!docs/)(.*)$ /frontend/$1?morrow_basehref_depth=3 [QSA]
 
-# set rewrite base for development URLs (simple host names and IPs)
+# Set rewrite base for development URLs (simple host names and IPs)
 RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
 RewriteRule ^(?!docs/)(.*)$ frontend/$1?morrow_basehref_depth=3 [QSA]
