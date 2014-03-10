@@ -75,7 +75,7 @@ class Factoryproxy {
 
 	/**
 	 * Returns the parameters which are later passed to the Factory (Used by the Factory).
-	 * @param mixed $instance_identifier_and_parameters All the parameters which are later passed to the Factory.
+	 * @return	null All the parameters which are later passed to the Factory.
 	 */
 	public function get() {
 		return $this->_parameters;
