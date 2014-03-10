@@ -69,30 +69,6 @@ class Frontcontroller {
 			echo "<pre>The Debug class threw an exception:\n$e</pre>";
 		}
 	}
-	
-	/**
-	 * Loads config files in an array.
-	 * First it searches for a file _default.php then it tries to load the config for the current HOST and then for the Server IP address.
-	 * @param	string	$directory	The directory path where the config files are.
-	 * @return	array	An array with the config.
-	 */
-	protected function _loadConfigVars($directory) {
-		// load main config
-		$config = include ($directory.'_default.php');
-
-		// overwrite with server specific config
-		if (php_sapi_name() === 'cli') {
-			$file1 = $directory.gethostname().'.php';
-			if (is_file($file1)) $config = array_merge($config, include($file1));
-		} else {
-			$file1 = $directory.$_SERVER['HTTP_HOST'].'.php';
-			$file2 = $directory.(isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR']).'.php'; // On Windows IIS 7 you must use $_SERVER['LOCAL_ADDR'] rather than $_SERVER['SERVER_ADDR'] to get the server's IP address.
-			if (is_file($file1)) $config = array_merge($config, include($file1));
-			elseif (is_file($file2)) $config = array_merge($config, include($file2));
-		}
-
-		return $config;
-	}
 
 	/**
 	 * This function contains the main application flow.
@@ -106,9 +82,6 @@ class Frontcontroller {
 		// include E_STRICT in error_reporting
 		error_reporting(E_ALL | E_STRICT);
 
-		// register autoloader for project specific models
-		//spl_autoload_register(array($this, '_autoload'));
-
 		/* declare errorhandler (needs config class)
 		********************************************************************************************/
 		set_error_handler(array($this, 'errorHandler'));
@@ -117,16 +90,7 @@ class Frontcontroller {
 		/* register main config in the config class
 		********************************************************************************************/
 		$this->config = Factory::load('Config'); // config class for config vars
-
-		// load vars
-		$config = $this->_loadConfigVars(APP_PATH . 'configs/');
-
-		// register config in class
-		foreach ($config as $key => $array) {
-			$this->config->set($key, $array);
-		}
-			
-		$config = $this->config->get();
+		$config = $this->config->load(APP_PATH . 'configs/');
 
 		/* set timezone 
 		********************************************************************************************/
@@ -196,56 +160,22 @@ class Frontcontroller {
 		foreach ($routes as $rule => $new_url) {
 			$rule		= trim($rule, '/');
 			$new_url	= trim($new_url, '/');
+			$regex		= '=^'.$rule.'$=';
 
 			// rebuild route to a preg pattern
-			$preg_route	= preg_replace('=\\:[a-z0-9_]+=i', '([^/]+)', $rule); // match parameters
-			$preg_route	= preg_replace('=/\\*[a-z0-9_]+=i', '(.*)', $preg_route); // match asterisk
-
-			$pattern	= '=^'.$preg_route.'$=i';
-
-			// does this rule match?
-			preg_match($pattern, $url, $hits);
-
-			// no hits? then goto next rule
-			if (count($hits) == 0) continue;
-						
-			// skip first entry because it contains the complete string and not only the search result
-			array_shift($hits);
-			
-			// if there is an asterisk the last entry is for the params
-			if (strpos($rule, '*') !== false) {
-				$blind_parameters = explode('/', trim($hits[0], '/'));
-				
-				// get asterisk param names
-				preg_match_all('=\*([a-z0-9_-]+)=i', $rule, $param_asterisk_keys);
-				$blind_key = $param_asterisk_keys[1][0];
-				
-				$this->input->set($blind_key, $blind_parameters);
-			}
-			
-			// get param names
-			if (strpos($rule, ':') !== false) {
-				preg_match_all('=:([a-z0-9_-]+)=i', $rule, $param_keys);
-				$params = array_combine($param_keys[1], $hits);
-				
-				// replace all known params in new_url
-				foreach ($params as $key => $param) {
-					$new_url = str_replace(":$key", $params[$key], $new_url);
-				}
-
-				// register new params in the input class
-				foreach ($params as $key => $param) {
-					$this->input->set($key, $param);
+			if (preg_match($regex, $url, $matches)) {
+				$url = preg_replace($regex, $new_url, $url);
+				unset($matches[0]);
+				foreach($matches as $key=>$value) {
+					$this->input->set('routed.' . $key, $value);	
 				}
 			}
-
-			$url = $new_url;
 		}
 
 		// set nodes in page class
 		$nodes = explode('/', $url);
 		$nodes = array_map('strtolower', $nodes);
-		$this->page->set('nodes_redirected', $nodes);
+		$this->page->set('nodes', $nodes);
 
 		/* prepare some internal variables
 		********************************************************************************************/

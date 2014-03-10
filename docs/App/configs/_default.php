@@ -26,9 +26,9 @@ return array(
 	
 // routing rules
 	'routing'					=> array(
-		'/'						=> 'home/',
-		'class/*path'			=> 'class/',
-		'page/:id'				=> 'page/',
+		''						=> 'home',
+		'class/(?P<path>.+)'	=> 'class',
+		'page/(?P<id>.+)'		=> 'page',
 	),
 	
 // log

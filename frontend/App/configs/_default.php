@@ -26,7 +26,7 @@ return array(
 	
 // routing rules
 	'routing'					=> array(
-		'/'							=> 'home/',
+		''							=> 'home',
 	),
 	
 // log
