@@ -36,6 +36,7 @@ cms/							Projekt Nr.2
 ✓ DB-Klasse: affectedRows bei update ist jetzt letzter Parameter
 ✓ url->slug();
 ✓ CLI-fähig machen
+✓ Url routing auf echte regex umbauen
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)

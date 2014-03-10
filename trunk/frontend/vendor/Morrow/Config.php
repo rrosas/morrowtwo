@@ -78,4 +78,32 @@ class Config {
 	public function set($identifier, $value) {
 		return \Morrow\Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
 	}
+	
+	/**
+	 * Loads config files in an array.
+	 * First it searches for a file _default.php then it tries to load the config for the current HOST and then for the Server IP address.
+	 * @param	string	$directory	The directory path where the config files are.
+	 * @return	array	An array with the config.
+	 */
+	public function load($directory) {
+		// load main config
+		$config = include ($directory.'_default.php');
+
+		// overwrite with server specific config
+		if (php_sapi_name() === 'cli') {
+			$file1 = $directory.gethostname().'.php';
+			if (is_file($file1)) $config = array_merge($config, include($file1));
+		} else {
+			$file1 = $directory.$_SERVER['HTTP_HOST'].'.php';
+			$file2 = $directory.(isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : $_SERVER['LOCAL_ADDR']).'.php'; // On Windows IIS 7 you must use $_SERVER['LOCAL_ADDR'] rather than $_SERVER['SERVER_ADDR'] to get the server's IP address.
+			if (is_file($file1)) $config = array_merge($config, include($file1));
+			elseif (is_file($file2)) $config = array_merge($config, include($file2));
+		}
+
+		foreach ($config as $key => $value) {
+			\Morrow\Helpers\General::array_dotSyntaxSet($this->data, $key, $value);
+		}
+
+		return $this->data;
+	}
 }
