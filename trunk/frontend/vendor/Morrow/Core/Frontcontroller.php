@@ -87,9 +87,21 @@ class Frontcontroller {
 		set_error_handler(array($this, 'errorHandler'));
 		set_exception_handler(array($this, 'exceptionHandler'));
 
-		/* register main config in the config class
+		/* extract important variables
 		********************************************************************************************/
-		$this->config = Factory::load('Config'); // config class for config vars
+		$morrow_basehref_depth = isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
+		unset($_GET['morrow_basehref_depth']);
+		$morrow_path_info = $_GET['morrow_path_info'];
+		unset($_GET['morrow_path_info']);
+
+		/* load some necessary classes
+		********************************************************************************************/
+		$this->input	= Factory::load('Input');
+		$this->page		= Factory::load('Page');
+		$this->config	= Factory::load('Config');
+
+		/* load all config files
+		********************************************************************************************/
 		$config = $this->config->load(APP_PATH . 'configs/');
 
 		/* set timezone 
@@ -98,31 +110,12 @@ class Frontcontroller {
 			throw new \Exception(__METHOD__.'<br>date_default_timezone_set() failed.');
 		}
 
-		/* map cli parameters to $_GET
-		********************************************************************************************/
-		if (php_sapi_name() === 'cli') {
-			global $argc, $argv;
-			if (isset($argv[2])) parse_str($argv[2], $_GET);
-			$_GET['morrow_path_info'] = isset($argv[1]) ? $argv[1] : '';
-		}
-
-		/* set basehref depth
-		********************************************************************************************/
-		$basehref_depth = isset($_GET['morrow_basehref_depth']) ? (int)$_GET['morrow_basehref_depth'] : 0;
-		unset($_GET['morrow_basehref_depth']);
-
 		/* load page class and set nodes
 		********************************************************************************************/
-		$url		= (preg_match('~[a-z0-9-/]~i', $_GET['morrow_path_info'])) ? $_GET['morrow_path_info'] : '';
-		unset($_GET['morrow_path_info']);
-		$url		= trim($url, '/');
+		$url		= $morrow_path_info;
+		$url		= (preg_match('~[a-z0-9-/]~i', $url)) ? trim($url, '/') : '';
 		$nodes		= explode('/', $url);
-		$this->page	= Factory::load('Page'); // config class for page vars
 		$this->page->set('nodes', $nodes);
-
-		/* load input class
-		********************************************************************************************/
-		$this->input	= Factory::load('Input', $_GET ,$_POST, $_FILES); // input class for all user input
 
 		/* load languageClass and define alias
 		********************************************************************************************/
@@ -189,7 +182,7 @@ class Frontcontroller {
 		/* load classes we need anyway
 		********************************************************************************************/
 		$this->view	= Factory::load('View');
-		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath, $basehref_depth);
+		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath, $morrow_basehref_depth);
 		
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
@@ -204,11 +197,13 @@ class Frontcontroller {
 
 		/* define page params
 		********************************************************************************************/
-		$this->page->set('base_href', $this->url->getBaseHref());
+		$base_href = $this->url->getBaseHref();
+		$this->page->set('base_href', $base_href);
 		$this->page->set('alias', $alias);
-		$this->page->set('controller', $page_controller_file);
-		$this->page->set('path', $path);
-		$this->page->set('fullpath', $fullpath);
+		$this->page->set('path.relative', $path);
+		$this->page->set('path.relative_with_query', $fullpath);
+		$this->page->set('path.absolute', $base_href . $path);
+		$this->page->set('path.absolute_with_query', $base_href . $fullpath);
 
 		/* load controller and render page
 		********************************************************************************************/
@@ -231,10 +226,9 @@ class Frontcontroller {
 		// assign the content to the view
 		$this->view->setContent('page', $this->page->get());
 
-		$view = $this->view->get();
-		$headers = $view['headers'];
-		$handle = $view['content'];
-		$meta_data = stream_get_meta_data($handle);
+		$view		= $this->view->get();
+		$headers	= $view['headers'];
+		$handle		= $view['content'];
 		
 		// output headers
 		foreach ($headers as $h) header($h);
@@ -244,8 +238,5 @@ class Frontcontroller {
 		fclose($handle);
 
 		ob_end_flush();
-		
-		// if we have zipped data bigger than 1 MB
-		if ($meta_data['wrapper_type'] == 'plainfile') unlink($meta_data['uri']);
 	}
 }

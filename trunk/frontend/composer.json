@@ -1,15 +1,23 @@
 {
-	"name": "morrow/project",
-	"type": "project",
-	"require": {
-		"php": ">=5.3",
-		"phpmailer/phpmailer": "5.2.*"
-	},
-	 "autoload": {
-		"psr-0": {
-			"Morrow\\": ["vendor_user/", "vendor/"],
-			"App\\": [""],
-			"": ["vendor_user/"]
-		}
-	}
+    "require": {
+        "phpmailer/phpmailer": "5.2.*", 
+        "php": ">=5.3",
+        "mcsodbrenner/serpent": "2.0.*"
+    }, 
+    "type": "project", 
+    "name": "morrow/project", 
+    "autoload": {
+        "psr-0": {
+            "": [
+                "vendor_user/"
+            ], 
+            "Morrow\\": [
+                "vendor_user/", 
+                "vendor/"
+            ], 
+            "App\\": [
+                ""
+            ]   
+        }
+    }
 }

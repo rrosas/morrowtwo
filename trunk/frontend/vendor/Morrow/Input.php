@@ -73,14 +73,18 @@ class Input {
 	
 	/**
 	 * Imports, unifies and cleans user input from PHP Superglobals.
-	 * @param	array	$get	Parameters which came by $_GET.
-	 * @param	array	$post	Parameters which came by $_POST.
-	 * @param	array	$files	Parameters which came by $_FILES.
 	 */
-	public function __construct($get, $post, $files) {
-		$this->_get   = $this->tidy($get);
-		$this->_post  = $this->tidy($post);
-		$this->_files = $this->_getFileData($this->tidy($files));
+	public function __construct() {
+		// map cli parameters to $_GET
+		if (php_sapi_name() === 'cli') {
+			global $argc, $argv;
+			if (isset($argv[2])) parse_str($argv[2], $_GET);
+			$_GET['morrow_path_info'] = isset($argv[1]) ? $argv[1] : '';
+		}
+
+		$this->_get   = $this->tidy($_GET);
+		$this->_post  = $this->tidy($_POST);
+		$this->_files = $this->_getFileData($this->tidy($_FILES));
 		$this->_data  = $this->_array_merge_recursive_distinct($this->_get, $this->_post, $this->_files);
 	}
 
@@ -157,7 +161,7 @@ class Input {
 	 * @param string $identifier The identifier to delete.
 	 * @return null
 	 */
-	public function delete($identifier, $value) {
+	public function delete($identifier) {
 		Helpers\General::array_dotSyntaxDelete($this->_data, $identifier);
 	}
 

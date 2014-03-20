@@ -37,6 +37,8 @@ cms/							Projekt Nr.2
 ✓ url->slug();
 ✓ CLI-fähig machen
 ✓ Url routing auf echte regex umbauen
+✓ Serpent über Composer hinzufügen
+✓ JSONP-View-Handler hinzufügen
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
@@ -51,4 +53,3 @@ ToDo:
 - Neue Session-Funktionen und Stream Wrapper dokumentieren
 - de-de statt de in language class umsetzen
 - Form-Handler überarbeiten
-- Eine bessere Doku bauen
