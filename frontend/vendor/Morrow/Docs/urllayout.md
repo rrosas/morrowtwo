@@ -42,7 +42,7 @@ Just use URL Routing and call the action in your default controller by hand.
 **_App/configs/default.php**
 ~~~{.php}
 	'routing' = array(
-		':controller/:action/*params' => ':controller/',
+		'(?P<controller>[^/]+)/(?P<action>[^/]+)(?P<params>/.*)?'	=> '$1'
 	),
 );
 ~~~
@@ -50,17 +50,17 @@ Just use URL Routing and call the action in your default controller by hand.
 **App/_default.php**
 ~~~{.php}
 // init "application url design"
-$controller	= $this->input->get('controller');
-$action		= $this->input->get('action');
-$params		= $this->input->get('params');
+$controller = $this->input->get('routed.controller');
+$action     = $this->input->get('routed.action');
+$params     = explode('/', trim($this->input->get('routed.params'), '/'));
 
 if (!is_null($action)) {
-	if (!method_exists($this, $action)) {
-		$this->url->redirect( $this->page->get('base_href') );
-	}
-	call_user_func_array( array($this, $action), $params);
+    if (!method_exists($this, $action)) {
+        $this->url->redirect( $this->page->get('base_href') );
+    }
+    call_user_func_array( array($this, $action), $params);
 
-	// set default template
-	$this->view->setProperty('template', $controller . '_' . $action, 'serpent');
+    // set default template
+    $this->view->setProperty('template', $controller . '_' . $action, 'serpent');
 }
 ~~~

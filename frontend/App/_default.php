@@ -7,7 +7,7 @@ use Morrow\Debug;
 class DefaultController extends Factory {
 	public function setup() {
 		$this->view->setHandler('serpent');
-
+		
 		/*
 		// add CSP security rules
 		$this->security->setCsp(array(
