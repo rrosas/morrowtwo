@@ -236,7 +236,7 @@ class View {
 	 * @param	resource	$handle	The stream handle for the generated content.
 	 * @return	resource	The changed stream handle.
 	 */
-	 protected function _processFilters($handle) {
+	protected function _processFilters($handle) {
 		rewind($handle);
 		$content = stream_get_contents($handle);
 		

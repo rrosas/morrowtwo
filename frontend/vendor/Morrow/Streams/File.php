@@ -42,7 +42,7 @@ class File {
 		if(!$scheme) return;
 		
 		self::$config[$scheme] = array(
-			'path'	=> trim($path ,'/') . '/',
+			'path'	=> trim($path, '/') . '/',
 		);
 		stream_register_wrapper($scheme, __CLASS__);
 	}
