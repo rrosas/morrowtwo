@@ -3,7 +3,8 @@
 	"type": "project",
 	"require": {
 		"php": ">=5.3",
-		"michelf/php-markdown": "1.3.*"
+		"michelf/php-markdown": "1.3.*",
+        "mcsodbrenner/serpent": "2.0.*"
 	},
 	 "autoload": {
 		"psr-0": {

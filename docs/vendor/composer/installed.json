@@ -51,5 +51,37 @@
         "keywords": [
             "markdown"
         ]
+    },
+    {
+        "name": "mcsodbrenner/serpent",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "svn",
+            "url": "http://serpent-php-template-engine.googlecode.com/svn",
+            "reference": "/tags/2.0.0/@211"
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-03-19 17:53:18",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "McSodbrenner\\": ""
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "LGPL-3.0"
+        ],
+        "description": "Serpent is a lightweight and compiling templating engine for PHP. It was designed to seamlessly integrate into existing MVC frameworks. It uses PHP itself as its template language, so you do not need to learn a new markup language. On the other side you get many improvements compared to pure PHP.",
+        "homepage": "https://code.google.com/p/serpent-php-template-engine/wiki/Overview?tm=6",
+        "keywords": [
+            "engine",
+            "template",
+            "templating"
+        ]
     }
 ]
