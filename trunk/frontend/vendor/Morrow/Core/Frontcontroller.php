@@ -159,7 +159,7 @@ class Frontcontroller {
 			if (preg_match($regex, $url, $matches)) {
 				$url = preg_replace($regex, $new_url, $url);
 				unset($matches[0]);
-				foreach($matches as $key=>$value) {
+				foreach ($matches as $key => $value) {
 					$this->input->set('routed.' . $key, $value);	
 				}
 			}

@@ -68,7 +68,7 @@ class Security {
 		header_remove("X-Powered-By");
 
 		// set new token
-		if (is_null($session->get('csrf_token'))) $session->set('csrf_token', md5(uniqid(rand(), TRUE)));
+		if (is_null($session->get('csrf_token'))) $session->set('csrf_token', md5(uniqid(rand(), true)));
 	}
 
 	/**
@@ -87,7 +87,7 @@ class Security {
 		$options['options'] = '';
 
 		// handle some differences between the browsers
-		foreach ($options as $key=>$value) {
+		foreach ($options as $key => $value) {
 			if ($value == '') continue;
 			$key = strtolower($key);
 			// handle some differences between the browsers

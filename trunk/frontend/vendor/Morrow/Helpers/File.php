@@ -207,7 +207,7 @@ class File {
 	
 	public static function copy_recurse($src, $dst, $file_permissions, $dir_permissions, $excludes = array()) {
 		// clean the excludes
-		foreach ($excludes as $key=>$value) {
+		foreach ($excludes as $key => $value) {
 			$excludes[$key] = trim($value, '/');
 		}
 

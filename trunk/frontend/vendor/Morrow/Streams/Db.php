@@ -69,7 +69,7 @@ class Db {
 		$parts = explode('://', $path, 2);
 
 		$this->scheme	= $parts[0];
-		$this->dir		= rtrim($parts[1] ,'/') . '/';
+		$this->dir		= rtrim($parts[1], '/') . '/';
 		$this->db		= self::$config[$this->scheme]['db'];
 		$this->table	= self::$config[$this->scheme]['table'];
 
@@ -106,7 +106,7 @@ class Db {
 		$parts = explode('://', $path, 2);
 
 		$this->scheme	= $parts[0];
-		$this->id		= rtrim($parts[1] ,'/') . '/';
+		$this->id		= rtrim($parts[1], '/') . '/';
 		$this->db		= self::$config[$this->scheme]['db'];
 		$this->table	= self::$config[$this->scheme]['table'];
 
@@ -219,7 +219,9 @@ class Db {
 		if ($whence == SEEK_SET) $this->pos = $offset;
 		elseif ($whence == SEEK_CUR) $this->pos += $offset;
 		elseif ($whence == SEEK_END) $this->pos = strlen($this->entry['data']) - $offset;
-		else { return false; }
+		else {
+			return false;
+		}
 		return true;
 	}
 

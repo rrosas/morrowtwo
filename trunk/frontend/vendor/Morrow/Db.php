@@ -1,7 +1,7 @@
 <?php
 /*////////////////////////////////////////////////////////////////////////////////
-	MorrowTwo - a PHP-Framework for efficient Web-Development
-	Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+    MorrowTwo - a PHP-Framework for efficient Web-Development
+    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
 	This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 

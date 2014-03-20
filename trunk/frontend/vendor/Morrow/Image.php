@@ -215,14 +215,14 @@ class Image {
 		$overlay_size = getimagesize($overlay_file);
 
 		if ($overlay_position == '1') imagecopy($img_obj, $overlay, 0, 0, 0, 0, $overlay_size[0], $overlay_size[1]); // top left
-		else if ($overlay_position == '2') imagecopy($img_obj, $overlay, $img_width/2-$overlay_size[0]/2, 0, 0, 0, $overlay_size[0], $overlay_size[1]); // top center
-		else if ($overlay_position == '3') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], 0, 0, 0, $overlay_size[0], $overlay_size[1]); // top right
-		else if ($overlay_position == '4') imagecopy($img_obj, $overlay, 0, $img_height/2-$overlay_size[1]/2, 0, 0, $overlay_size[0], $overlay_size[1]); // center left
-		else if ($overlay_position == '5') imagecopy($img_obj, $overlay, $img_width/2-$overlay_size[0]/2, $img_height/2-$overlay_size[1]/2, 0, 0, $overlay_size[0], $overlay_size[1]); // center center
-		else if ($overlay_position == '6') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], $img_height/2-$overlay_size[1]/2, 0, 0, $overlay_size[0], $overlay_size[1]); // center right
-		else if ($overlay_position == '7') imagecopy($img_obj, $overlay, 0, $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // bottom left
-		else if ($overlay_position == '8') imagecopy($img_obj, $overlay, $img_width/2-$overlay_size[0]/2, $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // bottom center
-		else if ($overlay_position == '9') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // bottom right
+		elseif ($overlay_position == '2') imagecopy($img_obj, $overlay, $img_width/2-$overlay_size[0]/2, 0, 0, 0, $overlay_size[0], $overlay_size[1]); // top center
+		elseif ($overlay_position == '3') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], 0, 0, 0, $overlay_size[0], $overlay_size[1]); // top right
+		elseif ($overlay_position == '4') imagecopy($img_obj, $overlay, 0, $img_height/2-$overlay_size[1]/2, 0, 0, $overlay_size[0], $overlay_size[1]); // center left
+		elseif ($overlay_position == '5') imagecopy($img_obj, $overlay, $img_width/2-$overlay_size[0]/2, $img_height/2-$overlay_size[1]/2, 0, 0, $overlay_size[0], $overlay_size[1]); // center center
+		elseif ($overlay_position == '6') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], $img_height/2-$overlay_size[1]/2, 0, 0, $overlay_size[0], $overlay_size[1]); // center right
+		elseif ($overlay_position == '7') imagecopy($img_obj, $overlay, 0, $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // bottom left
+		elseif ($overlay_position == '8') imagecopy($img_obj, $overlay, $img_width/2-$overlay_size[0]/2, $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // bottom center
+		elseif ($overlay_position == '9') imagecopy($img_obj, $overlay, $img_width-$overlay_size[0], $img_height-$overlay_size[1], 0, 0, $overlay_size[0], $overlay_size[1]); // bottom right
 		
 		return $img_obj;
 	}
@@ -248,8 +248,8 @@ class Image {
 		$h = imagesy($im); // image height
 		
 		// get top border
-		for($top = 0; $top < $h; ++$top) {
-			for($x = 0; $x < $w; ++$x) {
+		for ($top = 0; $top < $h; ++$top) {
+			for ($x = 0; $x < $w; ++$x) {
 					$rgb = imagecolorat($im, $x, $top);
 					$a = ($rgb >> 24) & 0xFF;
 					$r = ($rgb >> 16) & 0xFF;
@@ -268,8 +268,8 @@ class Image {
 		}
 
 		// get bottom border
-		for($bottom = $h-1; $bottom >= 0; --$bottom) {
-			for($x = 0; $x < $w; ++$x) {
+		for ($bottom = $h-1; $bottom >= 0; --$bottom) {
+			for ($x = 0; $x < $w; ++$x) {
 					$rgb = imagecolorat($im, $x, $bottom);
 					$a = ($rgb >> 24) & 0xFF;
 					$r = ($rgb >> 16) & 0xFF;
@@ -288,8 +288,8 @@ class Image {
 		}
 
 		// get left border
-		for($left = 0; $left < $w; ++$left) {
-			for($y = $top; $y <= $bottom; ++$y) {
+		for ($left = 0; $left < $w; ++$left) {
+			for ($y = $top; $y <= $bottom; ++$y) {
 					$rgb = imagecolorat($im, $left, $y);
 					$a = ($rgb >> 24) & 0xFF;
 					$r = ($rgb >> 16) & 0xFF;
@@ -308,8 +308,8 @@ class Image {
 		}
 
 		// get right border
-		for($right = $w-1; $right > 0; --$right) {
-			for($y = $top; $y <= $bottom; ++$y) {
+		for ($right = $w-1; $right > 0; --$right) {
+			for ($y = $top; $y <= $bottom; ++$y) {
 					$rgb = imagecolorat($im, $right, $y);
 					$a = ($rgb >> 24) & 0xFF;
 					$r = ($rgb >> 16) & 0xFF;
@@ -604,18 +604,24 @@ class Image {
 
 			// crop on width
 			if ($width_ratio > $height_ratio) {
-				switch($params['crop_position']) {
-					case '1': $_DST['offset_w'] = 0; break;
-					case '2': $_DST['offset_w'] = round(($_SRC['width']-$_DST['width']*$height_ratio)/2); break;
-					case '3': $_DST['offset_w'] = round(($_SRC['width']-$_DST['width']*$height_ratio)); break;
+				switch ($params['crop_position']) {
+					case '1': $_DST['offset_w'] = 0;
+						break;
+					case '2': $_DST['offset_w'] = round(($_SRC['width']-$_DST['width']*$height_ratio)/2);
+						break;
+					case '3': $_DST['offset_w'] = round(($_SRC['width']-$_DST['width']*$height_ratio));
+						break;
 				}
 				$_SRC['width'] = round($_DST['width']*$height_ratio);
 			} elseif ($width_ratio < $height_ratio) {
 				// crop on height
-				switch($params['crop_position']) {
-					case '1': $_DST['offset_h'] = 0; break;
-					case '2': $_DST['offset_h'] = round(($_SRC['height']-$_DST['height']*$width_ratio)/2); break;
-					case '3': $_DST['offset_h'] = round(($_SRC['height']-$_DST['height']*$width_ratio)); break;
+				switch ($params['crop_position']) {
+					case '1': $_DST['offset_h'] = 0;
+						break;
+					case '2': $_DST['offset_h'] = round(($_SRC['height']-$_DST['height']*$width_ratio)/2);
+						break;
+					case '3': $_DST['offset_h'] = round(($_SRC['height']-$_DST['height']*$width_ratio));
+						break;
 				}
 				$_SRC['height'] = round($_DST['height']*$width_ratio);
 			}
