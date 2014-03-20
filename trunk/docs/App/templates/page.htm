@@ -1,6 +1,6 @@
 ~:extend('_index')~
 
-~[body]~
+~:block('body')~
 <pre>
 	@ignore Tag einbauen, um z.B. den Frontcontroller auszublenden
 		Dummerweise muss man dann zur Ausgabe des Baums schon alle Klasseninhalte haben :(
@@ -11,5 +11,5 @@
 	~:endcapture()~
 
 	~~preg_replace('|<h1>.+?</h1>|', '<div class="page-header">$0</div>', $content, 1)~
-~[/body]~
+~:endblock()~
 

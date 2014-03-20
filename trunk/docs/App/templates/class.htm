@@ -1,6 +1,6 @@
 ~:extend('_index')~
 
-~[body]~
+~:block('body')~
 	<div class="page-header">
 		<h1>
 			<small>~~:escape($class.namespace)~\</small> ~~:escape($class.name)~
@@ -143,5 +143,4 @@
 		~endforeach~
 	~endif~
 
-~[/body]~
-
+~:endblock()~
