@@ -27,8 +27,8 @@ if (isset($_GET['file'])) {
 
 header('Content-Type: text/html; charset=utf-8');
 
-$root = realpath(__DIR__ . '/../trunk');
-$command = "cd $root; ../quality/PHP_CodeSniffer-1.4.3/scripts/phpcs --standard=Ministry --ignore=_libs/PHPMailer_v5.0.2,_libs/Zend,_libs/serpent_1.3,main/_libs --extensions=php .";
+$root = realpath(__DIR__ . '/../trunk/frontend/vendor/Morrow');
+$command = "cd $root; ../quality/PHP_CodeSniffer-1.4.3/scripts/phpcs --standard=Ministry --extensions=php .";
 //print_r($command);
 //die();
 preg_match_all("|FILE: (.+?)\n.+?\n\n|is", `$command`, $matches, PREG_SET_ORDER);
