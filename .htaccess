@@ -3,7 +3,7 @@ RewriteEngine on
 	# This htaccess is for separating projects (subfolders).
 	# It is not used if the document roots are pointing to the projects "public" folders.
 	#
-	# One folder (in the examples "frontend") is the main project and reachable without specifying a subfolder.
+	# One folder (in the examples "main") is the main project and reachable without specifying a subfolder.
 	# The other projects are reachable as there would not be this htaccess, but you have to specify them in the RewriteRule.
 	#
 	# Examples
@@ -17,10 +17,10 @@ RewriteEngine on
 
 
 # Set rewrite base for a TLD
-# The slash before frontend simulates a "RewriteBase /"
+# The slash before main simulates a "RewriteBase /"
 RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
-RewriteRule ^(?!docs/)(.*)$ /frontend/$1?morrow_basehref_depth=3 [QSA]
+RewriteRule ^(?!docs/)(.*)$ /main/$1?morrow_basehref_depth=3 [QSA]
 
 # Set rewrite base for development URLs (simple host names and IPs)
 RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
-RewriteRule ^(?!docs/)(.*)$ frontend/$1?morrow_basehref_depth=3 [QSA]
+RewriteRule ^(?!docs/)(.*)$ main/$1?morrow_basehref_depth=3 [QSA]
