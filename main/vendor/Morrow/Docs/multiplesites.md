@@ -1,49 +1,17 @@
 Multiple Sites
 =============================
 
-> How to handle two domains with one installation
-  Have to be handled with htaccess
+The skeleton you have downloaded can be used to setup several sites (installations, frameworks, whatever). Not only Morrow projects.
 
-> 3 entry points
+Different sites
+------------------
 
-The skeleton you have downloaded can be used to setup several projects (installations, frameworks, whatever).
+Take a look at the skeleton. First you have two folders: `main/` and `docs/`. Both folders contain fully independent sites although both are build with the Morrow framework.
+The `main` site will not appear in the URLs of the site. It is the default site.
+All other sites will only be reachable by including the site name in the URL path of the site.
+This was defined in the `.htaccess` file.
 
-Take a look at the skeleton. First you have two folders: "frontend" and "docs"
+So to call the homepage of `main` site you would call `http://localhost/skeleton-path/`.  
+To call the homepage of the `docs` site you would call `http://localhost/skeleton-path/docs/`
 
-
-The main project is callable by 
-
-
-
-You can name the folders however you like, but these names must be communicated to Morrow in the main configuration for the whole framework (FW_PATH/_config/).
-
-~~~{.php}
- // the first project will be the default project. The others reachable through the url
-$config['projects'] = array('main', 'docs');
-~~~
-
-The project named first will not appear in the URLs of the site. It is the default project. All other projects will only be reachable by including the project name in the URL path of the site.
-
-In one installation you cannot have an alias in the default project and a secondary project with the same name. This would result in an URL conflict.
-
-
-Separate Domains and Subdomains
---------------------------------
-
-Since sites can have their own config files, it is of course possible to set the default project individually for different domains or subdomains. Simply create a config file in FW_PATH/_config/ which has the name of the domain, IP or subdomain.
-
-For example, if you wish to create a subdomain for your "docs" project, you could create the file FW_PATH/_config/docs.yourdomain.tld.php with the following contents:
-
-**FW_PATH/_config/docs.yourdomain.tld.php**
-
-~~~{.php}
- // the first project will be the default project. The others reachable through the url
-$config['projects'] = array('docs');
-~~~
-
-The following would then show identical content:
-
-~~~
-http://mydomain.tld/morrow_docs/
-http://docs.mydomain.tld/
-~~~
+You can name the folders however you like, but these names have to be configured in the `.htaccess` file.

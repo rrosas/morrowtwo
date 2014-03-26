@@ -10,6 +10,6 @@ caching			Caching
 extending		Extending
 localization	Localization <div class="label label-warning">?</div>
 formhandling	Form handling <div class="label label-warning">?</div>
-multiplesites	Multiple Sites <div class="label label-warning">?</div>
+multiplesites	Multiple Sites
 security		Security
 cli				CLI usage

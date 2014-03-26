@@ -5,6 +5,14 @@ MorrowTwo have some measures builtin to improve the protection against attackers
 But they only work if you use them.
 So this is a little guide to assist you in building safe applications.
 
+Explicit public folder
+----------------------
+If possible you should change the document root to the `public` folder in your `App` folder.
+This way it is not possible to call other files than those public files.
+
+**Be careful:** If you have made changes to the uppermost `.htaccess` file, you have to copy them to the `.htaccess` file in the public folder.
+
+
 Sessions
 -----------------------------
 Morrows \Morrow\Session class regenerates the session ID every time the User Agent changes.
