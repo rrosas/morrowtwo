@@ -17,7 +17,7 @@
 	~if (isset($class.doc.content.1)):~
 		~~:markdown(:raw($class.doc.content.1))~
 	~endif~
-		
+	
 	/* Only show members if there are public ones */
 	<?
 	$show_members = false;
@@ -41,7 +41,7 @@
 			~foreach ($class.members as $member):~
 				~if (:raw($member.visibility) !== 'public' && !:raw($show_protected_and_private)) continue;~
 				<tr>
-					<td>~:render('elements/visibility', null, null, array('visibility' => $member.visibility))~</td>
+					<td>~:render('elements/visibility', array('visibility' => :raw($member.visibility)))~</td>
 					<td><span class="type">~~:escape($member.tags.var.0.type)~</span></td>
 					<td><code>$~~:escape($member.name)~</code></td>
 					<td>~~:escape($member.content.title)~</td>
@@ -66,19 +66,19 @@
 			~if (:raw($method.visibility) !== 'public' && !:raw($show_protected_and_private)) continue;~
 			<div class="function-wrapper">
 				<h4>
-					~:render('elements/visibility', null, null, array('visibility' => $method.visibility))~
+					~:render('elements/visibility', array('visibility' => :raw($method.visibility)))~
 					
 					~~:escape($method.name)~(
 					
 					<code>
 						~foreach ($method.parameters as $p):~
 							<?php
-							:render('elements/type', null, null, array('type' => $p.type)) . ' ';
+							:render('elements/type', array('type' => :raw($p.type))) . ' ';
 
 							echo '$'.:escape($p.name);
 
 							if ($p.optional) {
-								:render('elements/optional', null, null, array('default' => $p.default));
+								:render('elements/optional', array('default' => :raw($p.default)));
 							}
 
 							if ($p !== end($method.parameters)) {
@@ -108,7 +108,7 @@
 						<tbody>
 							~foreach ($method.parameters as $p):~
 								<tr>
-									<td>~:render('elements/type', null, null, array('type' => $p.type))~</td>
+									<td>~:render('elements/type', array('type' => :raw($p.type)))~</td>
 									<td><code>$~~:escape($p.name)~</code></td>
 									<td>~~:markdown(:raw($p.description))~</td>
 								</tr>
@@ -128,7 +128,7 @@
 						</colgroup>
 						<tbody>
 							<tr>
-								<td>~:render('elements/type', null, null, array('type' => $method.tags.return.0.type))~</td>
+								<td>~:render('elements/type', array('type' => :raw($method.tags.return.0.type)))~</td>
 								<td>
 									~if (isset($method.tags.return.0.description)):~
 										~~:markdown(:raw($method.tags.return.0.description))~
