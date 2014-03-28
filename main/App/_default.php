@@ -8,6 +8,12 @@ class DefaultController extends Factory {
 	public function setup() {
 		$this->view->setHandler('serpent');
 		
+		$config = array(
+			'cli_path' => 'php',
+			'save_path' =>  APP_PATH . 'temp/messagequeue/',
+		);
+		$this->prepare('MessageQueue:mq', $config);
+
 		/*
 		// add CSP security rules
 		$this->security->setCsp(array(

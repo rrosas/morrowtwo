@@ -20,15 +20,10 @@ class PageController extends DefaultController {
 		#file_put_contents('public://test.jpg', 'ulfggdfgfdgdfgdf2');
 		#unlink('public://test.jpg');
 
-		$config = array(
-			'program' => 'php ',
-			//'program' => 'wget http://localhost/',
-			'save_path' =>  APP_PATH . 'temp/messagequeue/',
-			'controller_path' =>  'mq',
-		);
 
-		$this->prepare('MessageQueue:mq', $config);
-		$this->mq->enqueue('mq/foobar', array('data' => '123'));
+		for ($i=0; $i<5; $i++) {
+			$this->mq->enqueue('mq/foobar', $i);
+		}
 
 
 		
@@ -52,14 +47,5 @@ class PageController extends DefaultController {
 		//print_r( file_get_contents('db://images/test.jpg') );
 
 
-
-
-
-		// $test = new Models\Test;
-		// $test = Factory::load('\App\Models\Test');
-
-		// 	$counter = $this->session->get('counter');
-		// 	Debug::dump(++$counter);
-		// 	$this->session->set('counter', $counter);
 	}
 }
