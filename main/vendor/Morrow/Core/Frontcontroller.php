@@ -87,6 +87,10 @@ class Frontcontroller {
 		set_error_handler(array($this, 'errorHandler'));
 		set_exception_handler(array($this, 'exceptionHandler'));
 
+		/* load the input class
+		********************************************************************************************/
+		$this->input	= Factory::load('Input');
+
 		/* extract important variables
 		********************************************************************************************/
 		$morrow_basehref_depth = isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
@@ -96,7 +100,6 @@ class Frontcontroller {
 
 		/* load some necessary classes
 		********************************************************************************************/
-		$this->input	= Factory::load('Input');
 		$this->page		= Factory::load('Page');
 		$this->config	= Factory::load('Config');
 
