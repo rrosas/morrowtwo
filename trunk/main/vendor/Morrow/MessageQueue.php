@@ -22,57 +22,101 @@
 
 namespace Morrow;
 
+
+// the next file to work with always has the extension "mq_processing"
+
 class MessageQueue {
 	protected $_save_path;
 	protected $_program;
-	protected $_controller_path;
 
 	public function __construct($config) {
 		// set save path
 		if (!is_dir($config['save_path'])) mkdir($config['save_path']);
 		$this->_save_path = $config['save_path'];
 
-		// set program
-		$this->_program = $config['program'];
-
-		// set mq controller
-		$this->_controller_path = $config['controller_path'];
+		// set cli_path
+		$this->_cli_path = $config['cli_path'];
 	}
 	
-	public function enqueue($controller, array $data) {
+	public function enqueue($controller, $data) {
 		// save request to file with id
-		$id = microtime(true) . '_' . uniqid('mq_', true);
+		$id = microtime(true) . '_' . uniqid('_', true) . '.mq';
 		
 		$json = json_encode(array(
 			'controller' => $controller,
 			'data' => $data,
 		));
 		
-		file_put_contents($this->_save_path . $id, $json);
+		$id_file = $this->_save_path . $id;
+		file_put_contents($id_file, $json);
 
-		// trigger processing
-		$command = $this->_program . ' ' . getcwd() . '/index.php' . ' ' . $this->_controller_path;
-		$this->_execInBackground($command);
+		// trigger processing if not running at the moment
+		$lockfile = $this->_save_path . 'mq.lock';
+		if (!is_file($lockfile)) {
+			// write lock file
+			file_put_contents($lockfile, '');
+
+			// we rename the file to mq_processing because if there is an error this file will be kept
+			rename($id_file, $id_file . '_processing');
+			
+			// trigger current entry
+			$command = $this->_cli_path . ' ' . getcwd() . '/index.php' . ' ' . $controller;
+			$this->_execInBackground($command);
+		}
 
 		return $id;
 	}
 
-	public function process($controller, $data) {
+	public function getItem() {
+		// get a list of all mq files and choose the oldest
+		$files = glob($this->_save_path . '*.mq_processing');
+		sort($files);
+		$item = json_decode(file_get_contents($files[0]), true);
+
+		return $item;
+	}
+
+	public function next($success) {
 		// write lock file
+		$lockfile = $this->_save_path . 'mq.lock';
+		file_put_contents($lockfile, '');
 
-		die('fdfd');
+		// get a list of all mq files and choose the oldest
+		$files = glob($this->_save_path . '*.mq_processing');
+		if ($success) {
+			if (isset($files[0])) {
+				unlink($files[0]);
+			}
+		} else {
+			rename($files[0], $files[0] . '_failed');
+		}
 
-		// call controller one after another
-		//exec('php mq &');
+		$files = glob($this->_save_path . '*.mq');
+		sort($files);
 
-		// delete lock file
+		if (count($files) === 0) {
+			// there is no entry to process anymore
+			unlink($lockfile);
+			return false;
+		}
+
+		$item = json_decode(file_get_contents($files[0]), true);
+
+		// we rename the file to mq_processing because if there is an error this file will be kept
+		rename($files[0], $files[0] . '_processing');
+
+		// trigger next entry
+		$command = $this->_cli_path . ' ' . getcwd() . '/index.php' . ' ' . $item['controller'];
+		$this->_execInBackground($command);
+
+		return true;
 	}
 
 	protected function _execInBackground($cmd) { 
 		if (substr(php_uname(), 0, 7) == "Windows") {
 			pclose(popen("start /B ". $cmd, "r"));
 		} else {
-			exec($cmd . " > /dev/null &");   
+			exec($cmd . " > /dev/null &");
 		}
 	} 	
 }
