@@ -1,4 +1,5 @@
 <?php
+
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -22,13 +23,55 @@
 
 namespace Morrow;
 
-
-// the next file to work with always has the extension "mq_processing"
-
+/**
+* This class helps you to debug your application.
+*
+* Message queues allow you to store data for processing time consuming jobs at a later time (decoupled from the current process).
+* Queues can dramatically increase the user experience of a web site by reducing load times.
+* All enqueued jobs are processed consecutively by an CLI call to keep the server load low.
+*
+* Type   | Keyname                | Default    | Description                                                              
+* -----  | ---------              | ---------  | ------------                                                             
+* string | `mq.cli_path`          | `php`     | The path to the php interpreter. Just use php if the cli is systemwide callable.
+* string | `mq.save_path`         | `APP_PATH . 'temp/messagequeue/'` | The path where the job files are saved.
+*
+* Examples
+* ---------
+*
+* ~~~{.php}
+* // ... Controller code
+* 
+* // set at the beginning of the DefaultController 
+* $this->debug->setAfterException(function(){
+*     $this->url->redirect('error/');	
+* });
+*  
+* // ... Controller code
+* ~~~ 
+*/
 class MessageQueue {
+	/**
+	 * The path where the job files are saved.
+	 * @var string $_save_path
+	 */
 	protected $_save_path;
-	protected $_program;
 
+	/**
+	 * The path to the php interpreter. Just use php if the PHP CLI is systemwide callable.
+	 * @var string $_cli_path
+	 */
+	protected $_cli_path;
+
+	/**
+	 * The path to the lock file which prevents multiple workers running.
+	 * @var string $_lockfile
+	 */
+	protected $_lockfile;
+
+	/**
+	 * Initializes the MessageQueue class.
+	 * @param	array	$config	All config parameters.
+	 */
 	public function __construct($config) {
 		// set save path
 		if (!is_dir($config['save_path'])) mkdir($config['save_path']);
@@ -36,82 +79,95 @@ class MessageQueue {
 
 		// set cli_path
 		$this->_cli_path = $config['cli_path'];
+
+		// set lockfile path
+		$this->_lockfile = $this->_save_path . 'mq.lock';
 	}
 	
-	public function enqueue($controller, $data) {
+	/**
+	 * Enqueues a new Job in the message queue.
+	 * @param	array	$controller	The path that should be called and that contains the controller logic.
+	 * @param	mixed	$data	That data that should be passed to the controller and is readable by getJob().
+	 * @return	string	Return the id of the job.
+	 */
+	public function set($controller, $data) {
 		// save request to file with id
 		$id = microtime(true) . '_' . uniqid('_', true) . '.mq';
 		
-		$json = json_encode(array(
+		$item = array(
+			'id' => $id,
 			'controller' => $controller,
 			'data' => $data,
-		));
-		
+		);
+
 		$id_file = $this->_save_path . $id;
-		file_put_contents($id_file, $json);
+		file_put_contents($id_file, json_encode($item));
 
-		// trigger processing if not running at the moment
-		$lockfile = $this->_save_path . 'mq.lock';
-		if (!is_file($lockfile)) {
-			// write lock file
-			file_put_contents($lockfile, '');
+		// trigger processing if worker is not running at the moment
+		if (!is_file($this->_lockfile)) {
+			// write lock file (we have to do this here and NOT in startworker because we could otherwise have more than one running worker)
+			file_put_contents($this->_lockfile, '');
 
-			// we rename the file to mq_processing because if there is an error this file will be kept
-			rename($id_file, $id_file . '_processing');
-			
-			// trigger current entry
-			$command = $this->_cli_path . ' ' . getcwd() . '/index.php' . ' ' . $controller;
+			$command = $this->_cli_path . ' ' . getcwd() . '/index.php' . ' ' . $controller . ' _morrow_startworker=true';
 			$this->_execInBackground($command);
 		}
 
 		return $id;
 	}
 
-	public function getItem() {
-		// get a list of all mq files and choose the oldest
-		$files = glob($this->_save_path . '*.mq_processing');
-		sort($files);
-		$item = json_decode(file_get_contents($files[0]), true);
+	/**
+	 * Retrieves the job data for an id.
+	 * @param	string	$id	The id of the job.
+	 * @return	array	All data for the requested job with the two keys `id`, `controller` and `data`.
+	 */
+	public function get($id) {
+		if (!isset($id)) throw new \Exception('ID for job is missing.');
+		$id_file = $this->_save_path . $id;
+		if (!is_file($id_file)) throw new \Exception('Job file for ID is missing.');
+
+		// get the requested ID
+		$item = json_decode(file_get_contents($id_file), true);
 
 		return $item;
 	}
 
-	public function next($success) {
-		// write lock file
-		$lockfile = $this->_save_path . 'mq.lock';
-		file_put_contents($lockfile, '');
+	/**
+	 * Starts the worker which processes all enqueued jobs.
+	 * @return	boolean	Returns `true` if the would could have been started and `false` if not.
+	 */
+	public function process() {
+		// just start worker if startworker was sent by $_GET
+		if (!isset($_GET['_morrow_startworker'])) return false;
 
-		// get a list of all mq files and choose the oldest
-		$files = glob($this->_save_path . '*.mq_processing');
-		if ($success) {
-			if (isset($files[0])) {
-				unlink($files[0]);
-			}
-		} else {
-			rename($files[0], $files[0] . '_failed');
-		}
-
+		// get all files to process
 		$files = glob($this->_save_path . '*.mq');
-		sort($files);
 
-		if (count($files) === 0) {
-			// there is no entry to process anymore
-			unlink($lockfile);
-			return false;
+		// there is no entry to process anymore
+		while (count($files) > 0) {
+			sort($files);
+
+			// extract data for the job to process
+			$item = json_decode(file_get_contents($files[0]), true);
+
+			$command = $this->_cli_path . ' ' . getcwd() . '/index.php' . ' ' . $item['controller'] . ' id=' . $item['id'];
+			exec($command, $output, $return_var);
+
+			unlink($files[0]);
+	
+			// get all files to process
+			$files = glob($this->_save_path . '*.mq');
 		}
 
-		$item = json_decode(file_get_contents($files[0]), true);
-
-		// we rename the file to mq_processing because if there is an error this file will be kept
-		rename($files[0], $files[0] . '_processing');
-
-		// trigger next entry
-		$command = $this->_cli_path . ' ' . getcwd() . '/index.php' . ' ' . $item['controller'];
-		$this->_execInBackground($command);
+		unlink($this->_lockfile);
 
 		return true;
 	}
 
+	/**
+	 * Executes a shell command in the background (decoupled from the current process) .
+	 * @param	string	$cmd	The command to execute.
+	 * @return	array	All data for the requested job with the two keys `id`, `controller` and `data`.
+	 */
 	protected function _execInBackground($cmd) { 
 		if (substr(php_uname(), 0, 7) == "Windows") {
 			pclose(popen("start /B ". $cmd, "r"));

@@ -77,7 +77,7 @@ class Log {
 	/**
 	 * Formates the output to write it to the file.
 	 * @param	array	$data	The data array produced by set().
-	 * @return	`string`	The string that will be written to the logfile.
+	 * @return	string	The string that will be written to the logfile.
 	 */
 	protected function _getOutputPlain($data) {
 		// create output string

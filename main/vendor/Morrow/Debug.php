@@ -31,7 +31,8 @@ namespace Morrow;
 * Type   | Keyname                | Default    | Description                                                              
 * -----  | ---------              | ---------  | ------------                                                             
 * bool   | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
-* bool   | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system (`APP_PATH/logs/`) 
+* bool   | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system
+* string | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
 *
 * Examples
 * ---------
@@ -126,9 +127,15 @@ class Debug {
 	protected function _errorhandler_file($errstr, $backtrace, $errortype) {
 		$body  = '############################## '.$errortype."\n";
 		$body .= 'Datum:      '.date("d.m.Y - H:i:s")."\n";
-		$body .= 'URL:        '.$_SERVER['REQUEST_URI']."\n";
-		$body .= 'IP:         '.$_SERVER['REMOTE_ADDR']."\n";
-		$body .= 'User-Agent: '.$_SERVER['HTTP_USER_AGENT']."\n";
+		
+		if (isset($_SERVER['REQUEST_URI'])) {
+			$body .= 'URL:        '.$_SERVER['REQUEST_URI']."\n";
+			$body .= 'IP:         '.$_SERVER['REMOTE_ADDR']."\n";
+			$body .= 'User-Agent: '.(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '-') ."\n";
+		} else {
+			$body .= 'CLI:        '.(implode(' ', $_SERVER['argv']))."\n";
+		}
+
 		$body .= 'Meldung:    '.$errstr."\n";
 		$body .= 'Backtrace:  '."\n\n";
 
