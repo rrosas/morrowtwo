@@ -27,6 +27,7 @@ class Plain extends AbstractView {
 	public $charset		= 'utf-8';
 
 	public function getOutput($content, $handle) {
+		if (!isset($content['content'])) return $handle;
 		$content = $content['content'];
 		
 		if (is_resource($content) && get_resource_type($content) == 'stream') {

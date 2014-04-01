@@ -21,10 +21,9 @@ class PageController extends DefaultController {
 		#unlink('public://test.jpg');
 
 
-		for ($i=0; $i<5; $i++) {
-			$this->mq->enqueue('mq/foobar', $i);
-		}
-
+		$this->mq->set('mq/foobar', 1);
+		$this->mq->set('mq/foobar', 2);
+		$this->mq->set('mq/foobar', array('foo', 'bar'));
 
 		
 		//Factory::load('Streams\Db:streamdb_files', 'db', $this->db, 'files');

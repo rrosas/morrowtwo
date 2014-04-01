@@ -4,22 +4,15 @@ namespace App;
 use Morrow\Factory;
 use Morrow\Debug;
 
+
 class PageController extends DefaultController {
 	public function run() {
-		$item = $this->mq->getItem();
+		$this->view->setHandler('plain');
 
-		try {
-			sleep(3);
-			if ($item['data'] == '2') throw new \Exception('Shit');
-			$this->log->set(date('H:i:s'), $item['data']);
+		if ($this->mq->process()) return;
 
-			$success = true;
-		} catch (\Exception $e) {
-			$this->log->set($e->__toString(), $item);
-			
-			$success = false;
-		}
-
-		$this->mq->next($success);
+		$job = $this->mq->get($this->input->get('id'));
+		sleep(3);
+		$this->log->set(date('H:i:s'), $job['data']);
 	}
 }
