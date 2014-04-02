@@ -21,6 +21,59 @@
 
 namespace Morrow\Streams;
 
+/**
+* DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOHHHHHHHHHHHHHHHHHHHHHH
+* This class helps you to handle Message Queues.
+*
+* Message queues allow you to store data for processing time consuming jobs at a later time (decoupled from the current process).
+* Queues can dramatically increase the user experience of a web site by reducing load times.
+* All enqueued jobs are processed consecutively by an CLI call to keep the server load low.
+* This class gives you a simple alternative to mature solutions like RabbitMQ or Beanstalkd, but should also run on hosted environments where you usually don't have access to them.
+*
+* You are able to change the behaviour of these methods with the following parameters in your configuration files:
+*
+* Type   | Keyname                | Default    | Description                                                              
+* -----  | ---------              | ---------  | ------------                                                             
+* string | `mq.cli_path`          | `php`     | The path to the php interpreter. Just use php if the cli is systemwide callable.
+* string | `mq.save_path`         | `APP_PATH . 'temp/messagequeue/'` | The path where the job files are saved.
+*
+* Examples
+* ---------
+*
+* Decouple time consuming processes from the current controller `foobar.php`
+* ~~~{.php}
+* // ... Controller code
+* 
+* $this->messagequeue->set('mq/foobar', 1);
+* $this->messagequeue->set('mq/foobar', 2);
+* $this->messagequeue->set('mq/foobar', array('foo', 'bar'));
+* 
+* // ... Controller code
+* ~~~
+* 
+* The job controller named `mq_foobar.php`
+* ~~~{.php}
+* // ... Controller code
+* 
+* // Set the handler to plain because we don't want to output anything
+* $this->view->setHandler('plain');
+*
+* // Important line: Start the job worker if necessary
+* // You have to insert this line into all your job controllers
+* if ($this->messagequeue->process()) return;
+*
+* // get the job data you passed with $this->messagequeue->set()
+* $job = $this->messagequeue->get($this->input->get('id'));
+* $data = $job['data'];
+* 
+* 
+* // This is your time consuming code
+* sleep(3);
+* $this->log->set(date('H:i:s'), $data);
+* 
+* // ... Controller code
+* ~~~
+*/
 class File {
 	public static $config = array();
 	

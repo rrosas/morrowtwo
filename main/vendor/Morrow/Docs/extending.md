@@ -11,7 +11,7 @@ Beside your `App` folder you will find those two folders:
 	* `composer.json` The Composer control file.
 * `vendor_user/` The folder to replace Morrows core components or load Not-Composer-Libraries.
 
-Morrows Autoloader is fully PSR-0 compatible.
+Morrow uses the autoloader of Composer and is fully [PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md) and [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md) compatible.
 
 
 1. Working with Composer libraries
