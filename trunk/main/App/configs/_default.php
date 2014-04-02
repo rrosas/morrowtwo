@@ -65,6 +65,6 @@ return array(
 	'db.encoding'				=> 'utf8',
 
 // message queue
-	'mq.cli_path'				=> 'php',
-	'mq.save_path'				=> APP_PATH . 'temp/messagequeue/',
+	'messagequeue.cli_path'		=> 'php',
+	'messagequeue.save_path'	=> APP_PATH . 'temp/messagequeue/',
 );

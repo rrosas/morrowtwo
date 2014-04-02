@@ -65,4 +65,8 @@ return array(
 	'db.user'					=> 'user',
 	'db.pass'					=> 'pass',
 	'db.encoding'				=> 'utf8',
+
+// message queue
+	'messagequeue.cli_path'		=> 'php',
+	'messagequeue.save_path'	=> APP_PATH . 'temp/messagequeue/',
 );

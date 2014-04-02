@@ -190,9 +190,11 @@ class Frontcontroller {
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
 		Factory::prepare('Cache', APP_PATH .'temp/codecache/');
+		Factory::prepare('Db', $config['db']);
 		Factory::prepare('Debug', $config['debug']);
 		Factory::prepare('Image', 'temp/thumbs/');
 		Factory::prepare('Log', $config['log']);
+		Factory::prepare('MessageQueue', $config['messagequeue']);
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
 		Factory::prepare('Session', $config['session']);

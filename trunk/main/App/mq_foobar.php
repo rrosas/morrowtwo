@@ -9,9 +9,9 @@ class PageController extends DefaultController {
 	public function run() {
 		$this->view->setHandler('plain');
 
-		if ($this->mq->process()) return;
+		if ($this->messagequeue->process()) return;
 
-		$job = $this->mq->get($this->input->get('id'));
+		$job = $this->messagequeue->get($this->input->get('id'));
 		sleep(3);
 		$this->log->set(date('H:i:s'), $job['data']);
 	}
