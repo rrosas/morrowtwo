@@ -22,16 +22,44 @@
 
 namespace Morrow\Filters;
 
+/**
+ * This filters saves the output to a given file.
+ *
+ * Useful if you need a static version of your HTML code.
+ * 
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ *
+ * $this->view->setFilter('Save', APP_PATH . 'generated_html/' . $this->page->get('alias') . '.html');
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Save extends AbstractFilter {
-	public $userfunction = '';
-	public $params = array();
+    /**
+     * The path the output will be saved into.
+     * @var string $_path
+     */
+	protected $_path = '';
 	
-	public function __construct($file) {
-		$this->file = $file;
+    /**
+     * The constructor which handles the passed parameters set in the second parameter of $this->view->setFilter().
+     * @param   string   $path The path to the path.
+     */
+	public function __construct($path) {
+		$this->_path = $path;
 	}
 	
+    /**
+     * This function saves the content to the path.
+     * @param   string  $content  The content the view class has created.
+     * @return  string  Returns the modified content.
+     */
 	public function get($content) {
-		file_put_contents($this->file, $content);
+		file_put_contents($this->_path, $content);
 		return $content;
 	}
 }

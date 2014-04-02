@@ -22,6 +22,14 @@
 
 namespace Morrow\Filters;
 
+/**
+ * You should extend this abstract class if you are writing your own filter.
+ */
 abstract class AbstractFilter {
+    /**
+     * You always have to define this method.
+     * @param   string $content  The content the view class has created.
+     * @return  string  Should return the modified content.
+     */
 	abstract public function get($content);
 }

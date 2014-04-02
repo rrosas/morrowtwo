@@ -20,6 +20,11 @@ frontend/						Projekt Nr.1
 cms/							Projekt Nr.2
 	...
 
+✓ Projekte werden komplett getrennt behandelt
+  - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
+  - Fremdprojekte können einfach integriert werden
+  - Morrow-Code muss nicht mehrere Projekte handlen können 
+  - Es gibt nur noch einen config-Ordner
 ✓ Entweder man verwendet die htaccess files oder setzt den Document-Root direkt auf den Public-Ordner
 ✓ Man kann von allen drei htaccess-Ebenen einsteigen
 ✓ Autoloading in vendor_user läuft mit allen Namespaces (in vendor nur mit Composer-Namespaces)
@@ -35,17 +40,14 @@ cms/							Projekt Nr.2
 ✓ DB-Klasse: lastinsertid() kann man auch selbst aufrufen (ist also raus)
 ✓ DB-Klasse: affectedRows bei update ist jetzt letzter Parameter
 ✓ url->slug();
-✓ CLI-fähig machen
 ✓ Url routing auf echte regex umbauen
 ✓ Serpent über Composer hinzufügen
 ✓ JSONP-View-Handler hinzufügen
+✓ CLI-fähig machen
+✓ MessageQueue-Klasse bauen
+✓ MessageQueue-Klasse wird jetzt automatisch initialisiert
 ✓ DB-Klasse wird jetzt automatisch initialisiert
 
-✓ Projekte werden komplett getrennt behandelt
-  - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)
-  - Fremdprojekte können einfach integriert werden
-  - Morrow-Code muss nicht mehrere Projekte handlen können 
-  - Es gibt nur noch einen config-Ordner
   
 
 ToDo:

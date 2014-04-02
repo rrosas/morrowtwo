@@ -6,6 +6,11 @@ use Morrow\Debug;
 
 class PageController extends DefaultController {
 	public function run() {
+		//$this->_testStreams();
+		//$this->_testMessageQueue();
+	}
+
+	protected function _testStreams() {
 		// You have to do this before working with the session
 		$this->prepare('Db', $this->config->get('db'));
 		
@@ -15,15 +20,12 @@ class PageController extends DefaultController {
 		echo $this->session->get('debug');
 		//print_r(scandir('sessions://'));
 
-		Factory::load('Streams\File:streamfile_assets', 'public', PUBLIC_PATH);
+		Factory::load('Streams\File:streamfile_public', 'public', PUBLIC_PATH);
 
 		#file_put_contents('public://test.jpg', 'ulfggdfgfdgdfgdf2');
 		#unlink('public://test.jpg');
 
 
-		$this->messagequeue->set('mq/foobar', 1);
-		$this->messagequeue->set('mq/foobar', 2);
-		$this->messagequeue->set('mq/foobar', array('foo', 'bar'));
 
 		
 		//Factory::load('Streams\Db:streamdb_files', 'db', $this->db, 'files');
@@ -44,7 +46,11 @@ class PageController extends DefaultController {
 		// var_dump(touch('db://images/test.jpg'));
 
 		//print_r( file_get_contents('db://images/test.jpg') );
+	}
 
-
+	protected function _testMessageQueue() {
+		$this->messagequeue->set('mq/foobar', array('data' => '1'));
+		$this->messagequeue->set('mq/foobar', array('data' => '2'));
+		$this->messagequeue->set('mq/foobar', array('data' => array('foo' => 'bar')));
 	}
 }

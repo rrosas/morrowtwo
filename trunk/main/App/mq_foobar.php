@@ -11,8 +11,7 @@ class PageController extends DefaultController {
 
 		if ($this->messagequeue->process()) return;
 
-		$job = $this->messagequeue->get($this->input->get('id'));
 		sleep(3);
-		$this->log->set(date('H:i:s'), $job['data']);
+		$this->log->set(date('H:i:s'), $this->input->get('data'));
 	}
 }

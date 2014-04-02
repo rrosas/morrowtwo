@@ -22,15 +22,55 @@
 
 namespace Morrow\Filters;
 
+/**
+ * This filter is a generic one to implement simple filters on the fly.
+ *
+ * Useful if you just have to do simple replacements or actions with your content because you don't need to write your own filter.
+ * Use the placeholder `:CONTENT` to pass your content to the php function where it expects the input string.
+ * 
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ *
+ * // Replaces all occurences of `#TIME#` with the current timestamp
+ * $this->view->setFilter('Generic', array('str_replace', '#TIME#', time(), ':CONTENT') );
+ *
+ * // Change the encoding of the whole output from iso to utf-8
+ * $this->view->setFilter('Generic', array('mb_convert_encoding', ':CONTENT', 'utf-8', 'iso-8859-1'));
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Generic extends AbstractFilter {
+	/**
+	 * The name of the PHP interal function to call.
+	 * @var string $userfunction
+	 */
 	public $userfunction = '';
+
+	/**
+	 * The params that will be passed to the $userfunction.
+	 * @var array $params
+	 */
 	public $params = array();
 	
+	/**
+	 * The constructor which handles the passed parameters set in the second parameter of $this->view->setFilter().
+	 * @param	array	$config	The configuration parameters.
+	 */
 	public function __construct($config = array()) {
 		$this->userfunction = $config[0];
 		$this->params = array_slice($config, 1);
 	}
 	
+	/**
+	 * This function calls the $userfunction.
+	 * @param   string	$content  The content the view class has created.
+	 * @return  string  Returns the modified content.
+	 */
 	public function get($content) {
 		// replace placeholder :CONTENT with $content
 		$key = array_search(':CONTENT', $this->params);
