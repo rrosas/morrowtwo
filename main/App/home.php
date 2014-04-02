@@ -21,9 +21,9 @@ class PageController extends DefaultController {
 		#unlink('public://test.jpg');
 
 
-		$this->mq->set('mq/foobar', 1);
-		$this->mq->set('mq/foobar', 2);
-		$this->mq->set('mq/foobar', array('foo', 'bar'));
+		$this->messagequeue->set('mq/foobar', 1);
+		$this->messagequeue->set('mq/foobar', 2);
+		$this->messagequeue->set('mq/foobar', array('foo', 'bar'));
 
 		
 		//Factory::load('Streams\Db:streamdb_files', 'db', $this->db, 'files');

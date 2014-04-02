@@ -33,6 +33,8 @@ namespace Morrow;
 * ~~~{.php}
 * // ... Controller code
 *  
+* // This line is not necessary if you use the default path to the config parameters (auto initialized by Morrow)
+* // You will need this if you need a second database or you want to use an other path to the config
 * $this->prepare('Db', $this->config->get('db'));
 *  
 * // Query with a prepared statement using named placeholder

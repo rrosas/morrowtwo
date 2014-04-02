@@ -39,6 +39,7 @@ cms/							Projekt Nr.2
 ✓ Url routing auf echte regex umbauen
 ✓ Serpent über Composer hinzufügen
 ✓ JSONP-View-Handler hinzufügen
+✓ DB-Klasse wird jetzt automatisch initialisiert
 
 ✓ Projekte werden komplett getrennt behandelt
   - Man kann verschiedene Versionen des Frameworks laufen lassen (z.B. CMS zusammen mit neuerem Morrow)

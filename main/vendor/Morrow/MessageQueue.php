@@ -38,16 +38,39 @@ namespace Morrow;
 * Examples
 * ---------
 *
+* Decouple time consuiming processes from the current controller `foobar.php`
 * ~~~{.php}
 * // ... Controller code
 * 
-* // set at the beginning of the DefaultController 
-* $this->debug->setAfterException(function(){
-*     $this->url->redirect('error/');	
-* });
-*  
+* $this->messagequeue->set('mq/foobar', 1);
+* $this->messagequeue->set('mq/foobar', 2);
+* $this->messagequeue->set('mq/foobar', array('foo', 'bar'));
+* 
 * // ... Controller code
-* ~~~ 
+* ~~~
+* 
+* The job controller named `mq_foobar.php`
+* ~~~{.php}
+* // ... Controller code
+* 
+* // Set the handler to plain because we don't want to output anything
+* $this->view->setHandler('plain');
+*
+* // Important line: Start the job worker if necessary
+* // You have to insert this line into all your job controllers
+* if ($this->messagequeue->process()) return;
+*
+* // get the job data you passed with $this->messagequeue->set()
+* $job = $this->messagequeue->get($this->input->get('id'));
+* $data = $job['data'];
+* 
+* 
+* // This is your time consuming code
+* sleep(3);
+* $this->log->set(date('H:i:s'), $data);
+* 
+* // ... Controller code
+* ~~~
 */
 class MessageQueue {
 	/**

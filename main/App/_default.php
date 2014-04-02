@@ -7,8 +7,6 @@ use Morrow\Debug;
 class DefaultController extends Factory {
 	public function setup() {
 		$this->view->setHandler('serpent');
-		
-		$this->prepare('MessageQueue:mq', $this->config->get('mq'));
 
 		/*
 		// add CSP security rules
