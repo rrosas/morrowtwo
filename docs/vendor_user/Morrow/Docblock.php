@@ -162,6 +162,7 @@ class Docblock {
 		$patterns = array(
 			'deprecated'	=> '@deprecated',
 			'ignore'		=> '@ignore',
+			'hidden'		=> '@hidden',
 			'param'			=> '@param\s+(?P<type>\S+)\s+(?P<variable>\S+)\s+(?P<description>.+)',
 			'return'		=> '@return\s+(?P<type>\S+)(\s+(?P<description>.+))?',
 			'var'			=> '@var\s+(?P<type>\S+)',

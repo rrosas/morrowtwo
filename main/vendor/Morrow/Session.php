@@ -38,27 +38,10 @@ namespace Morrow;
 *  
 * // counting per user page visits for the whole site
 * 
-* $visits = $this->session->get('visits');
-* if ($visits === null) $visits = 0;
+* // retrieve the value of visits and set a fallback value if visits does not exist. 
+* $visits = $this->session->get('visits', 0);
 *  
 * $this->session->set('visits', ++$visits);
-* 
-* // ... Controller code
-* ~~~
-*
-* The class registers itself as the default session handler but does just the same as PHP's default session handler (saves sessions to the file system).
-* This was necessary to allow stream wrappers to be used. This way you can redirect the session storing to a database or something else.
-* Just register the stream wrapper in your controller and set the session path in your config to `'session.save_path' => 'dbs://',`.
-* For the parameters of the stream wrapper take a look at the documentation.
-* 
-* ~~~{.php}
-* // ... Controller code
-*  
-* // You have to init the stream wrapper before working with the session
-* $this->prepare('Db', $this->config->get('db'));
-* Factory::load('Streams\Db:streamdb_sessions', 'dbs', $this->db, 'sessions');
-* 
-* // ... now work with the session
 * 
 * // ... Controller code
 * ~~~
@@ -147,10 +130,11 @@ class Session {
 	 * Retrieves session data saved with a given identifier.
 	 * 
 	 * @param string $identifier	The identifier you have used on setting the data.
+	 * @param mixed $fallback The return value if the identifier was not found.
 	 * @return mixed 	The requested data.
 	 */
-	public function get($identifier = null) {
-		return Helpers\General::array_dotSyntaxGet(self::$_data, $this->section . ($identifier !== null ? '.' . $identifier : ''));
+	public function get($identifier = null, $fallback = null) {
+		return Helpers\General::array_dotSyntaxGet(self::$_data, $this->section . ($identifier !== null ? '.' . $identifier : ''), $fallback);
 	}
 
 	/**
@@ -192,51 +176,70 @@ class Session {
 	}
 
 	/**
-	 * passed to session_set_save_handler()
+	 * Initialize session.
+	 * @param string $save_path	The path where to store/retrieve the session.
+	 * @param string $session_id	The session id.
+	 * @return boolean The return value (usually `true` on success, `false` on failure). Note this value is returned internally to PHP for processing.
+	 * @hidden
 	 */
-	public function sessionhandler_open($save_path, $session_name) {
+	public function sessionhandler_open($save_path, $session_id) {
 		return true;
 	}
 
 	/**
-	 * passed to session_set_save_handler()
+	 * Close the session.
+	 * @return boolean The return value (usually `true` on success, `false` on failure). Note this value is returned internally to PHP for processing.
+	 * @hidden
 	 */
 	public function sessionhandler_close() {
 		return true;
 	}
 
 	/**
-	 * passed to session_set_save_handler()
+	 * Read session data.
+	 * @param string $session_id	The session id to read data for.
+	 * @return string Returns an encoded string of the read data. If nothing was read, it must return an empty string. Note this value is returned internally to PHP for processing.
+	 * @hidden
 	 */
-	public function sessionhandler_read($key) {
-		$path = $this->save_path . $key;
+	public function sessionhandler_read($session_id) {
+		$path = $this->save_path . $session_id;
 		if (is_file($path)) return file_get_contents($path);
 		return '';
 	}
 
 	/**
-	 * passed to session_set_save_handler()
+	 * Write session data.
+	 * @param string $session_id	The session id.
+	 * @param string $session_data	The encoded session data. This data is the result of the PHP internally encoding the $_SESSION superglobal to a serialized string and passing it as this parameter.
+	 * @return boolean The return value (usually `true` on success, `false` on failure). Note this value is returned internally to PHP for processing.
+	 * @hidden
 	 */
-	public function sessionhandler_write($key, $val) {
-		file_put_contents($this->save_path . $key, $val);
+	public function sessionhandler_write($session_id, $session_data) {
+		file_put_contents($this->save_path . $session_id, $session_data);
 	}
 
 	/**
-	 * passed to session_set_save_handler()
+	 * Destroy a session.
+	 * @param string $session_id	The session ID being destroyed.
+	 * @return boolean The return value (usually `true` on success, `false` on failure). Note this value is returned internally to PHP for processing.
+	 * @hidden
 	 */
-	public function sessionhandler_destroy($key) {
-		unlink($this->save_path . $key);
+	public function sessionhandler_destroy($session_id) {
+		unlink($this->save_path . $session_id);
 	}
 
 	/**
-	 * passed to session_set_save_handler()
+	 * Cleanup old sessions.
+	 * @param string $maxlifetime	Sessions that have not updated for the last maxlifetime seconds will be removed.
+	 * @return boolean The return value (usually `true` on success, `false` on failure). Note this value is returned internally to PHP for processing.
+	 * @hidden
 	 */
-	public function sessionhandler_gc($max_lifetime) {
+	public function sessionhandler_gc($maxlifetime) {
 		$files = scandir($this->save_path);
 		foreach ($files as $file) {
 			if ($file{0} === '.') continue;
 
-			if (filemtime($this->save_path . $file) < time() - $max_lifetime) {
+			if (filemtime($this->save_path . $file) < time() - $maxlifetime) {
 				unlink($this->save_path . $file);
 			}
 		}

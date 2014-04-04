@@ -37,17 +37,18 @@ namespace Morrow;
 * ---------
 *
 * ~~~{.php}
+* // ... Controller code
+*
 * // extend an absolute URL with an additional GET parameter
 * $url = $this->url->create('http://chuck:norris@example.com:80/home?foo=bar#42', array('foo2' => 'bar2'));
-* Debug::dump($url);
 * 
-* // URLs without a scheme also work
+* // URLs without a scheme work too
 * $url = $this->url->create('//example.com/home', array('foo' => 'bar'));
-* Debug::dump($url);
 *
 * // create an URL to the actual page
 * $url = $this->url->create();
-* Debug::dump($url);
+*
+* // ... Controller code
 * ~~~
 *
 * ### Change the language
@@ -55,20 +56,26 @@ namespace Morrow;
 * If you just want to change the language just use the `language` query parameter which is handled different to other query parameters.
 *
 * ~~~{.php}
+* // ... Controller code
+*
 * // create an absolute URL to the homepage and change the language
 *
 * $url = $this->url->create('home', array('language' => 'de'), true);
 * // is the same as
 * $url = $this->url->create('de/home', array(), true);
 *
-* Debug::dump($url);
+* // ... Controller code
 * ~~~
 *
 * ### Redirect
 * 
 * ~~~{.php}
+* // ... Controller code
+*
 * // redirect to the not-found page
 * $this->url->redirect('not-found/', array(), 404);
+*
+* // ... Controller code
 * ~~~
 */
 class Url {
@@ -100,9 +107,10 @@ class Url {
 	/**
 	 * All parameters passed are used for create(). You don't have to do this yourself in Morrow.
 	 *
-	 * @param	array	$language_actual	Contains the currently active language.
+	 * @param	string	$language_actual	Contains the currently active language.
 	 * @param	array	$language_possible	Contains all valid language keys.
-	 * @param	array	$fullpath	Contains the full path of the current page.
+	 * @param	string	$fullpath	Contains the full path of the current page.
+	 * @param	integer	$basehref_depth	Necessary parameter for `getBasehref()`. Defines how man path nodes we have to skip to the the correct basehref.
 	 */
 	public function __construct($language_actual, $language_possible, $fullpath, $basehref_depth) {
 		$this->_language_actual		= $language_actual;

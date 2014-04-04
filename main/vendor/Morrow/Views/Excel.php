@@ -22,13 +22,52 @@
 
 namespace Morrow\Views;
 
+/**
+ * With this view handler it is possible to generate and output HTML files wich can be read from Microsoft Excel and OpenOffice as an spreadsheet.
+ *
+ * All public members of a view handler are changeable in the Controller by `\Morrow\View->setProperty($member, $value)`;
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ *
+ * $data[0]['date']       = '2007-01-01';
+ * $data[0]['headline']   = 'I am a Headline.';
+ * $data[0]['intro']      = 'Very short text.';
+ * $data[0]['text']       = "And a long text.";
+ * $data[1]['date']       = '2008-01-01';
+ * $data[1]['headline']   = 'I am a second Headline.';
+ * $data[1]['intro']      = 'Very short text.';
+ * $data[1]['text']       = "And a long text.";
+ *  
+ * $this->view->setHandler('Excel');
+ * $this->view->setContent('content', $data);
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Excel extends AbstractView {
+	/**
+	 * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+	 * @var string $mimetype
+	 */
 	public $mimetype	= 'application/vnd.ms-excel';
-	public $charset		= 'utf-8';
-	public $stream		= false;
 
+	/**
+	 * Set to false if you do not want the field names as first row.
+	 * @var boolean $mimetype
+	 */
 	public $table_header= true;
 
+	/**
+	 * You always have to define this method.
+	 * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 * @hidden
+	 */
 	public function getOutput($content, $handle) {
 		fwrite($handle, '<html><head><title>Excel</title><meta http-equiv="Content-Type" content="'.$this->mimetype.'; charset='.$this->charset.'"></head><body>');
 		$this->_output($content['content'], $handle);
@@ -37,6 +76,12 @@ class Excel extends AbstractView {
 		return $handle;
 	}
 
+	/**
+	 * Renders the table with the data.
+	 * @param   array $input Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 */
 	protected function _output($input, $handle) {
 		fwrite($handle, '<table cellpadding="0" cellspacing="0" border="0">');
 		foreach ($input as $nr => $row) {

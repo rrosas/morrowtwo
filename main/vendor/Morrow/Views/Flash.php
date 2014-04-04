@@ -22,18 +22,63 @@
 
 namespace Morrow\Views;
 
+/**
+ * This view generates an URL encoded string which can be read from the Flash loadvars object.
+ * 
+ * The keys of an multidimensional array will be combined with an underscore to create unique identifiers. Numeric keys will automatically prefixed with the `$numeric_prefix`.
+ *
+ * All public members of a view handler are changeable in the Controller by `\Morrow\View->setProperty($member, $value)`;
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ *
+ * $data['frame']['section1']     = 'Example';
+ * $data['frame'][0]['headline']  = 'Example';
+ * $data['frame'][0]['copy']      = 'Example text';
+ * $data['frame']['section2']     = 'This is a "<a>-link</a>';
+ *  
+ * $this->view->setHandler('Flash');
+ * $this->view->setContent('content', $data);
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Flash extends AbstractView {
+	/**
+	 * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+	 * @var string $mimetype
+	 */
 	public $mimetype	= 'text/plain';
-	public $charset		= 'utf-8';
-	
+
+	/**
+	 * If numeric indices are used in the base array this parameter will be prepended to the numeric index.
+	 * @var string $numeric_prefix
+	 */
 	public $numeric_prefix = 'entry';
 
+	/**
+	 * You always have to define this method.
+	 * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 * @hidden
+	 */
 	public function getOutput($content, $handle) {
 		if (isset($content['content'])) $this -> _outputVars('', $content['content'], $handle);
 		fwrite($handle, '&eof=1');
 		return $handle;
 	}
 	
+	/**
+	 * A recursive method that generates the loadVars compatible string.
+	 * @param   string $var The current name of the variable.
+	 * @param   array $input Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 */
 	protected function _outputVars($var, $input, $handle) {
 		if (is_array($input)) {
 			if (count($input) === 0) return '';

@@ -157,7 +157,7 @@ class Factory {
 	
 	/**
 	 * Initializes a class with optionally prepared constructor parameters and returns the instance.
-	 * @param	string	$instance_identifier The instance identifier
+	 * @param	string	$instance_identifier The instance identifier.
 	 * @return	object
 	 */
 	public static function load($instance_identifier) {
@@ -221,8 +221,8 @@ class Factory {
 	/**
 	 * Handles the preparation of class instantiation by deposit the constructor parameters. That allows the lazy loading functionality.
 	 * 
-	 * @param	string	$instance_identifier The instance identifier
-	 * @param	mixed	$parameters Any number of constructor parameters
+	 * @param	string	$instance_identifier The instance identifier.
+	 * @param	mixed	$parameters Any number of constructor parameters.
 	 * @return	null
 	 */
 	public static function prepare($instance_identifier, $parameters = null) {
@@ -251,8 +251,8 @@ class Factory {
 
 	/**
 	 * Allows to access and instantiating a class by accessing an object member.
-	 * @param	string	$instance_identifier
-	 * @return	object
+	 * @param	string	$instance_identifier The instance identifier.
+	 * @return	object  Returns the created instance.
 	 */
 	public function __get($instance_identifier) {
 		$this->$instance_identifier = Factory::load(ucfirst($instance_identifier));

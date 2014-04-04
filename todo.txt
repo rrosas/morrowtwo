@@ -47,7 +47,8 @@ cms/							Projekt Nr.2
 ✓ MessageQueue-Klasse bauen
 ✓ MessageQueue-Klasse wird jetzt automatisch initialisiert
 ✓ DB-Klasse wird jetzt automatisch initialisiert
-
+✓ Default-Wert bei Input->get()
+✓ Default-Wert bei Session->get()
   
 
 ToDo:

@@ -260,6 +260,7 @@ class Debug {
 	 * This method is called when an exception occurs
 	 * @param  object $exception The incoming Exception object
 	 * @return null
+	 * @hidden
 	 */
 	public function errorhandler($exception) {
 		header("HTTP/1.1 500 Internal Server Error");
