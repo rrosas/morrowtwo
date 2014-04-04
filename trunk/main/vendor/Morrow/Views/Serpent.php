@@ -25,14 +25,10 @@ namespace Morrow\Views;
 use Morrow\Factory;
 
 /**
- * With this view handler it is possible to generate and output valid XML files.
+ * With this view handler it is possible to output with plain PHP.
  * 
- * There are some special things you should keep in mind (take a look at the example):
+ * This handler uses the Serpent Template Engine which improves PHP a little bit to have more comfort when writing templates.
  * 
- *   * **Equal named tags:** Use a blank to create equal named tags. All characters behind the blank will get stripped.
- *   * **Attributes:** add attributes by prefixing the target tag with a colon.
- *   * **Numeric indices:** Numeric Indices will be prefixed by "entry" to generate a valid tag.
- *
  * All public members of a view handler are changeable in the Controller by `\Morrow\View->setProperty($member, $value)`;
  *
  * Example
@@ -41,40 +37,57 @@ use Morrow\Factory;
  * ~~~{.php}
  * // ... Controller code
  * 
- * // Equal named tags
- * $data['frame']['section 1']['headline']  = 'Example';
- * $data['frame']['section 2']['copy']      = 'Example text';
- *  
- * // Numeric indices
- * $data['frame'][0]['headline']            = 'Example';
- * $data['frame'][0]['copy']                = 'Example text';
- *  
- * // Attributes
- * $data['frame']['section2']['copy1']      = 'This is a "<a>-link</a>';
- * $data['frame'][':section2']['param_key'] = 'param_value';
- *  
- * $this->view->setHandler('Xml');
- * $this->view->setContent('content', $data);
  *
  * // ... Controller code
  * ~~~
  */
 class Serpent extends AbstractView {
 	/**
-	 * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
-	 * @var string $mimetype
+	 * a
+	 * @var string $template
 	 */
 	public $template		= '';
+
+	/**
+	 * The default extension that will Serpent use for template names.
+	 * @var string $template_suffix
+	 */
 	public $template_suffix	= '.htm';
+
+	/**
+	 * a
+	 * @var boolean $force_compile
+	 */
 	public $force_compile	= false;
+
+	/**
+	 * a
+	 * @var array $mappings
+	 */
 	public $mappings		= array();
+
+	/**
+	 * a
+	 * @var array $resources
+	 */
 	public $resources		= array();
 
+	/**
+	 * Initializes classes for the use in getOutput().
+	 * @hidden
+	 */
 	public function __construct() {
 		$this->page		= Factory::load('Page');
 		$this->language	= Factory::load('Language');
 	}
 
+	/**
+	 * You always have to define this method.
+	 * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 * @hidden
+	 */
 	public function getOutput($content, $handle) {
 		// get default template
 		if (empty($this->template)) {
