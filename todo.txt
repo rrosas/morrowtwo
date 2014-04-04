@@ -53,6 +53,7 @@ cms/							Projekt Nr.2
 
 ToDo:
 
+- Serpent view handler fehlt noch. Dort müssen auch alle Morrow Mappings erklärt werden.
 - File-Stream-Wrapper zuende bauen
 - Neue Session-Funktionen und Stream Wrapper dokumentieren
 - de-de statt de in language class umsetzen
