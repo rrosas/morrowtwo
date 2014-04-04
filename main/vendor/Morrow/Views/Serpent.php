@@ -60,6 +60,10 @@ use Morrow\Factory;
  * ~~~
  */
 class Serpent extends AbstractView {
+	/**
+	 * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+	 * @var string $mimetype
+	 */
 	public $template		= '';
 	public $template_suffix	= '.htm';
 	public $force_compile	= false;

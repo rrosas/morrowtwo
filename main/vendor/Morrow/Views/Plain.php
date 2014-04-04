@@ -1,22 +1,22 @@
 <?php
 /*////////////////////////////////////////////////////////////////////////////////
-    MorrowTwo - a PHP-Framework for efficient Web-Development
-    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+	MorrowTwo - a PHP-Framework for efficient Web-Development
+	Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
-    This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
+	This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 
-    MorrowTwo is free software:  you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	MorrowTwo is free software:  you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
@@ -56,19 +56,19 @@ namespace Morrow\Views;
  * ~~~
  */
 class Plain extends AbstractView {
-    /**
-     * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
-     * @var string $mimetype
-     */
+	/**
+	 * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+	 * @var string $mimetype
+	 */
 	public $mimetype	= 'text/plain';
 
-    /**
-     * You always have to define this method.
-     * @param   array $content Parameters that were passed to \Morrow\View->setContent().
-     * @param   handle $handle  The stream handle you have to write your created content to.
-     * @return  string  Should return the rendered content.
-     * @hidden
-     */
+	/**
+	 * You always have to define this method.
+	 * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 * @hidden
+	 */
 	public function getOutput($content, $handle) {
 		if (!isset($content['content'])) return $handle;
 		$content = $content['content'];

@@ -50,25 +50,25 @@ namespace Morrow\Views;
  * ~~~
  */
 class Jsonp extends AbstractView {
-    /**
-     * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
-     * @var string $mimetype
-     */
+	/**
+	 * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+	 * @var string $mimetype
+	 */
 	public $mimetype = 'application/javascript';
 
-    /**
-     * The name of the callback function that get passed the result as parameter. Default is `$_REQUEST['callback']` what it makes compatible with jQuery without a change.
-     * @var string $callback
-     */
-    public $callback;
+	/**
+	 * The name of the callback function that get passed the result as parameter. Default is `$_REQUEST['callback']` what it makes compatible with jQuery without a change.
+	 * @var string $callback
+	 */
+	public $callback;
 
-    /**
-     * You always have to define this method.
-     * @param   array $content Parameters that were passed to \Morrow\View->setContent().
-     * @param   handle $handle  The stream handle you have to write your created content to.
-     * @return  string  Should return the rendered content.
-     * @hidden
-     */
+	/**
+	 * You always have to define this method.
+	 * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+	 * @param   handle $handle  The stream handle you have to write your created content to.
+	 * @return  string  Should return the rendered content.
+	 * @hidden
+	 */
 	public function getOutput($content, $handle) {
 		if (is_null($this->callback)) $this->callback = $_REQUEST['callback'];
 
