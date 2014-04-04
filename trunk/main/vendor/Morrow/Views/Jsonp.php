@@ -22,14 +22,55 @@
 
 namespace Morrow\Views;
 
+/**
+ * With this view handler it is possible to generate valid JSONP responses.
+ * 
+ * JSONP is a common technique used in Javascript to request data from a server in a different domain. This is usually prohibited by web browsers because of the same-origin policy.
+ *
+ * All public members of a view handler are changeable in the Controller by `\Morrow\View->setProperty($member, $value)`;
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ * 
+ * $data['frame']['section 1']['headline']  = 'Example';
+ * $data['frame']['section 2']['copy']      = 'Example text';
+ * $data['frame'][0]['headline']            = 'Example';
+ * $data['frame'][0]['copy']                = 'Example text';
+ * $data['frame']['section2']['copy1']      = 'This is a "<a>-link</a>';
+ * $data['frame'][':section2']['param_key'] = 'param_value';
+ * $content['content'] = $data;
+ *  
+ * $this->view->setHandler('Jsonp');
+ * $this->view->setContent('content', $data);
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Jsonp extends AbstractView {
+    /**
+     * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+     * @var string $mimetype
+     */
 	public $mimetype = 'application/javascript';
-	public $charset  = 'utf-8';
-	
-	public $callback = '';
 
+    /**
+     * The name of the callback function that get passed the result as parameter. Default is `$_REQUEST['callback']` what it makes compatible with jQuery without a change.
+     * @var string $callback
+     */
+    public $callback;
+
+    /**
+     * You always have to define this method.
+     * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+     * @param   handle $handle  The stream handle you have to write your created content to.
+     * @return  string  Should return the rendered content.
+     * @hidden
+     */
 	public function getOutput($content, $handle) {
-		if (empty($this->callback)) $this->callback = $_REQUEST['callback'];
+		if (is_null($this->callback)) $this->callback = $_REQUEST['callback'];
 
 		fwrite($handle, $this->callback . '(');
 		fwrite($handle, json_encode($content['content']));

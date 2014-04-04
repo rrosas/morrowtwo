@@ -22,75 +22,99 @@
 namespace Morrow\Streams;
 
 /**
-* DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOHHHHHHHHHHHHHHHHHHHHHH
-* This class helps you to handle Message Queues.
+* Registers a stream handler that maps schemes to paths.
 *
-* Message queues allow you to store data for processing time consuming jobs at a later time (decoupled from the current process).
-* Queues can dramatically increase the user experience of a web site by reducing load times.
-* All enqueued jobs are processed consecutively by an CLI call to keep the server load low.
-* This class gives you a simple alternative to mature solutions like RabbitMQ or Beanstalkd, but should also run on hosted environments where you usually don't have access to them.
+* This is useful if you want to have a shortcut to a specific path.
+* It is of course also possible to achieve this by using a constant.
+* But if you want to be able to switch streams this is your solution.
 *
-* You are able to change the behaviour of these methods with the following parameters in your configuration files:
+* Example
+* -------
 *
-* Type   | Keyname                | Default    | Description                                                              
-* -----  | ---------              | ---------  | ------------                                                             
-* string | `mq.cli_path`          | `php`     | The path to the php interpreter. Just use php if the cli is systemwide callable.
-* string | `mq.save_path`         | `APP_PATH . 'temp/messagequeue/'` | The path where the job files are saved.
-*
-* Examples
-* ---------
-*
-* Decouple time consuming processes from the current controller `foobar.php`
 * ~~~{.php}
 * // ... Controller code
 * 
-* $this->messagequeue->set('mq/foobar', 1);
-* $this->messagequeue->set('mq/foobar', 2);
-* $this->messagequeue->set('mq/foobar', array('foo', 'bar'));
+* // Initialize the stream handler
+* Factory::load('Streams\File:streamfile_public', 'public', PUBLIC_PATH);
 * 
-* // ... Controller code
-* ~~~
+* // Write a file
+* file_put_contents('public://foo.txt', 'bar');
 * 
-* The job controller named `mq_foobar.php`
-* ~~~{.php}
-* // ... Controller code
-* 
-* // Set the handler to plain because we don't want to output anything
-* $this->view->setHandler('plain');
-*
-* // Important line: Start the job worker if necessary
-* // You have to insert this line into all your job controllers
-* if ($this->messagequeue->process()) return;
-*
-* // get the job data you passed with $this->messagequeue->set()
-* $job = $this->messagequeue->get($this->input->get('id'));
-* $data = $job['data'];
-* 
-* 
-* // This is your time consuming code
-* sleep(3);
-* $this->log->set(date('H:i:s'), $data);
+* // Now delete it
+* unlink('public://test.jpg');
 * 
 * // ... Controller code
 * ~~~
 */
 class File {
+	/**
+	 * The path to the log file.
+	 * @var string $config
+	 * @hidden
+	 */
 	public static $config = array();
 	
+	/**
+	 * The path to the log file.
+	 * @var string $scheme
+	 */
 	protected $scheme;
+
+	/**
+	 * The path to the log file.
+	 * @var string $path
+	 */
 	protected $path;
 	
 	// dir parameters
+	/**
+	 * The path to the log file.
+	 * @var string $dir
+	 */
 	protected $dir;
+
+	/**
+	 * The path to the log file.
+	 * @var string $entries
+	 */
 	protected $entries;
+
+	/**
+	 * The path to the log file.
+	 * @var string $entries_pos
+	 */
 	protected $entries_pos = 0;
 
 	// file parameters
+	/**
+	 * The path to the log file.
+	 * @var string $id
+	 */
 	protected $id;
+
+	/**
+	 * The path to the log file.
+	 * @var string $entry
+	 */
 	protected $entry;
+
+	/**
+	 * The path to the log file.
+	 * @var string $pos
+	 */
 	protected $pos = 0;
+
+	/**
+	 * The path to the log file.
+	 * @var string $mode
+	 */
 	protected $mode;
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $scheme The scheme that should be registered.
+	 * @param string $path The path the scheme should map file access to.
+	 */
 	public function __construct($scheme = null, $path = null) {
 		if(!$scheme) return;
 		
@@ -100,59 +124,133 @@ class File {
 		stream_register_wrapper($scheme, __CLASS__);
 	}
 
+
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function dir_closedir() {
 		// Any resources which were locked, or allocated, during opening and use of the directory stream should be released.
 		return true;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path As defined in PHPs \streamWrapper.
+	 * @param integer $options As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function dir_opendir($path, $options) {
 		return true;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function dir_readdir() {
 		return false;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function dir_rewinddir() {
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path As defined in PHPs \streamWrapper.
+	 * @param integer $mode As defined in PHPs \streamWrapper.
+	 * @param integer $options As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function mkdir($path, $mode, $options) {
 		return false;
 	}
 
-	public function rename($path, $options) {
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path_from As defined in PHPs \streamWrapper.
+	 * @param string $path_to As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
+	public function rename($path_from, $path_to) {
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path As defined in PHPs \streamWrapper.
+	 * @param integer $options As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function rmdir($path, $options) {
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_cast() {
 		// Should return the underlying stream resource used by the wrapper, or FALSE.
 		return false;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_close() {
 		return fclose($this->entry);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_eof() {
 		return ($this->pos === strlen($this->entry['data']) - 1);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_flush() {
 		// Should return TRUE if the cached data was successfully stored (or if there was no data to store), or FALSE if the data could not be stored.
 		// because er have stored the data in stream_write() there is no possibility to return false.
 		return true;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param integer $operation As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_lock($operation) {
 		return false;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path As defined in PHPs \streamWrapper.
+	 * @param integer $option As defined in PHPs \streamWrapper.
+	 * @param mixed $value As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_metadata($path, $option, $value) {
 		return false;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path As defined in PHPs \streamWrapper.
+	 * @param string $mode As defined in PHPs \streamWrapper.
+	 * @param integer $options As defined in PHPs \streamWrapper.
+	 * @param string $opath As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_open($path, $mode, $options, &$opath) {
 		$parts = explode('://', $path, 2);
 
@@ -166,40 +264,83 @@ class File {
 		return true;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param integer $count As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_read($count) {
 		return fread($this->entry, $count);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param integer $offset As defined in PHPs \streamWrapper.
+	 * @param integer $whence As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_seek($offset, $whence = SEEK_SET) {
 		return fseek($this->entry, $offset, $whence);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_set_option() {
 		return false;
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_stat() {
 		return fstat($this->entry);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_tell() {
 		return ftell($this->entry);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param integer $new_size As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_truncate($new_size) {
 		return ftruncate($this->entry, $new_size);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $data As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function stream_write($data) {
 		return fwrite($this->entry, $data);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $path As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function unlink($path) {
 		$parts	= explode('://', $path, 2);
 		$id		= $parts[1];
 		return unlink($this->path . $id);
 	}
 
+	/**
+	 * Implements function as defined in PHPs \streamWrapper.
+	 * @param string $filename As defined in PHPs \streamWrapper.
+	 * @hidden
+	 */
 	public function url_stat($filename) {
 		$this->stream_open($filename, 'r', array(), $opath);
 		$stats = $this->stream_stat();

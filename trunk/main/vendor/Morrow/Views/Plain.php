@@ -22,10 +22,53 @@
 
 namespace Morrow\Views;
 
+/**
+ * With this view handler it is possible to output single strings.
+ * 
+ * Useful if you create data by hand and want just to display it. The input has to be a scalar variable or a stream.
+ * You don't have to pass content, it is optional. This is useful if you write CLI scripts for the \Morrow\MessageQueue and you don't need any output.
+ *
+ * All public members of a view handler are changeable in the Controller by `\Morrow\View->setProperty($member, $value)`;
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ * 
+ * // Output just a string
+ * $this->view->setHandler('Plain');
+ * $this->view->setContent('content', 'Hello World!');
+ *
+ * // ... Controller code
+ * ~~~
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ * 
+ * // Output an image with the plain handler
+ * $data = file_get_contents('testimage.jpg');
+ * $this->view->setHandler('Plain');
+ * $this->view->setProperty('mimetype', 'image/jpg');
+ * $this->view->setContent('content', $data);
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Plain extends AbstractView {
+    /**
+     * Changes the standard mimetype of the view handler. Possible values are `text/html`, `application/xml` and so on.
+     * @var string $mimetype
+     */
 	public $mimetype	= 'text/plain';
-	public $charset		= 'utf-8';
 
+    /**
+     * You always have to define this method.
+     * @param   array $content Parameters that were passed to \Morrow\View->setContent().
+     * @param   handle $handle  The stream handle you have to write your created content to.
+     * @return  string  Should return the rendered content.
+     * @hidden
+     */
 	public function getOutput($content, $handle) {
 		if (!isset($content['content'])) return $handle;
 		$content = $content['content'];

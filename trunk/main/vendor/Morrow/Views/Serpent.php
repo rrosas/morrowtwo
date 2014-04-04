@@ -24,10 +24,42 @@ namespace Morrow\Views;
 
 use Morrow\Factory;
 
+/**
+ * With this view handler it is possible to generate and output valid XML files.
+ * 
+ * There are some special things you should keep in mind (take a look at the example):
+ * 
+ *   * **Equal named tags:** Use a blank to create equal named tags. All characters behind the blank will get stripped.
+ *   * **Attributes:** add attributes by prefixing the target tag with a colon.
+ *   * **Numeric indices:** Numeric Indices will be prefixed by "entry" to generate a valid tag.
+ *
+ * All public members of a view handler are changeable in the Controller by `\Morrow\View->setProperty($member, $value)`;
+ *
+ * Example
+ * --------
+ * 
+ * ~~~{.php}
+ * // ... Controller code
+ * 
+ * // Equal named tags
+ * $data['frame']['section 1']['headline']  = 'Example';
+ * $data['frame']['section 2']['copy']      = 'Example text';
+ *  
+ * // Numeric indices
+ * $data['frame'][0]['headline']            = 'Example';
+ * $data['frame'][0]['copy']                = 'Example text';
+ *  
+ * // Attributes
+ * $data['frame']['section2']['copy1']      = 'This is a "<a>-link</a>';
+ * $data['frame'][':section2']['param_key'] = 'param_value';
+ *  
+ * $this->view->setHandler('Xml');
+ * $this->view->setContent('content', $data);
+ *
+ * // ... Controller code
+ * ~~~
+ */
 class Serpent extends AbstractView {
-	public $mimetype		= 'text/html';
-	public $charset			= 'utf-8';
-	
 	public $template		= '';
 	public $template_suffix	= '.htm';
 	public $force_compile	= false;

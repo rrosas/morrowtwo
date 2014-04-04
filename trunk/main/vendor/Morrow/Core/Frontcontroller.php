@@ -38,6 +38,7 @@ class Frontcontroller {
 	 * @param	string $errfile The third parameter is optional, errfile, which contains the filename that the error was raised in, as a string.
 	 * @param	string $errline The fourth parameter is optional, errline, which contains the line number the error was raised at, as an integer.
 	 * @return	null
+	 * @hidden
 	 */
 	public function errorHandler($errno, $errstr, $errfile, $errline) {
 		// get actual error_reporting
@@ -56,6 +57,7 @@ class Frontcontroller {
 	 * Will be set by the Constructor as global exception handler.
 	 * @param	object	$exception	The thrown exception.
 	 * @return null
+	 * @hidden
 	 */
 	public function exceptionHandler($exception) {
 		try {
@@ -72,6 +74,7 @@ class Frontcontroller {
 
 	/**
 	 * This function contains the main application flow.
+	 * @hidden
 	 */
 	public function __construct() {
 		/* global settings
