@@ -58,3 +58,4 @@ ToDo:
 - Neue Session-Funktionen und Stream Wrapper dokumentieren
 - de-de statt de in language class umsetzen
 - Form-Handler überarbeiten
+- Validator bauen (dokumentieren)
