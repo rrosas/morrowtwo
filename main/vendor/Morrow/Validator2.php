@@ -24,7 +24,7 @@ namespace Morrow;
 
 
 /*
-minage
+age
 required
 required_if 
 numeric
@@ -39,39 +39,80 @@ before
 after
 date_format
 different (field)
-image
 in (foo, bar) // for selects
 ip
 
 */
 class Validator2 {
-	public function isValid($input, $rules) {
-
+	// Returns false if only one field is not valid
+	public function validate($input, $rules) {
+		// first 
 	}
 
-	/*
-	Returns an array with all valid fields
-	Returns false if only one field is not valid
-	*/
+	// Returns an array with all valid fields
 	public function filter($input, $rules) {
 		return $data;
 	}
 
-	protected function _validator_image($value) {
-		$img_attr = getimagesize($value['tmp_name']);
-		if ($img_attr[2] === IMAGETYPE_JPEG) {
-			return true;
+	protected function _validator_image($value, $types_user) {
+		if (!is_string($value)) return false;
+		if (!is_string($type)) throw new \Exception(__METHOD__ . ': $type has to be of type string.');
+
+
+		$types = array(
+			'jpg'	=> IMAGETYPE_JPEG,
+			'png'	=> IMAGETYPE_PNG,
+			'gif'	=> IMAGETYPE_GIF,
+		);
+		$types_user = array_map(function($data){ return strtolower(trim($data)); }, array_slice(func_get_args(), 1));
+		$types		= array_intersect_key($types, array_flip($types_user));
+
+		try {
+			$imagesize = getimagesize($value['tmp_name']);
+			if (in_array($imagesize[2], $types)) {
+				return true;
+			}
+		} catch (\Exception $e) {
+			return false;
 		}
 		return false;
 	}
 
-	protected function _validator_email($var) {
-		if (!is_string($var)) return false;
+	protected function _validator_width($value, $width) {
+		if (!is_string($value)) return false;
+		if (!is_string($width)) throw new \Exception(__METHOD__ . ': $width has to be of type string.');
+
+		try {
+			$imagesize = getimagesize($value['tmp_name']);
+			if ($imagesize[0] == $width) return true;
+			return false;
+		} catch (\Exception $e) {
+			return false;
+		}
+		return false;
+	}
+
+	protected function _validator_height($value, $height) {
+		if (!is_string($value)) return false;
+		if (!is_string($height)) throw new \Exception(__METHOD__ . ': $height has to be of type string.');
+
+		try {
+			$imagesize = getimagesize($value['tmp_name']);
+			if ($imagesize[1] == $height) return true;
+			return false;
+		} catch (\Exception $e) {
+			return false;
+		}
+		return false;
+	}
+
+	protected function _validator_email($value) {
+		if (!is_string($value)) return false;
 		
 		// syntax check
 		$localpart = "[a-z0-9!#$%&'*+-/\=?^_`{|}~]"; // RFC 2822
 		$domainpart = "[\.a-z0-9-]";
-		if (!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+\.$domainpart+)$=i", $var, $match)) {
+		if (!preg_match("=^$localpart+(\.$localpart+)*@($domainpart+\.$domainpart+)$=i", $value, $match)) {
 			return false;
 		}
 		
@@ -83,6 +124,21 @@ class Validator2 {
 		
 		return true;
 	}
+
+	protected function _validator_url($value, $schemes) {
+		if (!is_string($value)) return false;
+		
+		$schemes_user = array_map(function($data){ return strtolower(trim($data)); }, array_slice(func_get_args(), 1));
+		if (preg_match('~^('.implode('|', $schemes_user).')~', $value)) return true;
+
+		return false;
+	}
+
+
+
+
+
+
 		
 	protected function _validator_date($value) {
 		$return = false;
@@ -98,27 +154,20 @@ class Validator2 {
 		return $return;
 	}
 	
-	protected function _validator_age($birthday, $age) {
-		$return   = false;
+	protected function _validator_age($birthday, $min, $max) {
+		$birthday = strtotime($birthday);
+		if (!$birthday) return false;
+
+		$age = floor((date("Ymd") - date('Ymd', $birthday)) / 10000);
+		if ($age < $min) return false;
+		if ($age > $max) return false;
 		
-		if (self::checkDate($birthday, $error) === true) {
-			$age = floor((date("Ymd") - date('Ymd', strtotime($birthday))) / 10000);
-			
-			if ($age >= $age) return true;
-		}
-		
-		return $return;
-	}
-	
-	protected function _validator_captcha($captcha) {
-		$session = Factory::load('session');
-		$session_captcha = $session->get('captcha');
-		$session->delete('captcha');
-		if (strtolower($captcha) != strtolower($session_captcha)) {
-			return false;
-		}
 		return true;
 	}
+	
+
+
+
 	
 	protected function _validator_integer($value) {
 		if (!preg_match('=^[0-9]*$=', $value)) { 
