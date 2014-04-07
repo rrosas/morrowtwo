@@ -9,6 +9,27 @@ class PageController extends DefaultController {
 		//$this->_testStreams();
 		//$this->_testMessageQueue();
 		$this->_testForms();
+		$this->_testValidator();
+	}
+
+	protected function _testValidator() {
+		$input = array(
+			'image' => '',
+			'width' => '',
+			'height' => '',
+			'email' => 'test@cerdmann.com',
+			'url' => 'http://www.disney.de',
+		);
+		$this->validator2->validate(
+			$input,
+			array(
+				'image' => array('tmp_name' => 'images/ape.png'),
+				'width' => array('tmp_name' => 'images/ape.png'),
+				'height' => array('tmp_name' => 'images/ape.png'),
+				'email' => 'test@cerdmann.com',
+				'url' => 'http://www.disney.de',
+			)
+		);
 	}
 
 	protected function _testForms() {
