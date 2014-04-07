@@ -1,5 +1,4 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -21,26 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-abstract class Formhtmlelement {
-	protected $page;
-
-	public function __construct() {
-		$this->page = Factory::load('Page');
+class Password extends AbstractElement {
+	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
+		return "<input id=\"" . $id . "\" type=\"password\" name=\"" . $name . "\" value=\"\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}
 
-	public function getLabel($value, $for_id, $params) {
-		return "<label for=\"" . $for_id . "\" " . Helpers\Htmlformattributes::getAttributeString($params, 'label') . ">$value</label>";
+	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
+		$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>*******</div>';
+		return $content;
 	}
-	public function getError($value, $params, $tagname) {
-		return "<$tagname " . Helpers\Htmlformattributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
-	}
-
-	abstract public function getDisplay($name, $values, $id, $params, $options, $multiple);
-	abstract public function getReadonly($name, $values, $id, $params, $options, $multiple);
 
 	public function getListDisplay($values, $params, $options = array()) {
-		return $values;
+		return '******';
 	}
 }

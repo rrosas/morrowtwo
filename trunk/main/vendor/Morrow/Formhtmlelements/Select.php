@@ -20,9 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-class Formhtmlelementselect extends Formhtmlelement {
+class Select extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		$classes = array();
 		$class = '';
@@ -43,8 +43,8 @@ class Formhtmlelementselect extends Formhtmlelement {
 		}
 		$output = array_values($options);
 		$keys = array_keys($options);
-		$content = "<select id=\"$id\" name=\"$name\"  " . Helpers\Htmlformattributes::getAttributeString($params, 'select') . " $multiplestr>" . chr(10);
-		$content .= Helpers\Htmloptions::getOutput('', $keys, $output, $values, $class, $styles, $classes);
+		$content = "<select id=\"$id\" name=\"$name\"  " . \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'select') . " $multiplestr>" . chr(10);
+		$content .= \Morrow\Helpers\Htmloptions::getOutput('', $keys, $output, $values, $class, $styles, $classes);
 
 		$content .= "</select>" . chr(10);
 		return $content;
@@ -58,13 +58,13 @@ class Formhtmlelementselect extends Formhtmlelement {
 		if (is_array($values)) {
 			foreach ($values as $value) {
 				$content .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />';
-				$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.$options[$value].'</div>';
+				$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.$options[$value].'</div>';
 			}
 		} else {
 			$value = $values;
 			if (isset($options[$values])) $value = $options[$values];
 			$content .= '<input type="hidden" name="'.$name.'" value="'.$values.'" />';
-			$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.$value.'</div>';
+			$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.$value.'</div>';
 		}
 		return $content;
 	}

@@ -30,5 +30,19 @@
 			</li>
 		</ul>
 	</section>
+
+
+	<style>
+	input.error { background: #fee; }
+	</style>
+
+	~\Morrow\Factory::load('Formhtml')->setConfig('form_name', array(
+		'errorclass' => 'error',
+	))~
+
+	<form action="~~:raw($page.path.absolute)~">
+		~~:formelement('form_name', 'email', array('dtype' => 'Text'))~
+		<input type="submit" value="Submit">
+	</form>
 ~:endblock('body')~
 

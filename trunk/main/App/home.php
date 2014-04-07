@@ -8,6 +8,24 @@ class PageController extends DefaultController {
 	public function run() {
 		//$this->_testStreams();
 		//$this->_testMessageQueue();
+		$this->_testForms();
+	}
+
+	protected function _testForms() {
+		$fields = array(
+			'email' => array('required' => true, 'checktype' => 'email'),
+		);
+
+		// at the moment loadDef HAS to be before setInput (setInput should not do anything)
+		$this->form->loadDef(array('form_name' => $fields));
+		$this->form->setInput($this->input->get());
+
+		if ($this->form->isSubmitted('form_name')) {
+			echo "Submitted";
+			if ($this->form->validate('form_name')) {
+				echo "Valid";
+			}
+		}
 	}
 
 	protected function _testStreams() {

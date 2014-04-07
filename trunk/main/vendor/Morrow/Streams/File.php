@@ -24,6 +24,8 @@ namespace Morrow\Streams;
 /**
 * Registers a stream handler that maps schemes to paths.
 *
+* `THIS CLASS IS NOT YET COMPLETE`
+* 
 * This is useful if you want to have a shortcut to a specific path.
 * It is of course also possible to achieve this by using a constant.
 * But if you want to be able to switch streams this is your solution.

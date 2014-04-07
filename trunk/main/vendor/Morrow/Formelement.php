@@ -183,7 +183,7 @@ class FormElement {
 			if (!method_exists($validator, $function)) {
 				throw new \Exception("Method $function does not exist in class " . get_class($validator) . "!");
 			} else {
-				if (!$validator->$function($this->value, $errorkey, $compare, $this->arguments, $this->_fh->_locale)) {
+				if (!$validator->$function($this->value, $errorkey, $compare, $this->arguments)) {
 					$this->setError($errorkey);
 					// if it was a file, remove it from session
 					$session = Factory::load("Session");
