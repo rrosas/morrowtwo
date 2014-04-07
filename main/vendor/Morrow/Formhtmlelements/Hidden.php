@@ -20,21 +20,19 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-class Formhtmlelementtext extends Formhtmlelement {
+class Hidden extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		return "<input id=\"" . $id . "\" type=\"text\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+		return "<input id=\"" . $id . "\" type=\"hidden\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
 		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
-		$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		return $content;
 	}
 
 	public function getListDisplay($values, $params, $options = array()) {
-		$values = Helpers\String::truncate(htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')), 50);
-		return $values;
+		return '';
 	}
 }

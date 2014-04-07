@@ -1,4 +1,5 @@
 <?php
+
 /*////////////////////////////////////////////////////////////////////////////////
     MorrowTwo - a PHP-Framework for efficient Web-Development
     Copyright (C) 2009  Christoph Erdmann, R.David Cummins
@@ -20,20 +21,24 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-class Formhtmlelementcheckbox extends Formhtmlelement {
-	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		if ($values != '' && $values != 0) $params['checked'] = "checked";
-		$values = 1;
-		return "<input id=\"" . $id . "\" type=\"checkbox\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+abstract class AbstractElement {
+	protected $page;
+
+	public function __construct() {
+		$this->page = \Morrow\Factory::load('Page');
 	}
 
-	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
-		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
-		$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
-		return $content;
+	public function getLabel($value, $for_id, $params) {
+		return "<label for=\"" . $for_id . "\" " . \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'label') . ">$value</label>";
 	}
+	public function getError($value, $params, $tagname) {
+		return "<$tagname " . \Morrow\Helpers\Htmlformattributes::getAttributeString($params, $tagname) . ">$value</$tagname>";
+	}
+
+	abstract public function getDisplay($name, $values, $id, $params, $options, $multiple);
+	abstract public function getReadonly($name, $values, $id, $params, $options, $multiple);
 
 	public function getListDisplay($values, $params, $options = array()) {
 		return $values;

@@ -20,9 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-class Formhtmlelementdate extends Formhtmlelement {
+class Date extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		$date_str = '';
 		if (is_array($values)) {
@@ -37,7 +37,7 @@ class Formhtmlelementdate extends Formhtmlelement {
 		if (isset($params['end_year'])) $end_year = $params['end_year'];
 
 		$content = "<span class=\"date\">";
-		$content .= Helpers\Htmldate::getOutput($name, $date_str, $format, $start_year, $end_year, $params);
+		$content .= \Morrow\Helpers\Htmldate::getOutput($name, $date_str, $format, $start_year, $end_year, $params);
 		$content .= "</span>";
 		return $content;
 	}

@@ -71,7 +71,7 @@ class Formhtml {
 
 		$id = "mw_" . $formname . "_" . $el_name;
 
-		$classname = '\\Morrow\\Formhtmlelement' . $display_type;
+		$classname = '\\Morrow\\Formhtmlelements\\' . $display_type;
 		if (class_exists($classname)) {
 			$display_obj = Factory::load($classname);
 			$content = $display_obj->getLabel($el_label, $id, $params);
@@ -151,14 +151,11 @@ class Formhtml {
 
 		$multiple = false;
 
-		$default_dtype = 'text';
-
 		$options = array();
 		if ($_elobj->type == "set") {
 			$options = array();
 			if (count($_elobj->options)>0) $options = $_elobj->options;
 			$multiple =  $_elobj->multiple;
-			$default_dtype = 'select';
 
 			$groups = array(
 				"check",
@@ -169,16 +166,13 @@ class Formhtml {
 				"checkboxgroup"
 			);
 
-			if (in_array($display_type, $groups)) $display_type = 'group';
+			if (in_array($display_type, $groups)) $display_type = 'Group';
 		}
 
 		$display_obj = null;
-		$classname = '\\Morrow\\Formhtmlelement' . $display_type;
-		if (!is_null($display_type) && class_exists($classname)) {
-			$display_obj = Factory::load($classname);
-		} else {
-			$display_obj = Factory::load('Formhtmlelement' . $default_dtype);
-		}
+		$classname = '\\Morrow\\Formhtmlelements\\' . $display_type;
+
+		$display_obj = Factory::load($classname);
 		
 		if (isset($params['readonly']) && $params['readonly']===true) {
 			$content .= $display_obj->getReadonly($form_el_name, $el_value, $id, $params, $options, $multiple);
@@ -225,7 +219,7 @@ class Formhtml {
 			$display_type = "text";
 			if (isset($params['dtype'])) $display_type = $params['dtype'];
 			elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
-			$classname = '\\Morrow\\Formhtmlelement' . $display_type;
+			$classname = '\\Morrow\\Formhtmlelements\\' . $display_type;
 			if (class_exists($classname)) {
 				$display_obj = Factory::load($classname);
 				$content = $display_obj->getError($content, $params, $tagname);

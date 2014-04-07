@@ -20,11 +20,11 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-class Formhtmlelementgroup extends Formhtmlelement {
+class Group extends AbstractElement {
 	public function getLabel($value, $for_id, $params) {
-		return "<legend " .  Helpers\Htmlformattributes::getAttributeString($params, 'legend') . ">$value</legend>";
+		return "<legend " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'legend') . ">$value</legend>";
 	}
 
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
@@ -79,7 +79,7 @@ class Formhtmlelementgroup extends Formhtmlelement {
 		$content = '';
 		foreach ($values as $value) {
 			$content .= '<input type="hidden" name="'.$name.'" value="'.$value.'">';
-			$content .= '<div '. Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($value, ENT_QUOTES, $this->page->get('charset')).'</div>';
+			$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($value, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		}
 		return $content;
 	}

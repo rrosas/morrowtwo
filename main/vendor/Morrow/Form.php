@@ -24,51 +24,25 @@
 namespace Morrow;
 
 class Form {
-	public $elements = array();	
-	public $_rawinput = array();
-
-	protected $has_errors = false;
-
-	public $submitted = false;
-	public $submittedForm = null;
-	public $_lcontent;
-	public $_locale;
-
-	protected $_validator = 'Validator';
-
-	public function __construct($settings = null) {
-		if ($settings == null) $settings = $this->morrow_construct_vars();
-		
-		$this->_locale = $settings['locale'];
-	}
-
-	/* for use only in MorrowTwo context! */
-	protected function morrow_construct_vars() {
-		$page = Factory::load('Page');
-		$alias = $page->get('alias');
-			
-		// language content / locale
-		$language = Factory::load('Language');
-		$settings['locale'] = $language->getL10n();
-		
-		return $settings;
-	}
-
+	public $elements			= array();	// accessed by FormElement (does not make sense to make it public, should be passed to them)
+	
+	protected $_input			= array();
+	protected $_has_errors		= false;
+	
+	public $submitted			= false; // accessed by FormElement and Formhtml (does not make sense to make it public, should be passed to them)
+	protected $_submittedForms	= null;
+	protected $_submittedForm	= null;
+	protected $_validator		= 'Validator';
 
 	public function isSubmitted($form = null) {
 		if ($form != null) {
-			if (isset($this->submittedForms[$form])) return true;
+			if (isset($this->_submittedForms[$form])) return true;
 			return false;
 		}
 		return $this->submitted;
 	}
 
-	public function submittedForm() {
-		if ($this->submitted) return $this->submittedForm;
-		return null;
-	}
-
-	protected function _parseDef($formdef) {
+	public function loadDef($formdef) {
 		foreach ($formdef as $formkey => $element_def) {
 			foreach ($element_def as $key => $el) {
 				$required = isset($el['required'])?$el['required']:false;
@@ -105,20 +79,18 @@ class Form {
 				$new_element->arguments = $arguments;	
 				$this->elements[$formkey][$key] = $new_element;
 				// new def has been loaded after input
-				if (isset($this->_rawinput[$formkey][$key])) $this->elements[$formkey][$key]->setValue($this->_rawinput[$formkey][$key], true);
+				if (isset($this->_input[$formkey][$key])) $this->elements[$formkey][$key]->setValue($this->_input[$formkey][$key], true);
 			}
 		}
 	}
 
-	
-
 	public function hasErrors() {
-		return $this->has_errors;
+		return $this->_has_errors;
 	}
 
 	public function getErrors($formname = null) {
 		$errors = array();
-		if ($formname == null) $formname = $this->submittedForm;
+		if ($formname == null) $formname = $this->_submittedForm;
 		if ($formname !== null) {
 			foreach ($this->elements[$formname] as $key => $eldef) {
 				if ($eldef->error != null) $errors[$key] = $eldef->error;
@@ -131,13 +103,13 @@ class Form {
 		$eldef = $this->elements[$formname][$fieldname];
 		if (!isset($eldef)) return false;
 		$eldef->setError($errkey); 
-		$this->has_errors = true;
+		$this->_has_errors = true;
 		return true;
 	}
 
 	public function getValues($formname = null) {
 		$values = array();
-		if ($formname == null) $formname = $this->submittedForm;
+		if ($formname == null) $formname = $this->_submittedForm;
 		if ($formname !== null) {
 			foreach ($this->elements[$formname] as $key => $eldef) {
 				$values[$key] = $eldef->value;
@@ -157,10 +129,6 @@ class Form {
 		return true;
 	}
 
-	public function loadDef($element_def) {
-		$this->_parseDef($element_def);
-	}
-
 	public function setValues($formname, $values, $overwriteall = false) {
 		//dump(array($formname, $values));
 		
@@ -174,7 +142,7 @@ class Form {
 	}
 
 	public function clearValues($formname = null) {
-		if ($formname == null) $formname = $this->submittedForm;
+		if ($formname == null) $formname = $this->_submittedForm;
 		if ($formname !== null) {
 			foreach ($this->elements[$formname] as $key => $eldef) {
 				$eldef->setValue(null, true);
@@ -185,7 +153,7 @@ class Form {
 	}
 
 	public function resetValues($formname = null) {
-		if ($formname == null) $formname = $this->submittedForm;
+		if ($formname == null) $formname = $this->_submittedForm;
 		if ($formname !== null) {
 			foreach ($this->elements[$formname] as $key => $eldef) {
 				$eldef->setValue('', true);
@@ -198,20 +166,17 @@ class Form {
 
 	// only for setting user input (from _POST/_GET)
 	public function setInput($input) {
-		$this->_rawinput = $input;
-		$this->submitted = false;
-		$this->submittedForms = array();	
-		$this->submittedForm = null;
-		
-		// check submitted an which form
-		$formkeys = array_keys($this->elements);
+		$this->_input		= $input;
+		$this->submitted		= false;
+		$this->_submittedForms	= array();	
+		$this->_submittedForm	= null;
 		
 		foreach ($this->elements as $formkey => $def) {
 			if (!isset($input[$formkey])) continue;
 
 			$this->submitted = true;
-			$this->submittedForms[$formkey] = true;	
-			$this->submittedForm = $formkey;	
+			$this->_submittedForms[$formkey] = true;	
+			$this->_submittedForm = $formkey;	
 			
 			$this->setValues($formkey, $input[$formkey], true);
 		}
@@ -228,14 +193,14 @@ class Form {
 	}
 
 	public function validate($formname = null, $limit = null) {
-		if ($formname == null) $formname = $this->submittedForm;
+		if ($formname == null) $formname = $this->_submittedForm;
 		if (!$this->_checkElements($formname)) return false;
 
 		foreach ($this->elements[$formname] as $key => $element) {	
 			if (is_array($limit) && !in_array($key, $limit)) continue;
-			if (!$element->validate($formname, $this->_validator)) $this->has_errors = true;
+			if (!$element->validate($formname, $this->_validator)) $this->_has_errors = true;
 		}
-		return !$this->has_errors;
+		return !$this->_has_errors;
 	}
 
 	public function fillSet($formname, $fieldname, $sets, $replaceall = false, $default = null) {
@@ -264,8 +229,8 @@ class Form {
 			$new_el->setLabel($label);
 			$new_el->setName($new_name);
 			// maybe there was input for this field?
-			if (isset($this->_rawinput[$formname][$new_name])) {
-				$new_el->setValue($this->_rawinput[$formname][$new_name], true);
+			if (isset($this->_input[$formname][$new_name])) {
+				$new_el->setValue($this->_input[$formname][$new_name], true);
 			}
 			$this->elements[$formname][$new_name] = $new_el;
 		}

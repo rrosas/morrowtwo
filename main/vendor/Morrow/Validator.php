@@ -74,18 +74,6 @@ class Validator {
 		return true;
 	}
 
-	public static function checkCurrency($value, &$error, $compare_value = null, $locale = array()) {
-		$sep = ".";
-		if (isset($locale['currency']['separator'])) {
-			$sep = $locale['currency']['separator'];
-		}
-		if (!preg_match("=^[0-9]{1,}({$sep}[0-9]{0,4})?$=", $value)) { 
-			$error = Factory::load('Language')->_('Price not valid.');
-			return false;
-		}
-		return true;
-	}
-
 	public static function checkValidDate($value, &$error) {
 		if (!preg_match('/([0-9]{0,4})-([0-9]{0,2})-([0-9]{0,2})/', $value, $matches)) {
 			$error = Factory::load('Language')->_('The date is not valid.');

@@ -20,19 +20,22 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow;
+namespace Morrow\Formhtmlelements;
 
-class Formhtmlelementhidden extends Formhtmlelement {
+class Checkbox extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		return "<input id=\"" . $id . "\" type=\"hidden\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+		if ($values != '' && $values != 0) $params['checked'] = "checked";
+		$values = 1;
+		return "<input id=\"" . $id . "\" type=\"checkbox\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
 		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
+		$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		return $content;
 	}
 
 	public function getListDisplay($values, $params, $options = array()) {
-		return '';
+		return $values;
 	}
 }
