@@ -71,11 +71,11 @@ class Docblock {
 
 			// get overall information
 			$method = array(
-				'name' => $m->getName(),
-				'visibility' => $m->isPublic() ? 'public' : ($m->isProtected() ? 'protected' : 'private'),
-				'static' => $m->isStatic(),
-				'abstract' => $m->isAbstract(),
-				'final' => $m->isFinal(),
+				'name'				=> $m->getName(),
+				'visibility'		=> $m->isPublic() ? 'public' : ($m->isProtected() ? 'protected' : 'private'),
+				'static'			=> $m->isStatic(),
+				'abstract'			=> $m->isAbstract(),
+				'final'				=> $m->isFinal(),
 				//'_r' => $m,
 			);
 
@@ -84,15 +84,21 @@ class Docblock {
 			
 			foreach ($m->getParameters() as $p) {
 				$parameter = array(
-					'name' => $p->getName(),
-					'optional' => $p->isOptional(),
-					'default' => !$p->isOptional() ? null : $p->getDefaultValue(),
+					'name'				=> $p->getName(),
+					'optional'			=> $p->isOptional(),
+					'default'			=> !$p->isOptional() ? null : $p->getDefaultValue(),
+					'passedByReference'	=> $p->isPassedByReference(),
 				);
 				$method['parameters'][$p->getName()] = $parameter;
 			}
 
 			// parse doc comments
-			$doc = $this->parseDocComment($m->getDocComment());
+			$doc_comment = $m->getDocComment();
+			if (!$doc_comment) {
+				$methods[$method['name']] = false;
+				continue;
+			}
+			$doc = $this->parseDocComment($doc_comment);
 			$method = array_merge($method, $doc);
 			
 			// add docblock info to parameters
@@ -115,7 +121,6 @@ class Docblock {
 	}
 
 	public function parseDocComment($string) {
-
 		// unify linebreaks
 		$string = preg_replace("-(\r\n|\r|\n)-", "\n", $string);
 

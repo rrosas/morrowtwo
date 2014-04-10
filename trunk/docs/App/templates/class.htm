@@ -77,7 +77,13 @@
 	~if ($show_methods):~
 		<h2>Functions</h2>
 
-		~foreach ($class.methods as $method):~
+		~foreach ($class.methods as $key => $method):~
+			~if ($method === false):~
+				<p>
+					DocComment for method <code>~~$key~()</code> is missing.
+				</p>
+			~endif~
+
 			~if (isset($method.tags.hidden) && !:raw($show_protected_and_private)) continue;~
 			~if (:raw($method.visibility) !== 'public' && !:raw($show_protected_and_private)) continue;~
 			<div class="function-wrapper">
@@ -95,6 +101,7 @@
 							<?php
 							:render('elements/type', array('type' => :raw($p.type))) . ' ';
 
+							if ($p.passedByReference) echo '&';
 							echo '$'.:escape($p.name);
 
 							if ($p.optional) {
