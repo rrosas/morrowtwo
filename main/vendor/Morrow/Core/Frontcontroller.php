@@ -119,7 +119,7 @@ class Frontcontroller {
 		/* load page class and set nodes
 		********************************************************************************************/
 		$url		= $morrow_path_info;
-		$url		= (preg_match('~[a-z0-9-/]~i', $url)) ? trim($url, '/') : '';
+		$url		= (preg_match('~[a-z0-9\-/]~i', $url)) ? trim($url, '/') : '';
 		$nodes		= explode('/', $url);
 		$this->page->set('nodes', $nodes);
 

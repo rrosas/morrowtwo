@@ -32,12 +32,12 @@ RewriteEngine on
 # set rewrite base for a TLD
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
-RewriteRule ^([a-z0-9-/]*)$ /index.php?morrow_path_info=$1 [QSA,NC]
+RewriteRule ^([a-z0-9\-/]*)$ /index.php?morrow_path_info=$1 [QSA,NC]
 
 # set rewrite base for development URLs (simple host names and IPs)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
-RewriteRule ^([a-z0-9-/]*)$ index.php?morrow_path_info=$1 [QSA,NC]
+RewriteRule ^([a-z0-9\-/]*)$ index.php?morrow_path_info=$1 [QSA,NC]
 
 # Prevent directory listing
 # ---------------------------------------------------------------------------------------------
