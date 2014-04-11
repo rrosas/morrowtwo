@@ -40,14 +40,14 @@ Hinzufügen von Validatorn per Closure
  * ~~~{.php}
  * // ... Controller code
  * 
- * // optional: add your own validator with your own error message
- * $this->validator->add('captcha', function($input, $value, $session_captcha) {
- * 	return $value !== $session_captcha;
- * }, 'Captcha is wrong');
+ * // optional: imagine there would not be a validator "equal"
+ * $this->validator->add('equal', function($input, $value, $compare_value) {
+ * 	return $value == $compare_value;
+ * }, 'This field must have the value "%s"');
  * 
- * // optional: we want a different error message for the "equal" validator
+ * // optional: we want a different error message for the "minlength" validator
  * $this->validator->setMessages(array(
- * 	'password'			=> 'The password should have at least %s characters.',
+ * 	'minlength'			=> 'This field should have at least %s characters.',
  * ));
  * 
  * // now let us validate the input data
@@ -56,7 +56,7 @@ Hinzufügen von Validatorn per Closure
  * 	'email'				=> array('required', 'email'),
  * 	'password'			=> array('required', 'minlength' => 8),
  * 	'repeat_password'	=> array('required', 'same' => 'password'),
- * 	'captcha'			=> array('captcha' => $this->session->get('captcha')),
+ * 	'captcha'			=> array('equal' => $this->session->get('captcha')),
  * );
  * 
  * $input = $this->validator->filter($this->input->get(), $rules, $errors);
@@ -67,31 +67,31 @@ Hinzufügen von Validatorn per Closure
  * Shipped validators
  * -------------------
  *
- * Validator   | Keyname                | Default    | Description                                                              
+ * Validator   | Prameter                | type    | Description                                                              
  * ---------   | ---------              | ---------  | ------------                                                             
- * `optional`  | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
- * `required`  | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system
- * `equal`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `same`      | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `array`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `integer`   | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `numeric`   | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `min`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `max`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `minlength` | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `maxlength` | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `regex`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `in`        | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `image`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `width`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `height`    | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `email`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `url`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `ip`        | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `date`      | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `before`    | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `after`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
- * `age`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `optional`  |                           | `true`     | Defines if errors should be displayed on screen                          
+ * `required`  | `$fields = array()`                      |      | Defines if errors should be logged to the file system
+ * `equal`     | `$compare_value`      | 
+ * `same`      | `$compare_field`      | 
+ * `array`     |       | 
+ * `integer`   |       | 
+ * `numeric`   |       | 
+ * `min`       | `$min`                 | 
+ * `max`       | `$max`      | 
+ * `minlength` | `$minlength`      | 
+ * `maxlength` | `$maxlength`      | 
+ * `regex`     | `$regex`      | 
+ * `in`        | `$in = array()`      | 
+ * `image`     | `$types = array()`      | 
+ * `width`     | `$width`      | 
+ * `height`    | `$height`      | 
+ * `email`     |       | 
+ * `url`       | `$schemes`      | 
+ * `ip`        | `$flags = array()`      | 
+ * `date`      | `$date_format = null`      | 
+ * `before`    | `debug.file.path`      | 
+ * `after`     | `debug.file.path`      | 
+ * `age`       | `debug.file.path`      | 
  *
  * 
  */
@@ -392,19 +392,18 @@ class Validator2 {
 	 * Look at the validator list.
 	 * @param	array	$input	All input parameters that were passed to `filter()`.
 	 * @param	mixed	$value	The input data to validate.
-	 * @param	array	$types_user	An array of filetypes the filetype of `$value` has to exist in.
+	 * @param	array	$types	An array of filetypes the filetype of `$value` has to exist in.
 	 * @return 	booolean	The result of the validation.
 	 */
-	protected function _validator_image($input, $value, $types_user) {
+	protected function _validator_image($input, $value, $types) {
 		if (!is_string($value)) return false;
 
-		$types = array(
+		$types = array_map('strtolower', $types);
+		$types		= array_intersect_key( array(
 			'jpg'	=> IMAGETYPE_JPEG,
 			'png'	=> IMAGETYPE_PNG,
 			'gif'	=> IMAGETYPE_GIF,
-		);
-		$types_user = array_map('strtolower', $types_user);
-		$types		= array_intersect_key($types, array_flip($types_user));
+		), array_flip($types));
 
 		try {
 			$imagesize = getimagesize($value);
@@ -489,10 +488,10 @@ class Validator2 {
 	 * @param	array	$schemes_user	An array of schemes the scheme of `$value` has to exist in.
 	 * @return 	booolean	The result of the validation.
 	 */
-	protected function _validator_url($input, $value, $schemes_user) {
+	protected function _validator_url($input, $value, $schemes) {
 		if (!is_string($value)) return false;
 
-		$schemes = array_map('strtolower', $schemes_user);
+		$schemes = array_map('strtolower', $schemes);
 
 		$domainpart = "[\.a-z0-9-]";
 		$regex = '~^(' . implode(':|', $schemes) . ':)?//(' . $domainpart . '+)~i';
