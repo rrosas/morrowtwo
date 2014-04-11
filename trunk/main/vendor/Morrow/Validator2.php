@@ -67,11 +67,31 @@ Hinzufügen von Validatorn per Closure
  * Shipped validators
  * -------------------
  *
- * Type   | Keyname                | Default    | Description                                                              
- * -----  | ---------              | ---------  | ------------                                                             
- * bool   | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
- * bool   | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system
- * string | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * Validator   | Keyname                | Default    | Description                                                              
+ * ---------   | ---------              | ---------  | ------------                                                             
+ * `optional`  | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
+ * `required`  | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system
+ * `equal`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `same`      | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `array`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `integer`   | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `numeric`   | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `min`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `max`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `minlength` | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `maxlength` | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `regex`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `in`        | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `image`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `width`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `height`    | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `email`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `url`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `ip`        | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `date`      | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `before`    | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `after`     | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+ * `age`       | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
  *
  * 
  */
