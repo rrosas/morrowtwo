@@ -96,7 +96,7 @@ class Frontcontroller {
 
 		/* extract important variables
 		********************************************************************************************/
-		$morrow_basehref_depth = isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
+		$basehref_depth = isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
 		unset($_GET['morrow_basehref_depth']);
 		$morrow_path_info = $_GET['morrow_path_info'];
 		unset($_GET['morrow_path_info']);
@@ -179,7 +179,7 @@ class Frontcontroller {
 		/* prepare some internal variables
 		********************************************************************************************/
 		$alias					= implode('_', $nodes);
-		$global_controller_file	= APP_PATH .'_default.php';
+		$controller_file	= APP_PATH .'_default.php';
 		$page_controller_file	= APP_PATH . $alias .'.php';
 		$path					= implode('/', $this->page->get('nodes'));
 		$query					= $this->input->getGet();
@@ -188,7 +188,7 @@ class Frontcontroller {
 		/* load classes we need anyway
 		********************************************************************************************/
 		$this->view	= Factory::load('View');
-		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath, $morrow_basehref_depth);
+		$this->url	= Factory::load('Url', $this->language->get(), $lang['possible'], $fullpath, $basehref_depth);
 		
 		/* prepare classes so the user has less to pass
 		********************************************************************************************/
@@ -216,7 +216,7 @@ class Frontcontroller {
 		/* load controller and render page
 		********************************************************************************************/
 		// include global controller class
-		include($global_controller_file);
+		include($controller_file);
 
 		// include page controller class
 		if (is_file($page_controller_file)) {

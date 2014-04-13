@@ -294,11 +294,11 @@ class Cache {
 	/**
 	 * Creates a filesafe cache id.
 	 * 
-	 * @param string $id A string intended to be a cache id.
+	 * @param string $cache_id A string intended to be a cache id.
 	 * @return string Returns a filesafe cache id.
 	 */
-	protected function _cleanId($id) {
-		return preg_replace("=[^\w\.]=i", '_', strtolower($id));
+	protected function _cleanId($cache_id) {
+		return preg_replace("=[^\w\.]=i", '_', strtolower($cache_id));
 	}
 
 	/**
