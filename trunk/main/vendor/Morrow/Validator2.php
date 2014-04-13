@@ -22,10 +22,6 @@
 
 namespace Morrow;
 
-
-/*
-Hinzufügen von Validatorn per Closure
-*/
 /**
  * The Validator class provides several rules for validating data.
  * 
@@ -221,7 +217,7 @@ class Validator2 {
 	 * @param	array	$messages	An associative array with the error messages. Parameters are passed via `sprintf`, so you can use `%s` and other `sprintf` replacements.
 	 */
 	public function setMessages($messages) {
-		foreach ($messages as $name=>$message) {
+		foreach ($messages as $name => $message) {
 			$this->_messages[$name] = $message;
 		}
 	}
@@ -485,7 +481,7 @@ class Validator2 {
 	 * Look at the validator list.
 	 * @param	array	$input	All input parameters that were passed to `filter()`.
 	 * @param	mixed	$value	The input data to validate.
-	 * @param	array	$schemes_user	An array of schemes the scheme of `$value` has to exist in.
+	 * @param	array	$schemes	An array of schemes the scheme of `$value` has to exist in.
 	 * @return 	booolean	The result of the validation.
 	 */
 	protected function _validator_url($input, $value, $schemes) {
@@ -511,12 +507,12 @@ class Validator2 {
 	 * @param	array	$input	All input parameters that were passed to `filter()`.
 	 * @param	mixed	$value	The input data to validate.
 	 * @return 	booolean	The result of the validation.
-	 * @param	array	$flags_user	An array of falgs to control the behaviour of the validator.
+	 * @param	array	$flags	An array of falgs to control the behaviour of the validator.
 	 */
-	protected function _validator_ip($input, $value, $flags_user) {
+	protected function _validator_ip($input, $value, $flags) {
 		if (!is_string($value)) return false;
 
-		$flags = array_flip(array_map('strtolower', $flags_user));
+		$flags = array_flip(array_map('strtolower', $flags));
 
 		// by default we don't want to have private or reserved ips
 		$options = 0;
@@ -525,8 +521,8 @@ class Validator2 {
 
 		// check for ipv4 and ipv6 compability
 		if (isset($flags['ipv4']) && isset($flags['ipv6'])) $result = filter_var($value, FILTER_VALIDATE_IP, $options);
-		else if (isset($flags['ipv4'])) $result = filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | $options);
-		else if (isset($flags['ipv6'])) $result = filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 | $options);
+		elseif (isset($flags['ipv4'])) $result = filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | $options);
+		elseif (isset($flags['ipv6'])) $result = filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 | $options);
 		else throw new \Exception(__METHOD__ . ': You have define the IP version ("ipv4" or "ipv6").');
 
 		if ($result === false) return false;

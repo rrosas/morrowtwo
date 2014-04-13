@@ -1,0 +1,9 @@
+{
+    "name": "morrow/quality", 
+    "type": "project", 
+    "require": {
+        "php": ">=5.3",
+        "squizlabs/php_codesniffer": "1.*",
+        "phpmd/phpmd": "1.4.*"
+    }
+}
