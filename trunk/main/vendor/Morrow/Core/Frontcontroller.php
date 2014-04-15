@@ -97,7 +97,6 @@ class Frontcontroller {
 		/* extract important variables
 		********************************************************************************************/
 		$basehref_depth = isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
-		unset($_GET['morrow_basehref_depth']);
 		$morrow_path_info = $_GET['morrow_path_info'];
 		unset($_GET['morrow_path_info']);
 
@@ -105,6 +104,9 @@ class Frontcontroller {
 		********************************************************************************************/
 		$this->page		= Factory::load('Page');
 		$this->config	= Factory::load('Config');
+
+		// the configuration files need this parameter so we shouln't delete it
+		unset($_GET['morrow_basehref_depth']);
 
 		/* load all config files
 		********************************************************************************************/
