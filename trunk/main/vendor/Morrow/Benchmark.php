@@ -134,7 +134,7 @@ class Benchmark {
 	public function get() {
 		if ($this->active) $this->stop();
 
-		foreach ($this->data as $key => $value) {
+		foreach (array_keys($this->data) as $key) {
 			$row =& $this->data[$key];
 			$row['realtime_ms'] = $row['realtime']*1000;
 			if (is_numeric($row['proctime'])) {

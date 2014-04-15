@@ -101,7 +101,7 @@ class Cache {
 		}
 
 		if (!is_writeable($cachedir)) {
-			throw new \Exception(__CLASS__.': Directory "'.$dir.'" is not writeable.');
+			throw new \Exception(__CLASS__.': Directory "'.$cachedir.'" is not writeable.');
 		}
 
 		// set new paths
@@ -248,7 +248,7 @@ class Cache {
 		foreach ($files as $key => $file) {
 			if (preg_match($pattern, $file)) {
 				$result++;
-				unlink($dir.$file);
+				unlink($this->dir.$file);
 			}
 		}
 		return $result;

@@ -228,6 +228,8 @@ class Db extends \PDO {
 	 * @param  array $array The data to insert into the table
 	 * @param  array $on_duplicate_key_update The data which is used for an UPDATE if a PRIMARY or UNIQUE key already exists (*MySQL only*).
 	 * @return array An result array with the key `SUCCESS` (boolean Was the query successful).
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function insert($table, $array, $on_duplicate_key_update = array()) {
 		$array = $this->_createInsertAndReplaceValues($array);
@@ -287,6 +289,8 @@ class Db extends \PDO {
 	 * @param	mixed	$where_tokens	An array (or a scalar) for use as a Prepared Statement in the where clause. Only question marks are allowed for the token in the where clause. You cannot use the colon syntax.
 	 * @param	boolean	$affected_rows Set to true to return the count of the affected rows
 	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful) and `AFFECTED_ROWS` (int The count of the affected rows) 
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function update($table, $array, $where = '', $where_tokens = array(), $affected_rows = false) {
 		$array = $this->_createUpdateValues($array);
@@ -345,6 +349,8 @@ class Db extends \PDO {
 	 * @param	string	$table  The table name the query refers to.
 	 * @param	array	$array	The data to replace
 	 * @return	array	An result array with the keys `SUCCESS` (boolean Was the query successful)
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function replace($table, $array) {
 		$array = $this->_createInsertAndReplaceValues($array);
@@ -417,6 +423,8 @@ class Db extends \PDO {
 	 * 
 	 * @param	string	$query	The query to execute
 	 * @return	object	The result as a PDOStatement object
+	 *
+	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function query($query) {
 		$this->connect();
@@ -508,7 +516,7 @@ class Db extends \PDO {
 		}
 		
 		// remove all not existent keys
-		foreach ($array as $key => $value) {
+		foreach (array_keys($array) as $key) {
 			if (!in_array($key, $this->cache[$table])) unset ($array[$key]);
 		}
 		
