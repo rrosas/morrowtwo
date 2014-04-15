@@ -105,12 +105,12 @@ class Frontcontroller {
 		$this->page		= Factory::load('Page');
 		$this->config	= Factory::load('Config');
 
-		// the configuration files need this parameter so we shouln't delete it
-		unset($_GET['morrow_basehref_depth']);
-
 		/* load all config files
 		********************************************************************************************/
 		$config = $this->config->load(APP_PATH . 'configs/');
+
+		// the configuration files need this parameter so we shouln't delete it
+		unset($_GET['morrow_basehref_depth']);
 
 		/* set timezone 
 		********************************************************************************************/
