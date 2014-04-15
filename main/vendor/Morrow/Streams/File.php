@@ -47,6 +47,8 @@ namespace Morrow\Streams;
 * 
 * // ... Controller code
 * ~~~
+*
+* @SuppressWarnings(PHPMD.UnusedFormalParameter)
 */
 class File {
 	/**

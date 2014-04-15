@@ -28,18 +28,22 @@ namespace Morrow;
  * If you write a validator keep in mind that the validator should never throw an exception if `$input` is a scalar or an array.
  * Because if you validate data coming from a web client, data can only be a string or an array.
  *
- * Dot syntax for the keys of the rules.
+ * Dot Syntax
+ * ----------
  * 
- * Example
+ * This class works with the extended dot syntax. So it is possible to use keys like `email.0` and `email.1` as keys in your rules.
+ * This way it is possible to validate e.g. image uploads or multi select fields.
+ * 
+ * Examples
  * --------
  * 
  * ~~~{.php}
  * // ... Controller code
  * 
- * // optional: imagine there would not be a validator "equal"
+ * // optional: we add a integer validator
  * $this->validator->add('equal', function($input, $value, $compare_value) {
- * 	return $value == $compare_value;
- * }, 'This field must have the value "%s"');
+ * 	return is_integer($value) ? $value === $compare_value : false;
+ * }, 'This field must be an integer with the value "%s"');
  * 
  * // optional: we want a different error message for the "minlength" validator
  * $this->validator->setMessages(array(
@@ -49,7 +53,7 @@ namespace Morrow;
  * // now let us validate the input data
  * $rules =  array(
  * 	'username'			=> array('required', 'regex' => '/[0-9a-z-_]{5,}/i'),
- * 	'email'				=> array('required', 'email'),
+ * 	'email'				=> array('optional', 'email'),
  * 	'password'			=> array('required', 'minlength' => 8),
  * 	'repeat_password'	=> array('required', 'same' => 'password'),
  * 	'captcha'			=> array('equal' => $this->session->get('captcha')),
@@ -63,33 +67,33 @@ namespace Morrow;
  * Shipped validators
  * -------------------
  *
- * Validator   | Prameter                | type    | Description                                                              
- * ---------   | ---------              | ---------  | ------------                                                             
- * `optional`  |                           | `true`     | Defines if errors should be displayed on screen                          
- * `required`  | `$fields = array()`                      |      | Defines if errors should be logged to the file system
- * `equal`     | `$compare_value`      | 
- * `same`      | `$compare_field`      | 
- * `array`     |       | 
- * `integer`   |       | 
- * `numeric`   |       | 
- * `min`       | `$min`                 | 
- * `max`       | `$max`      | 
- * `minlength` | `$minlength`      | 
- * `maxlength` | `$maxlength`      | 
- * `regex`     | `$regex`      | 
- * `in`        | `$in = array()`      | 
- * `image`     | `$types = array()`      | 
- * `width`     | `$width`      | 
- * `height`    | `$height`      | 
- * `email`     |       | 
- * `url`       | `$schemes`      | 
- * `ip`        | `$flags = array()`      | 
- * `date`      | `$date_format = null`      | 
- * `before`    | `debug.file.path`      | 
- * `after`     | `debug.file.path`      | 
- * `age`       | `debug.file.path`      | 
+ * Validator   | Prameter              | type    | Description
+ * ---------   | ---------             | -----   | ------------
+ * `optional`  |                       |         | Defines the field as optional. If the field is not empty, all other validators will be applied.
+ * `required`  | `$fields = array()`   | array   | Defines the field as required. If you pass the optional associative array `$fields`, the field will only get required if all fields (keys) in the array have the stated values.
+ * `equal`     | `$compare_value`      | mixed   | Compares the field to a given value to compare.
+ * `same`      | `$compare_field`      | string  | Compares the field to the value of a different field in the input array.
+ * `array`     |                       |         | Returns `true` if the field is a number.
+ * `number`    |                       |         | Returns `true` if the field is decimal number.
+ * `numeric`   |                       |         | Returns `true` if the field is a number or a decimal number.
+ * `min`       | `$min`                | numeric | Returns `true` if the field is greater than `$min`.
+ * `max`       | `$max`                | numeric | Returns `true` if the field is lower than `$max`.
+ * `minlength` | `$minlength`          | integer | Returns `true` if the length of the field is greater than `$min`.
+ * `maxlength` | `$maxlength`          | integer | Returns `true` if the length of the field is lower than `$min`.
+ * `regex`     | `$regex`              | string  | Returns `true` if the regex matches the field. 
+ * `in`        | `$in`                 | array   | Returns `true` if the field is in the set of values.
+ * `image`     | `$types`              | array   | Returns `true` if the imagetype is one of the given (`jpg`, `gif` or `png`).
+ * `width`     | `$width`              | integer | Returns `true` if the image has the given width.
+ * `height`    | `$height`             | integer | Returns `true` if the image has the given height.
+ * `email`     |                       |         | Returns `true` if the email address is valid.
+ * `url`       | `$schemes`            | array   | Returns `true` if the scheme of the url is one of the given, eg. `array('http', 'https')`.
+ * `ip`        | `$flags = array()`    | array   | Returns `true` if the IP is valid. You can pass the following parameters to specify the requirements: `ipv4` (IP must be an IPV4 address), `ipv6` (IP must be an IPV6 address), `private` (IP can be a private address like 192.168.*) and `reserved` (IP can be a reserved address like 100.64.0.0/10). Default is `ipv4`.
+ * `date`      | `$date_format = null` | string  | Returns `true` if the date is valid. If you pass `$date_format` it wil be checked against this format (in `strftime` format). The date has to be passed in a format `strtotime` is able to read.
+ * `before`    | `$before`             | string  | Returns `true` if the date is before the given date. Both dates has to be passed in a format `strtotime` is able to read. 
+ * `after`     | `$after`              | string  | Returns `true` if the date is after the given date. Both dates has to be passed in a format `strtotime` is able to read. 
+ * `age`       | `$boundaries`         | array   | Returns `true` if the age is between both given integers, e.g. `array(18, 99)`. The birthdate has to be passed in a format `strtotime` is able to read. 
  *
- * 
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class Validator2 {
 	/**
@@ -109,12 +113,11 @@ class Validator2 {
 	 */
 	public function __construct() {
 		$this->_messages = array(
-			'optional'	=> 'VALDIDATOR_OPTIONAL',
 			'required'	=> 'VALDIDATOR_REQUIRED',
 			'equal'		=> 'VALDIDATOR_EQUAL:%s',
 			'same'		=> 'VALDIDATOR_SAME:%s',
 			'array'		=> 'VALDIDATOR_ARRAY',
-			'integer'	=> 'VALDIDATOR_INTEGER',
+			'number'	=> 'VALDIDATOR_NUMBER',
 			'numeric'	=> 'VALDIDATOR_NUMERIC',
 			'min'		=> 'VALDIDATOR_MIN:%s',
 			'max'		=> 'VALDIDATOR_MAX:%s',
@@ -147,16 +150,19 @@ class Validator2 {
 		$returner	= array();
 		$errors		= array();
 
+		// iterate all fields
 		foreach ($rules as $identifier => $rules_array) {
 			// get value from input array
 			$value = Helpers\General::array_dotSyntaxGet($input, $identifier);
 
-			// explode rules
 			// only if all rules are true we add the value to the $returner array
-			$add = true;
+			$is_valid = true;
 
+			// if we have "optional" in the array we have to see if the field satisfies the "required" validator
+			$is_optional = false;
+
+			// iterate all rules
 			foreach ($rules_array as $possible_rule1 => $possible_rule2) {
-				
 				$name	= $possible_rule2;
 				$params	= null;
 
@@ -166,6 +172,13 @@ class Validator2 {
 				}
 
 				$method	= '_validator_' . $name;
+
+				// if we have "optional" in the array we have to see if the field satisfies the "required" validator
+				// if not the other validators have no impact at the result
+				if ($name == 'optional') {
+					if (!$this->_validator_required($input, $value)) $is_optional = true;
+					continue;
+				}
 
 				$callback = null;
 				// does the user wants to use a predefined validator
@@ -184,18 +197,23 @@ class Validator2 {
 				}
 
 				// fill errors array
-				if (!$result) {
-					// map all params to strings
-					$params = array_map('strval', $params);
-					$errors[$identifier][$name] = vsprintf($this->_messages[$name], $params);
+				if ($result === false) {
+					if ($is_optional) {
+						$is_valid = true;
+					} else {
+						// map all params to strings
+						$params = array_map('strval', $params);
+						$errors[$identifier][$name] = vsprintf($this->_messages[$name], $params);
 
+						$is_valid = false;
+						
+						// if there is at least one error we can directly return false
+						if ($strict) return false;
+					}
 				}
-
-				if (!$result) $add = false;
-				if (!$result && $strict) return false;
 			}
 
-			if ($add) Helpers\General::array_dotSyntaxSet($returner, $identifier, $value);
+			if ($is_valid) Helpers\General::array_dotSyntaxSet($returner, $identifier, $value);
 		}
 
 		return $returner;
@@ -220,16 +238,6 @@ class Validator2 {
 		foreach ($messages as $name => $message) {
 			$this->_messages[$name] = $message;
 		}
-	}
-
-	/**
-	 * Look at the validator list.
-	 * @param	array	$input	All input parameters that were passed to `filter()`.
-	 * @param	mixed	$value	The input data to validate.
-	 * @return 	booolean	The result of the validation.
-	 */
-	protected function _validator_optional($input, $value) {
-		return true;
 	}
 
 	/**
@@ -292,7 +300,7 @@ class Validator2 {
 	 * @param	mixed	$value	The input data to validate.
 	 * @return 	booolean	The result of the validation.
 	 */
-	protected function _validator_integer($input, $value) {
+	protected function _validator_number($input, $value) {
 		if (!is_string($value) && !is_integer($value) && !is_float($value)) return false;
 		if (is_string($value)) $value = (int)$value;
 		return is_integer($value);
