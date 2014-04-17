@@ -75,13 +75,6 @@ class Input {
 	 * Imports, unifies and cleans user input from PHP Superglobals.
 	 */
 	public function __construct() {
-		// map cli parameters to $_GET
-		if (php_sapi_name() === 'cli') {
-			global $argc, $argv;
-			if (isset($argv[2])) parse_str($argv[2], $_GET);
-			$_GET['morrow_path_info'] = isset($argv[1]) ? $argv[1] : '';
-		}
-
 		$this->_get   = $this->tidy($_GET);
 		$this->_post  = $this->tidy($_POST);
 		$this->_files = $this->_getFileData($this->tidy($_FILES));
