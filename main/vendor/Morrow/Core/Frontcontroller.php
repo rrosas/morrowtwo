@@ -90,27 +90,29 @@ class Frontcontroller {
 		set_error_handler(array($this, 'errorHandler'));
 		set_exception_handler(array($this, 'exceptionHandler'));
 
-		/* load the input class
+		/* load all config files
 		********************************************************************************************/
-		$this->input	= Factory::load('Input');
+		$this->config	= Factory::load('Config');
+		$config = $this->config->load(APP_PATH . 'configs/');
 
 		/* extract important variables
 		********************************************************************************************/
-		$basehref_depth = isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
-		$morrow_path_info = $_GET['morrow_path_info'];
+		// map cli parameters to $_GET
+		if (php_sapi_name() === 'cli') {
+			global $argc, $argv;
+			if (isset($argv[2])) parse_str($argv[2], $_GET);
+			$_GET['morrow_path_info'] = isset($argv[1]) ? $argv[1] : '';
+		}
+
+		$morrow_path_info	= $_GET['morrow_path_info'];
+		$basehref_depth		= isset($_GET['morrow_basehref_depth']) ? $_GET['morrow_basehref_depth'] : 0;
 		unset($_GET['morrow_path_info']);
+		unset($_GET['morrow_basehref_depth']);
 
 		/* load some necessary classes
 		********************************************************************************************/
+		$this->input	= Factory::load('Input');
 		$this->page		= Factory::load('Page');
-		$this->config	= Factory::load('Config');
-
-		/* load all config files
-		********************************************************************************************/
-		$config = $this->config->load(APP_PATH . 'configs/');
-
-		// the configuration files need this parameter so we shouln't delete it
-		unset($_GET['morrow_basehref_depth']);
 
 		/* set timezone 
 		********************************************************************************************/
