@@ -88,7 +88,7 @@ namespace Morrow;
  * `email`     |                       |         | Returns `true` if the email address is valid.
  * `url`       | `$schemes`            | array   | Returns `true` if the scheme of the url is one of the given, eg. `array('http', 'https')`.
  * `ip`        | `$flags = array()`    | array   | Returns `true` if the IP is valid. You can pass the following parameters to specify the requirements: `ipv4` (IP must be an IPV4 address), `ipv6` (IP must be an IPV6 address), `private` (IP can be a private address like 192.168.*) and `reserved` (IP can be a reserved address like 100.64.0.0/10). Default is `ipv4`.
- * `date`      | `$date_format = null` | string  | Returns `true` if the date is valid. If you pass `$date_format` it wil be checked against this format (in `strftime` format). The date has to be passed in a format `strtotime` is able to read.
+ * `date`      | `$date_format`        | string  | Returns `true` if the date is valid and the date could be successfully checked against `$date_format` (in `strftime` format). The date has to be passed in a format `strtotime` is able to read.
  * `before`    | `$before`             | string  | Returns `true` if the date is before the given date. Both dates has to be passed in a format `strtotime` is able to read. 
  * `after`     | `$after`              | string  | Returns `true` if the date is after the given date. Both dates has to be passed in a format `strtotime` is able to read. 
  * `age`       | `$boundaries`         | array   | Returns `true` if the age is between both given integers, e.g. `array(18, 99)`. The birthdate has to be passed in a format `strtotime` is able to read. 
@@ -131,10 +131,10 @@ class Validator2 {
 			'email'		=> 'VALDIDATOR_EMAIL',
 			'url'		=> 'VALDIDATOR_URL',
 			'ip'		=> 'VALDIDATOR_IP',
-			'date'		=> 'VALDIDATOR_DATE',
+			'date'		=> 'VALDIDATOR_DATE:%s',
 			'before'	=> 'VALDIDATOR_BEFORE:%s',
 			'after'		=> 'VALDIDATOR_AFTER:%',
-			'age'		=> 'VALDIDATOR_AGE',
+			'age'		=> 'VALDIDATOR_AGE:%s',
 		);
 	}
 
@@ -201,8 +201,9 @@ class Validator2 {
 					if ($is_optional) {
 						$is_valid = true;
 					} else {
-						// map all params to strings
-						$params = array_map('strval', $params);
+						$params = $params[0];
+						if (!is_scalar($params)) $params = json_encode($params);
+						$params = (string)$params;
 						$errors[$identifier][$name] = vsprintf($this->_messages[$name], $params);
 
 						$is_valid = false;
@@ -544,14 +545,12 @@ class Validator2 {
 	 * @param	string	$date_format	The format to validate against.
 	 * @return 	booolean	The result of the validation.
 	 */
-	protected function _validator_date($input, $value, $date_format = null) {
+	protected function _validator_date($input, $value, $date_format) {
 		if (!is_string($value) && !is_integer($value)) return false;
 		$timestamp = is_string($value) ? strtotime($value) : $value;
 		if ($timestamp === false) return false;
 
-		if ($date_format !== null) {
-			if ($value !== strftime($date_format, $timestamp)) return false;
-		}
+		if ($value !== strftime($date_format, $timestamp)) return false;
 
 		return true;
 	}
