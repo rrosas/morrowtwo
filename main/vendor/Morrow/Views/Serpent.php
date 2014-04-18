@@ -73,6 +73,12 @@ class Serpent extends AbstractView {
 	public $resources		= array();
 
 	/**
+	 * Handles the cycles for cycles()
+	 * @var array $cycles
+	 */
+	public static $cycles = array();
+
+	/**
 	 * Initializes classes for the use in getOutput().
 	 * @hidden
 	 */
@@ -108,15 +114,14 @@ class Serpent extends AbstractView {
 			'dump'			=> '\\Morrow\\Debug::dump',
 			'url'			=> '\\Morrow\\Factory::load("Url")->create',
 			'securl'		=> '\\Morrow\\Factory::load("Security")->createCSRFUrl',
-			'cycle'			=> '\\Morrow\\Helpers\\View::cycle',
-			'mailto'		=> '\\Morrow\\Helpers\\View::mailto',
-			'hidelink'		=> '\\Morrow\\Helpers\\View::hidelink',
-			'thumb'			=> '\\Morrow\\Helpers\\View::thumb',
-			'image'			=> '\\Morrow\\Helpers\\View::image',
+			'cycle'			=> '\\Morrow\\Views\\Serpent::cycle',
+			'mailto'		=> '\\Morrow\\Views\\Serpent::mailto',
+			'hidelink'		=> '\\Morrow\\Views\\Serpent::hidelink',
+			'thumb'			=> '\\Morrow\\Views\\Serpent::thumb',
 			'truncate'		=> '\\Morrow\\Factory::load("Helpers\\\String")->truncate',
-			'strip'			=> 'ob_start(array("\\Morrow\\Helpers\\View::strip")) //',
+			'strip'			=> 'ob_start(array("\\Morrow\\Views\\Serpent::strip")) //',
 			'endstrip'		=> 'ob_end_flush',
-			'loremipsum'	=> '\\Morrow\\Helpers\\View::loremipsum',
+			'loremipsum'	=> '\\Morrow\\Views\\Serpent::loremipsum',
 			'formlabel'		=> '\\Morrow\\Factory::load("Formhtml")->getLabel',
 			'formelement'	=> '\\Morrow\\Factory::load("Formhtml")->getElement',
 			'formerror'		=> '\\Morrow\\Factory::load("Formhtml")->getError',
@@ -144,5 +149,117 @@ class Serpent extends AbstractView {
 		fwrite($handle, $_engine->render($this->template));
 		
 		return $handle;
+	}
+	
+	/**
+	 * Used for the Serpent mapping `:cycle`. Every call of cycle will return the next of the parameters you have passed initially. All function paramters will be used to cycle.
+	 * @return  mixed Returns the next cyvle value.
+	 */
+	public static function cycle() {
+		$values = func_get_args();
+		$name = array_shift($values);
+		
+		if (!isset(self::$cycles[$name])) self::$cycles[$name] = -1;
+		$index =& self::$cycles[$name];
+		if (!isset($values[++$index])) $index = 0;
+		return $values[ $index ];
+	}
+		
+	/**
+	 * Used for the Serpent block `:strip`. Removes unnecessary whitespace from an html string.
+	 * @param   string $buffer The content to work with.
+	 * @return  string Returns the edited buffer.
+	 */
+	public static function strip($buffer) {
+		$pat = array("=^\s+=", "=\s{2,}=", "=\s+\$=", "=>\s*<([a-z])=");
+		$rep = array("", " ", "", "><$1");
+		$buffer = preg_replace($pat, $rep, $buffer);
+		return $buffer;
+	}
+		
+	/**
+	 * Used for the Serpent mapping `:mailto`. Obfuscates an email address with javascript and returns the necessary html.
+	 * @param   string $address The email address to obfuscate.
+	 * @param   string $text If set it will used as text for the link instead of the email address.
+	 * @param   string $html If set you can pass an html string that will be embedded into the link.
+	 * @return  string Returns the html that shows a linked email address.
+	 */
+	public static function mailto($address, $text = '', $html = '') {
+		if (empty($text)) $text = $address;
+		$address = str_replace('@', '--', $address);
+		$id = uniqid('scrambled_');
+
+		$link = '<a href="mailto:'.$address.'" '.$html.' rel="nofollow">'.$text.'</a>';
+		$link = strrev($link);
+		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
+		$returner .= '<script>';
+		$returner .= 'var el_'.$id.' = document.getElementById("'.$id.'");';
+		$returner .= 'var content_'.$id.' = el_'.$id.'.textContent ? el_'.$id.'.textContent : el_'.$id.'.innerText;'; // innerText = IE
+		$returner .= 'el_'.$id.'.innerHTML = content_'.$id.'.split("").reverse().join("").replace(/--/g, "@");';
+		$returner .= '</script>';
+		return $returner;
+	}
+
+	/**
+	 * Used for the Serpent mapping `:hidelink`. Obfuscates an URL with javascript and returns the necessary html.
+	 * @param   string $url The URL to obfuscate.
+	 * @param   string $text If set it will used as text for the link instead of the URL.
+	 * @param   string $html If set you can pass an html string that will be embedded into the link.
+	 * @return  string Returns the html that shows a linked URL.
+	 */
+	public static function hidelink($url, $text = '', $html = '') {
+		if (empty($text)) $text = $url;
+		$id = uniqid('scrambled_');
+		$link = '<a href="'.$url.'" '.$html.' rel="nofollow">'.htmlspecialchars($text).'</a>';
+		$link = strrev($link);
+		$returner = '<span id="'.$id.'">'.htmlspecialchars($link).'</span>';
+		$returner .= '<script>';
+		$returner .= 'var el_'.$id.' = document.getElementById("'.$id.'");';
+		$returner .= 'var content_'.$id.' = el_'.$id.'.textContent ? el_'.$id.'.textContent : el_'.$id.'.innerText;'; // innerText = IE
+		$returner .= 'el_'.$id.'.innerHTML = content_'.$id.'.split("").reverse().join("");';
+		$returner .= '</script>';
+		return $returner;
+	}
+
+	/**
+	 * Used for the Serpent mapping `:loremipsum`. Output some placeholder text.
+	 * @param   integer $word_count Defines the count of words that should be shown.
+	 * @param   boolean $random Randomizes the words.
+	 * @return  string Returns the placeholder text.
+	 */
+	 public static function loremipsum($word_count = 200, $random = true) {
+		$text = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.';
+		$count = str_word_count($text);
+
+		$multiplier = ceil($word_count/$count);
+		$text = str_repeat($text, $multiplier);
+		
+		$text = explode(' ', $text);
+		if ($random) shuffle($text);
+		$returner = array_slice($text, 0, $word_count);
+		
+		$returner = ucfirst(implode(' ', $returner)).'.';
+		return $returner;
+	}
+
+	/**
+	 * Used for the Serpent mapping `:thumb`. Outputs the path to a thumb of a passed image path.
+	 * @param   string $filepath The path to the image.
+	 * @param   array $params THe parameters to edit the image. Explained in \Morrow\Image.
+	 * @return  string Returns the path to the thumbnail in the temp folder.
+	 */
+	public static function thumb($filepath, $params = array()) {
+		try {
+			$path = Factory::load('Image')->get($filepath, $params);
+			$path = str_replace(PUBLIC_PATH, '', $path);
+		} catch (\Exception $e) {
+			if (isset($params['fallback'])) {
+				$path = Factory::load('Image')->get($params['fallback'], $params);
+				$path = str_replace(PUBLIC_PATH, '', $path);
+			} else {
+				throw new \Exception (__CLASS__ . ': image "'.$filepath.'" does not exist.');
+			}
+		}
+		return $path;
 	}
 }

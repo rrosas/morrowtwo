@@ -93,7 +93,7 @@ class Cache {
 	 */
 	public function __construct($cachedir, $user_droppable = false) {
 		// clean cachedir
-		$cachedir = \Morrow\Helpers\General::cleanPath($cachedir);
+		$cachedir = rtrim($cachedir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
 		// create temp dir if it does not exist
 		if (!is_dir($cachedir)) {

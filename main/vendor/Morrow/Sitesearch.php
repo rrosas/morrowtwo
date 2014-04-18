@@ -96,7 +96,7 @@ class Sitesearch {
 		foreach ($results['RESULT'] as $key => $result) {
 			$new =& $results['RESULT'][$key];
 			
-			$raw = Helpers\String::excerpt($result['searchdata'], $q, $this->contextradius);
+			$raw = $this->excerpt($result['searchdata'], $q, $this->contextradius);
 			$new['searchdata']	= htmlspecialchars($raw['excerpt']);
 			$new['relevance']	= $raw['weight'];
 
@@ -142,5 +142,90 @@ class Sitesearch {
 		
 		$q = implode(' ', $words);
 		return $q;
+	}
+
+	// nur Sitesearch
+	public function excerpt($text, $phrase, $radius = 100, $etc = "...") {
+		$textlength = strlen($text);
+
+		// find the positions of all phrase words
+		$phrases = explode(' ', $phrase);
+		$phrases_regex = implode('|', array_map('preg_quote', $phrases));
+
+		// get all the positions of the search words in the text
+		$found = preg_match_all('='.$phrases_regex.'=i', $text, $matches, PREG_OFFSET_CAPTURE );
+		$matches = $matches[0];
+		
+		// if phrase words were not found return the start of the page
+		// useful on search results if you have a match in the url but no in the page text you want to show
+		if (!$found) {
+			$output = array();
+			$output['excerpt'] = substr($text, 0, $radius*2);
+			$output['weight'] = 0;
+			return $output;
+		}
+				
+		// get all positions and counts of search words within the text
+		$tmp_positions = array();
+		foreach ($matches as $match) {
+			$tmp_positions[] = $match[1];
+			$word = strtolower($match[0]);
+		}
+		
+		// include all positions within the radius
+		// take care that smaller radius has to be added to the other site
+		$positions = array();
+		foreach ($tmp_positions as $pos) {
+			$start = ($pos-$radius < 0) ? 0 : $pos-$radius;
+			$end = ($pos+$radius >= $textlength-1) ? $textlength-1 : $pos+$radius;
+			$positions[] = array( 'start' => $start, 'end' => $end );
+		}
+		
+		// combine overlapping ranges
+		$newpositions = array();
+		$count = count($positions);
+		
+		for ($i=0; $i<$count; $i++) {
+			$curr =& $positions[$i];
+			$next =& $positions[$i+1];
+			
+			if (!is_null($next) && $curr['end'] > $next['start']) {
+				$next['start'] = $curr['start'];
+				unset($curr);
+			} else {
+				$newpositions[] = $curr;
+			}
+		}
+		$positions = $newpositions;
+		
+		$output = array();
+
+		// calc weight of full text to return the relevance
+		$text_lower = strtolower($text);
+		foreach ($phrases as $phrase) {
+			$phrase = strtolower($phrase);
+			$weight[$phrase] = substr_count($text_lower, $phrase);
+		}
+		$output['weight'] = array_product($weight);
+		
+		
+		// iterate all excerpts
+		$highest_weight = 0;
+		foreach ($positions as $pos) {
+			$string = substr($text, $pos['start'], ($pos['end']-$pos['start']));
+			if ($pos['start'] !== 0) $string = $etc.$string;
+			if ($pos['end'] !== $textlength-1) $string .= $etc;
+			
+			// calc weight of this excerpt
+			$weight = array();
+			$extract = strtolower($string);
+			foreach ($phrases as $phrase) {
+				$phrase = strtolower($phrase);
+				$weight[$phrase] = substr_count($extract, $phrase)+1;
+			}
+			$weight = array_product($weight);
+			if ($weight > $highest_weight) $output['excerpt'] = $string;
+		}
+		return $output;
 	}
 }

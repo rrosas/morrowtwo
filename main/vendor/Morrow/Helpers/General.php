@@ -23,14 +23,7 @@
 namespace Morrow\Helpers;
 
 class General {
-	// trims slashes on file paths
-	static public function cleanPath($dir, $absolute = false) {
-		$dir = str_replace(DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $dir);
-		$dir = rtrim($dir, DIRECTORY_SEPARATOR) . '/';
-		if ($absolute) $dir = '/' . $dir;
-		return $dir;
-	}
-	
+	// often used, where to put?
 	// This function orders an array like in a sql query
 	public static function array_orderby($data, $orderby) {
 		// all the references are part of a workaround which only occurs with array_multisort and call_user_func_array in PHP >= 5.3
@@ -74,70 +67,6 @@ class General {
 		$params[] =& $data;
 		call_user_func_array('array_multisort', $params);
 		return $data;
-	}
-
-	// This function does a array_diff_key but recursive
-	public static function array_diff_key_recursive ($a1, $a2) {
-		if (is_array($a2)) {
-			$r = array_diff_key($a1, $a2);
-		} else {
-			$r = $a1;
-		}
-
-		foreach ($a1 as $k => $v) {
-			if (is_array($v)) {
-				$temp = self::array_diff_key_recursive($a1[$k], $a2[$k]);
-				if (count($temp) > 0) {
-					$r[$k]=$temp;
-				}
-			}
-		}
-		return $r;
-	}
-
-	// This function does a correct array_merge_recursive
-	public static function array_merge_recursive() {
-		$_return    = false;
-		$parameters = func_get_args();
-
-		// Validation
-		if (count($parameters) >= 2) {
-			$_return = true;
-
-			foreach ($parameters as $parameter) {
-				if (!is_array($parameter)) {
-					$_return = false;
-					throw new \Exception(__METHOD__ . ': Only arrays can be merged', E_USER_ERROR);
-					break;
-				}
-			}
-		} else {
-			throw new \Exception(__METHOD__ . ': Two or more arrays needed to be merged', E_USER_ERROR);
-		}
-
-		if ($_return = true) {
-			$_return = array_shift($parameters);
-
-			foreach ($parameters as $parameter) {
-				foreach ($parameter as $key => $value) {
-					$type = gettype($value);
-					switch($type) {
-						case 'array':
-							if (isset($_return[$key]) && is_array($_return[$key])) {
-								$_return[$key] = self::array_merge_recursive($_return[$key], $parameter[$key]);
-							} else {
-								$_return[$key] = $parameter[$key];
-							}
-							break;
-						default:
-							$_return[$key] = $parameter[$key];
-							break;
-					}
-				}
-			}
-		}
-
-		return $_return;
 	}
 
 	public static function array_dotSyntaxGet(array &$array, $identifier = '', $fallback = null) {
@@ -224,13 +153,5 @@ class General {
 			}
 		}
 		return $data;
-	}
-
-	public static function array_setKey($data, $field) {
-		$returner = array();
-		foreach ($data as $row) {
-			$returner[$row[$field]] = $row;
-		}
-		return $returner;
 	}
 }

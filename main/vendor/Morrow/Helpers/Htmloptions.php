@@ -38,7 +38,7 @@ class HtmlOptions {
 		// add extras
 		$extra_str = '';
 		foreach ($extras as $_key => $_value) {
-			$extra_str .= ' '.$_key.'="'.String::htmlSpecialChars($_value).'"';
+			$extra_str .= ' '.$_key.'="'.self::htmlSpecialChars($_value).'"';
 		}
 
 		if (!empty($name)) {
@@ -50,16 +50,16 @@ class HtmlOptions {
 
 	static public function getOption($key, $value, $selected, $stylevalue, $classall, $classvalue = '') {
 		if (!is_array($value)) {
-			$_html_result = '<option class="' .String::htmlSpecialChars($classall).' '.String::htmlSpecialChars($classvalue)
-				.'" style="' .String::htmlSpecialChars($stylevalue)
-				.'" label="' .String::htmlSpecialChars($value)
-				.'" value="' .String::htmlSpecialChars($key) . '"';
+			$_html_result = '<option class="' .self::htmlSpecialChars($classall).' '.self::htmlSpecialChars($classvalue)
+				.'" style="' .self::htmlSpecialChars($stylevalue)
+				.'" label="' .self::htmlSpecialChars($value)
+				.'" value="' .self::htmlSpecialChars($key) . '"';
 			
 			if (!is_array($value) && in_array((string)$key, $selected)) {
 				$_html_result .= ' selected="selected"';
 			}
 
-			$_html_result .= '>' . String::htmlSpecialChars($value) . '</option>' . chr(10);
+			$_html_result .= '>' . self::htmlSpecialChars($value) . '</option>' . chr(10);
 		} else {
 			$_html_result = Htmloptions::getOptGroup($key, $value, $selected, $stylevalue, $classall, $classvalue);
 		}
@@ -73,9 +73,9 @@ class HtmlOptions {
 		elseif (isset($stylevalue[$key])) $style = $stylevalue[$key];
 		$class = $classvalue;
 
-		$optgroup_str = '<optgroup class="' .String::htmlSpecialChars($classall)
-			.'" style="' .String::htmlSpecialChars($style)
-			.'" label="' . String::htmlSpecialChars($key) . '">' . chr(10);
+		$optgroup_str = '<optgroup class="' .self::htmlSpecialChars($classall)
+			.'" style="' .self::htmlSpecialChars($style)
+			.'" label="' . self::htmlSpecialChars($key) . '">' . chr(10);
 		foreach ($values as $key => $value) {
 			if (isset($stylevalue[$key])) $style = $stylevalue[$key];
 			if (isset($classvalue[$key])) $class = $classvalue[$key];
@@ -83,5 +83,11 @@ class HtmlOptions {
 		}
 		$optgroup_str .= "</optgroup>" . chr(10);
 		return $optgroup_str;
+	}
+
+	public static function htmlSpecialChars($string) {
+		$returner = htmlspecialchars($string);
+		$returner = preg_replace('|&amp;(#?\w+);|', '&$1;', $returner);
+		return $returner;
 	}
 }

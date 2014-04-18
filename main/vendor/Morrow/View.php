@@ -148,7 +148,7 @@ class View {
 		// set download header
 		if (!empty($displayHandler->downloadable)) {
 			if (!$mimetype_changed) {
-				$displayHandler->mimetype = Helpers\File::getMimeType($displayHandler->downloadable);
+				$displayHandler->mimetype = $this->getMimeType($displayHandler->downloadable);
 			}
 			$this->_header[] = 'Content-Disposition: attachment; filename='.basename($displayHandler->downloadable);
 			
@@ -335,5 +335,138 @@ class View {
 	public function setProperty($key, $value = array(), $handler_name = null) {
 		if ($handler_name == null) $handler_name = $this->_handler_name;
 		$this->_properties[$handler_name][$key] = $value;
+	}
+
+	/**
+	 * Returns the mimetype for a given filename.
+	 *
+	 * @param	string	$file	The filename to retrieve the mimetype for.
+	 * @return	string The detected mimetype.
+	 */
+	public function getMimeType($file) {
+		$mime_types = array(
+			'ai' => 'application/postscript',
+			'aif' => 'audio/x-aiff',
+			'aiff' => 'audio/x-aiff',
+			'asf' => 'video/x-ms-asf',
+			'asx' => 'video/x-ms-asf',
+			'au' => 'audio/basic',
+			'avi' => 'video/x-msvideo',
+			'axs' => 'application/olescript',
+			'bas' => 'text/plain',
+			'bin' => 'application/octet-stream',
+			'bmp' => 'image/bmp',
+			'c' => 'text/plain',
+			'cdf' => 'application/x-cdf',
+			'class' => 'application/octet-stream',
+			'clp' => 'application/x-msclip',
+			'crd' => 'application/x-mscardfile',
+			'css' => 'text/css',
+			'dcr' => 'application/x-director',
+			'dir' => 'application/x-director',
+			'dll' => 'application/x-msdownload',
+			'dms' => 'application/octet-stream',
+			'doc' => 'application/msword',
+			'dot' => 'application/msword',
+			'dvi' => 'application/x-dvi',
+			'dxr' => 'application/x-director',
+			'eps' => 'application/postscript',
+			'exe' => 'application/octet-stream',
+			'flr' => 'x-world/x-vrml',
+			'gif' => 'image/gif',
+			'gtar' => 'application/x-gtar',
+			'gz' => 'application/x-gzip',
+			'h' => 'text/plain',
+			'hlp' => 'application/winhlp',
+			'hqx' => 'application/mac-binhex40',
+			'hta' => 'application/hta',
+			'htc' => 'text/x-component',
+			'htm' => 'text/html',
+			'html' => 'text/html',
+			'htt' => 'text/webviewhtml',
+			'ico' => 'image/x-icon',
+			'iii' => 'application/x-iphone',
+			'jpe' => 'image/jpeg',
+			'jpeg' => 'image/jpeg',
+			'jpg' => 'image/jpeg',
+			'js' => 'application/x-javascript',
+			'latex' => 'application/x-latex',
+			'lha' => 'application/octet-stream',
+			'lzh' => 'application/octet-stream',
+			'm3u' => 'audio/x-mpegurl',
+			'mdb' => 'application/x-msaccess',
+			'mid' => 'audio/mid',
+			'mov' => 'video/quicktime',
+			'movie' => 'video/x-sgi-movie',
+			'mp2' => 'video/mpeg',
+			'mp3' => 'audio/mpeg',
+			'mpeg' => 'video/mpeg',
+			'mpg' => 'video/mpeg',
+			'ms' => 'application/x-troff-ms',
+			'mvb' => 'application/x-msmediaview',
+			'pbm' => 'image/x-portable-bitmap',
+			'pdf' => 'application/pdf',
+			'pgm' => 'image/x-portable-graymap',
+			'png' => 'image/png',
+			'pot' => 'application/vnd.ms-powerpoint',
+			'pps' => 'application/vnd.ms-powerpoint',
+			'ppt' => 'application/vnd.ms-powerpoint',
+			'ps' => 'application/postscript',
+			'pub' => 'application/x-mspublisher',
+			'qt' => 'video/quicktime',
+			'ra' => 'audio/x-pn-realaudio',
+			'ram' => 'audio/x-pn-realaudio',
+			'rgb' => 'image/x-rgb',
+			'rmi' => 'audio/mid',
+			'rtf' => 'application/rtf',
+			'rtx' => 'text/richtext',
+			'scd' => 'application/x-msschedule',
+			'sct' => 'text/scriptlet',
+			'sh' => 'application/x-sh',
+			'sit' => 'application/x-stuffit',
+			'snd' => 'audio/basic',
+			'spl' => 'application/futuresplash',
+			'stm' => 'text/html',
+			'svg' => 'image/svg+xml',
+			'tar' => 'application/x-tar',
+			'tcl' => 'application/x-tcl',
+			'tex' => 'application/x-tex',
+			'texi' => 'application/x-texinfo',
+			'texinfo' => 'application/x-texinfo',
+			'tgz' => 'application/x-compressed',
+			'tif' => 'image/tiff',
+			'tiff' => 'image/tiff',
+			'tsv' => 'text/tab-separated-values',
+			'txt' => 'text/plain',
+			'vcf' => 'text/x-vcard',
+			'vrml' => 'x-world/x-vrml',
+			'wav' => 'audio/x-wav',
+			'wcm' => 'application/vnd.ms-works',
+			'wdb' => 'application/vnd.ms-works',
+			'wks' => 'application/vnd.ms-works',
+			'wmf' => 'application/x-msmetafile',
+			'wps' => 'application/vnd.ms-works',
+			'wri' => 'application/x-mswrite',
+			'wrl' => 'x-world/x-vrml',
+			'wrz' => 'x-world/x-vrml',
+			'xaf' => 'x-world/x-vrml',
+			'xbm' => 'image/x-xbitmap',
+			'xla' => 'application/vnd.ms-excel',
+			'xlc' => 'application/vnd.ms-excel',
+			'xlm' => 'application/vnd.ms-excel',
+			'xls' => 'application/vnd.ms-excel',
+			'xlt' => 'application/vnd.ms-excel',
+			'xlw' => 'application/vnd.ms-excel',
+			'xof' => 'x-world/x-vrml',
+			'xpm' => 'image/x-xpixmap',
+			'z' => 'application/x-compress',
+			'zip' => 'application/zip'
+		);
+		
+		$file = pathinfo($file);
+		if (isset($file['extension'])) $ext = $file['extension'];
+		else $ext = 'unknown';
+		if (isset($mime_types[$ext])) return $mime_types[$ext];
+		else return 'application/x-'.$ext;
 	}
 }
