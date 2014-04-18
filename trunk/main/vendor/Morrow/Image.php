@@ -120,7 +120,7 @@ class Image {
 		foreach ($files as $file) {
 			if ($file{0} == '.') continue;
 			if (is_dir($cache_dir.$file) && $file != $counter) {
-				Helpers\File::rmdir_recurse( $cache_dir.$file );
+				$this->_rmdir_recurse( $cache_dir.$file );
 			}
 		}
 
@@ -708,4 +708,28 @@ class Image {
 
 		return $_DST['image'];
 	}
+	
+	/**
+	 * Removes recursively all files and folders for a given path.
+	 * 
+	 * @param string $path The path to delete.
+	 */
+	protected function _rmdir_recurse($path) {
+		if (!file_exists($path)) return;
+		
+		$path = rtrim($path, '/').'/';
+		$handle = opendir($path);
+		for (; false !== ($file = readdir($handle));) {
+			if($file == "." or $file == ".." ) continue;
+			
+			$fullpath = $path.$file;
+			if (!is_link($fullpath) && is_dir($fullpath)) {
+				self::rmdir_recurse($fullpath);
+			} else {
+				unlink($fullpath);
+			}
+		}
+		closedir($handle);
+		rmdir($path);
+	}	
 }

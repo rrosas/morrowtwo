@@ -120,9 +120,9 @@ class Language {
 		// set default parameters
 		$this->_possible		= $settings['possible'];
 		$this->_default			= $settings['possible'][0];
-		$this->_language_path	= Helpers\General::cleanPath($settings['language_path']);
-		$this->_search_paths		= $settings['search_paths'];
-
+		$this->_language_path	= rtrim($settings['language_path'], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+		$this->_search_paths	= $settings['search_paths'];
+		
 		// set language
 		// default language was provided
 		if (isset($settings['language']) && $this->isValid($settings['language'])) {
