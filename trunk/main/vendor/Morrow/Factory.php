@@ -141,6 +141,41 @@ namespace Morrow;
  * 			
  * // Controller code
  * ~~~
+ *
+ * Allows to create a lightweight proxy object which is useful for Dependency Injection.
+ * --------------------------------------------------------------------------------------
+ *
+ * Create an instance of this class if you want to prepare a class A which depends on another class B, but you are not sure if you will use the class A.
+ * The generated proxy object is really lightweight and this way you can save memory and initialization time.
+ *
+ * ### Example
+ * We have a class A which depends on Class B
+ *
+ * ~~~{.php}
+ * class Class A {
+ *     public function __construct($class_b) {
+ * 	       $class_b->get();
+ *     }	
+ * }
+ * ~~~
+ * 
+ * #### The problem
+ * We have to initialize Class B because we need it in the constructor of Class A.
+ * Class A is prepared because we don't know if we will use it.
+ * 
+ * ~~~{.php}
+ * $class_b = Factory::load('Class_B');
+ * Factory::prepare('Class_A', $class_b);
+ * ~~~
+ *
+ * #### The solution
+ * We create the proxy object of Class B which is a very lightweight object.
+ * In Class A we can use Class B as if we have really passed it.
+ * 
+ * ~~~{.php}
+ * $class_b = new Factory('Class_B');
+ * Factory::prepare('Class_A', $class_b);
+ * ~~~
  */
 class Factory {
 	/**
@@ -155,6 +190,19 @@ class Factory {
 	 */
 	protected static $_params;
 	
+	/**
+	 * Holds the parameters which are later passed to the Factory.
+	 * @var array $_parameters
+	 */
+	protected $_proxy_params;
+
+	/**
+	 * Pass the same parameters as you would do for Factory::load(). This creates the lightweight proxy object.
+	 */
+	public function __construct() {
+		$this->_proxy_params = func_get_args();
+	}
+
 	/**
 	 * Initializes a class with optionally prepared constructor parameters and returns the instance.
 	 * @param	string	$instance_identifier The instance identifier.
@@ -207,8 +255,8 @@ class Factory {
 		} else {
 			// check the parameters for instances of class Factoryproxy
 			$factory_args = array_map(function($param){
-				if (!is_object($param) || get_class($param) !== 'Morrow\\Factoryproxy') return $param;
-				return call_user_func_array('\\Morrow\\Factory::load', $param->get());
+				if (!is_object($param) || get_class($param) !== 'Morrow\\Factory') return $param;
+				return call_user_func_array('\\Morrow\\Factory::load', $param->_getProxyParameters());
 			}, $factory_args);
 
 			// use reflection class to inject the args as single parameters
@@ -257,5 +305,13 @@ class Factory {
 	public function __get($instance_identifier) {
 		$this->$instance_identifier = Factory::load(ucfirst($instance_identifier));
 		return $this->$instance_identifier;
+	}
+
+	/**
+	 * Returns the parameters which are later passed to the Factory (Used by the Factory).
+	 * @return	null All the parameters which are later passed to the Factory.
+	 */
+	protected function _getProxyParameters() {
+		return $this->_proxy_params;
 	}
 }

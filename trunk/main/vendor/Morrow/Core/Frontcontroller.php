@@ -24,7 +24,6 @@
 namespace Morrow\Core;
 
 use Morrow\Factory;
-use Morrow\Factoryproxy;
 
 /**
  * The main class which defines the cycle of a request.
@@ -204,7 +203,7 @@ class Frontcontroller {
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);
 		Factory::prepare('Pagesession', 'page.' . $alias);
 		Factory::prepare('Session', $config['session']);
-		Factory::prepare('Security', new Factoryproxy('Session'), $this->view, $this->input, $this->url);
+		Factory::prepare('Security', new Factory('Session'), $this->view, $this->input, $this->url);
 
 		/* define page params
 		********************************************************************************************/
