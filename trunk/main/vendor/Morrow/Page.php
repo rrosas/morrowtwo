@@ -61,7 +61,7 @@ namespace Morrow;
 * )
 * ~~~
 */
-class Page {
+class Page extends Core\Base {
 	/**
 	* The data array which does not have dotted keys anymore
 	* @var array $data
@@ -76,7 +76,7 @@ class Page {
 	 * @return mixed
 	 */
 	public function get($identifier = null, $fallback = null) {
-		return \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier, $fallback);
+		return $this->arrayGet($this->data, $identifier, $fallback);
 	}
 
 	/**
@@ -87,6 +87,6 @@ class Page {
 	 * @return null
 	 */
 	public function set($identifier, $value) {
-		return \Morrow\Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
+		return $this->arraySet($this->data, $identifier, $value);
 	}
 }

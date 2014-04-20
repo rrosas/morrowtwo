@@ -46,7 +46,7 @@ namespace Morrow;
  * // ... Controller code
  * ~~~
  */
-class Input {
+class Input extends Core\Base {
 	/**
 	 * Holds the data for GET input.
 	 * @var array $_get
@@ -106,7 +106,7 @@ class Input {
 	 * @return mixed
 	 */
 	public function get($identifier = null, $fallback = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_data, $identifier, $fallback);
+		return $this->arrayGet($this->_data, $identifier, $fallback);
 	}
 
 	/**
@@ -116,7 +116,7 @@ class Input {
 	 * @return mixed
 	 */
 	public function getPost($identifier = null, $fallback = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_post, $identifier, $fallback);
+		return $this->arrayGet($this->_post, $identifier, $fallback);
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Input {
 	 * @return mixed
 	 */
 	public function getGet($identifier = null, $fallback = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_get, $identifier, $fallback);
+		return $this->arrayGet($this->_get, $identifier, $fallback);
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Input {
 	 * @return mixed
 	 */
 	public function getFiles($identifier = null, $fallback = null) {
-		return Helpers\General::array_dotSyntaxGet($this->_files, $identifier, $fallback);
+		return $this->arrayGet($this->_files, $identifier, $fallback);
 	}
 
 	/**
@@ -146,7 +146,7 @@ class Input {
 	 * @return mixed
 	 */
 	public function set($identifier, $value) {
-		Helpers\General::array_dotSyntaxSet($this->_data, $identifier, $value);
+		$this->arraySet($this->_data, $identifier, $value);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class Input {
 	 * @return null
 	 */
 	public function delete($identifier) {
-		Helpers\General::array_dotSyntaxDelete($this->_data, $identifier);
+		$this->arrayDelete($this->_data, $identifier);
 	}
 
 	/**

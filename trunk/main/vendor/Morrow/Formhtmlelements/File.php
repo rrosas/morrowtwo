@@ -24,12 +24,12 @@ namespace Morrow\Formhtmlelements;
 
 class File extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		return "<input id=\"" . $id . "\" type=\"file\" name=\"" . $name . "\" value=\"\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+		return "<input id=\"" . $id . "\" type=\"file\" name=\"" . $name . "\" value=\"\" " .  $this->_getAttributeString($params, 'input')  . " />";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
 		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
-		$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
+		$content .= '<div '. $this->_getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		return $content;
 	}
 

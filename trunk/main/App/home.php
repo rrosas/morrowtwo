@@ -9,7 +9,7 @@ class PageController extends DefaultController {
 		//$this->_testStreams();
 		//$this->_testMessageQueue();
 		$this->_testForms();
-		$this->_testValidator();
+		//P$this->_testValidator();
 	}
 
 	protected function _testValidator() {

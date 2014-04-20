@@ -72,10 +72,8 @@ class Formhtml {
 		$id = "mw_" . $formname . "_" . $el_name;
 
 		$classname = '\\Morrow\\Formhtmlelements\\' . $display_type;
-		if (class_exists($classname)) {
-			$display_obj = Factory::load($classname);
-			$content = $display_obj->getLabel($el_label, $id, $params);
-		} else $content = "<label for=\"" . $id . "\" " .  Helpers\Htmlformattributes::getAttributeString($params, 'label') . ">$el_label</label>";
+		$display_obj = Factory::load($classname);
+		$content = $display_obj->getLabel($el_label, $id, $params);
 
 		return $content;
 	}
@@ -220,10 +218,8 @@ class Formhtml {
 			if (isset($params['dtype'])) $display_type = $params['dtype'];
 			elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
 			$classname = '\\Morrow\\Formhtmlelements\\' . $display_type;
-			if (class_exists($classname)) {
-				$display_obj = Factory::load($classname);
-				$content = $display_obj->getError($content, $params, $tagname);
-			} else $content = "<$tagname " . Helpers\Htmlformattributes::getAttributeString($params, $tagname) .">$content</$tagname>";
+			$display_obj = Factory::load($classname);
+			$content = $display_obj->getError($content, $params, $tagname);
 		}
 
 		return $content;

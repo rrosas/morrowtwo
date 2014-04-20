@@ -178,7 +178,6 @@ class Frontcontroller {
 		// set nodes in page class
 		$nodes = explode('/', $url);
 		$nodes = array_map('strtolower', $nodes);
-		$this->page->set('nodes', $nodes);
 
 		/* prepare some internal variables
 		********************************************************************************************/

@@ -118,7 +118,7 @@ class Serpent extends AbstractView {
 			'mailto'		=> '\\Morrow\\Views\\Serpent::mailto',
 			'hidelink'		=> '\\Morrow\\Views\\Serpent::hidelink',
 			'thumb'			=> '\\Morrow\\Views\\Serpent::thumb',
-			'truncate'		=> '\\Morrow\\Factory::load("Helpers\\\String")->truncate',
+			'truncate'		=> '\\Morrow\\Views\\Serpent::truncate',
 			'strip'			=> 'ob_start(array("\\Morrow\\Views\\Serpent::strip")) //',
 			'endstrip'		=> 'ob_end_flush',
 			'loremipsum'	=> '\\Morrow\\Views\\Serpent::loremipsum',
@@ -261,5 +261,32 @@ class Serpent extends AbstractView {
 			}
 		}
 		return $path;
+	}
+
+	/**
+	 * Used for the Serpent mapping `:truncate`. Truncates a string to a character `$length`.
+	 * @param   string $string The string you want to truncate.
+	 * @param   integer $length The length of the truncated string.
+	 * @param   string $etc The text at the end of the truncated string.
+	 * @param   boolean $break_words Set to `true` if you want the function not to respect word boundaries.
+	 * @param   boolean $middle Set to `true` if you want to see the middle of the original string.
+	 * @return  string Returns the truncated text.
+	 */
+	public static function truncate($string, $length = 80, $etc = '...', $break_words = false, $middle = false) {
+		if ($length == 0) return '';
+
+		if (strlen($string) > $length) {
+			$length -= min($length, strlen($etc));
+			if (!$break_words && !$middle) {
+				$string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length+1));
+			}
+			if (!$middle) {
+				return substr($string, 0, $length) . $etc;
+			} else {
+				return substr($string, 0, $length/2) . $etc . substr($string, -$length/2);
+			}
+		} else {
+			return $string;
+		}
 	}
 }

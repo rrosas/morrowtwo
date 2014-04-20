@@ -51,7 +51,7 @@ namespace Morrow;
 * // ... Controller code
 * ~~~
 */
-class Config {
+class Config extends Core\Base {
 	/**
 	* The data array which does not have dotted keys anymore
 	* @var array $data
@@ -65,7 +65,7 @@ class Config {
 	 * @return mixed
 	 */
 	public function get($identifier = null) {
-		return \Morrow\Helpers\General::array_dotSyntaxGet($this->data, $identifier);
+		return $this->arrayGet($this->data, $identifier);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Config {
 	 * @return null
 	 */
 	public function set($identifier, $value) {
-		return \Morrow\Helpers\General::array_dotSyntaxSet($this->data, $identifier, $value);
+		return $this->arraySet($this->data, $identifier, $value);
 	}
 	
 	/**
@@ -101,7 +101,7 @@ class Config {
 		}
 
 		foreach ($config as $key => $value) {
-			\Morrow\Helpers\General::array_dotSyntaxSet($this->data, $key, $value);
+			$this->arraySet($this->data, $key, $value);
 		}
 
 		return $this->data;
