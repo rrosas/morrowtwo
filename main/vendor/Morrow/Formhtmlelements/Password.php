@@ -24,11 +24,11 @@ namespace Morrow\Formhtmlelements;
 
 class Password extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		return "<input id=\"" . $id . "\" type=\"password\" name=\"" . $name . "\" value=\"\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+		return "<input id=\"" . $id . "\" type=\"password\" name=\"" . $name . "\" value=\"\" " .  $this->_getAttributeString($params, 'input')  . " />";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
-		$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>*******</div>';
+		$content .= '<div '. $this->_getAttributeString($params, 'div') .'>*******</div>';
 		return $content;
 	}
 

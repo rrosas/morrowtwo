@@ -46,7 +46,7 @@ namespace Morrow;
 * // ... Controller code
 * ~~~
 */
-class Session {
+class Session extends Core\Base {
 	/**
 	 * The array with parsed data that holds the session data.
 	 * Has to be static because it represents the superglobal `$_SESSION`.
@@ -134,7 +134,7 @@ class Session {
 	 * @return mixed 	The requested data.
 	 */
 	public function get($identifier = null, $fallback = null) {
-		return Helpers\General::array_dotSyntaxGet(self::$_data, $this->section . ($identifier !== null ? '.' . $identifier : ''), $fallback);
+		return $this->arrayGet(self::$_data, $this->section . ($identifier !== null ? '.' . $identifier : ''), $fallback);
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Session {
 	 * @return null
 	 */
 	public function set($identifier, $value) {
-		Helpers\General::array_dotSyntaxSet(self::$_data, $this->section . "." . $identifier, $value);
+		$this->arraySet(self::$_data, $this->section . "." . $identifier, $value);
 	}
 
 	/**
@@ -156,7 +156,7 @@ class Session {
 	 */
 	public function delete($identifier = null) {
 		if ($this->get($identifier) === null) return;
-		Helpers\General::array_dotSyntaxDelete(self::$_data, $this->section . ($identifier !== null ? '.' . $identifier : ''));
+		$this->arrayDelete(self::$_data, $this->section . ($identifier !== null ? '.' . $identifier : ''));
 	}
 	
 	/**

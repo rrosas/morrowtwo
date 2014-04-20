@@ -95,7 +95,7 @@ namespace Morrow;
  *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
-class Validator2 {
+class Validator2 extends Core\Base {
 	/**
 	 * Contains all user defined validator set by add().
 	 * @var array $_callbacks
@@ -153,7 +153,7 @@ class Validator2 {
 		// iterate all fields
 		foreach ($rules as $identifier => $rules_array) {
 			// get value from input array
-			$value = Helpers\General::array_dotSyntaxGet($input, $identifier);
+			$value = $this->arrayGet($input, $identifier);
 
 			// only if all rules are true we add the value to the $returner array
 			$is_valid = true;
@@ -214,7 +214,7 @@ class Validator2 {
 				}
 			}
 
-			if ($is_valid) Helpers\General::array_dotSyntaxSet($returner, $identifier, $value);
+			if ($is_valid) $this->arraySet($returner, $identifier, $value);
 		}
 
 		return $returner;

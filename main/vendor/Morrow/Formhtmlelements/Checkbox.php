@@ -26,12 +26,12 @@ class Checkbox extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
 		if ($values != '' && $values != 0) $params['checked'] = "checked";
 		$values = 1;
-		return "<input id=\"" . $id . "\" type=\"checkbox\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+		return "<input id=\"" . $id . "\" type=\"checkbox\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  $this->_getAttributeString($params, 'input')  . " />";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
 		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
-		$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
+		$content .= '<div '. $this->_getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		return $content;
 	}
 

@@ -49,7 +49,7 @@ namespace Morrow;
  * // ... Controller code
  * ~~~
  */
-class Language {
+class Language extends Core\Base {
 	/**
 	 * The current active language.
 	 * @var string $_language
@@ -421,7 +421,7 @@ class Language {
 	 */
 	protected function _loadFile($path, $dot_syntax_explode = true) {
 		if(!is_file($path)) return array();
-		if ($dot_syntax_explode) return Helpers\General::array_dotSyntaxExplode(include($path));
+		if ($dot_syntax_explode) return $this->arrayExplode(include($path));
 		return include($path);
 	}
 

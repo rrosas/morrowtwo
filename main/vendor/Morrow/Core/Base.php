@@ -20,12 +20,12 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
-namespace Morrow\Helpers;
+namespace Morrow\Core;
 
-class General {
+abstract class Base {
 	// often used, where to put?
 	// This function orders an array like in a sql query
-	public static function array_orderby($data, $orderby) {
+	public function arrayOrderBy($data, $orderby) {
 		// all the references are part of a workaround which only occurs with array_multisort and call_user_func_array in PHP >= 5.3
 		$asc = SORT_ASC; 
 		$desc = SORT_DESC;
@@ -69,7 +69,7 @@ class General {
 		return $data;
 	}
 
-	public static function array_dotSyntaxGet(array &$array, $identifier = '', $fallback = null) {
+	public function arrayGet(array &$array, $identifier = '', $fallback = null) {
 		if (empty($identifier)) return $array;
 
 		// create reference
@@ -91,7 +91,7 @@ class General {
 		else return $fallback;
 	}
 
-	public static function array_dotSyntaxSet(array &$array, $identifier, $value) {
+	public function arraySet(array &$array, $identifier, $value) {
 		// create reference
 		$returner =& $array;
 		
@@ -105,7 +105,7 @@ class General {
 		$returner = $value;
 	}
 
-	public static function array_dotSyntaxDelete(array &$array, $identifier) {
+	public function arrayDelete(array &$array, $identifier) {
 		// create reference
 		$parts = explode('.', $identifier);
 		$returner =& $array;
@@ -131,7 +131,7 @@ class General {
 		}
 	}
 
-	public static function array_dotSyntaxExplode(array $array) {
+	public function arrayExplode(array $array) {
 		$data = array();
 
 		// iterate keys
@@ -145,7 +145,7 @@ class General {
 				if (!isset($parent[$part]) || !is_array($parent[$part])) {
 					if ($part === end($parts)) {
 						if (!is_array($row)) $parent[$part] = $row;
-						else $parent[$part] = self::array_dotSyntaxExplode($row);
+						else $parent[$part] = $this->arrayExplode($row);
 					}
 					else $parent[$part] = array();
 				}

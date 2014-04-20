@@ -24,17 +24,17 @@ namespace Morrow\Formhtmlelements;
 
 class Textarea extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		return "<textarea id=\"" . $id . "\" name=\"" . $name . "\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'textarea')  . ">" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) ."</textarea>";
+		return "<textarea id=\"" . $id . "\" name=\"" . $name . "\" " .  $this->_getAttributeString($params, 'textarea')  . ">" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) ."</textarea>";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
 		$content = '<input type="hidden" name="'.$name.'" value="'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .'">';
-		$content .= '<div '. \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
+		$content .= '<div '. $this->_getAttributeString($params, 'div') .'>'.htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')).'</div>';
 		return $content;
 	}
 
 	public function getListDisplay($values, $params, $options = array()) {
-		$values = \Morrow\Helpers\String::truncate(htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')), 50);
+		$values = $this->_truncate(htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')), 50);
 		return $values;
 	}
 }

@@ -24,7 +24,7 @@ namespace Morrow\Formhtmlelements;
 
 class Hidden extends AbstractElement {
 	public function getDisplay($name, $values, $id, $params, $options, $multiple) {
-		return "<input id=\"" . $id . "\" type=\"hidden\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  \Morrow\Helpers\Htmlformattributes::getAttributeString($params, 'input')  . " />";
+		return "<input id=\"" . $id . "\" type=\"hidden\" name=\"" . $name . "\" value=\"" . htmlspecialchars($values, ENT_QUOTES, $this->page->get('charset')) .  "\" " .  $this->_getAttributeString($params, 'input')  . " />";
 	}
 
 	public function getReadonly($name, $values, $id, $params, $options, $multiple) {
