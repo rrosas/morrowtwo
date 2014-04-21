@@ -18,7 +18,7 @@ return array(
 // debug
 	'debug.output.screen'			=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? false : true,
 	'debug.output.file'				=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? true : false,
-	'debug.file.path'				=> APP_PATH .'logs/error_'. date('Y-m-d') .'.txt',
+	'debug.file.path'				=> STORAGE_PATH .'errors/'. date('Y-m-d') .'.txt',
 	
 // languages
 	'languages'						=> array('en'),
@@ -32,10 +32,10 @@ return array(
 	),
 	
 // log
-	'log.file.path'					=> APP_PATH .'logs/log_'. date('Y-m-d') .'.txt',
+	'log.file.path'					=> STORAGE_PATH .'logs/'. date('Y-m-d') .'.txt',
 	
 // session
-	'session.save_path'				=> APP_PATH . 'temp/sessions/', // The path where all sessions are stored (it is also possible to use stream wrappers)
+	'session.save_path'				=> STORAGE_PATH . 'sessions/', // The path where all sessions are stored (it is also possible to use stream wrappers)
 	'session.gc_probability'		=> 1, // In conjunction with gc_divisor it is used to manage probability that the gc (garbage collection) routine is started.
 	'session.gc_divisor'			=> 100, // session.gc_divisor coupled with session.gc_probability defines the probability that the gc (garbage collection) process is started on every session initialization. The probability is calculated by using gc_probability/gc_divisor, e.g. 1/100 means there is a 1% chance that the GC process starts on each request.
 	'session.gc_maxlifetime'		=> 1440, // Specifies the number of seconds after which data will be seen as 'garbage' and potentially cleaned up. 
@@ -77,7 +77,7 @@ return array(
 	'sitesearch.gc_divisor'			=> 100,
 	'sitesearch.entry_lifetime'		=> '+1 month',
 	'sitesearch.db.driver'			=> 'sqlite',
-	'sitesearch.db.file'			=> APP_PATH .'temp/sitesearch.sqlite',
+	'sitesearch.db.file'			=> STORAGE_PATH .'sitesearch.sqlite',
 	'sitesearch.db.host'			=> 'localhost',
 	'sitesearch.db.db'				=> 'sitesearch_searchengine',
 	'sitesearch.db.user'			=> 'root',
@@ -86,5 +86,5 @@ return array(
 	
 // message queue
 	'messagequeue.cli_path'			=> 'php',
-	'messagequeue.save_path'		=> APP_PATH . 'temp/messagequeue/',
+	'messagequeue.save_path'		=> STORAGE_PATH . 'messagequeue/',
 );

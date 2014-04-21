@@ -32,7 +32,7 @@ namespace Morrow;
 * -----  | ---------              | ---------  | ------------                                                             
 * bool   | `debug.output.screen`  | `true`     | Defines if errors should be displayed on screen                          
 * bool   | `debug.output.file`    | `true`     | Defines if errors should be logged to the file system
-* string | `debug.file.path`      | `APP_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
+* string | `debug.file.path`      | `STORAGE_PATH .'logs/error_'. date('Y-m-d') .'.txt'` | Defines the path where to save the errors
 *
 * Examples
 * ---------
@@ -97,6 +97,10 @@ class Debug {
 	 */
 	public function __construct($config) {
 		$this->_logfile	= $config['file']['path'];
+
+		// create save_path if it does not exist
+		if (!is_dir(dirname($this->_logfile))) mkdir(dirname($this->_logfile));
+
 		$this->config	= $config;
 
 		// error types

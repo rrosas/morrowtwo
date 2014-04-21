@@ -6,7 +6,6 @@ main/						Projekt Nr.1
 	App/
 		configs/
 		languages/
-		logs/
 		Models/					
 			User.php			von Controller > Models\User.php
 		public/
@@ -15,7 +14,7 @@ main/						Projekt Nr.1
 			images/
 			javascript/
 			css/
-		temp/
+		storage/
 		templates/
 		home.php				\App\PageController
 docs/							Projekt Nr.2
@@ -52,6 +51,7 @@ docs/							Projekt Nr.2
 ✓ Default-Wert bei Session->get()
 ✓ neue _default_app.php
 ✓ Fehler werden bei Toplevel-Domain ausgegeben, ansonsten nicht
+✓ temp = storage und logs in storage
   
 
 ToDo:

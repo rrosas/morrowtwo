@@ -5,6 +5,7 @@ namespace Morrow;
 // define paths
 define('PUBLIC_PATH', realpath(__DIR__) . '/');
 define('APP_PATH', realpath(__DIR__ . '/..') . '/');
+define('STORAGE_PATH', realpath(__DIR__ . '/../storage') . '/');
 define('FW_PATH', realpath(__DIR__ . '/../..') . '/');
 
 // define the path to vendor dir
