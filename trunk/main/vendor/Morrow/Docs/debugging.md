@@ -62,13 +62,16 @@ $this->debug->setAfterException(function($exception) {
 Configuration defaults
 --------------
 
+If the framework runs on a host with a toplevel domain, errors will not be outputted to the screen but to a logfile by default.
+If you work in a local development environment (like `localhost` or `192.168.1.100`) the other way.
+
 **App/configs/_default.php**
 ~~~{.php}
 ...
 // debug
-	'debug.output.screen'		=> true,
-	'debug.output.file'			=> true,
-	'debug.file.path'			=> APP_PATH .'logs/error_'. date('Y-m-d') .'.txt',
+	'debug.output.screen'	=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? false : true,
+	'debug.output.file'		=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? true : false,
+	'debug.file.path'		=> APP_PATH .'logs/error_'. date('Y-m-d') .'.txt',
 ...
 ~~~
 

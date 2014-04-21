@@ -1,5 +1,5 @@
 .htaccess
-frontend/						Projekt Nr.1
+main/						Projekt Nr.1
 	.htaccess
 	vendor/
 	vendor_user/
@@ -10,6 +10,7 @@ frontend/						Projekt Nr.1
 		Models/					
 			User.php			von Controller > Models\User.php
 		public/
+			.htaccess
 			index.php
 			images/
 			javascript/
@@ -17,7 +18,7 @@ frontend/						Projekt Nr.1
 		temp/
 		templates/
 		home.php				\App\PageController
-cms/							Projekt Nr.2
+docs/							Projekt Nr.2
 	...
 
 ✓ Projekte werden komplett getrennt behandelt
@@ -49,6 +50,8 @@ cms/							Projekt Nr.2
 ✓ DB-Klasse wird jetzt automatisch initialisiert
 ✓ Default-Wert bei Input->get()
 ✓ Default-Wert bei Session->get()
+✓ neue _default_app.php
+✓ Fehler werden bei Toplevel-Domain ausgegeben, ansonsten nicht
   
 
 ToDo:
