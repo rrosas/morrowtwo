@@ -36,7 +36,7 @@ namespace Morrow;
 * Type   | Keyname                | Default    | Description                                                              
 * -----  | ---------              | ---------  | ------------                                                             
 * string | `mq.cli_path`          | `php`     | The path to the php interpreter. Just use php if the cli is systemwide callable.
-* string | `mq.save_path`         | `APP_PATH . 'temp/messagequeue/'` | The path where the job files are saved.
+* string | `mq.save_path`         | `STORAGE_PATH . 'messagequeue/'` | The path where the job files are saved.
 *
 * Examples
 * ---------

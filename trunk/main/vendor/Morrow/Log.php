@@ -58,6 +58,9 @@ class Log {
 	 */
 	public function __construct($config) {
 		$this->_logfile = $config['file']['path'];
+
+		// create save_path if it does not exist
+		if (!is_dir(dirname($this->_logfile))) mkdir(dirname($this->_logfile));
 	}
 
 	/**

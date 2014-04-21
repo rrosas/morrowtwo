@@ -14,7 +14,7 @@ Beside your `App` folder you will find those two folders:
 Morrow uses the autoloader of Composer and is fully [PSR-0](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md) and [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md) compatible.
 
 
-1. Working with Composer libraries
+Working with Composer libraries
 -------------------------------
 We assume that you know what Composer and Packagist is and how to work with it.
 
@@ -42,7 +42,7 @@ class PageController extends DefaultController {
 ~~~
 
 
-2. Working with Not-Composer-Libraries
+Working with Not-Composer-Libraries
 ------------------------------------
 Assuming you want to install the Markdown library of the example above by hand, you could also download the ZIP package from http://michelf.ca/projects/php-markdown/.
 Copy the folder `Michelf` of the ZIP into the `vendor_user/` folder und you are done. Thanks to PSR-0.
@@ -52,7 +52,7 @@ Then you have to include the correct files manually, just like in the "good" old
 But this is not recommended because you have to take care of missing class dependencies.
 
 
-3. Replacing or adding MorrowTwo components
+Replacing or adding MorrowTwo components
 --------------------------------------------
 All classes namespaced with `Morrow\` are first searched in the `vendor_user/` folder and then in the `vendor/` folder.
 
@@ -62,3 +62,10 @@ Now the file in `vendor_user/` is preferred and can be modified.
 
 This way you can also add new classes you want to have in the `Morrow\` namespace. 
 Just copy them into `vendor_user/Morrow/`.
+
+
+Create your own classes
+------------------------
+If you work with folder paths just expect folders to have a trailing slash when the user passes one and only return paths in such a format.
+And do not forget that your class is responsible to create the folder in the `STORAGE_PATH`, so the user could remove all folders from it.
+

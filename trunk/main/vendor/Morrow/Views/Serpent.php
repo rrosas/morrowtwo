@@ -103,7 +103,7 @@ class Serpent extends AbstractView {
 		// assign template and frame_template to page
 		$content['page']['template'] = $this->template;
 
-		$compile_dir = APP_PATH .'temp/serpent_templates_compiled/';
+		$compile_dir = STORAGE_PATH .'serpent_templates_compiled/';
 		if (!is_dir($compile_dir)) mkdir($compile_dir); // create temp dir if it does not exist
 		
 		// init serpent

@@ -103,8 +103,6 @@ class Image {
 	 * Checks the path to the cache dir and creates subdirectories.
 	 * For every month a subdirectory is created. Old months will be deleted.
 	 * 
-	 * MorrowTwo auto-initializes the class with the cache dir path `PUBLIC_PATH . 'temp/thumbs/'`.
-	 * 
 	 * @param string $cache_dir The path to the cache dir.
 	 * @return null
 	 */
