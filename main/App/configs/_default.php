@@ -1,7 +1,9 @@
 <?php
 
 // DO NOT CHANGE THIS FILE
-// CREATE AN EXTRA FILE FOR YOUR HOST/IP
+// If you want to modify defaults for your project (like routing rules), use the _default_app.php.
+// If you want to modify settings per host (like database access settings), create a file for your host/ip.
+// This file represents all possible config parameters and is the master default file.
 
 // the session should always be valid only for the current project
 $session_path = str_replace('//', '/', str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])).'/');
@@ -14,8 +16,8 @@ if (isset($_GET['morrow_basehref_depth'])) {
 
 return array(
 // debug
-	'debug.output.screen'			=> true,
-	'debug.output.file'				=> true,
+	'debug.output.screen'			=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? false : true,
+	'debug.output.file'				=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? true : false,
 	'debug.file.path'				=> APP_PATH .'logs/error_'. date('Y-m-d') .'.txt',
 	
 // languages

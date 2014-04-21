@@ -39,7 +39,7 @@ For advanced users
 If you are writing an application rather than creating a presentational website, it can make more sense to use the Controller-Action URL layout.
 Just use URL Routing and call the action in your default controller by hand.
 
-**_App/configs/default.php**
+**_App/configs/\_default\_app.php**
 ~~~{.php}
 	'routing' = array(
 		'(?P<controller>[^/]+)/(?P<action>[^/]+)(?P<params>/.*)?'	=> '$1'
@@ -47,7 +47,7 @@ Just use URL Routing and call the action in your default controller by hand.
 );
 ~~~
 
-**App/_default.php**
+**App/\_default.php**
 ~~~{.php}
 // init "application url design"
 $controller = $this->input->get('routed.controller');

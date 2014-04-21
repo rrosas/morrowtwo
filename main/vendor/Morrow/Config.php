@@ -89,6 +89,9 @@ class Config extends Core\Base {
 		// load main config
 		$config = include ($directory.'_default.php');
 
+		$file0 = $directory.'_default_app.php';
+		if (is_file($file0)) $config = array_merge($config, include($file0));
+
 		// overwrite with server specific config
 		if (php_sapi_name() === 'cli') {
 			$file1 = $directory.gethostname().'.php';
