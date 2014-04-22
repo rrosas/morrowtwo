@@ -220,9 +220,6 @@ class Url {
 		// combine query parameters
 		parse_str($parts['query'], $parts['query']);
 		$parts['query'] = array_merge($parts['query'], $query);
-		if (count($parts['query']) > 0) {
-			$parts['query_divider'] = '?';
-		}
 
 		// only for URLs without a scheme
 		if (empty($parts['scheme_divider'])) {
@@ -241,9 +238,6 @@ class Url {
 			if (isset($query['language']) && in_array($query['language'], $this->_language_possible)) {
 				$lang = $query['language'];
 				unset($parts['query']['language']);
-				if (count($parts['query']) === 0) {
-					$parts['query_divider'] = '';
-				}
 			}
 
 			// now we have to add the language in some cases
@@ -263,6 +257,10 @@ class Url {
 				$base['query']	= $parts['query'];
 				$parts			= $base;
 			}
+		}
+
+		if (count($parts['query']) > 0) {
+			$parts['query_divider'] = '?';
 		}
 
 		// create query string
