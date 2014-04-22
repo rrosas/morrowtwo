@@ -17,8 +17,8 @@ echo shell_exec("vendor/bin/phpcs --standard=".__DIR__."/Ministry ../trunk/main/
 
 // init Mess Detector
 echo "\nRunning Mess Detector\n-------------------\n";
-echo "\nNaming Rules\n-------------------";
-echo shell_exec("vendor/bin/phpmd ../trunk/main/vendor/Morrow text naming 2>&1");
+//echo "\nNaming Rules\n-------------------";
+//echo shell_exec("vendor/bin/phpmd ../trunk/main/vendor/Morrow text naming 2>&1");
 echo "\nUnused Rules\n-------------------";
 echo shell_exec("vendor/bin/phpmd ../trunk/main/vendor/Morrow text unusedcode 2>&1");
 echo "\nCodesize Rules\n-------------------";
