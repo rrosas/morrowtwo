@@ -6,7 +6,7 @@ main/						Projekt Nr.1
 	App/
 		configs/
 		languages/
-		Models/					
+		models/					
 			User.php			von Controller > Models\User.php
 		public/
 			.htaccess

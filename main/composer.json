@@ -9,8 +9,10 @@
     "autoload": {
         "psr-0": {
             "Morrow\\": ["vendor_user/", "vendor/"], 
-            "App\\": [""],   
             "": ["vendor_user/"] 
+        },
+        "psr-4": {
+            "App\\Models\\": "app/models/"
         }
     }
 }
