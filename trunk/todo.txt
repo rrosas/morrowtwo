@@ -52,6 +52,7 @@ docs/							Projekt Nr.2
 ✓ neue _default_app.php
 ✓ Fehler werden bei Toplevel-Domain ausgegeben, ansonsten nicht
 ✓ temp = storage und logs in storage
+✓ TableDataGateway Klasse für bessere Models
   
 
 ToDo:
