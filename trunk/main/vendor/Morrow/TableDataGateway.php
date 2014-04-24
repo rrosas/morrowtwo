@@ -21,17 +21,14 @@
 
 
 namespace Morrow;
+use Morrow\Debug;
+use Morrow\Factory;
 
 class TableDataGateway {
 	protected $_db;
 	protected $_table;
 	protected $_allowed_insert_fields = array();
 	protected $_allowed_update_fields = array();
-
-	public function __construct() {
-		$this->_db		= Factory::load('Db');
-		$this->_table	= preg_replace('/^.+\\\\/', '', strtolower(get_called_class()));
-	}
 
 	public function filterFields($data, $allowed_fields) {
 		return array_intersect_key($data, array_flip($allowed_fields));
