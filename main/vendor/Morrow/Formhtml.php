@@ -26,6 +26,7 @@ namespace Morrow;
 class Formhtml {
 	public static $config = array();
 	
+
 	public static function setConfig($formname, $config) {
 		self::$config[$formname] = $config;
 	}
@@ -36,6 +37,7 @@ class Formhtml {
 		$display_type = 'text';
 		if (isset($params['dtype'])) $display_type = $params['dtype'];
 		elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
+		$display_type = ucfirst($display_type);
 
 		$_form = Factory::load('Form');
 
@@ -44,7 +46,7 @@ class Formhtml {
 			return '';
 		}
 
-		$_elobj = $_form->getElement($formname, $el_name);
+		$_elobj = $_form->getElement($formname, $el_name, $params);
 
 		$el_label = $_elobj->label;
 		
@@ -83,9 +85,10 @@ class Formhtml {
 
 		$special_params = array('errorclass','errorstyle', 'value', 'dtype','displaytype', 'opt_classes','separator', 'styles');
 
-		$display_type = null;
+		$display_type = 'text';
 		if (isset($params['dtype'])) $display_type = $params['dtype'];
 		elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
+		$display_type = ucfirst($display_type);
 		
 		if (!$_form->getElement($formname, $el_name)) {
 			throw new \Exception("Formhtml::getElement : missing definition for '$el_name'");
@@ -217,6 +220,8 @@ class Formhtml {
 			$display_type = "text";
 			if (isset($params['dtype'])) $display_type = $params['dtype'];
 			elseif (isset($params['displaytype'])) $display_type = $params['displaytype'];
+			$display_type = ucfirst($display_type);
+
 			$classname = '\\Morrow\\Formhtmlelements\\' . $display_type;
 			$display_obj = Factory::load($classname);
 			$content = $display_obj->getError($content, $params, $tagname);
