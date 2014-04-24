@@ -38,7 +38,7 @@ namespace Morrow;
 * $this->prepare('Db', $this->config->get('db'));
 *  
 * // Query with a prepared statement using named placeholder
-* $sql = $this->db->result('
+* $sql = $this->db->get('
 *     SELECT *
 *     FROM table
 *     WHERE id = :id
@@ -48,7 +48,7 @@ namespace Morrow;
 *  
 * // Query with a prepared statement using "?" placeholder
 * // If you just want to pass one parameter you can also pass it directly without using an array
-* $sql = $this->db->result('
+* $sql = $this->db->get('
 *     SELECT *
 *     FROM table
 *     WHERE id = ?
@@ -149,7 +149,7 @@ class Db extends \PDO {
 	 * @param  array $token An array with the prepared statement parameters (indexed or associative array, depends on the use of the prepared statement syntax)
 	 * @return array Returns an array with the keys `SUCCESS` (true if the query could successfully sent to the db, otherwise false), `RESULT` (array The complete result set of the request) and `NUM_ROWS` (integer 	The count of returned results). 
 	 */
-	public function result($query, $token = null) {
+	public function get($query, $token = null) {
 		if (is_scalar($token)) $token = array($token);
 				
 		// search for access keys
@@ -188,7 +188,7 @@ class Db extends \PDO {
 	 * @param  array $token An array with the prepared statement parameters (indexed or associative array, depends on the use of the prepared statement syntax)
 	 * @return array Returns an array with the keys `SUCCESS` (true if the query could successfully sent to the db, otherwise false), `RESULT` (array The complete result set of the request), `NUM_ROWS` (integer The count of returned results) and `FOUND_ROWS` (integer The count of results without the LIMIT). 
 	 */
-	public function result_calc_found_rows($query, $token = null) {
+	public function get_calc_found_rows($query, $token = null) {
 		if (is_scalar($token)) $token = array($token);
 
 		// because of two queries we should use transactions if available
