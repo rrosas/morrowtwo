@@ -19,7 +19,7 @@
 	~endif~
 	
 	/* Only show members if there are public ones */
-	<?
+	<?php
 	$show_members = false;
 	foreach ($class.members as $member) {
 		if (:raw($member['visibility']) == 'public' || :raw($show_protected_and_private)) $show_members = true;
@@ -67,7 +67,7 @@
 	~endif~
 
 	/* Only show functions if there are public ones */
-	<?
+	<?php
 	$public_methods_available = false;
 	foreach ($class.methods as $method) {
 		if (:raw($method['visibility']) == 'public' || :raw($show_protected_and_private)) $show_methods = true;

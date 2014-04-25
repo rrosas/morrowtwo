@@ -19,8 +19,8 @@ RewriteEngine on
 # Set rewrite base for a TLD
 # The slash before main simulates a "RewriteBase /"
 RewriteCond %{HTTP_HOST} \.[a-z]{2,}$
-RewriteRule ^(?!docs/)(.*)$ /main/$1?morrow_basehref_depth=3 [QSA]
+RewriteRule ^(?!docs/)(.*)$ /main/$1?morrow_basehref_depth=2 [QSA]
 
 # Set rewrite base for development URLs (simple host names and IPs)
 RewriteCond %{HTTP_HOST} !\.[a-z]{2,}$
-RewriteRule ^(?!docs/)(.*)$ main/$1?morrow_basehref_depth=3 [QSA]
+RewriteRule ^(?!docs/)(.*)$ main/$1?morrow_basehref_depth=2 [QSA]

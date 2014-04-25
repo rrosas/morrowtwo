@@ -25,8 +25,8 @@ class DefaultController extends Factory {
 
 		$this->view->setContent('show_protected_and_private', $this->session->get('show_protected_and_private'));
 
-		$classes_root = realpath(FW_PATH . '../main/vendor') . '/';
-		
+		$classes_root = realpath('../../main/vendor') . '/';
+
 		// get all pages
 		$pages = file_get_contents($classes_root . 'Morrow/Docs/index.nav');
 		preg_match_all('|(?P<id>\w+)\s+(?P<title>.+)|', $pages, $pages, PREG_SET_ORDER);

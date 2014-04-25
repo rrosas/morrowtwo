@@ -3,15 +3,15 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "88ccfa3d07ea0b4f4e5cb6875cf4bcce",
+    "hash": "95109683e536eab6c07c2058c0a80d51",
     "packages": [
         {
             "name": "mcsodbrenner/serpent",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "svn",
                 "url": "http://serpent-php-template-engine.googlecode.com/svn",
-                "reference": "/tags/2.0.1/@214"
+                "reference": "/tags/2.0.2/@216"
             },
             "require": {
                 "php": ">=5.3.0"
@@ -33,7 +33,7 @@
                 "template",
                 "templating"
             ],
-            "time": "2014-03-26 10:33:45"
+            "time": "2014-04-21 12:07:23"
         },
         {
             "name": "michelf/php-markdown",

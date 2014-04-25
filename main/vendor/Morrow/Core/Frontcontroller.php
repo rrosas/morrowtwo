@@ -131,8 +131,6 @@ class Frontcontroller {
 		$lang['possible']		= $config['languages'];
 		$lang['language_path']	= APP_PATH .'languages/';
 		$lang['search_paths']	= array(
-			VENDOR_PATH			.'Morrow/*.php',
-			VENDOR_USER_PATH	.'*.php',
 			APP_PATH			.'templates/*',
 			APP_PATH			.'*.php'
 		);
