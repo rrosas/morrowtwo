@@ -124,7 +124,7 @@ class Db extends \PDO {
 			}
 			
 			// sqlite
-			if (isset($this->config['file'])) {
+			if ($this->config['driver'] == 'sqlite') {
 				$connector = $this->config['driver'].':'.$this->config['file'].'';
 			}
 			
@@ -134,7 +134,7 @@ class Db extends \PDO {
 			$this -> setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION); // on errors we want to get \Exceptions
 
 			// set encoding
-			if (isset($this->config['encoding'])) {
+			if (isset($this->config['encoding']) && $this->config['driver'] != 'sqlite') {
 				parent::exec('SET NAMES '.$this->config['encoding']);
 			}
 
@@ -506,12 +506,22 @@ class Db extends \PDO {
 	protected function _safe($table, $array) {
 		if (!isset($this->cache[$table])) {
 			$this->connect();
+			
 			$query = 'SHOW COLUMNS FROM '.$table;
+			if ($this->config['driver'] == 'sqlite') {
+				$query = 'PRAGMA table_info('.$table.');';
+			}
 			$sth = $this->prepare($query);
 			$sth->execute();
 			$result = $sth->fetchAll(\PDO::FETCH_ASSOC);
 			
-			foreach ($result as $row) $columns[] = $row['Field'];
+			foreach ($result as $row) {
+				if ($this->config['driver'] == 'sqlite') {
+					$columns[] = $row['name'];
+				} else {
+					$columns[] = $row['Field'];
+				}
+			}
 			$this->cache[$table] = $columns;
 		}
 		
