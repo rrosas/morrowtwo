@@ -7,5 +7,5 @@ RewriteEngine on
 
 # Map all requests to the public subfolder
 # ----------------------------------------
-RewriteCond %{REQUEST_URI} !^app/public/
-RewriteRule ^(.*)$ app/public/$1?morrow_basehref_depth=2 [QSA]
+RewriteCond %{REQUEST_URI} !^public/
+RewriteRule ^(.*)$ public/$1?morrow_basehref_depth=1 [QSA]

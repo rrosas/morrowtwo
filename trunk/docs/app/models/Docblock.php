@@ -1,6 +1,6 @@
 <?php
 
-namespace Morrow;
+namespace App\Models;
 
 class Docblock {
 	protected $_reflection;

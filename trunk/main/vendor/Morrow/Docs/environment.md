@@ -6,12 +6,10 @@ There are some constants provided from the framework that could be useful for yo
 
 Constant           | Description
 ------------------ | ------------
-`PUBLIC_PATH`      | The absolute path to the public folder (`.../main/App/public/`)
-`APP_PATH`         | The absolute path to the App folder (`.../main/App/`)
-`STORAGE_PATH`     | The absolute path to the storage folder (`.../main/App/storage/`)
-`FW_PATH`          | The absolute path to the framework folder (`.../main/`)
+`PUBLIC_PATH`      | The absolute path to the public folder (`.../main/public/`)
+`APP_PATH`         | The absolute path to the App folder (`.../main/app/`)
+`STORAGE_PATH`     | The absolute path to the storage folder (`.../main/app/storage/`)
 `VENDOR_PATH`      | The absolute path to the vendor folder (`.../main/vendor/`)
-`VENDOR_USER_PATH` | The absolute path to the vendor_user folder (`.../main/vendor_user/`)
 
 As in these constants all classes expect folder paths to have a trailing slash.
 

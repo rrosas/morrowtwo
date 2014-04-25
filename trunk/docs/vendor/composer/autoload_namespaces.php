@@ -6,9 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Morrow\\' => array($baseDir . '/vendor_user', $baseDir . '/../main/vendor'),
+    'Morrow\\' => array($baseDir . '/../main/vendor'),
     'Michelf' => array($vendorDir . '/michelf/php-markdown'),
     'McSodbrenner\\' => array($vendorDir . '/mcsodbrenner/serpent'),
-    'App\\' => array($baseDir . '/'),
-    '' => array($baseDir . '/vendor_user'),
 );
