@@ -16,8 +16,8 @@ if (isset($_GET['morrow_basehref_depth'])) {
 
 return array(
 // debug
-	'debug.output.screen'			=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? false : true,
-	'debug.output.file'				=> (isset($_SERVER['HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HOST'])) ? true : false,
+	'debug.output.screen'			=> (isset($_SERVER['HTTP_HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HTTP_HOST'])) ? false : true,
+	'debug.output.file'				=> (isset($_SERVER['HTTP_HOST']) && preg_match('/\.[a-z]+$/', $_SERVER['HTTP_HOST'])) ? true : false,
 	'debug.file.path'				=> STORAGE_PATH .'errors/'. date('Y-m-d') .'.txt',
 	
 // languages
