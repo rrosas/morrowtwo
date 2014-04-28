@@ -176,7 +176,7 @@ abstract class AbstractTableDataGateway {
 			WHERE {$where}
 		", array_values($conditions));
 
-		return $sql['RESULT'][0];
+		return current($sql['RESULT']);
 	}
 
 	/**
