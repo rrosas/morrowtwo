@@ -4,12 +4,13 @@ Environment information
 There are some constants provided from the framework that could be useful for you:
 
 
-Constant           | Description
------------------- | ------------
-`PUBLIC_PATH`      | The absolute path to the public folder (`.../main/public/`)
-`APP_PATH`         | The absolute path to the App folder (`.../main/app/`)
-`STORAGE_PATH`     | The absolute path to the storage folder (`.../main/app/storage/`)
-`VENDOR_PATH`      | The absolute path to the vendor folder (`.../main/vendor/`)
+Constant               | Description
+------------------     | ------------
+`PUBLIC_PATH`          | The absolute path to the public folder (`.../main/public/`).
+`PUBLIC_STORAGE_PATH`  | The absolute path to the public storage folder (`.../main/public/`). Use this for temporary files that should be public accessible, e.g. thumbnails of images.
+`APP_PATH`             | The absolute path to the App folder (`.../main/app/`).
+`STORAGE_PATH`         | The absolute path to the storage folder (`.../main/app/storage/`). Use this for temporary files that should NOT be public accessible, e.g. internal caches.
+`VENDOR_PATH`          | The absolute path to the vendor folder (`.../main/vendor/`).
 
 As in these constants all classes expect folder paths to have a trailing slash.
 

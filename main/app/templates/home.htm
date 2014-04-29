@@ -40,6 +40,9 @@
 		'errorclass' => 'error',
 	))~
 
+	~~$form->label('captcha', 'First name')~
+	~~$form->hidden('test', 'BLABLA')~
+
 	<form action="~~:raw($page.path.absolute)~">
 		~~:formelement('form_name', 'email', array('dtype' => 'Text'))~
 		<input type="submit" value="Submit">

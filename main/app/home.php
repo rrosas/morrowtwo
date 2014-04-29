@@ -87,11 +87,11 @@ class PageController extends DefaultController {
 			}
 		}
 
-		//$this->view->setContent('form', $this->load('Formelements', $input, $errors));
+		$this->view->setContent('form', $this->load('Form2', $input, $errors));
 
 
-		$input2 = $this->validator2->filter($input, $rules);
-		Debug::dump($input2);	
+		// $input2 = $this->validator2->filter($input, $rules);
+		// Debug::dump($input2);	
 
 	}
 
