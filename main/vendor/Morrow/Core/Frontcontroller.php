@@ -195,7 +195,7 @@ class Frontcontroller {
 		Factory::prepare('Cache', STORAGE_PATH .'codecache/');
 		Factory::prepare('Db', $config['db']);
 		Factory::prepare('Debug', $config['debug']);
-		Factory::prepare('Image', STORAGE_PATH . 'thumbs/');
+		Factory::prepare('Image', PUBLIC_STORAGE_PATH . 'thumbs/');
 		Factory::prepare('Log', $config['log']);
 		Factory::prepare('MessageQueue', $config['messagequeue'], $this->input);
 		Factory::prepare('Navigation', Factory::load('Language')->getTree(), $alias);

@@ -4,6 +4,7 @@ namespace Morrow;
 
 // define paths
 define('PUBLIC_PATH', realpath(__DIR__) . '/');
+define('PUBLIC_STORAGE_PATH', realpath(__DIR__ . '/storage') . '/');
 define('APP_PATH', realpath(__DIR__ . '/../app') . '/');
 define('STORAGE_PATH', realpath(__DIR__ . '/../app/storage') . '/');
 
