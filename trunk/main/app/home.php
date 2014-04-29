@@ -6,13 +6,16 @@ use Morrow\Debug;
 
 class PageController extends DefaultController {
 	public function run() {
+		$this->_testValidator();
+		$this->_testForms();
 		//$this->_testStreams();
 		//$this->_testMessageQueue();
-		$this->_testForms();
-		//P$this->_testValidator();
 	}
 
 	protected function _testValidator() {
+		// for debugging
+		$this->input->set('redundant', 'foobar');
+
 		$this->validator2->add('captcha', function($input, $value, $session_captcha) {
 			if (!is_string($value) || $value !== $session_captcha) return false;
 			return true;
@@ -76,11 +79,20 @@ class PageController extends DefaultController {
 			'age'			=> array('age' => array(18, 99)),
 		);
 
-		$input = $this->validator2->filter($input, $rules, $errors);
-		Debug::dump($input);
-		Debug::dump($errors);
-		$input = $this->validator2->filter($input, $rules, $errors, true);
-		Debug::dump($input);
+		if ($this->input->get('redundant')) {
+			if ($data = $this->validator2->filter($input, $rules, $errors, true)) {
+				Debug::dump($data);
+			} else {
+				Debug::dump($errors);
+			}
+		}
+
+		//$this->view->setContent('form', $this->load('Formelements', $input, $errors));
+
+
+		$input2 = $this->validator2->filter($input, $rules);
+		Debug::dump($input2);	
+
 	}
 
 	protected function _testForms() {

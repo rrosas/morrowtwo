@@ -1,36 +1,41 @@
 URL Layout
 ==========
 
-The URL layout often used by other frameworks is usually:
-
-**URL:** `http://domain.com/controller/action/param/param/`
-
-From the object oriented view of a developer this might be right, but we think the URL is an important hierarchical navigation element for the user of a website.
+We think the URL is an important hierarchical navigation element for the user of a website.
 It is like a breadcrumb (also for search engines like Google) and that we decided to design our URL layout.
 
-Framework | URL layout
-----------|------------
-Others | `products/show/cool_funky_product/`
-MorrowTwo | `products/hard-stuff/funky-stuff/cool-funky-product/`
+Here an example:
+
+**URL:** `http://example.com/products/hard-stuff/funky-stuff/cool-funky-product`
 
 MorrowTwo takes the given URL and creates an internal identifier (`alias`).
-It is the same as the URL path but with underscores instead of slashes. So the URL above will get the following identifier:
+It is the same as the URL path but with underscores instead of slashes. So the URL above will get the following alias:
 
 **Alias:** `products_hard-stuff_funky-stuff_cool-funky-product`
 
-The framework will now try to execute the controller
+The framework will now try to load and execute the following controller
 
-**File:** `App/products_hard-stuff_funky-stuff_cool-funky-product.php`
+**Controller:** `app/products_hard-stuff_funky-stuff_cool-funky-product.php`
 
 and to use the template (if you have set Serpent as your default view handler)
 
-**File:** `App/templates/products_hard-stuff_funky-stuff_cool-funky-product.htm`
+**Template:** `app/templates/products_hard-stuff_funky-stuff_cool-funky-product.htm`
+
 
 ### URL nodes are case insensitive
 
 To create the MorrowTwo alias they get lowered.
-`products/cool-funky-product/` loads the same controller as `Products/Cool-Funky-Product/`.
-So you have to take care of using the same notation website wide because search engines respect different notations and could find duplicate content. 
+`products/cool-funky-product/` loads the same controller as `Products/Cool-Funky-Product`.
+So you have to take care of using the same notation website wide because search engines respect different notations and could find duplicate content.
+
+
+### Write your URLs without the trailing slash
+
+The Morrow skeleton is able to handle multiple projects. So you can have a project `docs` and a page `docs` in your main project.
+To differentiate them the trailing slash is used.
+
+The URL `http://example.com/docs/` would request the project `docs` whereas `http://example.com/docs` would request the page `docs` in the main project.
+If there is no project name which could lead to confusion you could write the trailing slash without any problem. But to avoid the possibility of confusion you should omit it.
 
 
 For advanced users
