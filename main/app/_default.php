@@ -8,7 +8,7 @@ class DefaultController extends Factory {
 	public function setup() {
 		$this->view->setHandler('serpent');
 
-		$this->view->setFilter('Sitesearch', $this->config->get('sitesearch'), 'Serpent');
+		//$this->view->setFilter('Sitesearch', $this->config->get('sitesearch'), 'Serpent');
  	
  		/*
 		// add CSP security rules

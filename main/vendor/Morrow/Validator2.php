@@ -209,7 +209,7 @@ class Validator2 extends Core\Base {
 						$is_valid = false;
 						
 						// if there is at least one error we can directly return false
-						if ($strict) return false;
+						if ($strict) return null;
 					}
 				}
 			}
