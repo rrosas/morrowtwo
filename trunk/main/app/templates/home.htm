@@ -36,15 +36,19 @@
 	input.error { background: #fee; }
 	</style>
 
-	~\Morrow\Factory::load('Formhtml')->setConfig('form_name', array(
-		'errorclass' => 'error',
-	))~
-
-	~~$form->label('captcha', 'First name')~
-	~~$form->hidden('test', 'BLABLA')~
+	<?php
+	\Morrow\Form2::$error_class = 'error';
+	$form->setName('testform');
+	?>
 
 	<form action="~~:raw($page.path.absolute)~">
-		~~:formelement('form_name', 'email', array('dtype' => 'Text'))~
+		~~$form->label('captcha', 'First name')~
+		~~$form->hidden('hidden', 'value')~
+		~~$form->text('text')~
+		~~$form->password('password')~
+		~~$form->textarea('textarea', array('placeholder' => 'Your comment'))~
+		~~$form->checkbox('checkbox', 'value', array('checked' => 'checked'))~
+		~~$form->radio('radio', 'value')~
 		<input type="submit" value="Submit">
 	</form>
 ~:endblock('body')~
