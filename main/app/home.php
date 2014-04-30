@@ -27,7 +27,7 @@ class PageController extends DefaultController {
 
 		$input = array(
 			'redundant'		=> 'foobar',
-			'captcha'		=> '43242',
+			'captcha'		=> '432<4>2',
 			'optional'		=> '',
 			'required'		=> 'foobar',
 			'required2'		=> 'foobar',
@@ -78,6 +78,8 @@ class PageController extends DefaultController {
 			'after'			=> array('after' => '2013-02-16'),
 			'age'			=> array('age' => array(18, 99)),
 		);
+
+		$input = array_merge($input, $this->input->get());
 
 		if ($this->input->get('redundant')) {
 			if ($data = $this->validator2->filter($input, $rules, $errors, true)) {
