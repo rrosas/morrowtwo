@@ -232,6 +232,9 @@ class Db extends \PDO {
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function insert($table, $array, $on_duplicate_key_update = array()) {
+		// The array could be empty if processed by insertSafe
+		if (count($array) == 0) return array('SUCCESS' => true);
+
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
@@ -293,6 +296,9 @@ class Db extends \PDO {
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function update($table, $array, $where = '', $where_tokens = array(), $affected_rows = false) {
+		// The array could be empty if processed by updateSafe
+		if (count($array) == 0) return array('SUCCESS' => true, 'AFFECTED_ROWS' => 0);
+
 		$array = $this->_createUpdateValues($array);
 		extract($array);
 		
@@ -353,6 +359,9 @@ class Db extends \PDO {
 	 * @SuppressWarnings(PHPMD.UnusedLocalVariable)
 	 */
 	public function replace($table, $array) {
+		// The array could be empty if processed by replaceSafe
+		if (count($array) == 0) return array('SUCCESS' => true);
+
 		$array = $this->_createInsertAndReplaceValues($array);
 		extract($array);
 		
