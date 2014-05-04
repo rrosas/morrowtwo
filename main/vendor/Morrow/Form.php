@@ -1,256 +1,170 @@
 <?php
-
 /*////////////////////////////////////////////////////////////////////////////////
-    MorrowTwo - a PHP-Framework for efficient Web-Development
-    Copyright (C) 2009  Christoph Erdmann, R.David Cummins
+	MorrowTwo - a PHP-Framework for efficient Web-Development
+	Copyright (C) 2009  Christoph Erdmann, R.David Cummins
 
-    This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
+	This file is part of MorrowTwo <http://code.google.com/p/morrowtwo/>
 
-    MorrowTwo is free software:  you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	MorrowTwo is free software:  you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU Lesser General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////////////*/
 
 
 namespace Morrow;
 
+/**
+ * The Validator class provides several rules for validating data.
+ * 
+ * If you write a validator keep in mind that the validator should never throw an exception if `$input` is a scalar or an array.
+ * Because if you validate data coming from a web client, data can only be a string or an array.
+ */
 class Form {
-	public $elements			= array();	// accessed by FormElement (does not make sense to make it public, should be passed to them)
+	protected $_input;
+	protected $_errors;
+	public static $error_class = 'error';
 	
-	protected $_input			= array();
-	protected $_has_errors		= false;
+	public static $form_counter = 0;
+	protected $_form_prefix;
+
+	public function __construct($input, $errors) {
+		$this->_input	= $input;
+		$this->_errors	= $errors;
+
+		$this->_form_prefix = 'form' . ++self::$form_counter . '_';
+	}
+
+	public function label($name, $value, $attributes = array()) {
+		list($id, $attributes) = $this->_prepare($name, $attributes);
+		return "<label for=\"{$id}\"{$attributes}>{$value}</label>";
+	}
+
+	public function error($name, $attributes = array()) {
+		if (!isset($this->_errors[$name])) return '';
+
+		list($id, $attributes) = $this->_prepare($name, $attributes);
+		
+		// show only the first error. The others could be consequential error
+		$value = $this->_escape(current($this->_errors[$name]));
+
+		return "<span data-error-for=\"{$id}\"{$attributes}>{$value}</span>";
+	}
+
+	public function hidden($name, $value, $attributes = array()) {
+		return $this->_getDefaultInputHtml('hidden', $name, $attributes, $value);
+	}
+
+	public function text($name, $attributes = array()) {
+		return $this->_getDefaultInputHtml('text', $name, $attributes);
+	}
+
+	public function password($name, $attributes = array()) {
+		return $this->_getDefaultInputHtml('password', $name, $attributes);
+	}
+
+	public function file($name, $attributes = array()) {
+		return $this->_getDefaultInputHtml('file', $name, $attributes);
+	}
+
+	public function textarea($name, $attributes = array()) {
+		list($id, $attributes, $value) = $this->_prepare($name, $attributes);
+		return "<textarea id=\"{$id}\" name=\"{$name}\"{$attributes}>{$value}</textarea>";
+	}
+
+	public function checkbox($name, $value, $attributes = array()) {
+		if (isset($this->_input[$name])) {
+			if ($this->_input[$name] === $value) $attributes['checked'] = 'checked';
+			else unset($attributes['checked']);
+		}
+
+		return $this->_getDefaultInputHtml('checkbox', $name, $attributes, $value);
+	}
+
+	public function radio($name, $value, $attributes = array()) {
+		if (isset($this->_input[$name])) {
+			if ($this->_input[$name] === $value) $attributes['checked'] = 'checked';
+			else unset($attributes['checked']);
+		}
+
+		return $this->_getDefaultInputHtml('radio', $name, $attributes, $value);
+	}
 	
-	public $submitted			= false; // accessed by FormElement and Formhtml (does not make sense to make it public, should be passed to them)
-	protected $_submittedForms	= null;
-	protected $_submittedForm	= null;
-	protected $_validator		= 'Validator';
+	public function select($name, $values, $attributes = array()) {
+		list($id, $attributes, $selected_value) = $this->_prepare($name, $attributes);
 
-	public function isSubmitted($form = null) {
-		if ($form != null) {
-			if (isset($this->_submittedForms[$form])) return true;
-			return false;
-		}
-		return $this->submitted;
+		$content = "<select id=\"$id\" name=\"$name\"{$attributes}>";
+		$content .= $this->select_option($values, $selected_value);
+		$content .= "</select>";
+		return $content;
 	}
 
-	public function loadDef($formdef) {
-		foreach ($formdef as $formkey => $element_def) {
-			foreach ($element_def as $key => $el) {
-				$required = isset($el['required'])?$el['required']:false;
-				$checktype = isset($el['checktype'])?$el['checktype']:null;
-				$comparefield = isset($el['compare'])?$el['compare']:null;
-				$arguments = isset($el['arguments'])?$el['arguments']:null;
-				if (!isset($el['type'])) $el['type'] = "simple";
-				switch ($el['type']) {
-					case 'set':
-						$new_element = new Formelementset($this, $key, $required, $checktype);
-						// options
-						$options = isset($el['options'])?$el['options']:array();
-						$new_element->setOptions($options);
-						// multiple = true/false
-						$multiple = isset($el['multiple'])?$el['multiple']:false;
-						$new_element->setMultipleSelect($multiple);
-						break;
-					default:
-						$new_element = new Formelement($this, $key, $required, $checktype);
-						if ($el['type'] == "checkbox") $new_element->type = "checkbox";
-						if (isset($el['example'])) {
-							$new_element->setExample($el['example']);
-						}
-				}
-				if (isset($el['label'])) {
-					$new_element->setLabel($el['label']);
-				}
-				// default value in element definition
-				if (isset($el['default'])) {
-					$new_element->setDefault($el['default']);
-				}
-				else $new_element->setDefault(null);
-				$new_element->comparefield = $comparefield;
-				$new_element->arguments = $arguments;	
-				$this->elements[$formkey][$key] = $new_element;
-				// new def has been loaded after input
-				if (isset($this->_input[$formkey][$key])) $this->elements[$formkey][$key]->setValue($this->_input[$formkey][$key], true);
+	public function select_option($values, $selected_value) {
+		$content = '';
+
+		foreach ($values as $value => $title) {
+			if (is_array($title)) {
+				$label		= $this->_escape($value);
+				$content	.= "<optgroup label=\"{$label}\">";
+				$content	.= $this->select_option($title, $selected_value);
+				$content	.= "</optgroup>";
+			} else {
+				$value		= $this->_escape($value);
+				$title		= $this->_escape($title);
+				$selected	= $value == $selected_value ? ' selected="selected"' : '';
+				$content	.= "<option value=\"{$value}\"{$selected}>{$title}</option>";
 			}
 		}
+
+		return $content;
 	}
 
-	public function hasErrors() {
-		return $this->_has_errors;
+	public function setName($name) {
+		$this->_form_prefix = $name . '_';
 	}
 
-	public function getErrors($formname = null) {
-		$errors = array();
-		if ($formname == null) $formname = $this->_submittedForm;
-		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key => $eldef) {
-				if ($eldef->error != null) $errors[$key] = $eldef->error;
+	protected function _getDefaultInputHtml($type, $name, $attributes, $value_fixed = null) {
+		list($id, $attributes, $value) = $this->_prepare($name, $attributes, $value_fixed);
+		if ($value_fixed !== null) $value = $this->_escape($value_fixed);
+
+		return "<input type=\"{$type}\" id=\"{$id}\" name=\"{$name}\" value=\"{$value}\"{$attributes} />";
+	}
+
+	protected function _prepare($name, $attributes) {
+		// add error class ...
+		if (isset($this->_errors[$name])) {
+			if (isset($attributes['class'])) {
+				$attributes['class'] .= ' ' . self::$error_class;
+			} else {
+				$attributes['class'] = self::$error_class;
 			}
 		}
-		return $errors;
-	}
 
-	public function setError($formname, $fieldname, $errkey) {
-		$eldef = $this->elements[$formname][$fieldname];
-		if (!isset($eldef)) return false;
-		$eldef->setError($errkey); 
-		$this->_has_errors = true;
-		return true;
-	}
-
-	public function getValues($formname = null) {
-		$values = array();
-		if ($formname == null) $formname = $this->_submittedForm;
-		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key => $eldef) {
-				$values[$key] = $eldef->value;
-			}
+		// ... and create string from attributes
+		$attributes_string = '';
+		foreach ($attributes as $key => $value) {
+			$attributes_string .= ' ' . $key . '="' . $this->_escape($value) . '"';
 		}
-		return $values;
-	}
 
-	public function getElement($formname, $fieldname) {
-		if (!$this->_checkElements($formname, $fieldname)) return false;
-		return $this->elements[$formname][$fieldname];
-	}
-
-	public function removeElement($formname, $fieldname) {
-		if (!$this->_checkElements($formname, $fieldname)) return false;
-		unset($this->elements[$formname][$fieldname]);
-		return true;
-	}
-
-	public function setValues($formname, $values, $overwriteall = false) {
-		//dump(array($formname, $values));
+		// add value
+		if (!isset($this->_input[$name]) || is_array($this->_input[$name])) $value = '';
+		else $value = $this->_escape($this->_input[$name]);
 		
-		if (!$this->_checkElements($formname)) return false;
-		foreach ($this->elements[$formname] as $key => $elobj) {
-			$overwrite = $overwriteall;
-			if (isset($values[$key])) $overwrite = true;
-			else $values[$key] = '';
-			$elobj->setValue($values[$key], $overwrite);	
-		}
+		// add id
+		$id = $this->_form_prefix . str_replace(array('[', ']'), '', $name);
+
+		return array($id, $attributes_string, $value);
 	}
 
-	public function clearValues($formname = null) {
-		if ($formname == null) $formname = $this->_submittedForm;
-		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key => $eldef) {
-				$eldef->setValue(null, true);
-			}
-			return true;
-		}
-		return false;
-	}
-
-	public function resetValues($formname = null) {
-		if ($formname == null) $formname = $this->_submittedForm;
-		if ($formname !== null) {
-			foreach ($this->elements[$formname] as $key => $eldef) {
-				$eldef->setValue('', true);
-				$eldef->setValue($eldef->getDefault());
-			}
-			return true;
-		}
-	return false;
-	}
-
-	// only for setting user input (from _POST/_GET)
-	public function setInput($input) {
-		$this->_input		= $input;
-		$this->submitted		= false;
-		$this->_submittedForms	= array();	
-		$this->_submittedForm	= null;
-		
-		foreach ($this->elements as $formkey => $def) {
-			if (!isset($input[$formkey])) continue;
-
-			$this->submitted = true;
-			$this->_submittedForms[$formkey] = true;	
-			$this->_submittedForm = $formkey;	
-			
-			$this->setValues($formkey, $input[$formkey], true);
-		}
-	}
-
-	public function setValidator($validator) {
-		if (class_exists($validator)) {
-			$this->_validator = $validator;
-			return true;
-		} else {
-			throw new \Exception("Class '" . $validator . "' does not exist.");
-			return false;
-		}
-	}
-
-	public function validate($formname = null, $limit = null) {
-		if ($formname == null) $formname = $this->_submittedForm;
-		if (!$this->_checkElements($formname)) return false;
-
-		foreach ($this->elements[$formname] as $key => $element) {	
-			if (is_array($limit) && !in_array($key, $limit)) continue;
-			if (!$element->validate($formname, $this->_validator)) $this->_has_errors = true;
-		}
-		return !$this->_has_errors;
-	}
-
-	public function fillSet($formname, $fieldname, $sets, $replaceall = false, $default = null) {
-		if (!$this->_checkElements($formname, $fieldname)) return false;
-
-		if ($this->elements[$formname][$fieldname]->type != "set") {
-			throw new \Exception("Element '" . $fieldname . "' ist not type 'set'.");
-			return false;
-		}
-		
-		if ($replaceall) {
-			$this->elements[$formname][$fieldname]->setOptions($sets);
-		} else {
-			$this->elements[$formname][$fieldname]->addOptions($sets);
-		}
-
-		if ($default !== null) $this->elements[$formname][$fieldname]->setDefault($default);
-	}
-
-	public function multiplyField($formname, $fieldname, $key_label) {
-		$old_el = $this->elements[$formname][$fieldname];
-		$els = array();
-		foreach ($key_label as $key => $label) {
-			$new_name = $fieldname . '(' . $key . ')';
-			$new_el = clone $old_el;
-			$new_el->setLabel($label);
-			$new_el->setName($new_name);
-			// maybe there was input for this field?
-			if (isset($this->_input[$formname][$new_name])) {
-				$new_el->setValue($this->_input[$formname][$new_name], true);
-			}
-			$this->elements[$formname][$new_name] = $new_el;
-		}
-		unset($this->elements[$formname][$fieldname]);
-	}
-
-	protected function  _checkElements($formname, $fieldname = null) {
-		if (!isset($this->elements[$formname])) {
-			throw new \Exception("Missing Form-Def for '" . $formname . "' !");
-			return false;
-		}
-		if ($fieldname !== null && !isset($this->elements[$formname][$fieldname])) {
-			throw new \Exception("Element '" . $fieldname . "' does not exist in Form-Def '" . $formname . "'");
-			return false;
-		}
-		return true;
-	}
-
-	public function exists($formname) {
-		if (!isset($this->elements[$formname])) return false;
-		return true;
+	protected function _escape($string) {
+		return htmlspecialchars($string, ENT_QUOTES, 'utf-8');
 	}
 }

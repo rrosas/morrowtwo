@@ -37,18 +37,33 @@
 	</style>
 
 	<?php
-	\Morrow\Form2::$error_class = 'error';
+	\Morrow\Form::$error_class = 'error';
 	$form->setName('testform');
 	?>
 
-	<form action="~~:raw($page.path.absolute)~">
-		~~$form->label('captcha', 'First name')~
-		~~$form->hidden('hidden', 'value')~
+	<form action="~~:raw($page.path.absolute)~" method="post" enctype="multipart/form-data">
+		~~$form->hidden('sent', 'ok')~
+
+		~~$form->label('salutation', 'Anrede')~
+		~~$form->select('salutation', :raw($salutations))~
+		~~$form->error('salutation')~
+		<br />
+
+		~~$form->label('text', 'Text')~
 		~~$form->text('text')~
-		~~$form->password('password')~
-		~~$form->textarea('textarea', array('placeholder' => 'Your comment'))~
-		~~$form->checkbox('checkbox', 'value', array('checked' => 'checked'))~
-		~~$form->radio('radio', 'value')~
+		~~$form->error('text')~
+		<br />
+
+		~~$form->label('file', 'Datei-Upload')~
+		~~$form->file('file')~
+		~~$form->error('file')~
+		<br />
+
+		~~$form->hidden('multi[]', 'vater')~
+		~~$form->hidden('multi[]', 'mutter')~
+		~~$form->error('multi[]')~
+		<br />
+
 		<input type="submit" value="Submit">
 	</form>
 ~:endblock('body')~

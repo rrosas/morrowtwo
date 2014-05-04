@@ -1,22 +1,21 @@
 .htaccess
 main/						Projekt Nr.1
 	.htaccess
-	vendor/
-	vendor_user/
-	App/
+	app/
 		configs/
 		languages/
 		models/					
-			User.php			von Controller > Models\User.php
-		public/
-			.htaccess
-			index.php
-			images/
-			javascript/
-			css/
+			User.php			von Controller > Models\User
 		storage/
 		templates/
 		home.php				\App\PageController
+	public/
+		.htaccess
+		index.php
+		images/
+		javascript/
+		css/
+	vendor/
 docs/							Projekt Nr.2
 	...
 
