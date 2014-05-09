@@ -50,9 +50,15 @@ namespace Morrow;
  * 	'minlength'			=> 'This field should have at least %s characters.',
  * ));
  * 
+ * // optional: we want always the same validator rules for a username
+ * // so do this in the DefaultController
+ * $this->validator->addComposition('username', array(
+ * 	'regex'			=> '/[a-z0-9-_]{8,}/i',
+ * ));
+ * 
  * // now let us validate the input data
  * $rules =  array(
- * 	'username'			=> array('required', 'regex' => '/[0-9a-z-_]{5,}/i'),
+ * 	'username'			=> array('reauired', 'composition' => 'username'),
  * 	'email'				=> array('email'),
  * 	'password'			=> array('required', 'minlength' => 8),
  * 	'repeat_password'	=> array('required', 'same' => 'password'),
@@ -114,40 +120,47 @@ namespace Morrow;
  * Shipped validators
  * -------------------
  *
- * Validator   | Prameter              | type    | Description
- * ---------   | ---------             | -----   | ------------
- * `required`  | `$fields = array()`   | array   | Defines the field as required. If you pass the optional associative array `$fields`, the field will only get required if all fields (keys) in the array have the stated values.
- * `equal`     | `$compare_value`      | mixed   | Compares the field to a given value to compare.
- * `same`      | `$compare_field`      | string  | Compares the field to the value of a different field in the input array.
- * `array`     |                       |         | Returns `true` if the field is an array.
- * `number`    |                       |         | Returns `true` if the field is decimal number.
- * `numeric`   |                       |         | Returns `true` if the field is a number or a decimal number.
- * `min`       | `$min`                | numeric | Returns `true` if the field is greater than `$min`.
- * `max`       | `$max`                | numeric | Returns `true` if the field is lower than `$max`.
- * `minlength` | `$minlength`          | integer | Returns `true` if the length of the field is greater than `$min`.
- * `maxlength` | `$maxlength`          | integer | Returns `true` if the length of the field is lower than `$min`.
- * `regex`     | `$regex`              | string  | Returns `true` if the regex matches the field. 
- * `in`        | `$in`                 | array   | Returns `true` if the field is in the set of values.
- * `in_keys`   | `$in`                 | array   | Returns `true` if the field is one of the keys in the given array. The validator iterates the `$in` array recursively and does not accept keys whose value is itself an array. This is useful to validate nested arrays like those you can use for a `<select>` form element with the \Morrow\Form class.
- * `image`     | `$types`              | array   | Returns `true` if the imagetype is one of the given (`jpg`, `gif` or `png`).
- * `width`     | `$width`              | integer | Returns `true` if the image has the given width.
- * `height`    | `$height`             | integer | Returns `true` if the image has the given height.
- * `email`     |                       |         | Returns `true` if the email address is valid.
- * `url`       | `$schemes`            | array   | Returns `true` if the scheme of the url is one of the given, eg. `array('http', 'https')`.
- * `ip`        | `$flags = array()`    | array   | Returns `true` if the IP is valid. You can pass the following parameters to specify the requirements: `ipv4` (IP must be an IPV4 address), `ipv6` (IP must be an IPV6 address), `private` (IP can be a private address like 192.168.*) and `reserved` (IP can be a reserved address like 100.64.0.0/10). Default is `ipv4`.
- * `date`      | `$date_format`        | string  | Returns `true` if the date is valid and the date could be successfully checked against `$date_format` (in `strftime` format). The date has to be passed in a format `strtotime` is able to read.
- * `before`    | `$before`             | string  | Returns `true` if the date is before the given date. Both dates has to be passed in a format `strtotime` is able to read. 
- * `after`     | `$after`              | string  | Returns `true` if the date is after the given date. Both dates has to be passed in a format `strtotime` is able to read. 
- * `upload`    |                       |         | Returns `true` if the fields contains a valid file upload array.
+ * Validator     | Prameter                | type    | Description
+ * ---------     | ---------               | -----   | ------------
+ * `composition` | `$name`                 | string  | Check against all fields which are defined for the given composition name added by `addComposition()`.
+ * `required`    | `$fields = array()`     | array   | Defines the field as required. If you pass the optional associative array `$fields`, the field will only get required if all fields (keys) in the array have the stated values.
+ * `equal`       | `$compare_value`        | mixed   | Compares the field to a given value to compare.
+ * `same`        | `$compare_field`        | string  | Compares the field to the value of a different field in the input array.
+ * `array`       | `$validators = array()` |         | Returns `true` if the field is an array. If you pass `$validators` all values are checked against them. If just one value fails the `array` validator fails. Useful if you have a `<select>` with the attribute `multiple="multiple"`.
+ * `number`      |                         |         | Returns `true` if the field is decimal number.
+ * `numeric`     |                         |         | Returns `true` if the field is a number or a decimal number.
+ * `min`         | `$min`                  | numeric | Returns `true` if the field is greater than `$min`.
+ * `max`         | `$max`                  | numeric | Returns `true` if the field is lower than `$max`.
+ * `minlength`   | `$minlength`            | integer | Returns `true` if the length of the field is greater than `$min`.
+ * `maxlength`   | `$maxlength`            | integer | Returns `true` if the length of the field is lower than `$min`.
+ * `regex`       | `$regex`                | string  | Returns `true` if the regex matches the field. 
+ * `in`          | `$in`                   | array   | Returns `true` if the field is in the set of values.
+ * `in_keys`     | `$in`                   | array   | Returns `true` if the field is one of the keys in the given array. The validator iterates the `$in` array recursively and does not accept keys whose value is itself an array. This is useful to validate nested arrays like those you can use for a `<select>` form element with the \Morrow\Form class.
+ * `image`       | `$types`                | array   | Returns `true` if the imagetype is one of the given (`jpg`, `gif` or `png`).
+ * `width`       | `$width`                | integer | Returns `true` if the image has the given width.
+ * `height`      | `$height`               | integer | Returns `true` if the image has the given height.
+ * `email`       |                         |         | Returns `true` if the email address is valid.
+ * `url`         | `$schemes`              | array   | Returns `true` if the scheme of the url is one of the given, eg. `array('http', 'https')`.
+ * `ip`          | `$flags = array()`      | array   | Returns `true` if the IP is valid. You can pass the following parameters to specify the requirements: `ipv4` (IP must be an IPV4 address), `ipv6` (IP must be an IPV6 address), `private` (IP can be a private address like 192.168.*) and `reserved` (IP can be a reserved address like 100.64.0.0/10). Default is `ipv4`.
+ * `date`        | `$date_format`          | string  | Returns `true` if the date is valid and the date could be successfully checked against `$date_format` (in `strftime` format). The date has to be passed in a format `strtotime` is able to read.
+ * `before`      | `$before`               | string  | Returns `true` if the date is before the given date. Both dates has to be passed in a format `strtotime` is able to read. 
+ * `after`       | `$after`                | string  | Returns `true` if the date is after the given date. Both dates has to be passed in a format `strtotime` is able to read. 
+ * `upload`      |                         |         | Returns `true` if the fields contains a valid file upload array.
  *
  * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class Validator extends Core\Base {
 	/**
-	 * Contains all user defined validator set by add().
+	 * Contains all user defined validators set by add().
 	 * @var array $_callbacks
 	 */
 	protected $_callbacks = array();
+
+	/**
+	 * Contains all user defined compositions set by addComposition().
+	 * @var array $_compositions
+	 */
+	protected $_compositions = array();
 
 	/**
 	 * Contains the error messages for all validators.
@@ -204,6 +217,12 @@ class Validator extends Core\Base {
 			// get value from input array
 			$value = $this->arrayGet($input, $identifier);
 
+			// extract compositions
+			if (isset($rules_array['composition'])) {
+				$rules_array = array_merge($this->_compositions[$identifier], $rules_array);
+				unset($rules_array['composition']);
+			}
+
 			// rewrite rules to normal form (validator => value)
 			foreach ($rules_array as $unknown_key => $unknown_value) {
 				if (is_numeric($unknown_key)) {
@@ -215,7 +234,7 @@ class Validator extends Core\Base {
 			}
 
 			// if we get an empty file upload array or an empty field we need not to check the validators if the field is also not required
-			if ($value == '' || is_array($value) && isset($value['error']) && $value['error'] == 4 && !array_key_exists('required', $rules_array)) {
+			if (!array_key_exists('required', $rules_array) && ($value == '' || is_array($value) && isset($value['error']) && $value['error'] == 4)) {
 				$this->arraySet($output, $identifier, $value);
 				continue;
 			}
@@ -263,12 +282,21 @@ class Validator extends Core\Base {
 	/**
 	 * Adds a user defined validator.
 	 * @param	string	$name	The name of the validator.
-	 * @param	callback	$callback	A valid PHP callback like `array('OBJECT', 'METHOD')`, `array($obj, 'METHOD')` or a n anonymous function like `function($input, $value){}`. The method gets at least two parameters passed. An array of all `$input` parameters and the `$value` to validate. Other parameters are the passed parameters.
-	 * @param	callback	$error_message	The error message that get all parameters passed via `sprintf`, so you can use `%s` and other `sprintf` replacements.
+	 * @param	callable	$callback	A valid PHP callback like `array('OBJECT', 'METHOD')`, `array($obj, 'METHOD')` or a n anonymous function like `function($input, $value){}`. The method gets at least two parameters passed. An array of all `$input` parameters and the `$value` to validate. Other parameters are the passed parameters.
+	 * @param	string	$error_message	The error message that get all parameters passed via `sprintf`, so you can use `%s` and other `sprintf` replacements.
 	 */
 	public function add($name, $callback, $error_message) {
 		$this->_callbacks[$name] = $callback;
 		$this->_messages[$name] = $error_message;
+	}
+
+	/**
+	 * Adds a composition of already existing validators.
+	 * @param	string	$name	The name of the validator.
+	 * @param	array	$composition	An array of validator rules.
+	 */
+	public function addComposition($name, array $composition) {
+		$this->_compositions[$name] = $composition;
 	}
 
 	/**
@@ -333,8 +361,9 @@ class Validator extends Core\Base {
 	 */
 	protected function _validator_array($input, $value, $validators = array()) {
 		if (count($validators) === 0) return is_array($value);
+		if (!is_array($value)) return false;
 
-		foreach ($input as $item) {
+		foreach ($value as $item) {
 			$result = $this->filter(array('item' => $item), array('item' => $validators), $errors, true);
 			if ($result === null) return false;
 		}

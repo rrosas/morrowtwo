@@ -44,23 +44,38 @@ class Form {
 	}
 
 	public function label($name, $value, $attributes = array()) {
-		list($id, $attributes) = $this->_prepare($name, $attributes);
-		return "<label for=\"{$id}\"{$attributes}>{$value}</label>";
+		list($attributes) = $this->_prepare($name, $attributes);
+		
+		$attributes['for'] = $attributes['id'];
+		unset($attributes['id']);
+		unset($attributes['name']);
+		$attributes = $this->_arrayToAttributesString($attributes);
+		$value = $this->_escape($value);
+
+		return "<label{$attributes}>{$value}</label>";
 	}
 
 	public function error($name, $attributes = array()) {
 		if (!isset($this->_errors[$name])) return '';
 
-		list($id, $attributes) = $this->_prepare($name, $attributes);
-		
+		list($attributes) = $this->_prepare($name, $attributes);
+
+		$attributes['data-error-for'] = $attributes['id'];
+		unset($attributes['id']);
+		$attributes = $this->_arrayToAttributesString($attributes);
+
 		// show only the first error. The others could be consequential error
 		$value = $this->_escape(current($this->_errors[$name]));
 
-		return "<span data-error-for=\"{$id}\"{$attributes}>{$value}</span>";
+		return "<span{$attributes}>{$value}</span>";
 	}
 
 	public function hidden($name, $value, $attributes = array()) {
 		return $this->_getDefaultInputHtml('hidden', $name, $attributes, $value);
+	}
+
+	public function input($name, $attributes = array()) {
+		return $this->_getDefaultInputHtml('text', $name, $attributes);
 	}
 
 	public function text($name, $attributes = array()) {
@@ -76,16 +91,13 @@ class Form {
 	}
 
 	public function textarea($name, $attributes = array()) {
-		list($id, $attributes, $value) = $this->_prepare($name, $attributes);
-		return "<textarea id=\"{$id}\" name=\"{$name}\"{$attributes}>{$value}</textarea>";
+		list($attributes, $value)	= $this->_prepare($name, $attributes);
+		$attributes					= $this->_arrayToAttributesString($attributes);
+		$value						= $this->_escape($value);
+		return "<textarea{$attributes}>{$value}</textarea>";
 	}
 
 	public function checkbox($name, $value, $attributes = array()) {
-		if (isset($this->_input[$name])) {
-			if ($this->_input[$name] === $value) $attributes['checked'] = 'checked';
-			else unset($attributes['checked']);
-		}
-
 		return $this->_getDefaultInputHtml('checkbox', $name, $attributes, $value);
 	}
 
@@ -99,9 +111,10 @@ class Form {
 	}
 	
 	public function select($name, $values, $attributes = array()) {
-		list($id, $attributes, $selected_value) = $this->_prepare($name, $attributes);
+		list($attributes, $selected_value) = $this->_prepare($name, $attributes);
+		$attributes = $this->_arrayToAttributesString($attributes);
 
-		$content = "<select id=\"$id\" name=\"$name\"{$attributes}>";
+		$content = "<select{$attributes}>";
 		$content .= $this->select_option($values, $selected_value);
 		$content .= "</select>";
 		return $content;
@@ -119,7 +132,14 @@ class Form {
 			} else {
 				$value		= $this->_escape($value);
 				$title		= $this->_escape($title);
-				$selected	= $value == $selected_value ? ' selected="selected"' : '';
+				
+				$selected = '';
+				if (is_scalar($selected_value) && $value == $selected_value) {
+					$selected = ' selected="selected"';
+				} elseif (is_array($selected_value) && in_array($value, $selected_value)) {
+					$selected = ' selected="selected"';
+				}
+
 				$content	.= "<option value=\"{$value}\"{$selected}>{$title}</option>";
 			}
 		}
@@ -132,10 +152,26 @@ class Form {
 	}
 
 	protected function _getDefaultInputHtml($type, $name, $attributes, $value_fixed = null) {
-		list($id, $attributes, $value) = $this->_prepare($name, $attributes, $value_fixed);
-		if ($value_fixed !== null) $value = $this->_escape($value_fixed);
+		list($attributes, $value) = $this->_prepare($name, $attributes);
+		
+		$attributes['type']		= !isset($attributes['type']) ? $type : $attributes['type'];
+		
+		// on type "file" we would have an array (and "file" does not need a value)
+		if (is_scalar($value))		$attributes['value'] = $this->_escape($value);
+		if ($value_fixed !== null)	$attributes['value'] = $this->_escape($value_fixed);
 
-		return "<input type=\"{$type}\" id=\"{$id}\" name=\"{$name}\" value=\"{$value}\"{$attributes} />";
+		// for checkboxes
+		if ($type === 'checkbox') {
+			if (is_array($value) && in_array($value_fixed, $value)) {
+				$attributes['checked'] = 'checked';
+			} elseif ($value_fixed == $value) {
+				$attributes['checked'] = 'checked';
+			}
+		}
+
+		$attributes = $this->_arrayToAttributesString($attributes);
+
+		return "<input{$attributes} />";
 	}
 
 	protected function _prepare($name, $attributes) {
@@ -148,23 +184,31 @@ class Form {
 			}
 		}
 
-		// ... and create string from attributes
-		$attributes_string = '';
-		foreach ($attributes as $key => $value) {
-			$attributes_string .= ' ' . $key . '="' . $this->_escape($value) . '"';
+		// add name
+		if (!isset($attributes['name'])) {
+			$attributes['name'] = $name;
 		}
 
-		// add value
-		if (!isset($this->_input[$name]) || is_array($this->_input[$name])) $value = '';
-		else $value = $this->_escape($this->_input[$name]);
-		
 		// add id
-		$id = $this->_form_prefix . str_replace(array('[', ']'), '', $name);
+		$attributes['id']	= $this->_form_prefix . (isset($attributes['id']) ? $attributes['id'] : str_replace(array('[', ']'), '', $name));
 
-		return array($id, $attributes_string, $value);
+		// add value
+		// the name could be in array syntax like "field[]" but in the input array the field has the name "field"
+		$input_key	= preg_replace('/\[[^]]*\]/', '', $attributes['name']);
+		$value		= isset($this->_input[$input_key]) ? $this->_input[$input_key] : '';
+		
+		return array($attributes, $value);
 	}
 
 	protected function _escape($string) {
 		return htmlspecialchars($string, ENT_QUOTES, 'utf-8');
+	}
+
+	protected function _arrayToAttributesString(array $attributes) {
+		$attributes_string = '';
+		foreach ($attributes as $key => $value) {
+			$attributes_string .= ' ' . $key . '="' . $this->_escape($value) . '"';
+		}
+		return $attributes_string;
 	}
 }
