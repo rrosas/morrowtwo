@@ -15,17 +15,21 @@ class PageController extends DefaultController {
 		$salutations = array('Anreden' => array('herr' => 'Herr', 'frau' => 'Frau'), 'foo' => 'bar', 'Weiteres' => array('test1' => 'Test 1', 'test2' => 'Test 2'));
 		$this->view->setContent('salutations', $salutations);
 
+		$this->validator->addComposition('username', array('regex' => '/[a-z0-9_-]{8,}/i'));
+
 		$rules =  array(
-			'salutation'	=> array('required', 'in_keys' => $salutations),
+			'salutation'	=> array('required', 'array' => array('in_keys' => $salutations)),
 			'text'			=> array('minlength' => 5),
+			'username'		=> array('required', 'composition' => 'username'),
 			'file'			=> array('upload'),
 			'file.tmp_name'	=> array('image' => array('png')),			// the image has to be a JPG
 			'file.size'		=> array('number', 'max' => 1024 * 2000),	// no more than 2 MB
-			'multi[]'			=> array('required', 'array' => array('in' => array('mutter', 'vater'))),
+			'multi'			=> array('required', 'array' => array('in' => array('mutter', 'vater'))),
+			'simplecheckbox'=> array('required', 'equal' => 'vater'),
 		);
 
-		$input = $this->input->get();
-		$errors = array();
+		$input	= $this->input->get();
+		$errors	= array();
 
 		if (isset($input['sent'])) {
 			if ($data = $this->validator->filter($input, $rules, $errors, true)) {

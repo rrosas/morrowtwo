@@ -42,16 +42,19 @@
 	?>
 
 	<form action="~~:raw($page.path.absolute)~" method="post" enctype="multipart/form-data">
-		~~$form->hidden('sent', 'ok')~
-
 		~~$form->label('salutation', 'Anrede')~
-		~~$form->select('salutation', :raw($salutations))~
+		~~$form->select('salutation[]', :raw($salutations), array('multiple' => 'multiple'))~
 		~~$form->error('salutation')~
 		<br />
 
 		~~$form->label('text', 'Text')~
-		~~$form->text('text')~
+		~~$form->input('text', array('type' => 'date'))~
 		~~$form->error('text')~
+		<br />
+
+		~~$form->label('username', 'Username')~
+		~~$form->text('username')~
+		~~$form->error('username')~
 		<br />
 
 		~~$form->label('file', 'Datei-Upload')~
@@ -59,12 +62,18 @@
 		~~$form->error('file')~
 		<br />
 
-		~~$form->hidden('multi[]', 'vater')~
-		~~$form->hidden('multi[]', 'mutter')~
-		~~$form->error('multi[]')~
+		Wähle:
+		~~$form->checkbox('multi[0]', 'vater')~
+		~~$form->label('multi[0]', 'Vater')~
+		~~$form->checkbox('multi[1]', 'mutter')~
+		~~$form->label('multi[1]', 'Mutter')~
+		~~$form->error('multi')~
 		<br />
 
-		<input type="submit" value="Submit">
+		~~$form->checkbox('simplecheckbox', 'vater')~
+		~~$form->label('simplecheckbox', 'Vater')~
+
+		<input type="submit" name="sent" value="Submit">
 	</form>
 ~:endblock('body')~
 
