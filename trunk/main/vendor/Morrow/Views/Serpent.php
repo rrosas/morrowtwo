@@ -122,10 +122,6 @@ class Serpent extends AbstractView {
 			'strip'			=> 'ob_start(array("\\Morrow\\Views\\Serpent::strip")) //',
 			'endstrip'		=> 'ob_end_flush',
 			'loremipsum'	=> '\\Morrow\\Views\\Serpent::loremipsum',
-			'formlabel'		=> '\\Morrow\\Factory::load("Formhtml")->getLabel',
-			'formelement'	=> '\\Morrow\\Factory::load("Formhtml")->getElement',
-			'formerror'		=> '\\Morrow\\Factory::load("Formhtml")->getError',
-			'formupload'	=> '\\Morrow\\Factory::load("Formhtml")->getInputImage',
 			'_'				=> '\\Morrow\\Factory::load("Language")->_',
 		);
 		// add user mappings
