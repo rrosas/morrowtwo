@@ -22,10 +22,11 @@ class PageController extends DefaultController {
 			'text'			=> array('minlength' => 5),
 			'username'		=> array('required', 'composition' => 'username'),
 			'file'			=> array('upload'),
-			'file.tmp_name'	=> array('image' => array('png')),			// the image has to be a JPG
-			'file.size'		=> array('number', 'max' => 1024 * 2000),	// no more than 2 MB
+			'file.tmp_name'	=> array('image' => array('jpg'), 'invalidates' => 'file'),			// the image has to be a JPG
+			'file.size'		=> array('number', 'max' => 1024 * 2000, 'invalidates' => 'file'),	// no more than 2 MB
 			'multi'			=> array('required', 'array' => array('in' => array('mutter', 'vater'))),
 			'simplecheckbox'=> array('required', 'equal' => 'vater'),
+			'date'			=> array('date' => 'd.m.Y'),
 		);
 
 		$input	= $this->input->get();

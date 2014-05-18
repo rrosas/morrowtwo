@@ -86,9 +86,9 @@ namespace Morrow;
  * ~~~{.php}
  * $rules =  array(
  * 	'file'			=> array('upload'),
- * 	'file.tmp_name'	=> array('image' => array('jpg')),			// the image has to be a JPG
- * 	'file.name'		=> array('regex' => '/^[a-z0-9_.]+$/'),		// only specific characters allowed
- * 	'file.size'		=> array('number', 'max' => 1024 * 2000),	// no more than 2 MB
+ * 	'file.tmp_name'	=> array('invalidates' => 'file', 'image' => array('jpg')),			// the image has to be a JPG
+ * 	'file.name'		=> array('invalidates' => 'file', 'regex' => '/^[a-z0-9_.]+$/'),	// only specific characters allowed
+ * 	'file.size'		=> array('invalidates' => 'file', 'number', 'max' => 1024 * 2000),	// no more than 2 MB
  * );
  * ~~~
  * 
@@ -123,6 +123,7 @@ namespace Morrow;
  * Validator     | Prameter                | type    | Description
  * ---------     | ---------               | -----   | ------------
  * `composition` | `$name`                 | string  | Check against all fields which are defined for the given composition name added by `addComposition()`.
+ * `invalidates` | `$field`                | string  | Use this if you want the error be appended to the errors of another field.
  * `required`    | `$fields = array()`     | array   | Defines the field as required. If you pass the optional associative array `$fields`, the field will only get required if all fields (keys) in the array have the stated values.
  * `equal`       | `$compare_value`        | mixed   | Compares the field to a given value to compare.
  * `same`        | `$compare_field`        | string  | Compares the field to the value of a different field in the input array.
@@ -136,18 +137,16 @@ namespace Morrow;
  * `regex`       | `$regex`                | string  | Returns `true` if the regex matches the field. 
  * `in`          | `$in`                   | array   | Returns `true` if the field is in the set of values.
  * `in_keys`     | `$in`                   | array   | Returns `true` if the field is one of the keys in the given array. The validator iterates the `$in` array recursively and does not accept keys whose value is itself an array. This is useful to validate nested arrays like those you can use for a `<select>` form element with the \Morrow\Form class.
+ * `upload`      |                         |         | Returns `true` if the fields contains a valid file upload array.
  * `image`       | `$types`                | array   | Returns `true` if the imagetype is one of the given (`jpg`, `gif` or `png`).
  * `width`       | `$width`                | integer | Returns `true` if the image has the given width.
  * `height`      | `$height`               | integer | Returns `true` if the image has the given height.
  * `email`       |                         |         | Returns `true` if the email address is valid.
  * `url`         | `$schemes`              | array   | Returns `true` if the scheme of the url is one of the given, eg. `array('http', 'https')`.
  * `ip`          | `$flags = array()`      | array   | Returns `true` if the IP is valid. You can pass the following parameters to specify the requirements: `ipv4` (IP must be an IPV4 address), `ipv6` (IP must be an IPV6 address), `private` (IP can be a private address like 192.168.*) and `reserved` (IP can be a reserved address like 100.64.0.0/10). Default is `ipv4`.
- * `date`        | `$date_format`          | string  | Returns `true` if the date is valid and the date could be successfully checked against `$date_format` (in `strftime` format). The date has to be passed in a format `strtotime` is able to read.
+ * `date`        | `$date_format`          | string  | Returns `true` if the date is valid and the date could be successfully checked against `$date_format` (in `\DateTime::createFromFormat` format).
  * `before`      | `$before`               | string  | Returns `true` if the date is before the given date. Both dates has to be passed in a format `strtotime` is able to read. 
  * `after`       | `$after`                | string  | Returns `true` if the date is after the given date. Both dates has to be passed in a format `strtotime` is able to read. 
- * `upload`      |                         |         | Returns `true` if the fields contains a valid file upload array.
- *
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class Validator extends Core\Base {
 	/**
@@ -223,6 +222,13 @@ class Validator extends Core\Base {
 				unset($rules_array['composition']);
 			}
 
+			// handle invalidates
+			$invalidates = null;
+			if (isset($rules_array['invalidates'])) {
+				$invalidates = $rules_array['invalidates'];
+				unset($rules_array['invalidates']);
+			}
+
 			// rewrite rules to normal form (validator => value)
 			foreach ($rules_array as $unknown_key => $unknown_value) {
 				if (is_numeric($unknown_key)) {
@@ -260,6 +266,10 @@ class Validator extends Core\Base {
 				if ($result === false) {
 					// add the error message
 					if (!is_scalar($params)) $params	= json_encode($params);
+
+					// this error should be appended to a different field
+					if ($invalidates !== null) $identifier = $invalidates;
+					
 					$errors[$identifier][$name]			= vsprintf($this->_messages[$name], (string)$params);
 
 					// one false result is enough to set a field as not valid
@@ -637,13 +647,9 @@ class Validator extends Core\Base {
 	 * @return 	booolean	The result of the validation.
 	 */
 	protected function _validator_date($input, $value, $date_format) {
-		if (!is_string($value) && !is_integer($value)) return false;
-		$timestamp = is_string($value) ? strtotime($value) : $value;
-		if ($timestamp === false) return false;
-
-		if ($value !== strftime($date_format, $timestamp)) return false;
-
-		return true;
+		if (!is_string($value)) return false;
+		$date = \DateTime::createFromFormat($date_format, $value);
+		return $date && str_replace('0', '', $date->format($date_format)) === str_replace('0', '', $value);
 	}
 	
 	/**

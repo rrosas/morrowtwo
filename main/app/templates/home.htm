@@ -48,7 +48,7 @@
 		<br />
 
 		~~$form->label('text', 'Text')~
-		~~$form->input('text', array('type' => 'date'))~
+		~~$form->input('text')~
 		~~$form->error('text')~
 		<br />
 
@@ -72,8 +72,12 @@
 
 		~~$form->checkbox('simplecheckbox', 'vater')~
 		~~$form->label('simplecheckbox', 'Vater')~
+		<br />
+
+		~~$form->label('date', 'Datum')~
+		~~$form->text('date')~
+		<br />
 
 		<input type="submit" name="sent" value="Submit">
 	</form>
 ~:endblock('body')~
-
